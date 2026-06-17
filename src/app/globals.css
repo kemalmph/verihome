@@ -5,6 +5,34 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
+  /* VeriHome brand tokens */
+  --color-brand-green: #1A7A5E;
+  --color-brand-navy: #0D2137;
+  --color-brand-light-green: #E8F5F0;
+  --color-text-primary: #333333;
+  --color-text-muted: #888888;
+  --color-border-default: #CCCCCC;
+
+  /* VeriHome material color system */
+  --color-vh-primary: #006048;
+  --color-vh-primary-container: #1A7A5E;
+  --color-vh-on-primary: #FFFFFF;
+  --color-vh-primary-fixed: #9CF4D1;
+  --color-vh-primary-fixed-dim: #80D7B6;
+  --color-vh-secondary: #4D6079;
+  --color-vh-on-secondary-fixed: #081C32;
+  --color-vh-surface: #FBF9F8;
+  --color-vh-surface-container-low: #F6F3F2;
+  --color-vh-surface-container: #F0EDED;
+  --color-vh-surface-container-high: #EAE8E7;
+  --color-vh-on-surface: #1B1C1C;
+  --color-vh-on-surface-variant: #3E4944;
+  --color-vh-outline: #6E7A74;
+  --color-vh-outline-variant: #BEC9C2;
+
+  /* Typography */
+  --font-sans: "Public Sans", sans-serif;
+
   --color-background: var(--background);
   --color-foreground: var(--foreground);
   --font-sans: var(--font-sans);
@@ -49,24 +77,24 @@
 }
 
 :root {
-  --background: oklch(1 0 0);
-  --foreground: oklch(0.145 0 0);
-  --card: oklch(1 0 0);
-  --card-foreground: oklch(0.145 0 0);
-  --popover: oklch(1 0 0);
-  --popover-foreground: oklch(0.145 0 0);
-  --primary: oklch(0.205 0 0);
-  --primary-foreground: oklch(0.985 0 0);
-  --secondary: oklch(0.97 0 0);
-  --secondary-foreground: oklch(0.205 0 0);
-  --muted: oklch(0.97 0 0);
-  --muted-foreground: oklch(0.556 0 0);
-  --accent: oklch(0.97 0 0);
-  --accent-foreground: oklch(0.205 0 0);
-  --destructive: oklch(0.577 0.245 27.325);
-  --border: oklch(0.922 0 0);
-  --input: oklch(0.922 0 0);
-  --ring: oklch(0.708 0 0);
+  --background: #fbf9f8;
+  --foreground: #1b1c1c;
+  --card: #ffffff;
+  --card-foreground: #1b1c1c;
+  --popover: #ffffff;
+  --popover-foreground: #1b1c1c;
+  --primary: #1a7a5e;
+  --primary-foreground: #ffffff;
+  --secondary: #f6f3f2;
+  --secondary-foreground: #1b1c1c;
+  --muted: #f0eded;
+  --muted-foreground: #888888;
+  --accent: #e8f5f0;
+  --accent-foreground: #1a7a5e;
+  --destructive: #ba1a1a;
+  --border: #cccccc;
+  --input: #cccccc;
+  --ring: #1a7a5e;
   --chart-1: oklch(0.87 0 0);
   --chart-2: oklch(0.556 0 0);
   --chart-3: oklch(0.439 0 0);
