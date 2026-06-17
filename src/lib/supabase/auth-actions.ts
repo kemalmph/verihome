@@ -18,7 +18,7 @@ export async function signInWithGoogle() {
   if (data.url) redirect(data.url);
 }
 
-export async function signInWithEmail(formData: FormData) {
+export async function signInWithEmail(formData: FormData, redirectTo = "/dashboard") {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = await createClient();
@@ -26,7 +26,7 @@ export async function signInWithEmail(formData: FormData) {
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: error.message };
 
-  redirect("/dashboard");
+  redirect(redirectTo);
 }
 
 export async function signUpWithEmail(formData: FormData) {

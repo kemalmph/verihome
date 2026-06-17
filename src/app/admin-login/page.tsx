@@ -12,13 +12,8 @@ export default function AdminLoginPage() {
     const formData = new FormData(e.currentTarget);
     setError(null);
     startTransition(async () => {
-      const result = await signInWithEmail(formData);
-      if (result?.error) {
-        setError(result.error);
-      } else {
-        // Redirect to admin dashboard after sign in
-        window.location.href = "/admin";
-      }
+      const result = await signInWithEmail(formData, "/admin");
+      if (result?.error) setError(result.error);
     });
   }
 
