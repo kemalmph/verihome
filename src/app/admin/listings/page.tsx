@@ -1,8 +1,22 @@
 import Link from "next/link";
+import { redirect } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PIPELINE_STAGES, statusColor, statusLabel } from "@/lib/pipeline";
 import { StatusSelect } from "./StatusSelect";
+
+async function createNewProperty() {
+  "use server";
+  const admin = createAdminClient();
+  const slug = `new-property-${Date.now().toString(36)}`;
+  const { data, error } = await admin
+    .from("properties")
+    .insert({ name: "New Property", slug, status: "new_lead", submission_type: "internal" })
+    .select("id")
+    .single();
+  if (error || !data) throw new Error(error?.message ?? "Failed to create property");
+  redirect(`/admin/listings/${data.id}/build`);
+}
 
 function StatusBadge({ status }: { status: string }) {
   return (
@@ -54,14 +68,15 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
             <h1 className="text-3xl font-bold text-[#0d2137]">Listings Pipeline</h1>
             <p className="text-[#3e4944] mt-1">{all.length} total · {counts["live"] ?? 0} live</p>
           </div>
-          <Link
-            href="/list-your-property"
-            target="_blank"
-            className="bg-[#1a7a5e] text-white px-5 py-2.5 rounded-lg font-medium text-sm hover:opacity-90 flex items-center gap-2"
-          >
-            <span className="material-symbols-outlined text-lg">add</span>
-            Add Lead
-          </Link>
+          <form action={createNewProperty}>
+            <button
+              type="submit"
+              className="bg-[#1a7a5e] text-white px-5 py-2.5 rounded-lg font-medium text-sm hover:opacity-90 flex items-center gap-2"
+            >
+              <span className="material-symbols-outlined text-lg">add</span>
+              New Property
+            </button>
+          </form>
         </div>
 
         {/* Pipeline stage summary */}
