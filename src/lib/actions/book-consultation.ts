@@ -5,9 +5,6 @@ import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY! });
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 const PACKAGES = {
   basic: { label: "Basic Consultation", price: 99000, duration: "30 min" },
   premium: { label: "Premium Consultation", price: 199000, duration: "60 min" },
@@ -21,6 +18,9 @@ export async function bookConsultation(formData: FormData) {
   const notes = (formData.get("notes") as string)?.trim() || null;
 
   if (!PACKAGES[packageId]) return { error: "Invalid package selected." };
+
+  const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY ?? "dummy" });
+  const resend = new Resend(process.env.RESEND_API_KEY ?? "dummy");
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();

@@ -3,8 +3,6 @@
 import { Resend } from "resend";
 import { createAdminClient } from "@/lib/supabase/admin";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 function slugify(text: string) {
   return text
     .toLowerCase()
@@ -86,6 +84,7 @@ export async function submitProperty(formData: FormData) {
   }
 
   // Send emails (fire and forget — don't fail the submission if email fails)
+  const resend = new Resend(process.env.RESEND_API_KEY ?? "dummy");
   const emailFrom = "VeriHome <onboarding@resend.dev>";
 
   await Promise.allSettled([

@@ -1,9 +1,8 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Resend } from "resend";
 
-const resend = new Resend(process.env.RESEND_API_KEY);
-
 export async function POST(request: Request) {
+  const resend = new Resend(process.env.RESEND_API_KEY ?? "dummy");
   // Verify Xendit webhook token
   const token = request.headers.get("x-callback-token");
   if (token !== process.env.XENDIT_WEBHOOK_TOKEN) {
