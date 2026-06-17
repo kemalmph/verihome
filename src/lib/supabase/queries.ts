@@ -14,7 +14,7 @@ export type PropertyRow = {
   bedrooms: number;
   bathrooms: number;
   min_stay_months: number;
-  property_media: { photo_urls: string[] }[];
+  photo_urls: string[];
   rla_assessments: {
     rla_score: number;
     building_condition: number;
@@ -49,8 +49,7 @@ export type PropertyDetailRow = PropertyRow & {
 };
 
 const PROPERTY_LIST_SELECT = `
-  id, name, slug, property_type, status, price_monthly, area, address, size_sqm, bedrooms, bathrooms, min_stay_months,
-  property_media ( photo_urls ),
+  id, name, slug, property_type, status, price_monthly, area, address, size_sqm, bedrooms, bathrooms, min_stay_months, photo_urls,
   rla_assessments ( rla_score, building_condition, natural_lighting, bathroom_condition, ventilation, noise_level, water_pressure, security_level, pros, cons, overall_notes )
 `;
 

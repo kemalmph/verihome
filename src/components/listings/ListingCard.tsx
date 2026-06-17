@@ -10,7 +10,7 @@ interface ListingCardProps {
 
 export function ListingCard({ property, savedIds = [] }: ListingCardProps) {
   const price = new Intl.NumberFormat("id-ID").format(property.price_monthly);
-  const photos = property.property_media?.[0]?.photo_urls ?? [];
+  const photos = property.photo_urls ?? [];
   const rla = property.rla_assessments?.[0];
   const isSaved = savedIds.includes(property.id);
 

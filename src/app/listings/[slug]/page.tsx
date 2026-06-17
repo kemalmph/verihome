@@ -28,7 +28,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 
   const price = new Intl.NumberFormat("id-ID").format(property.price_monthly);
   const isSaved = savedIds.includes(property.id);
-  const photos = property.property_media?.[0]?.photo_urls ?? [];
+  const photos = property.photo_urls ?? [];
   const rla = property.rla_assessments?.[0];
   const details = property.property_details?.[0];
   const area = property.area_overviews?.[0];
