@@ -7,7 +7,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
   const { data: { user } } = await supabase.auth.getUser();
 
   if (!user) {
-    redirect("/admin/login");
+    redirect("/admin-login");
   }
 
   // Check is_admin in users table
@@ -19,7 +19,7 @@ export default async function AdminLayout({ children }: { children: React.ReactN
     .single();
 
   if (!profile?.is_admin) {
-    redirect("/admin/login");
+    redirect("/admin-login");
   }
 
   return <>{children}</>;

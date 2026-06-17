@@ -34,12 +34,12 @@ export async function proxy(request: NextRequest) {
 
   const { pathname } = request.nextUrl;
   const isProtected = PROTECTED_PREFIXES.some((p) => pathname.startsWith(p));
-  const isAdminLogin = pathname === "/admin/login";
+  const isAdminLogin = pathname === "/admin-login";
 
   if (isProtected && !isAdminLogin && !user) {
     const redirectUrl = request.nextUrl.clone();
     if (pathname.startsWith("/admin")) {
-      redirectUrl.pathname = "/admin/login";
+      redirectUrl.pathname = "/admin-login";
     } else {
       redirectUrl.pathname = "/";
       redirectUrl.searchParams.set("login", "1");
