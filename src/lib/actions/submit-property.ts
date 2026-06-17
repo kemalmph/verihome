@@ -14,7 +14,10 @@ function slugify(text: string) {
 
 export async function submitProperty(formData: FormData) {
   const name = (formData.get("name") as string)?.trim();
+  const city = (formData.get("city") as string)?.trim();
   const area = formData.get("area") as string;
+  const address = (formData.get("address") as string)?.trim();
+  const google_maps_url = (formData.get("google_maps_url") as string)?.trim();
   const property_type = formData.get("property_type") as string;
   const bedrooms = formData.get("bedrooms") as string;
   const bathrooms = parseInt(formData.get("bathrooms") as string) || 1;
@@ -24,7 +27,7 @@ export async function submitProperty(formData: FormData) {
   const owner_email = (formData.get("owner_email") as string)?.trim();
   const owner_phone = (formData.get("owner_phone") as string)?.trim();
 
-  if (!name || !area || !property_type || !price_monthly || !owner_name || !owner_email || !owner_phone) {
+  if (!name || !city || !area || !address || !property_type || !price_monthly || !owner_name || !owner_email || !owner_phone) {
     return { error: "Please fill in all required fields." };
   }
 
@@ -62,6 +65,8 @@ export async function submitProperty(formData: FormData) {
     submission_type: "owner",
     price_monthly,
     area,
+    address: address || null,
+    google_maps_url: google_maps_url || null,
     bedrooms: bedroomsNum,
     bathrooms,
     owner_id: owner.id,

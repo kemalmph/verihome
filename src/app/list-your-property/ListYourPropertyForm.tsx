@@ -3,9 +3,14 @@
 import { useState, useTransition } from "react";
 import { submitProperty } from "@/lib/actions/submit-property";
 
+const CITY_NEIGHBORHOODS: Record<string, string[]> = {
+  Jakarta: ["Kemang", "SCBD", "Senayan", "Sudirman", "Kuningan", "Menteng", "Other"],
+};
+
 export function ListYourPropertyForm() {
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<{ success?: boolean; error?: string } | null>(null);
+  const [selectedCity, setSelectedCity] = useState("");
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -46,34 +51,76 @@ export function ListYourPropertyForm() {
         </div>
       )}
 
+      <div className="space-y-1">
+        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          Property Name *
+        </label>
+        <input
+          name="name"
+          type="text"
+          required
+          placeholder="e.g. Modern 2BR in Senayan"
+          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
+        />
+      </div>
+
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            Property Name *
+            City *
           </label>
-          <input
-            name="name"
-            type="text"
+          <select
+            name="city"
             required
-            placeholder="e.g. Modern 2BR in Senayan"
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
-          />
+            value={selectedCity}
+            onChange={(e) => setSelectedCity(e.target.value)}
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
+          >
+            <option value="">Select city</option>
+            <option value="Jakarta">Jakarta</option>
+          </select>
         </div>
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            Area / Neighborhood *
+            Neighborhood *
           </label>
           <select
             name="area"
             required
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
+            disabled={!selectedCity}
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <option value="">Select area</option>
-            {["Kemang", "SCBD", "Senayan", "Sudirman", "Kuningan", "Menteng", "Other"].map((a) => (
-              <option key={a} value={a}>{a}</option>
+            <option value="">Select neighborhood</option>
+            {(CITY_NEIGHBORHOODS[selectedCity] ?? []).map((n) => (
+              <option key={n} value={n}>{n}</option>
             ))}
           </select>
         </div>
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          Address *
+        </label>
+        <input
+          name="address"
+          type="text"
+          required
+          placeholder="e.g. Jl. Kemang Raya No. 12, Jakarta Selatan"
+          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
+        />
+      </div>
+
+      <div className="space-y-1">
+        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          Google Maps Location URL
+        </label>
+        <input
+          name="google_maps_url"
+          type="url"
+          placeholder="https://maps.google.com/..."
+          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
+        />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
