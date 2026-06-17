@@ -1,3 +1,4 @@
+import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
@@ -17,6 +18,13 @@ export default async function HomePage() {
       <main>
         {/* Hero */}
         <section className="relative min-h-[600px] md:min-h-[720px] flex items-center overflow-hidden bg-[#0d2137]">
+          <Image
+            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcksN-p-DaXBjiUxEHR1FaW24hMXJk8TVSU21Z4YMT4Wey8sS9xPDMnnqS8kj8r5PAu55TVtFKgwKiK841DDSBhLcNlKj2UjKEpMCC8w60A16LKW_d2lVdeeBZ5qtZEiY92LByl39oiD_eB5kJ18I9dpbYV1nBQ8YPYdB7HNmlmVqilg5ly-G6LOyfRGWudOapiAzr-BdowVi0e3dYz0XewyMhNXNUysxD8rUAAC0uQJAlOE-hz_3ChCjD-wNEWzDfdBL5vxc9zIkW"
+            alt="Luxury Jakarta apartment interior"
+            fill
+            className="object-cover object-center"
+            priority
+          />
           <div className="absolute inset-0 bg-gradient-to-r from-[#0d2137]/90 via-[#0d2137]/60 to-transparent z-10" />
           <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:px-16 py-20">
             <div className="max-w-2xl text-white">
@@ -106,47 +114,37 @@ export default async function HomePage() {
         </section>
 
         {/* How It Works */}
-        <section id="how-it-works" className="bg-[#0d2137] text-white py-20">
-          <div className="max-w-7xl mx-auto px-4 md:px-16">
-            <div className="text-center mb-16">
-              <h2 className="text-3xl font-bold mb-3">
-                Relocate with Confidence
-              </h2>
-              <p className="text-white/70 text-lg max-w-xl mx-auto">
-                We&apos;ve streamlined the Jakarta housing search to meet global
-                standards.
-              </p>
-            </div>
-            <div className="grid grid-cols-1 md:grid-cols-3 gap-12">
-              {[
-                {
-                  icon: "search_check",
-                  title: "Curated Search",
-                  desc: "Browse our hand-picked selection of properties that pass our 50-point quality checklist.",
-                },
-                {
-                  icon: "verified_user",
-                  title: "Verified Viewing",
-                  desc: "Schedule high-res video tours or in-person viewings accompanied by our relocation experts.",
-                },
-                {
-                  icon: "key",
-                  title: "Seamless Move-in",
-                  desc: "From lease negotiation to utility setup, we handle the local paperwork so you don't have to.",
-                },
-              ].map((step) => (
-                <div key={step.title} className="text-center">
-                  <div className="w-16 h-16 bg-[#1a7a5e] text-white rounded-full flex items-center justify-center mx-auto mb-6">
-                    <span className="material-symbols-outlined text-2xl">
-                      {step.icon}
-                    </span>
+        <section id="how-it-works" className="bg-white py-24">
+          <div className="max-w-7xl mx-auto px-4 md:px-16 flex flex-col lg:flex-row items-center gap-16">
+            <div className="lg:w-1/2">
+              <h2 className="text-3xl font-bold text-[#0d2137] mb-12">The VeriHome Process</h2>
+              <div className="space-y-10">
+                {[
+                  { n: "1", title: "Browse Curated Listings", desc: "Access a hand-picked selection of properties that meet international quality standards and are actually available." },
+                  { n: "2", title: "Independent Consultation", desc: "Talk to an advisor who works for you, not the landlord. Get honest feedback on neighborhoods, pricing, and amenities." },
+                  { n: "3", title: "Move In with Confidence", desc: "Enjoy a seamless transaction and the peace of mind that your new home is exactly what was promised." },
+                ].map((step) => (
+                  <div key={step.n} className="flex gap-6">
+                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1a7a5e] text-white flex items-center justify-center font-bold text-xl">{step.n}</div>
+                    <div>
+                      <h3 className="text-lg font-semibold text-[#1b1c1c] mb-1">{step.title}</h3>
+                      <p className="text-[#3e4944] leading-relaxed">{step.desc}</p>
+                    </div>
                   </div>
-                  <h3 className="text-xl font-semibold mb-3">{step.title}</h3>
-                  <p className="text-white/70 leading-relaxed px-4">
-                    {step.desc}
-                  </p>
+                ))}
+              </div>
+            </div>
+            <div className="lg:w-1/2 flex justify-center">
+              <div className="w-full max-w-md aspect-square bg-[#f0eded] rounded-full flex items-center justify-center relative overflow-hidden">
+                <div className="relative w-4/5 h-4/5 rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
+                  <Image
+                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD6x7Y5th2JvBJ0vQETwVH9pa-oQhNT-64n7d2c-8vePEun1SvOzTxPApz0IMaNIaI8_k_x4-jXeY0WdXWEuG6tOb1vqQbEn3UnEw-KYQMMnpiT30cA5glZ8-4kgcdpDZQbWtiLm5HBDFCJ9Q8ZaZ8ggFy2SKoYkmeqyjJUKGBiHdHTRySl25fRpv6EJE5edbZBhqDn7IjCBb0iptp9l4BDi-zj5lsc9uNqszytOu_x5GTzle1arMsxeyBmFV-_A50o0_kdG6_1FB3"
+                    alt="VeriHome consultation process"
+                    fill
+                    className="object-cover"
+                  />
                 </div>
-              ))}
+              </div>
             </div>
           </div>
         </section>
@@ -169,20 +167,24 @@ export default async function HomePage() {
               {
                 name: "Kemang",
                 desc: "The leafy heart of Jakarta's expat community. Full of villas and trendy cafes.",
+                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnu9lA3Tbbjwi9fmwwMCinoaLpY557NcN-8V5cFhxNeInVc2h_y1TW9w1lQAeTsP9u4sCRs3N019NYREc-BiYh3I1w3gLyyKrJPoxNDwQhri2Wmk1s_HEjnVkiEk4vaUVUFbud3kpiHEbUd-ulg6n5grHtLsfsHnILAp3aSfbZzdNbnBB1ztybuP82_mi9lgLb50nZBsA7oVWfXagEyDXVgrxKdkxkfehoctJtrUR-kOY6Wwz-80M_wciAU0_hapEnE6P_QlRCURg4",
               },
               {
                 name: "SCBD",
                 desc: "Modern luxury living just steps away from the city's financial headquarters.",
+                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDie1Xp1Fuzrbd2YKZwW0geG0EzgtJsPTtowEcKIZ1N-I8NmcM90U523OeufOqwSyYM-n53j8eprYP6Iu4tD-cxGgwg1ncMzLXcNrmBGCWRSGk2pMmcRR3kwnsbon86hm2Xf60B_qktfbYSvCOWvCwNHFBZCXIkYgu-TGGRLT9TieP9iG_BlwEf2SKCicQJRkp6VGQF0dyAPRBCirVjH7u9bGaMGbFDc6juO1Pno3WAyzNeJjbytnOcDFMMaXmzpgImvxhrwPSZ-QZl",
               },
               {
                 name: "Menteng",
                 desc: "Quiet, prestigious, and full of history. Jakarta's most elite diplomatic district.",
+                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCK-ErtDsxD1mVxFZLMDpSb2FdDHG7fa2T5wCIPbO9iT_cUzhJHJRwxrLFwzvIvrrrTGdpeEbau4jQ3Z9ERj-lm2LDFoKgVAcY39W_DORxDwRdpB9N3eBH6-Gl2YExzmPSaQkhzvLGCeLqbtG508Gad4m3aEBr9Is0PyyEjdjB_ktgmToUVqr9L5o1Ula5UAdfutrELptodCcBIvvJDJBtHtZadFV7g0tLKcjppF9twYsn7c6gUVSpF0qNhL7xkbzgeHZFsiTriYyXV",
               },
             ].map((hood) => (
               <div
                 key={hood.name}
                 className="relative h-72 rounded-xl overflow-hidden group cursor-pointer bg-[#0d2137]"
               >
+                <Image src={hood.img} alt={hood.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
                 <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
                 <div className="absolute bottom-0 left-0 w-full p-6">
                   <h3 className="text-xl font-semibold text-white mb-2">
