@@ -9,6 +9,7 @@ const links = [
   { href: "/admin/listings", icon: "apartment", label: "Listings" },
   { href: "/admin/consultations", icon: "calendar_today", label: "Consultations" },
   { href: "/admin/surveys/pending", icon: "assignment", label: "Survey Imports" },
+  { href: "/admin/users", icon: "group", label: "Users" },
 ];
 
 export function AdminSidebar({ activeHref }: AdminSidebarProps) {
