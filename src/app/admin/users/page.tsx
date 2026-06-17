@@ -9,9 +9,18 @@ interface AdminUsersPageProps {
 
 export const dynamic = "force-dynamic";
 
+const TABS = [
+  { value: "all",      label: "All Users" },
+  { value: "clients",  label: "Non-admin" },
+  { value: "active",   label: "Active Clients" },
+  { value: "admins",   label: "Admin Accounts" },
+] as const;
+
+type TabValue = (typeof TABS)[number]["value"];
+
 export default async function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
   const { tab } = await searchParams;
-  const activeTab = tab === "admins" ? "admins" : "all";
+  const activeTab: TabValue = (TABS.find((t) => t.value === tab)?.value ?? "all");
 
   const admin = createAdminClient();
 
@@ -21,10 +30,23 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
     .order("created_at", { ascending: false });
 
   const all = users ?? [];
-  const admins = all.filter((u) => u.is_admin);
-  const clients = all.filter((u) => !u.is_admin);
+  const admins   = all.filter((u) => u.is_admin);
+  const clients  = all.filter((u) => !u.is_admin);
+  const active   = all.filter((u) => u.is_active_client);
 
-  const displayed = activeTab === "admins" ? admins : all;
+  const counts: Record<TabValue, number> = {
+    all:     all.length,
+    clients: clients.length,
+    active:  active.length,
+    admins:  admins.length,
+  };
+
+  const displayed =
+    activeTab === "admins"  ? admins  :
+    activeTab === "clients" ? clients :
+    activeTab === "active"  ? active  : all;
+
+  const showActiveClientCol = activeTab !== "admins";
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
@@ -35,7 +57,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
           <div>
             <h1 className="text-3xl font-bold text-[#0d2137]">Users</h1>
             <p className="text-[#3e4944] mt-1">
-              {all.length} total · {admins.length} admins · {clients.length} clients
+              {all.length} total · {admins.length} admins · {active.length} active clients
             </p>
           </div>
           {activeTab === "admins" && <CreateAdminForm />}
@@ -43,13 +65,10 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
-          {[
-            { value: "all", label: "All Users", count: all.length },
-            { value: "admins", label: "Admin Accounts", count: admins.length },
-          ].map((t) => (
+          {TABS.map((t) => (
             <a
               key={t.value}
-              href={t.value === "all" ? "/admin/users" : "/admin/users?tab=admins"}
+              href={t.value === "all" ? "/admin/users" : `/admin/users?tab=${t.value}`}
               className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                 activeTab === t.value
                   ? "bg-white border-[#1a7a5e] text-[#1a7a5e] shadow-sm"
@@ -58,7 +77,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
             >
               {t.label}
               <span className="ml-2 px-1.5 py-0.5 bg-[#f6f3f2] rounded text-xs font-bold text-[#6e7a74]">
-                {t.count}
+                {counts[t.value]}
               </span>
             </a>
           ))}
@@ -73,7 +92,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                 <th className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Contact</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Type</th>
                 <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Admin</th>
-                {activeTab === "all" && (
+                {showActiveClientCol && (
                   <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Active Client</th>
                 )}
                 <th className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Joined</th>
@@ -102,7 +121,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                         <AdminToggle userId={u.id} isAdmin={u.is_admin ?? false} />
                       </div>
                     </td>
-                    {activeTab === "all" && (
+                    {showActiveClientCol && (
                       <td className="px-6 py-4 text-center">
                         <div className="flex justify-center">
                           <ActiveClientToggle userId={u.id} isActive={u.is_active_client ?? false} />
@@ -118,7 +137,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
               })}
               {displayed.length === 0 && (
                 <tr>
-                  <td colSpan={activeTab === "all" ? 7 : 6} className="px-6 py-12 text-center text-sm text-[#6e7a74]">
+                  <td colSpan={showActiveClientCol ? 7 : 6} className="px-6 py-12 text-center text-sm text-[#6e7a74]">
                     No users found.
                   </td>
                 </tr>
