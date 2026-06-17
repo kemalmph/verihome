@@ -3,7 +3,7 @@ import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { RLAScore } from "@/components/listings/RLAScore";
-import { PhotoGallery } from "@/components/listings/PhotoGallery";
+import { PhotoGallery, type CategorizedPhotos } from "@/components/listings/PhotoGallery";
 import { getPropertyBySlug, getLiveSlugs } from "@/lib/supabase/queries";
 import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
 import { SaveButton } from "@/components/listings/SaveButton";
@@ -28,10 +28,21 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 
   const price = new Intl.NumberFormat("id-ID").format(property.price_monthly);
   const isSaved = savedIds.includes(property.id);
-  const photos = property.photo_urls ?? [];
   const rla = property.rla_assessments?.[0];
   const details = property.property_details?.[0];
   const area = property.area_overviews?.[0];
+  const media = property.property_media?.[0];
+
+  // Prefer categorized photos from property_media, fall back to flat photo_urls
+  const categorized: CategorizedPhotos | undefined = media
+    ? {
+        exterior:   (media.photos_exterior   as string[]) ?? [],
+        commonArea: (media.photos_common_area as string[]) ?? [],
+        unit:       (media.photos_unit        as string[]) ?? [],
+        bathroom:   (media.photos_bathroom    as string[]) ?? [],
+      }
+    : undefined;
+  const flatPhotos = property.photo_urls ?? [];
 
   return (
     <>
@@ -50,7 +61,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
           {/* Left Column */}
           <div className="lg:col-span-8 space-y-10">
             {/* Photos */}
-            <PhotoGallery photos={photos} title={property.name} />
+            <PhotoGallery photos={flatPhotos} categorized={categorized} title={property.name} />
 
             {/* Property Header */}
             <section className="space-y-4">
@@ -153,13 +164,16 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                   </div>
                   <div className="space-y-3">
                     {[
-                      { label: area.nearest_mrt, value: `${area.walk_time_to_transit_min} min walk` },
-                      { label: area.nearest_minimarket, value: "" },
-                      { label: area.nearest_clinic, value: "" },
-                    ].map((place) => (
-                      <div key={place.label} className="bg-white p-3 rounded-xl border border-[#cccccc] flex justify-between items-center">
-                        <span className="text-sm text-[#1b1c1c]">{place.label}</span>
-                        {place.value && <span className="text-sm font-bold text-[#1a7a5e]">{place.value}</span>}
+                      { label: area.nearest_mrt, value: area.mrt_distance ?? (area.walk_time_to_transit_min ? `${area.walk_time_to_transit_min} min walk` : null) },
+                      area.nearest_transjakarta ? { label: area.nearest_transjakarta, value: area.transjakarta_distance } : null,
+                      { label: area.nearest_minimarket, value: null },
+                      { label: area.nearest_clinic, value: null },
+                      area.nearest_food ? { label: area.nearest_food, value: null } : null,
+                      area.nearest_gym  ? { label: area.nearest_gym,  value: null } : null,
+                    ].filter(Boolean).map((place) => (
+                      <div key={place!.label} className="bg-white p-3 rounded-xl border border-[#cccccc] flex justify-between items-center">
+                        <span className="text-sm text-[#1b1c1c]">{place!.label}</span>
+                        {place!.value && <span className="text-sm font-bold text-[#1a7a5e]">{place!.value}</span>}
                       </div>
                     ))}
                   </div>
@@ -169,10 +183,19 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                   <span className="text-sm text-[#52647d] font-bold whitespace-nowrap">
                     SCBD: {area.time_to_scbd_min} min · Sudirman: {area.time_to_sudirman_min} min
                   </span>
-                  <span className="text-sm text-[#1a7a5e] font-bold whitespace-nowrap">
-                    {area.expat_friendly ? "✓ Expat Friendly" : ""}
-                  </span>
+                  {area.expat_friendly != null && (
+                    <div className="flex items-center gap-1.5 whitespace-nowrap">
+                      <span className="text-xs text-[#52647d]">Expat-friendly</span>
+                      <span className="text-sm font-bold text-[#1a7a5e]">{area.expat_friendly}/10</span>
+                      <div className="w-16 bg-[#e4e2e1] h-1.5 rounded-full overflow-hidden">
+                        <div className="bg-[#1a7a5e] h-full rounded-full" style={{ width: `${(area.expat_friendly / 10) * 100}%` }} />
+                      </div>
+                    </div>
+                  )}
                 </div>
+                {area.area_notes && (
+                  <p className="text-sm text-[#3e4944] italic">{area.area_notes}</p>
+                )}
               </section>
             )}
           </div>

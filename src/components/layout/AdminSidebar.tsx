@@ -8,6 +8,7 @@ const links = [
   { href: "/admin", icon: "dashboard", label: "Dashboard" },
   { href: "/admin/listings", icon: "apartment", label: "Listings" },
   { href: "/admin/consultations", icon: "calendar_today", label: "Consultations" },
+  { href: "/admin/surveys/pending", icon: "assignment", label: "Survey Imports" },
 ];
 
 export function AdminSidebar({ activeHref }: AdminSidebarProps) {
@@ -19,7 +20,7 @@ export function AdminSidebar({ activeHref }: AdminSidebarProps) {
       </div>
       <nav className="flex-1 px-4 space-y-1">
         {links.map((link) => {
-          const active = activeHref === link.href;
+          const active = activeHref === link.href || (link.href !== "/admin" && activeHref.startsWith(link.href));
           return (
             <Link
               key={link.href}

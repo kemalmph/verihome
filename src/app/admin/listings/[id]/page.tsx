@@ -14,15 +14,59 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
 
   const { data: property } = await admin
     .from("properties")
-    .select("*, rla_assessments(*), property_details(*), owners(*)")
+    .select(`
+      *,
+      rla_assessments(*),
+      property_details(*),
+      owners(*),
+      property_media(*),
+      area_overviews(*),
+      publish_checklist(*)
+    `)
     .eq("id", id)
     .single();
 
   if (!property) notFound();
 
-  const rla = property.rla_assessments?.[0];
+  const rla     = property.rla_assessments?.[0];
   const details = property.property_details?.[0];
-  const owner = property.owners as { name: string; email: string; phone_whatsapp: string } | null;
+  const media   = property.property_media?.[0];
+  const area    = property.area_overviews?.[0];
+  const owner   = property.owners as { name: string; email: string; phone_whatsapp: string } | null;
+
+  // Compute checklist status from live data
+  const rlaComplete =
+    rla &&
+    rla.building_condition  != null &&
+    rla.natural_lighting    != null &&
+    rla.ventilation         != null &&
+    rla.noise_level         != null &&
+    rla.cleanliness         != null &&
+    rla.security_level      != null &&
+    rla.bathroom_condition  != null &&
+    rla.furniture_quality   != null &&
+    Array.isArray(rla.pros) && (rla.pros as string[]).length >= 2 &&
+    Array.isArray(rla.cons) && (rla.cons as string[]).length >= 2;
+
+  const photosComplete = media && media.total_photo_count >= 15;
+  const videoComplete  = !!(media?.video_url || property.property_surveys?.[0]?.video_walkthrough_url);
+  const areaComplete   =
+    area &&
+    area.nearest_mrt         &&
+    area.nearest_transjakarta &&
+    area.nearest_minimarket   &&
+    area.nearest_clinic       &&
+    area.neighborhood_character &&
+    area.expat_friendly != null;
+
+  const checklist = [
+    { label: "RLA completed (8 scores + 2+ pros/cons)",  done: !!rlaComplete },
+    { label: "Photos uploaded (≥ 15)",                   done: !!photosComplete },
+    { label: "Video walkthrough",                        done: !!videoComplete },
+    { label: "Area overview filled",                     done: !!areaComplete },
+    { label: "Price verified",                           done: !!(property.publish_checklist?.[0]?.price_verified) },
+    { label: "Owner contact active",                     done: !!(property.publish_checklist?.[0]?.owner_contact_active) },
+  ];
 
   async function handleUpdate(formData: FormData) {
     "use server";
@@ -151,8 +195,27 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
             </button>
           </form>
 
-          {/* Side info panels */}
+          {/* Side panels */}
           <div className="space-y-6">
+            {/* Publish checklist */}
+            <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
+              <h3 className="font-semibold text-[#0d2137] flex items-center gap-2">
+                <span className="material-symbols-outlined text-[#1a7a5e]">checklist</span>
+                Publish Checklist
+              </h3>
+              {checklist.map((item) => (
+                <div key={item.label} className="flex items-center gap-2 text-sm">
+                  <span
+                    className={`material-symbols-outlined text-base ${item.done ? "text-[#1a7a5e]" : "text-[#bec9c2]"}`}
+                    style={{ fontVariationSettings: item.done ? "'FILL' 1" : "'FILL' 0" }}
+                  >
+                    {item.done ? "check_circle" : "radio_button_unchecked"}
+                  </span>
+                  <span className={item.done ? "text-[#1b1c1c]" : "text-[#6e7a74]"}>{item.label}</span>
+                </div>
+              ))}
+            </div>
+
             {/* Owner info */}
             {owner && (
               <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
@@ -166,7 +229,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
               </div>
             )}
 
-            {/* RLA summary */}
+            {/* RLA summary — 0-10 scale */}
             {rla && (
               <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
                 <h3 className="font-semibold text-[#0d2137] flex items-center gap-2">
@@ -175,28 +238,59 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
                 </h3>
                 <div className="flex items-center gap-2">
                   <span className="text-3xl font-bold text-[#1a7a5e]">{Number(rla.rla_score).toFixed(1)}</span>
-                  <span className="text-[#6e7a74] text-sm">/ 5</span>
+                  <span className="text-[#6e7a74] text-sm">/ 10</span>
                 </div>
                 {[
-                  { label: "Building", val: rla.building_condition },
-                  { label: "Lighting", val: rla.natural_lighting },
-                  { label: "Bathroom", val: rla.bathroom_condition },
-                  { label: "Ventilation", val: rla.ventilation },
-                ].map((item) => (
+                  { label: "Building",   val: rla.building_condition },
+                  { label: "Lighting",   val: rla.natural_lighting },
+                  { label: "Bathroom",   val: rla.bathroom_condition },
+                  { label: "Ventilation",val: rla.ventilation },
+                  { label: "Noise",      val: rla.noise_level },
+                  { label: "Cleanliness",val: rla.cleanliness },
+                  { label: "Security",   val: rla.security_level },
+                  { label: "Furniture",  val: rla.furniture_quality },
+                ].filter((i) => i.val != null).map((item) => (
                   <div key={item.label}>
                     <div className="flex justify-between text-xs text-[#3e4944] mb-1">
                       <span>{item.label}</span>
-                      <span className="font-bold">{item.val}/5</span>
+                      <span className="font-bold">{item.val}/10</span>
                     </div>
                     <div className="w-full bg-[#e4e2e1] h-1.5 rounded-full">
-                      <div className="bg-[#1a7a5e] h-full rounded-full" style={{ width: `${(item.val / 5) * 100}%` }} />
+                      <div className="bg-[#1a7a5e] h-full rounded-full" style={{ width: `${((item.val ?? 0) / 10) * 100}%` }} />
                     </div>
                   </div>
                 ))}
               </div>
             )}
 
-            {/* Details summary */}
+            {/* Photo count */}
+            {media && (
+              <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-2">
+                <h3 className="font-semibold text-[#0d2137] flex items-center gap-2">
+                  <span className="material-symbols-outlined text-[#1a7a5e]">photo_library</span>
+                  Photos
+                </h3>
+                <p className="text-sm text-[#3e4944]">
+                  <span className={`font-bold ${media.total_photo_count >= 15 ? "text-[#1a7a5e]" : "text-amber-600"}`}>
+                    {media.total_photo_count}
+                  </span>
+                  {" "}/ 15 minimum
+                </p>
+                {[
+                  { label: "Exterior",    val: (media.photos_exterior    as string[])?.length ?? 0 },
+                  { label: "Common area", val: (media.photos_common_area as string[])?.length ?? 0 },
+                  { label: "Unit",        val: (media.photos_unit        as string[])?.length ?? 0 },
+                  { label: "Bathroom",    val: (media.photos_bathroom    as string[])?.length ?? 0 },
+                ].map((c) => (
+                  <div key={c.label} className="flex justify-between text-xs text-[#6e7a74]">
+                    <span>{c.label}</span>
+                    <span>{c.val}</span>
+                  </div>
+                ))}
+              </div>
+            )}
+
+            {/* Facilities */}
             {details && (
               <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-2">
                 <h3 className="font-semibold text-[#0d2137]">Facilities</h3>
