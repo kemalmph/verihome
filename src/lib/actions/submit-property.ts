@@ -61,7 +61,7 @@ export async function submitProperty(formData: FormData) {
     name,
     slug,
     property_type: resolvedType,
-    status: "unverified",
+    status: "new_lead",
     submission_type: "owner",
     price_monthly,
     area,

@@ -3,6 +3,7 @@ import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updatePropertyDetails, deleteProperty } from "@/lib/actions/admin-actions";
+import { PIPELINE_STAGES } from "@/lib/pipeline";
 
 interface EditListingPageProps {
   params: Promise<{ id: string }>;
@@ -178,10 +179,10 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
               </div>
 
               <div>
-                <label className={labelClass}>Status</label>
-                <select name="status" defaultValue={property.status ?? "unverified"} className={inputClass}>
-                  {["live", "unverified", "pending", "archived"].map((s) => (
-                    <option key={s} value={s} className="capitalize">{s}</option>
+                <label className={labelClass}>Pipeline Stage</label>
+                <select name="status" defaultValue={property.status ?? "new_lead"} className={inputClass}>
+                  {PIPELINE_STAGES.map((s) => (
+                    <option key={s.value} value={s.value}>{s.label}</option>
                   ))}
                 </select>
               </div>

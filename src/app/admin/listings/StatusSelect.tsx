@@ -2,13 +2,17 @@
 
 import { useTransition } from "react";
 import { updatePropertyStatus } from "@/lib/actions/admin-actions";
+import { PIPELINE_STAGES, statusColor, statusLabel } from "@/lib/pipeline";
 
-const STATUS_COLORS: Record<string, string> = {
-  live: "bg-green-100 text-green-800",
-  unverified: "bg-yellow-100 text-yellow-800",
-  pending: "bg-blue-100 text-blue-800",
-  archived: "bg-[#f6f3f2] text-[#3e4944]",
-};
+export { PIPELINE_STAGES, statusColor, statusLabel };
+
+export function StatusBadge({ status }: { status: string }) {
+  return (
+    <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${statusColor(status)}`}>
+      {statusLabel(status)}
+    </span>
+  );
+}
 
 export function StatusSelect({ propertyId, currentStatus }: { propertyId: string; currentStatus: string }) {
   const [isPending, startTransition] = useTransition();
@@ -21,10 +25,10 @@ export function StatusSelect({ propertyId, currentStatus }: { propertyId: string
         const newStatus = e.target.value;
         startTransition(async () => { await updatePropertyStatus(propertyId, newStatus); });
       }}
-      className={`px-3 py-1 rounded-full text-xs font-bold border-0 cursor-pointer disabled:opacity-60 ${STATUS_COLORS[currentStatus] ?? "bg-[#f6f3f2] text-[#3e4944]"}`}
+      className={`px-3 py-1 rounded-full text-xs font-bold border-0 cursor-pointer disabled:opacity-60 ${statusColor(currentStatus)}`}
     >
-      {["live", "unverified", "pending", "archived"].map((s) => (
-        <option key={s} value={s} className="bg-white text-[#1b1c1c]">{s}</option>
+      {PIPELINE_STAGES.map((s) => (
+        <option key={s.value} value={s.value} className="bg-white text-[#1b1c1c]">{s.label}</option>
       ))}
     </select>
   );
