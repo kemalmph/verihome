@@ -1,9 +1,9 @@
 import { notFound } from "next/navigation";
 import Link from "next/link";
-import Image from "next/image";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { RLAScore } from "@/components/listings/RLAScore";
+import { PhotoGallery } from "@/components/listings/PhotoGallery";
 import { getPropertyBySlug, getLiveSlugs } from "@/lib/supabase/queries";
 import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
 import { SaveButton } from "@/components/listings/SaveButton";
@@ -50,30 +50,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
           {/* Left Column */}
           <div className="lg:col-span-8 space-y-10">
             {/* Photos */}
-            <div className="relative aspect-video rounded-xl overflow-hidden bg-[#e4e2e1]">
-              {photos[0] ? (
-                <Image src={photos[0]} alt={property.name} fill className="object-cover" />
-              ) : (
-                <div className="w-full h-full flex items-center justify-center">
-                  <span className="material-symbols-outlined text-[#6e7a74] text-6xl">image</span>
-                </div>
-              )}
-              <div className="absolute top-4 left-4">
-                <span className="bg-[#e8f5f0] text-[#1a7a5e] px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-                  <span className="material-symbols-outlined text-sm">verified</span>
-                  Curated
-                </span>
-              </div>
-              {photos.length > 1 && (
-                <div className="absolute bottom-4 right-4 flex gap-2">
-                  {photos.slice(1, 4).map((url, i) => (
-                    <div key={i} className="w-16 h-16 rounded-lg overflow-hidden border-2 border-white">
-                      <Image src={url} alt="" width={64} height={64} className="object-cover w-full h-full" />
-                    </div>
-                  ))}
-                </div>
-              )}
-            </div>
+            <PhotoGallery photos={photos} title={property.name} />
 
             {/* Property Header */}
             <section className="space-y-4">
