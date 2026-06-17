@@ -155,6 +155,11 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
                             View
                           </Link>
                         )}
+                        {!["live", "archived", "closed"].includes(p.status) && (
+                          <Link href={`/admin/listings/${p.id}/build`} className="text-[#3b82f6] text-sm font-medium hover:underline">
+                            Build
+                          </Link>
+                        )}
                         <Link href={`/admin/listings/${p.id}`} className="text-[#1a7a5e] text-sm font-medium hover:underline">
                           Edit
                         </Link>

@@ -99,6 +99,12 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
           </div>
           <div className="flex items-center gap-3">
             <Link
+              href={`/admin/listings/${id}/build`}
+              className="px-4 py-2 bg-[#3b82f6] text-white rounded-lg text-sm font-medium hover:opacity-90"
+            >
+              Build Listing
+            </Link>
+            <Link
               href={`/listings/${property.slug}`}
               target="_blank"
               className="px-4 py-2 border border-[#cccccc] text-[#3e4944] rounded-lg text-sm hover:bg-white"
