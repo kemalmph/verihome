@@ -1,13 +1,17 @@
 import Link from "next/link";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { PLACEHOLDER_PROPERTIES } from "@/lib/placeholder-data";
+import { getCurrentUser } from "@/lib/supabase/get-current-user";
 
-export default function SavedListingsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function SavedListingsPage() {
+  const user = await getCurrentUser();
   const savedProperties = PLACEHOLDER_PROPERTIES.slice(0, 3);
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <DashboardSidebar activeHref="/dashboard/saved" userName="Sarah C." isActiveClient={true} />
+      <DashboardSidebar activeHref="/dashboard/saved" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-72 p-16 max-w-[1400px]">
         <header className="mb-10">

@@ -1,5 +1,8 @@
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import type { Appointment } from "@/lib/types";
+
+export const dynamic = "force-dynamic";
 
 const PLACEHOLDER_APPOINTMENTS: Appointment[] = [
   {
@@ -14,10 +17,12 @@ const PLACEHOLDER_APPOINTMENTS: Appointment[] = [
   },
 ];
 
-export default function AppointmentsPage() {
+export default async function AppointmentsPage() {
+  const user = await getCurrentUser();
+
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <DashboardSidebar activeHref="/dashboard/appointments" userName="Sarah C." isActiveClient={true} />
+      <DashboardSidebar activeHref="/dashboard/appointments" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-72 p-16 max-w-[1400px]">
         <header className="mb-10">
@@ -29,10 +34,10 @@ export default function AppointmentsPage() {
           {PLACEHOLDER_APPOINTMENTS.map((apt) => {
             const date = new Date(apt.scheduled_at);
             const dateStr = date.toLocaleDateString("en-US", {
-              weekday: "long", day: "numeric", month: "long", year: "numeric"
+              weekday: "long", day: "numeric", month: "long", year: "numeric",
             });
             const timeStr = date.toLocaleTimeString("en-US", {
-              hour: "2-digit", minute: "2-digit"
+              hour: "2-digit", minute: "2-digit",
             });
 
             const statusColors: Record<string, string> = {
@@ -43,10 +48,7 @@ export default function AppointmentsPage() {
             };
 
             return (
-              <div
-                key={apt.id}
-                className="bg-white rounded-xl border border-[#cccccc] p-8 shadow-sm"
-              >
+              <div key={apt.id} className="bg-white rounded-xl border border-[#cccccc] p-8 shadow-sm">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-[#e8f5f0] rounded-full flex items-center justify-center">
@@ -55,12 +57,8 @@ export default function AppointmentsPage() {
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-[#0d2137] capitalize">
-                        {apt.appointment_type}
-                      </h3>
-                      <p className="text-sm text-[#3e4944]">
-                        {dateStr} at {timeStr}
-                      </p>
+                      <h3 className="text-xl font-semibold text-[#0d2137] capitalize">{apt.appointment_type}</h3>
+                      <p className="text-sm text-[#3e4944]">{dateStr} at {timeStr}</p>
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${statusColors[apt.status]}`}>

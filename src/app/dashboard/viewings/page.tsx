@@ -1,10 +1,15 @@
 import Link from "next/link";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { getCurrentUser } from "@/lib/supabase/get-current-user";
 
-export default function ViewingsPage() {
+export const dynamic = "force-dynamic";
+
+export default async function ViewingsPage() {
+  const user = await getCurrentUser();
+
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <DashboardSidebar activeHref="/dashboard/viewings" userName="Sarah C." isActiveClient={true} />
+      <DashboardSidebar activeHref="/dashboard/viewings" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-72 p-16 max-w-[1400px]">
         <header className="mb-10">

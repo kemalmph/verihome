@@ -1,31 +1,35 @@
 import Link from "next/link";
 import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
 import { PLACEHOLDER_PROPERTIES } from "@/lib/placeholder-data";
+import { getCurrentUser } from "@/lib/supabase/get-current-user";
 
-export default function DashboardPage() {
+export const dynamic = "force-dynamic";
+
+export default async function DashboardPage() {
+  const user = await getCurrentUser();
+
   const savedCount = 2;
   const appointmentsCount = 1;
   const activeServicesCount = 1;
-
   const savedPreviews = PLACEHOLDER_PROPERTIES.slice(0, 2);
+
+  const firstName = user.name.split(" ")[0];
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <DashboardSidebar
         activeHref="/dashboard"
-        userName="Sarah C."
-        isActiveClient={true}
+        userName={user.name}
+        isActiveClient={user.is_active_client}
       />
 
       <main className="flex-1 ml-72 p-16 max-w-[1400px]">
         <header className="mb-10">
           <h2 className="text-3xl font-bold text-[#0d2137] mb-1">
-            Welcome back, Sarah
+            Welcome back, {firstName}
           </h2>
           <p className="text-[#3e4944] flex items-center gap-2">
-            <span className="material-symbols-outlined text-[#1a7a5e] text-base">
-              info
-            </span>
+            <span className="material-symbols-outlined text-[#1a7a5e] text-base">info</span>
             You have 1 upcoming consultation and 2 unread messages.
           </p>
         </header>
@@ -42,17 +46,11 @@ export default function DashboardPage() {
               className="bg-white border border-[#cccccc] p-6 rounded-lg shadow-sm flex items-center gap-4"
             >
               <div className="bg-[#f0eded] p-3 rounded-full">
-                <span className={`material-symbols-outlined ${stat.color}`}>
-                  {stat.icon}
-                </span>
+                <span className={`material-symbols-outlined ${stat.color}`}>{stat.icon}</span>
               </div>
               <div>
-                <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">
-                  {stat.label}
-                </p>
-                <p className="text-2xl font-semibold text-[#0d2137]">
-                  {stat.value}
-                </p>
+                <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">{stat.label}</p>
+                <p className="text-2xl font-semibold text-[#0d2137]">{stat.value}</p>
               </div>
             </div>
           ))}
@@ -64,9 +62,7 @@ export default function DashboardPage() {
             {/* Upcoming Appointment */}
             <section className="bg-white border-2 border-[#1a7a5e]/20 rounded-lg p-8 shadow-sm">
               <div className="flex items-center gap-2 mb-4">
-                <span className="material-symbols-outlined text-[#1a7a5e]">
-                  videocam
-                </span>
+                <span className="material-symbols-outlined text-[#1a7a5e]">videocam</span>
                 <h3 className="text-xl font-semibold text-[#0d2137]">
                   Consultation — Tomorrow, 2:00 PM
                 </h3>
@@ -76,9 +72,7 @@ export default function DashboardPage() {
                   <span className="material-symbols-outlined text-[#6e7a74]">apartment</span>
                   <div>
                     <p className="text-xs text-[#3e4944]">Property Focus</p>
-                    <p className="font-semibold text-[#0d2137]">
-                      Modern 2BR Apartment, Senayan
-                    </p>
+                    <p className="font-semibold text-[#0d2137]">Modern 2BR Apartment, Senayan</p>
                   </div>
                 </div>
                 <div className="grid grid-cols-2 gap-4">
@@ -109,9 +103,7 @@ export default function DashboardPage() {
 
             {/* Active Services */}
             <section className="bg-white border border-[#cccccc] rounded-lg p-6 shadow-sm">
-              <h3 className="text-xl font-semibold text-[#0d2137] mb-6">
-                Active Client Services
-              </h3>
+              <h3 className="text-xl font-semibold text-[#0d2137] mb-6">Active Client Services</h3>
               <div className="flex items-center justify-between p-4 bg-[#f6f3f2] rounded-lg mb-4">
                 <div className="flex items-center gap-4">
                   <div className="bg-white p-2 rounded-md shadow-sm">
