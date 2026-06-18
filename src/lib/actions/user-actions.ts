@@ -26,17 +26,23 @@ export async function toggleActiveClient(userId: string, active: boolean) {
 }
 
 export async function updateUser(userId: string, formData: FormData) {
-  const admin = createAdminClient();
+  const admin          = createAdminClient();
   const name           = (formData.get("name") as string)?.trim() || null;
+  const email          = (formData.get("email") as string)?.trim() || null;
   const phone_whatsapp = (formData.get("phone_whatsapp") as string)?.trim() || null;
   const user_type      = (formData.get("user_type") as string) || null;
   const preferred_area = (formData.get("preferred_area") as string)?.trim() || null;
   const budget_min     = parseInt(formData.get("budget_min") as string) || null;
   const budget_max     = parseInt(formData.get("budget_max") as string) || null;
 
+  // Update auth email if provided
+  if (email) {
+    await admin.auth.admin.updateUserById(userId, { email });
+  }
+
   const { error } = await admin
     .from("users")
-    .update({ name, phone_whatsapp, user_type, preferred_area, budget_min, budget_max })
+    .update({ name, email, phone_whatsapp, user_type, preferred_area, budget_min, budget_max })
     .eq("id", userId);
   if (error) return { error: error.message };
   revalidatePath("/admin/users");

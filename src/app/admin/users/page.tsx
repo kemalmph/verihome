@@ -3,6 +3,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
 import { AdminToggle, ActiveClientToggle, DeleteUserButton } from "./UserRowActions";
 import { CreateAdminForm } from "./CreateAdminForm";
 import { CreateUserForm } from "./CreateUserForm";
+import { EditUserButton } from "./EditUserModal";
 
 interface AdminUsersPageProps {
   searchParams: Promise<{ tab?: string }>;
@@ -27,7 +28,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
 
   const { data: users } = await admin
     .from("users")
-    .select("id, name, email, phone_whatsapp, user_type, is_admin, is_active_client, created_at")
+    .select("id, name, email, phone_whatsapp, user_type, preferred_area, budget_min, budget_max, is_admin, is_active_client, created_at")
     .order("created_at", { ascending: false });
 
   const all = users ?? [];
@@ -132,7 +133,19 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                     )}
                     <td className="px-6 py-4 text-xs text-[#6e7a74]">{joined}</td>
                     <td className="px-6 py-4">
-                      <DeleteUserButton userId={u.id} userName={u.name ?? u.email ?? u.id} />
+                      <div className="flex items-center gap-3">
+                        <EditUserButton user={{
+                          id: u.id,
+                          name: u.name,
+                          email: u.email,
+                          phone_whatsapp: u.phone_whatsapp,
+                          user_type: u.user_type,
+                          preferred_area: u.preferred_area,
+                          budget_min: u.budget_min,
+                          budget_max: u.budget_max,
+                        }} />
+                        <DeleteUserButton userId={u.id} userName={u.name ?? u.email ?? u.id} />
+                      </div>
                     </td>
                   </tr>
                 );
