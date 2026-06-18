@@ -99,7 +99,7 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AdminSidebar activeHref="/admin/listings" />
-      <main className="flex-1 ml-64 p-12 max-w-[1100px]">
+      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <BuildListingPageClient
           property={{
             id: property.id,

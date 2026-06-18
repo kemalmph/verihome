@@ -63,7 +63,7 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AdminSidebar activeHref="/admin/listings" />
-      <main className="flex-1 ml-64 p-12">
+      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12">
         <div className="flex justify-between items-center mb-8">
           <div>
             <h1 className="text-3xl font-bold text-[#0d2137]">Listings Pipeline</h1>

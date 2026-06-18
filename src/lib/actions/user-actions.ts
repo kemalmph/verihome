@@ -56,15 +56,15 @@ export async function deleteUser(userId: string) {
 }
 
 export async function createAdminUser(formData: FormData) {
-  const admin = createAdminClient();
+  const admin    = createAdminClient();
   const name     = (formData.get("name") as string)?.trim();
   const email    = (formData.get("email") as string)?.trim();
   const password = (formData.get("password") as string)?.trim();
+  const isAdmin  = formData.get("is_admin") !== "false";
 
   if (!name || !email || !password) return { error: "All fields are required." };
   if (password.length < 8)          return { error: "Password must be at least 8 characters." };
 
-  // Create auth user
   const { data: authData, error: authError } = await admin.auth.admin.createUser({
     email,
     password,
@@ -73,11 +73,8 @@ export async function createAdminUser(formData: FormData) {
   });
   if (authError) return { error: authError.message };
 
-  const newId = authData.user.id;
-
-  // Upsert into users table with is_admin = true
   await admin.from("users").upsert(
-    { id: newId, name, email, is_admin: true },
+    { id: authData.user.id, name, email, is_admin: isAdmin },
     { onConflict: "id" }
   );
 

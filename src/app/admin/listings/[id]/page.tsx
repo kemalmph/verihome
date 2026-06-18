@@ -87,7 +87,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AdminSidebar activeHref="/admin/listings" />
-      <main className="flex-1 ml-64 p-12 max-w-[1200px]">
+      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12 max-w-[1200px]">
         <div className="flex items-center justify-between mb-8">
           <div>
             <div className="flex items-center gap-2 text-sm text-[#3e4944] mb-2">

@@ -26,7 +26,7 @@ export default async function PendingSurveysPage() {
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AdminSidebar activeHref="/admin/surveys" />
-      <main className="flex-1 ml-64 p-12 max-w-[1100px]">
+      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-[#0d2137]">Pending Survey Imports</h1>
           <p className="text-sm text-[#6e7a74] mt-1">

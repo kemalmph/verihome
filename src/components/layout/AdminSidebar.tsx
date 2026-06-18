@@ -1,4 +1,7 @@
+"use client";
+
 import Link from "next/link";
+import { useState } from "react";
 
 interface AdminSidebarProps {
   activeHref: string;
@@ -13,37 +16,89 @@ const links = [
 ];
 
 export function AdminSidebar({ activeHref }: AdminSidebarProps) {
+  const [open, setOpen] = useState(false);
+
   return (
-    <aside className="w-64 bg-[#0d2137] text-white flex flex-col fixed h-full z-40">
-      <div className="px-6 py-8">
-        <p className="text-[#9cf4d1] font-bold text-xl">VeriHome</p>
-        <p className="text-white/50 text-xs mt-1">Admin Panel</p>
-      </div>
-      <nav className="flex-1 px-4 space-y-1">
-        {links.map((link) => {
-          const active = activeHref === link.href || (link.href !== "/admin" && activeHref.startsWith(link.href));
-          return (
-            <Link
-              key={link.href}
-              href={link.href}
-              className={`flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${
-                active
-                  ? "text-[#80d7b6] bg-white/5"
-                  : "text-white/70 hover:text-white hover:bg-white/5"
-              }`}
-            >
-              <span className="material-symbols-outlined text-lg">{link.icon}</span>
-              <span className="text-sm font-medium">{link.label}</span>
-            </Link>
-          );
-        })}
-      </nav>
-      <div className="px-6 py-6 border-t border-white/10">
-        <Link href="/" className="flex items-center gap-2 text-white/50 hover:text-white text-xs transition-colors">
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back to site
-        </Link>
-      </div>
-    </aside>
+    <>
+      {/* Mobile top bar */}
+      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#0d2137] flex items-center px-4 z-50 gap-3">
+        <button
+          onClick={() => setOpen(true)}
+          className="text-white p-1.5 rounded-md hover:bg-white/10 transition-colors"
+          aria-label="Open menu"
+        >
+          <span className="material-symbols-outlined text-xl">menu</span>
+        </button>
+        <p className="text-[#9cf4d1] font-bold text-lg">VeriHome</p>
+        <p className="text-white/50 text-xs mt-0.5">Admin</p>
+      </header>
+
+      {/* Backdrop (mobile) */}
+      {open && (
+        <div
+          className="md:hidden fixed inset-0 bg-black/50 z-40"
+          onClick={() => setOpen(false)}
+        />
+      )}
+
+      {/* Sidebar */}
+      <aside
+        className={`
+          fixed top-0 left-0 h-full w-64 bg-[#0d2137] text-white flex flex-col z-50
+          transition-transform duration-200
+          ${open ? "translate-x-0" : "-translate-x-full"}
+          md:translate-x-0
+        `}
+      >
+        {/* Header */}
+        <div className="px-6 py-8 flex items-center justify-between">
+          <div>
+            <p className="text-[#9cf4d1] font-bold text-xl">VeriHome</p>
+            <p className="text-white/50 text-xs mt-1">Admin Panel</p>
+          </div>
+          {/* Close button — mobile only */}
+          <button
+            onClick={() => setOpen(false)}
+            className="md:hidden text-white/50 hover:text-white p-1 rounded transition-colors"
+            aria-label="Close menu"
+          >
+            <span className="material-symbols-outlined text-xl">close</span>
+          </button>
+        </div>
+
+        <nav className="flex-1 px-4 space-y-1">
+          {links.map((link) => {
+            const active =
+              activeHref === link.href ||
+              (link.href !== "/admin" && activeHref.startsWith(link.href));
+            return (
+              <Link
+                key={link.href}
+                href={link.href}
+                onClick={() => setOpen(false)}
+                className={`flex items-center gap-3 px-4 py-3 rounded-md transition-colors ${
+                  active
+                    ? "text-[#80d7b6] bg-white/5"
+                    : "text-white/70 hover:text-white hover:bg-white/5"
+                }`}
+              >
+                <span className="material-symbols-outlined text-lg">{link.icon}</span>
+                <span className="text-sm font-medium">{link.label}</span>
+              </Link>
+            );
+          })}
+        </nav>
+
+        <div className="px-6 py-6 border-t border-white/10">
+          <Link
+            href="/"
+            className="flex items-center gap-2 text-white/50 hover:text-white text-xs transition-colors"
+          >
+            <span className="material-symbols-outlined text-sm">arrow_back</span>
+            Back to site
+          </Link>
+        </div>
+      </aside>
+    </>
   );
 }
