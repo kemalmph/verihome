@@ -22,7 +22,8 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
         bedrooms, bathrooms, size_sqm, min_stay_months, google_maps_url, status,
         rla_assessments ( building_condition, natural_lighting, ventilation, noise_level, cleanliness, security_level, bathroom_condition, furniture_quality, pros, cons, overall_notes, survey_id ),
         area_overviews ( nearest_mrt, mrt_distance, nearest_transjakarta, transjakarta_distance, nearest_minimarket, nearest_clinic, nearest_food, nearest_gym, neighborhood_character, expat_friendly, time_to_scbd_min, time_to_sudirman_min, area_notes ),
-        property_details ( facilities, included_utilities, rules, additional_notes )
+        property_details ( facilities, included_utilities, rules, additional_notes ),
+        property_media ( photos_exterior, photos_common_area, photos_unit, photos_bathroom, video_url )
       `)
       .eq("id", id)
       .single(),
@@ -118,6 +119,13 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
           rla={rla}
           area={area}
           details={details}
+          media={property.property_media?.[0] ? {
+            photos_exterior:    (property.property_media[0].photos_exterior    as string[]) ?? [],
+            photos_common_area: (property.property_media[0].photos_common_area as string[]) ?? [],
+            photos_unit:        (property.property_media[0].photos_unit        as string[]) ?? [],
+            photos_bathroom:    (property.property_media[0].photos_bathroom    as string[]) ?? [],
+            video_url:          (property.property_media[0].video_url as string | null) ?? null,
+          } : null}
           pendingImports={parsedPending}
           onLinkImport={handleLinkImport}
         />

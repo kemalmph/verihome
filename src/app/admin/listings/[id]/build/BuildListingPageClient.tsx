@@ -4,6 +4,7 @@ import { useRef, useState, useEffect, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { statusColor, statusLabel } from "@/lib/pipeline";
 import { BuildListingForm } from "./BuildListingForm";
+import { MediaSection } from "../MediaSection";
 import type { PropertyData, RLAData, AreaData, DetailsData } from "./BuildListingForm";
 
 interface PendingImport {
@@ -15,11 +16,20 @@ interface PendingImport {
   date: string;
 }
 
+interface MediaData {
+  photos_exterior: string[];
+  photos_common_area: string[];
+  photos_unit: string[];
+  photos_bathroom: string[];
+  video_url: string | null;
+}
+
 interface Props {
   property: PropertyData & { status: string };
   rla: RLAData | null;
   area: AreaData | null;
   details: DetailsData | null;
+  media: MediaData | null;
   pendingImports: PendingImport[];
   onLinkImport: (pendingId: string) => Promise<void>;
 }
@@ -90,6 +100,7 @@ export function BuildListingPageClient({
   rla,
   area,
   details,
+  media,
   pendingImports,
   onLinkImport,
 }: Props) {
@@ -280,6 +291,11 @@ export function BuildListingPageClient({
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Media section */}
+      <div className="mt-8">
+        <MediaSection propertyId={property.id} initialMedia={media} />
       </div>
     </>
   );
