@@ -4,6 +4,7 @@ import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updatePropertyDetails, deleteProperty } from "@/lib/actions/admin-actions";
 import { PIPELINE_STAGES } from "@/lib/pipeline";
+import { MediaSection } from "./MediaSection";
 
 interface EditListingPageProps {
   params: Promise<{ id: string }>;
@@ -309,6 +310,20 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
               </div>
             )}
           </div>
+        </div>
+
+        {/* Media upload section */}
+        <div className="mt-8">
+          <MediaSection
+            propertyId={id}
+            initialMedia={media ? {
+              photos_exterior:    (media.photos_exterior    as string[]) ?? [],
+              photos_common_area: (media.photos_common_area as string[]) ?? [],
+              photos_unit:        (media.photos_unit        as string[]) ?? [],
+              photos_bathroom:    (media.photos_bathroom    as string[]) ?? [],
+              video_url:          media.video_url ?? null,
+            } : null}
+          />
         </div>
       </main>
     </div>

@@ -43,6 +43,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
       }
     : undefined;
   const flatPhotos = property.photo_urls ?? [];
+  const videoUrl = (media as { video_url?: string | null } | undefined)?.video_url ?? null;
 
   return (
     <>
@@ -61,7 +62,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
           {/* Left Column */}
           <div className="lg:col-span-8 space-y-10">
             {/* Photos */}
-            <PhotoGallery photos={flatPhotos} categorized={categorized} title={property.name} />
+            <PhotoGallery photos={flatPhotos} categorized={categorized} title={property.name} videoUrl={videoUrl} />
 
             {/* Property Header */}
             <section className="space-y-4">
