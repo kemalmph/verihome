@@ -12,7 +12,10 @@ const links = [
   { href: "/admin/listings", icon: "apartment", label: "Listings" },
   { href: "/admin/consultations", icon: "calendar_today", label: "Consultations" },
   { href: "/admin/surveys/pending", icon: "assignment", label: "Survey Imports" },
-  { href: "/admin/users", icon: "group", label: "Users" },
+  { href: "/admin/bookings",  icon: "hotel",          label: "Bookings" },
+  { href: "/admin/viewings",  icon: "location_on",    label: "Viewings" },
+  { href: "/admin/inventory", icon: "inventory_2",    label: "Inventory" },
+  { href: "/admin/users",     icon: "group",          label: "Users" },
 ];
 
 export function AdminSidebar({ activeHref }: AdminSidebarProps) {

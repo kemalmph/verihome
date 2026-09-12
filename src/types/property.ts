@@ -1,3 +1,5 @@
+export type RentalMode = "long_term" | "short_stay" | "both";
+
 export interface PropertyMedia {
   id: string;
   property_id: string;

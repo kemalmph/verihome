@@ -43,6 +43,17 @@ export function ListingCard({ property, savedIds = [] }: ListingCardProps) {
           Curated
         </span>
 
+        {property.rental_mode === "short_stay" && (
+          <span className="absolute top-10 left-3 bg-blue-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm">
+            SHORT STAY
+          </span>
+        )}
+        {property.rental_mode === "both" && (
+          <span className="absolute top-10 left-3 bg-purple-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm">
+            SHORT + LONG
+          </span>
+        )}
+
         <div className="absolute top-3 right-3 flex items-center gap-2">
           {rla?.rla_score && (
             <span className="bg-[#e8f5f0] text-[#1a7a5e] px-2 py-1 rounded-lg text-xs font-bold whitespace-nowrap">

@@ -56,7 +56,19 @@ export type PropertyRow = {
   bathrooms: number;
   min_stay_months: number;
   photo_urls: string[];
+  rental_mode: "long_term" | "short_stay" | "both";
+  is_furnished: boolean;
+  is_instant_bookable: boolean;
   rla_assessments: RLAAssessment[];
+};
+
+export type ShortStayRateRow = {
+  price_per_night: number;
+  price_per_night_weekend: number | null;
+  min_nights: number;
+  max_nights: number | null;
+  cleaning_fee: number;
+  active: boolean;
 };
 
 export type PropertyDetailRow = PropertyRow & {
@@ -67,10 +79,12 @@ export type PropertyDetailRow = PropertyRow & {
   }[];
   area_overviews: AreaOverview[];
   property_media: PropertyMedia[];
+  short_stay_rates: ShortStayRateRow[];
 };
 
 const PROPERTY_LIST_SELECT = `
   id, name, slug, property_type, status, price_monthly, area, address, size_sqm, bedrooms, bathrooms, min_stay_months, photo_urls,
+  rental_mode, is_furnished, is_instant_bookable,
   rla_assessments ( rla_score, building_condition, natural_lighting, bathroom_condition, ventilation, noise_level, security_level, cleanliness, furniture_quality, pros, cons, overall_notes )
 `;
 
@@ -78,7 +92,8 @@ const PROPERTY_DETAIL_SELECT = `
   ${PROPERTY_LIST_SELECT},
   property_details ( included_utilities, facilities, rules ),
   area_overviews ( nearest_mrt, mrt_distance, walk_time_to_transit_min, nearest_transjakarta, transjakarta_distance, nearest_minimarket, nearest_clinic, nearest_food, nearest_gym, neighborhood_character, expat_friendly, time_to_scbd_min, time_to_sudirman_min, area_notes ),
-  property_media ( photos_exterior, photos_common_area, photos_unit, photos_bathroom, total_photo_count, video_url )
+  property_media ( photos_exterior, photos_common_area, photos_unit, photos_bathroom, total_photo_count, video_url ),
+  short_stay_rates ( price_per_night, price_per_night_weekend, min_nights, max_nights, cleaning_fee, active )
 `;
 
 export async function getLiveProperties(filters?: {
@@ -86,6 +101,7 @@ export async function getLiveProperties(filters?: {
   type?: string;
   minPrice?: number;
   maxPrice?: number;
+  rentalMode?: string;
 }) {
   const supabase = await createClient();
   let query = supabase
@@ -98,6 +114,9 @@ export async function getLiveProperties(filters?: {
   if (filters?.type) query = query.eq("property_type", filters.type);
   if (filters?.minPrice) query = query.gte("price_monthly", filters.minPrice);
   if (filters?.maxPrice) query = query.lte("price_monthly", filters.maxPrice);
+  if (filters?.rentalMode && filters.rentalMode !== "all") {
+    query = query.or(`rental_mode.eq.${filters.rentalMode},rental_mode.eq.both`);
+  }
 
   const { data, error } = await query;
   if (error) throw error;

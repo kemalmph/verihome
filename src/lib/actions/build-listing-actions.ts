@@ -28,12 +28,16 @@ export async function saveBuildListing(propertyId: string, formData: FormData) {
   const bedrooms      = parseInt(formData.get("bedrooms") as string) || null;
   const bathrooms     = parseInt(formData.get("bathrooms") as string) || null;
   const size_sqm      = parseFloat(formData.get("size_sqm") as string) || null;
-  const min_stay_months = parseInt(formData.get("min_stay_months") as string) || 1;
-  const google_maps_url = (formData.get("google_maps_url") as string)?.trim() || null;
+  const min_stay_months     = parseInt(formData.get("min_stay_months") as string) || 1;
+  const google_maps_url     = (formData.get("google_maps_url") as string)?.trim() || null;
+  const rental_mode         = (formData.get("rental_mode") as string) || "long_term";
+  const is_furnished        = formData.get("is_furnished") === "on";
+  const is_instant_bookable = formData.get("is_instant_bookable") === "on";
 
   await admin.from("properties").update({
     name, area, address, property_type, price_monthly, bedrooms,
     bathrooms, size_sqm, min_stay_months, google_maps_url,
+    rental_mode, is_furnished, is_instant_bookable,
     status: "draft",
   }).eq("id", propertyId);
 

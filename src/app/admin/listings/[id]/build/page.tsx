@@ -20,6 +20,7 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
       .select(`
         id, name, area, address, property_type, price_monthly,
         bedrooms, bathrooms, size_sqm, min_stay_months, google_maps_url, status,
+        rental_mode, is_furnished, is_instant_bookable,
         rla_assessments ( building_condition, natural_lighting, ventilation, noise_level, cleanliness, security_level, bathroom_condition, furniture_quality, pros, cons, overall_notes, survey_id ),
         area_overviews ( nearest_mrt, mrt_distance, nearest_transjakarta, transjakarta_distance, nearest_minimarket, nearest_clinic, nearest_food, nearest_gym, neighborhood_character, expat_friendly, time_to_scbd_min, time_to_sudirman_min, area_notes ),
         property_details ( facilities, included_utilities, rules, additional_notes ),
@@ -112,8 +113,11 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
             bedrooms: property.bedrooms,
             bathrooms: property.bathrooms,
             size_sqm: property.size_sqm ? Number(property.size_sqm) : null,
-            min_stay_months: property.min_stay_months,
-            google_maps_url: property.google_maps_url,
+            min_stay_months:     property.min_stay_months,
+            google_maps_url:     property.google_maps_url,
+            rental_mode:         (property as Record<string, unknown>).rental_mode as string ?? "long_term",
+            is_furnished:        (property as Record<string, unknown>).is_furnished as boolean ?? false,
+            is_instant_bookable: (property as Record<string, unknown>).is_instant_bookable as boolean ?? false,
             status: property.status ?? "new_lead",
           }}
           rla={rla}

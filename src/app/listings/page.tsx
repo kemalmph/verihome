@@ -10,6 +10,7 @@ interface ListingsPageProps {
     type?: string;
     min_price?: string;
     max_price?: string;
+    mode?: string;
   }>;
 }
 
@@ -22,6 +23,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       type: filters.type,
       minPrice: filters.min_price ? parseInt(filters.min_price) : undefined,
       maxPrice: filters.max_price ? parseInt(filters.max_price) : undefined,
+      rentalMode: filters.mode,
     }),
     getSavedPropertyIds(),
   ]);

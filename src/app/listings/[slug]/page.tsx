@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { RLAScore } from "@/components/listings/RLAScore";
 import { PhotoGallery, type CategorizedPhotos } from "@/components/listings/PhotoGallery";
+import { BookingOptions } from "@/components/listings/BookingOptions";
 import { getPropertyBySlug, getLiveSlugs } from "@/lib/supabase/queries";
 import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
 import { SaveButton } from "@/components/listings/SaveButton";
@@ -203,40 +204,31 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
 
           {/* Sticky Sidebar */}
           <aside className="lg:col-span-4 sticky top-24 space-y-6">
-            <div className="bg-white border border-[#cccccc] rounded-xl p-6 shadow-sm">
-              <div className="mb-6">
-                <div className="text-xs text-[#3e4944] mb-1">Starting from</div>
-                <div className="text-[#1a7a5e] text-3xl font-bold">IDR {price}</div>
-                <div className="text-xs text-[#3e4944]">per month + utilities</div>
-              </div>
-
-              <div className="space-y-3 mb-8">
+            {/* Property quick-facts */}
+            <div className="bg-white border border-[#cccccc] rounded-xl p-4 shadow-sm">
+              <div className="space-y-2">
                 {[
-                  { label: "Min stay", value: `${property.min_stay_months} Months` },
                   { label: "Property type", value: property.property_type },
                   { label: "Size", value: `${property.size_sqm} m²` },
+                  { label: "Furnished", value: property.is_furnished ? "Yes" : "No" },
                 ].map((item) => (
-                  <div key={item.label} className="flex justify-between items-center pb-3 border-b border-[#bec9c2] last:border-0">
+                  <div key={item.label} className="flex justify-between items-center pb-2 border-b border-[#bec9c2] last:border-0">
                     <span className="text-[#3e4944] text-sm">{item.label}</span>
                     <span className="text-[#1b1c1c] font-bold text-sm capitalize">{item.value}</span>
                   </div>
                 ))}
               </div>
-
-              <div className="space-y-3">
-                <Link
-                  href="/consultation"
-                  className="w-full bg-[#1a7a5e] text-white py-4 rounded-lg font-semibold flex flex-col items-center hover:opacity-90 transition-opacity"
-                >
-                  <span>Book a Consultation</span>
-                  <span className="text-xs font-normal opacity-80">Get independent advice before you commit</span>
-                </Link>
-                <button className="w-full border-2 border-[#0d2137] text-[#0d2137] py-4 rounded-lg font-semibold flex flex-col items-center hover:bg-[#f6f3f2] transition-colors">
-                  <span>Request a Viewing</span>
-                  <span className="text-xs font-normal opacity-70">Schedule a physical visit</span>
-                </button>
-              </div>
             </div>
+
+            <BookingOptions
+              propertyId={property.id}
+              slug={property.slug}
+              rentalMode={property.rental_mode ?? "long_term"}
+              priceMonthly={property.price_monthly}
+              minStayMonths={property.min_stay_months}
+              isInstantBookable={property.is_instant_bookable ?? false}
+              shortStayRate={property.short_stay_rates?.[0] ?? null}
+            />
 
             <div className="bg-[#0d2137] text-white p-6 rounded-xl space-y-3">
               <h4 className="font-bold flex items-center gap-2">

@@ -11,7 +11,8 @@ const mainLinks: SidebarLink[] = [
   { href: "/dashboard", label: "Dashboard", icon: "home" },
   { href: "/dashboard/saved", label: "Saved Listings", icon: "favorite" },
   { href: "/dashboard/appointments", label: "Appointments", icon: "calendar_today", badge: 1 },
-  { href: "/dashboard/viewings", label: "Viewings", icon: "location_on" },
+  { href: "/dashboard/viewings",  label: "Viewings",  icon: "location_on" },
+  { href: "/dashboard/bookings",  label: "Bookings",  icon: "hotel" },
   { href: "/dashboard/support", label: "Support & Services", icon: "headset_mic" },
 ];
 

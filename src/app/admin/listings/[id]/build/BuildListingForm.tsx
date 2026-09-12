@@ -17,6 +17,9 @@ export interface PropertyData {
   size_sqm: number | null;
   min_stay_months: number | null;
   google_maps_url: string | null;
+  rental_mode?: string | null;
+  is_furnished?: boolean | null;
+  is_instant_bookable?: boolean | null;
 }
 
 export interface RLAData {
@@ -401,6 +404,43 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
             defaultValue={details?.additional_notes ?? ""}
             className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm resize-none"
           />
+        </div>
+      </div>
+
+      {/* Rental Mode */}
+      <div className={sectionCls}>
+        <SectionHeading icon="hotel" title="Rental Mode" subtitle="Control how this property can be booked" />
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div className="col-span-2">
+            <label className={labelCls}>Rental Mode</label>
+            <select name="rental_mode" defaultValue={property.rental_mode ?? "long_term"} className={input}>
+              <option value="long_term">Long-term only</option>
+              <option value="short_stay">Short stay only</option>
+              <option value="both">Both long-term &amp; short stay</option>
+            </select>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="is_furnished"
+              name="is_furnished"
+              defaultChecked={property.is_furnished ?? false}
+              className="w-4 h-4 accent-[#1a7a5e]"
+            />
+            <label htmlFor="is_furnished" className="text-sm text-[#3e4944]">Furnished</label>
+          </div>
+          <div className="flex items-center gap-3">
+            <input
+              type="checkbox"
+              id="is_instant_bookable"
+              name="is_instant_bookable"
+              defaultChecked={property.is_instant_bookable ?? false}
+              className="w-4 h-4 accent-[#1a7a5e]"
+            />
+            <label htmlFor="is_instant_bookable" className="text-sm text-[#3e4944]">
+              Instant bookable (confirm automatically without admin review)
+            </label>
+          </div>
         </div>
       </div>
 
