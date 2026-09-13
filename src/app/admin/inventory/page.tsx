@@ -54,7 +54,7 @@ export default async function AdminInventoryPage() {
             <tbody>
               {(properties ?? []).map((p) => {
                 const mode       = (p.rental_mode ?? "long_term") as RentalMode;
-                const rate       = (p.short_stay_rates as { price_per_night: number; active: boolean }[])?.[0];
+                const rate       = p.short_stay_rates as unknown as { price_per_night: number; active: boolean } | null;
                 const blocks     = (p.availability_blocks as { start_date: string; end_date: string }[]) ?? [];
                 const isBlocked  = blocks.some((b) => b.start_date <= today && b.end_date > today);
 

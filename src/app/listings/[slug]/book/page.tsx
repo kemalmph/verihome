@@ -23,7 +23,7 @@ export default async function BookPage({ params }: Props) {
 
   if (!user) redirect(`/auth/login?next=/listings/${slug}/book`);
 
-  const rate = property.short_stay_rates?.[0];
+  const rate = property.short_stay_rates;
   if (!rate || !rate.active) {
     // Not available for short stay — redirect back
     redirect(`/listings/${slug}`);

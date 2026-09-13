@@ -131,8 +131,8 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
             photos_bathroom:    (property.property_media[0].photos_bathroom    as string[]) ?? [],
             video_url:          (property.property_media[0].video_url as string | null) ?? null,
           } : null}
-          shortStayRate={property.short_stay_rates?.[0] ? (() => {
-            const r = property.short_stay_rates[0] as Record<string,unknown>;
+          shortStayRate={property.short_stay_rates ? (() => {
+            const r = property.short_stay_rates as unknown as Record<string,unknown>;
             return {
               price_per_night:         Number(r.price_per_night         ?? 0),
               price_per_night_weekend: r.price_per_night_weekend != null ? Number(r.price_per_night_weekend) : null,

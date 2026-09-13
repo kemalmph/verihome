@@ -66,8 +66,8 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
     { label: "Photos uploaded (≥ 15)",                   done: !!photosComplete },
     { label: "Video walkthrough",                        done: !!videoComplete },
     { label: "Area overview filled",                     done: !!areaComplete },
-    { label: "Price verified",                           done: !!(property.publish_checklist?.[0]?.price_verified) },
-    { label: "Owner contact active",                     done: !!(property.publish_checklist?.[0]?.owner_contact_active) },
+    { label: "Price verified",                           done: !!(property.publish_checklist?.price_verified) },
+    { label: "Owner contact active",                     done: !!(property.publish_checklist?.owner_contact_active) },
   ];
 
   async function handleUpdate(formData: FormData) {

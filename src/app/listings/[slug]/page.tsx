@@ -229,7 +229,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
               priceMonthly={property.price_monthly}
               minStayMonths={property.min_stay_months}
               isInstantBookable={property.is_instant_bookable ?? false}
-              shortStayRate={property.short_stay_rates?.[0] ?? null}
+              shortStayRate={property.short_stay_rates ?? null}
             />
 
             <div className="bg-[#0d2137] text-white p-6 rounded-xl space-y-3">

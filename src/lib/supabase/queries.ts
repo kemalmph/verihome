@@ -79,7 +79,9 @@ export type PropertyDetailRow = PropertyRow & {
   }[];
   area_overviews: AreaOverview[];
   property_media: PropertyMedia[];
-  short_stay_rates: ShortStayRateRow[];
+  // property_id is UNIQUE on short_stay_rates, so PostgREST embeds it as a
+  // single object (to-one), not an array.
+  short_stay_rates: ShortStayRateRow | null;
 };
 
 const PROPERTY_LIST_SELECT = `
@@ -143,7 +145,9 @@ export async function getPropertyBySlug(slug: string) {
     .eq("slug", slug)
     .single();
   if (error) return null;
-  return data as PropertyDetailRow;
+  // Cast via unknown: typegen models short_stay_rates as an array, but PostgREST
+  // embeds it as a single object because property_id is UNIQUE.
+  return data as unknown as PropertyDetailRow;
 }
 
 // Uses a cookie-free client safe for generateStaticParams at build time
