@@ -1,6 +1,8 @@
 "use client";
 
 import { useState, useTransition, useMemo } from "react";
+import { computePrice } from "@/lib/pricing";
+import type { PricingTier } from "@/lib/pricing";
 
 export interface ShortStayRateData {
   price_per_night:         number | null;
@@ -39,38 +41,13 @@ function fmt(n: number) {
 
 // ── Pricing preview ───────────────────────────────────────────
 
-type PricingTier = "per_night" | "weekly" | "monthly";
-
-function calcPreview(
-  rate: ShortStayRateData,
-  nights: number,
-  weekendNights: number
-): { tier: PricingTier; subtotal: number; total: number } | null {
-  const pn  = Number(rate.price_per_night  ?? 0);
-  const pw  = Number(rate.price_per_week   ?? 0);
-  const pm  = Number(rate.price_per_month  ?? 0);
-  const pnw = Number(rate.price_per_night_weekend ?? pn);
-  const cf  = Number(rate.cleaning_fee ?? 0);
-  if (!pn) return null;
-
-  if (nights >= 28 && pm) {
-    const subtotal = (nights / 30) * pm;
-    return { tier: "monthly", subtotal, total: subtotal + cf };
-  }
-  if (nights >= 7 && pw) {
-    const subtotal = (nights / 7) * pw;
-    return { tier: "weekly", subtotal, total: subtotal + cf };
-  }
-  const weekdayNights = nights - weekendNights;
-  const subtotal = weekdayNights * pn + weekendNights * pnw;
-  return { tier: "per_night", subtotal, total: subtotal + cf };
-}
-
-const PREVIEW_SCENARIOS: { label: string; nights: number; weekendNights: number }[] = [
-  { label: "3 nights, weekdays only",      nights: 3,  weekendNights: 0 },
-  { label: "3 nights incl. weekend",       nights: 3,  weekendNights: 2 },
-  { label: "10 nights",                    nights: 10, weekendNights: 2 },
-  { label: "30 nights",                    nights: 30, weekendNights: 8 },
+// Anchor dates for preview scenarios — fixed so results are deterministic.
+// Mon 2026-01-05 is a known Monday; offsets give the required weekday/weekend mix.
+const PREVIEW_SCENARIOS: { label: string; checkIn: string; checkOut: string }[] = [
+  { label: "3 nights, weekdays only", checkIn: "2026-01-05", checkOut: "2026-01-08" }, // Mon-Wed
+  { label: "3 nights incl. weekend",  checkIn: "2026-01-09", checkOut: "2026-01-12" }, // Fri-Sun
+  { label: "10 nights",               checkIn: "2026-01-05", checkOut: "2026-01-15" }, // Mon+9
+  { label: "30 nights",               checkIn: "2026-01-05", checkOut: "2026-02-04" }, // Mon+29
 ];
 
 const tierLabel: Record<PricingTier, string> = {
@@ -81,7 +58,14 @@ const tierLabel: Record<PricingTier, string> = {
 
 function PricingPreview({ rate }: { rate: ShortStayRateData }) {
   const rows = useMemo(
-    () => PREVIEW_SCENARIOS.map((s) => ({ ...s, result: calcPreview(rate, s.nights, s.weekendNights) })),
+    () => PREVIEW_SCENARIOS.map((s) => ({
+      label: s.label,
+      result: computePrice(
+        rate,
+        new Date(s.checkIn  + "T00:00:00Z"),
+        new Date(s.checkOut + "T00:00:00Z"),
+      ),
+    })),
     [rate]
   );
 
