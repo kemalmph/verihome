@@ -2,8 +2,11 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
+import { requireAdmin } from "@/lib/auth/guards";
 
 export async function updatePropertyStatus(propertyId: string, status: string) {
+  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+
   const admin = createAdminClient();
   const { error } = await admin
     .from("properties")
@@ -16,6 +19,8 @@ export async function updatePropertyStatus(propertyId: string, status: string) {
 }
 
 export async function updatePropertyDetails(propertyId: string, formData: FormData) {
+  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+
   const admin = createAdminClient();
 
   const name = (formData.get("name") as string).trim();
@@ -41,6 +46,8 @@ export async function updatePropertyDetails(propertyId: string, formData: FormDa
 }
 
 export async function deleteProperty(propertyId: string) {
+  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+
   const admin = createAdminClient();
   const { error } = await admin.from("properties").delete().eq("id", propertyId);
   if (error) return { error: error.message };
@@ -49,6 +56,8 @@ export async function deleteProperty(propertyId: string) {
 }
 
 export async function updateConsultationStatus(consultationId: string, status: string) {
+  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+
   const admin = createAdminClient();
   const { error } = await admin
     .from("consultations")

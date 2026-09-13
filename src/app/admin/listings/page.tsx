@@ -2,12 +2,15 @@ import Link from "next/link";
 import { redirect } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin } from "@/lib/auth/guards";
 import { PIPELINE_STAGES, statusColor, statusLabel } from "@/lib/pipeline";
 import { StatusSelect } from "./StatusSelect";
 import { DeleteButton } from "./DeleteButton";
 
 async function createNewProperty() {
   "use server";
+  await requireAdmin();
+
   const admin = createAdminClient();
   const slug = `new-property-${Date.now().toString(36)}`;
   const { data, error } = await admin
