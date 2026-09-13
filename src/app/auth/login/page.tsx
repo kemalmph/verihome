@@ -3,21 +3,10 @@ import { redirect } from "next/navigation";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
+import { safeNext } from "@/lib/auth/safe-next";
 import { LoginForm } from "./LoginForm";
 
 export const dynamic = "force-dynamic";
-
-/**
- * Only same-origin paths are allowed through. A `next` of "//evil.com" or
- * "https://evil.com" would otherwise turn this page into an open redirect that
- * lends the site's name to someone else's login form.
- */
-function safeNext(raw: string | undefined): string {
-  if (!raw) return "/dashboard";
-  if (!raw.startsWith("/")) return "/dashboard";
-  if (raw.startsWith("//")) return "/dashboard";
-  return raw;
-}
 
 function reasonFor(next: string): string | undefined {
   if (next.endsWith("/book"))    return "Sign in to finish booking. Your dates are still available.";
@@ -50,7 +39,13 @@ export default async function LoginPage({
             </p>
           </div>
 
-          <LoginForm next={next} reason={reasonFor(next)} />
+          {/* Flip GOOGLE_AUTH_ENABLED to "true" once the provider is configured
+              in Supabase — enabling it is then a config change, not a deploy. */}
+          <LoginForm
+            next={next}
+            reason={reasonFor(next)}
+            googleEnabled={process.env.GOOGLE_AUTH_ENABLED === "true"}
+          />
 
           <p className="text-xs text-[#6e7a74] text-center mt-6">
             Listing a property instead?{" "}

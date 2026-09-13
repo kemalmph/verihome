@@ -9,7 +9,9 @@ const labelCls = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider 
 
 type Mode = "signin" | "signup";
 
-export function LoginForm({ next, reason }: { next: string; reason?: string }) {
+export function LoginForm({ next, reason, googleEnabled = false }: {
+  next: string; reason?: string; googleEnabled?: boolean;
+}) {
   const [mode, setMode] = useState<Mode>("signin");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -121,20 +123,26 @@ export function LoginForm({ next, reason }: { next: string; reason?: string }) {
           </button>
         </form>
 
-        <div className="flex items-center gap-3 my-5">
-          <span className="h-px flex-1 bg-[#e4e2e1]" />
-          <span className="text-xs text-[#6e7a74]">or</span>
-          <span className="h-px flex-1 bg-[#e4e2e1]" />
-        </div>
+        {/* Hidden until the Google provider is enabled in Supabase — an OAuth
+            button that errors on click is worse than no button at all. */}
+        {googleEnabled && (
+          <>
+            <div className="flex items-center gap-3 my-5">
+              <span className="h-px flex-1 bg-[#e4e2e1]" />
+              <span className="text-xs text-[#6e7a74]">or</span>
+              <span className="h-px flex-1 bg-[#e4e2e1]" />
+            </div>
 
-        <form action={signInWithGoogle}>
-          <button
-            type="submit"
-            className="w-full h-11 border border-[#cccccc] rounded-lg font-semibold text-sm text-[#3e4944] hover:border-[#1a7a5e] transition-colors"
-          >
-            Continue with Google
-          </button>
-        </form>
+            <form action={signInWithGoogle.bind(null, next)}>
+              <button
+                type="submit"
+                className="w-full h-11 border border-[#cccccc] rounded-lg font-semibold text-sm text-[#3e4944] hover:border-[#1a7a5e] transition-colors"
+              >
+                Continue with Google
+              </button>
+            </form>
+          </>
+        )}
       </div>
     </div>
   );

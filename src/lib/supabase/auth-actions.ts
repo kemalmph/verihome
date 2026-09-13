@@ -3,14 +3,16 @@
 import { redirect } from "next/navigation";
 import { createClient } from "./server";
 
-export async function signInWithGoogle() {
+export async function signInWithGoogle(redirectTo = "/dashboard") {
   const supabase = await createClient();
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   const { data, error } = await supabase.auth.signInWithOAuth({
     provider: "google",
     options: {
-      redirectTo: `${origin}/auth/callback`,
+      // Same destination handling as email sign-in, so an OAuth round trip
+      // started mid-booking comes back to the booking.
+      redirectTo: `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
     },
   });
 
@@ -34,20 +36,29 @@ export async function signUpWithEmail(formData: FormData, redirectTo = "/dashboa
   const password = formData.get("password") as string;
   const name = formData.get("name") as string;
   const supabase = await createClient();
+  const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
   const { data, error } = await supabase.auth.signUp({
     email,
     password,
-    options: { data: { full_name: name } },
+    options: {
+      data: { full_name: name },
+      // Carry the destination through the confirmation email. Without this the
+      // link lands on /dashboard and a guest who signed up midway through a
+      // booking has to find their way back to it themselves.
+      emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
+    },
   });
   if (error) return { error: error.message };
 
-  // Supabase returns a session here only when "Confirm email" is off. Branch on
-  // what actually came back rather than on an assumption about the project
-  // setting, so this stays correct whichever way that toggle is set.
+  // A session comes back only when "Confirm email" is off. Branch on what
+  // actually arrived rather than on an assumption about the project setting,
+  // so this stays correct whichever way that toggle is set.
   if (data.session) redirect(redirectTo);
 
-  return { success: "Almost there — check your email to confirm your account, then sign in." };
+  return {
+    success: `Check ${email} to confirm your account. The link brings you straight back here.`,
+  };
 }
 
 export async function sendOtp(formData: FormData) {
