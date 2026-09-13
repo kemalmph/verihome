@@ -1,9 +1,9 @@
 "use server";
 
-import Xendit from "xendit-node";
 import { Resend } from "resend";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getPaymentProvider, isBankTransfer } from "@/lib/payment";
 
 const PACKAGES = {
   basic: { label: "Basic Consultation", price: 99000, duration: "30 min" },
@@ -19,7 +19,6 @@ export async function bookConsultation(formData: FormData) {
 
   if (!PACKAGES[packageId]) return { error: "Invalid package selected." };
 
-  const xendit = new Xendit({ secretKey: process.env.XENDIT_SECRET_KEY ?? "dummy" });
   const resend = new Resend(process.env.RESEND_API_KEY ?? "dummy");
 
   const supabase = await createClient();
@@ -49,33 +48,40 @@ export async function bookConsultation(formData: FormData) {
 
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
-  // Create Xendit invoice
-  const invoice = await xendit.Invoice.createInvoice({
-    data: {
-      externalId: consultation.id,
-      amount: pkg.price,
-      description: `VeriHome ${pkg.label} (${pkg.duration})`,
-      payerEmail: user.email!,
-      currency: "IDR",
-      successRedirectUrl: `${origin}/consultation/success?id=${consultation.id}`,
-      failureRedirectUrl: `${origin}/consultation?error=payment_failed`,
-      invoiceDuration: 86400, // 24h expiry
-    },
+  // Same abstraction as bookings and viewing deposits — consultations no longer
+  // hardcode a gateway. Which provider runs is PAYMENT_PROVIDER, not this file.
+  const provider = getPaymentProvider();
+  const intent = await provider.createIntent({
+    reference:   consultation.id,
+    amount:      pkg.price,
+    description: `VeriHome ${pkg.label} (${pkg.duration})`,
+    payerEmail:  user.email!,
+    returnUrl:   `${origin}/consultation/success?id=${consultation.id}`,
+    cancelUrl:   `${origin}/consultation?error=payment_failed`,
   });
 
-  // Save invoice ID
+  // Record whichever reference this provider gave us, so an incoming payment can
+  // be matched back: a unique transfer amount, or the gateway's own invoice id.
   await admin
     .from("consultations")
-    .update({ xendit_invoice_id: invoice.id })
+    .update(
+      isBankTransfer(intent.action)
+        ? { bank_transfer_code: intent.action.transferCode, payment_status: "unpaid" }
+        : { xendit_invoice_id: intent.action.externalId,    payment_status: "unpaid" }
+    )
     .eq("id", consultation.id);
+
+  const howToPay = isBankTransfer(intent.action)
+    ? `Awaiting bank transfer of Rp ${intent.action.payableAmount.toLocaleString("id-ID")} (code ${intent.action.transferCode}).`
+    : `Xendit invoice ${intent.action.externalId} issued.`;
 
   // Notify team
   await resend.emails.send({
     from: "VeriHome <onboarding@resend.dev>",
     to: process.env.TEAM_EMAIL ?? "team@verihome.id",
     subject: `New consultation booking: ${pkg.label}`,
-    html: `<p>User ${user.email} booked a <strong>${pkg.label}</strong>. Consultation ID: ${consultation.id}. Invoice: ${invoice.id}.</p>`,
+    html: `<p>User ${user.email} booked a <strong>${pkg.label}</strong>. Consultation ID: ${consultation.id}. ${howToPay}</p>`,
   }).catch(() => null);
 
-  return { invoiceUrl: invoice.invoiceUrl };
+  return { intent };
 }

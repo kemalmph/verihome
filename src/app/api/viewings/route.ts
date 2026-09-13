@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getPaymentProvider } from "@/lib/payment";
+import { getPaymentProvider, isBankTransfer } from "@/lib/payment";
 
 const VIEWING_DEPOSIT = Number(process.env.VIEWING_DEPOSIT_AMOUNT ?? 200000);
 
@@ -23,7 +23,14 @@ export async function POST(req: NextRequest) {
   }
 
   const provider = getPaymentProvider();
-  const intent   = await provider.createIntent(VIEWING_DEPOSIT);
+  const intent   = await provider.createIntent({
+    reference:   propertyId,
+    amount:      VIEWING_DEPOSIT,
+    description: "VeriHome viewing deposit",
+    payerEmail:  user.email,
+  });
+
+  const transferCode = isBankTransfer(intent.action) ? intent.action.transferCode : null;
 
   const admin = createAdminClient();
   const { data: viewing, error } = await admin
@@ -34,7 +41,7 @@ export async function POST(req: NextRequest) {
       preferred_dates:    preferredDates,
       team_notes:         notes ?? null,
       deposit_amount:     VIEWING_DEPOSIT,
-      bank_transfer_code: intent.transferCode,
+      bank_transfer_code: transferCode,
       status:             "pending",
     })
     .select()

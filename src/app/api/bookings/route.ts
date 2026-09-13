@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getPaymentProvider } from "@/lib/payment";
+import { getPaymentProvider, isBankTransfer } from "@/lib/payment";
 import { validateStayRules, calculatePrice, isRangeAvailable, getBufferDays } from "@/lib/availability";
 
 // POST /api/bookings — create a new short-stay booking
@@ -51,7 +51,16 @@ export async function POST(req: NextRequest) {
   const transferTotal = quote.total - appliedCredit;
 
   const provider = getPaymentProvider();
-  const intent = await provider.createIntent(transferTotal);
+  const intent = await provider.createIntent({
+    reference:   propertyId,
+    amount:      transferTotal,
+    description: `VeriHome stay · ${checkIn} to ${checkOut}`,
+    payerEmail:  user.email,
+  });
+
+  // Only a bank transfer carries a unique code. Under a redirecting provider
+  // the record is matched by the provider's own reference instead.
+  const transferCode = isBankTransfer(intent.action) ? intent.action.transferCode : null;
 
   const admin = createAdminClient();
   const rpc = appliedCredit > 0 ? "create_booking_with_credits" : "create_booking_if_available";
@@ -67,7 +76,7 @@ export async function POST(req: NextRequest) {
         p_gross_price:     quote.total,
         p_credit_amount:   appliedCredit,
         p_total_price:     transferTotal,
-        p_transfer_code:   intent.transferCode,
+        p_transfer_code:   transferCode,
       }
     : {
         p_property_id:     propertyId,
@@ -78,7 +87,7 @@ export async function POST(req: NextRequest) {
         p_price_per_night: quote.effectivePerNight,
         p_cleaning_fee:    quote.cleaningFee,
         p_total_price:     transferTotal,
-        p_transfer_code:   intent.transferCode,
+        p_transfer_code:   transferCode,
       };
 
   const { data: booking, error } = await admin.rpc(rpc, rpcArgs);

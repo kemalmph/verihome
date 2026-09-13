@@ -3,6 +3,9 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { bookConsultation } from "@/lib/actions/book-consultation";
+import type { PaymentAction } from "@/lib/payment";
+
+type BankTransfer = Extract<PaymentAction, { kind: "bank_transfer" }>;
 
 const PACKAGES = {
   basic: { label: "Basic", price: "IDR 99,000", duration: "30 min" },
@@ -19,6 +22,7 @@ interface BookingFormProps {
 export function BookingForm({ defaultPackage, savedProperties }: BookingFormProps) {
   const [selectedPackage, setSelectedPackage] = useState<PackageId>(defaultPackage);
   const [error, setError] = useState<string | null>(null);
+  const [transfer, setTransfer] = useState<BankTransfer | null>(null);
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -38,10 +42,57 @@ export function BookingForm({ defaultPackage, savedProperties }: BookingFormProp
         setError(result.error);
         return;
       }
-      if (result.invoiceUrl) {
-        window.location.href = result.invoiceUrl;
+      const action = result.intent?.action;
+      if (!action) return;
+
+      // A redirecting provider hands the payer to a hosted checkout; a bank
+      // transfer keeps them here and shows the details to pay against.
+      if (action.kind === "redirect") {
+        window.location.href = action.checkoutUrl;
+        return;
       }
+      setTransfer(action);
     });
+  }
+
+  if (transfer) {
+    return (
+      <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+        <div className="flex items-center gap-3">
+          <span className="material-symbols-outlined text-[#1a7a5e] text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+            check_circle
+          </span>
+          <div>
+            <h2 className="font-bold text-[#0d2137] text-lg">Consultation reserved</h2>
+            <p className="text-sm text-[#6e7a74]">Complete the transfer to confirm your session.</p>
+          </div>
+        </div>
+
+        <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
+          <div className="space-y-1 text-sm">
+            <div className="flex justify-between"><span className="text-[#6e7a74]">Bank</span><strong>{transfer.bankName}</strong></div>
+            <div className="flex justify-between"><span className="text-[#6e7a74]">Account</span><strong>{transfer.accountNumber}</strong></div>
+            <div className="flex justify-between"><span className="text-[#6e7a74]">Name</span><strong>{transfer.accountHolder}</strong></div>
+            <div className="flex justify-between text-[#1a7a5e] font-bold border-t border-[#cccccc] pt-2 mt-2">
+              <span>Transfer exactly</span>
+              <span>IDR {transfer.payableAmount.toLocaleString("id-ID")}</span>
+            </div>
+          </div>
+          <p className="text-xs text-[#6e7a74]">{transfer.instructions}</p>
+        </div>
+
+        <p className="text-xs text-[#6e7a74]">
+          Our team confirms the transfer and contacts you within 24 hours to schedule the session.
+        </p>
+
+        <button
+          onClick={() => router.push("/dashboard/appointments")}
+          className="w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold hover:opacity-90"
+        >
+          View my appointments
+        </button>
+      </div>
+    );
   }
 
   return (
@@ -139,7 +190,7 @@ export function BookingForm({ defaultPackage, savedProperties }: BookingFormProp
         )}
       </button>
       <p className="text-xs text-center text-[#6e7a74]">
-        Secured by Xendit · Your advisor will contact you within 24 hours after payment.
+        Payment details appear on the next step · Your advisor will contact you within 24 hours after payment.
       </p>
     </form>
   );
