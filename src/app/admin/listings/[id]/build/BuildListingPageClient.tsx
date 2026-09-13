@@ -116,6 +116,7 @@ export function BuildListingPageClient({
   const [isSaving, startSaveTransition] = useTransition();
   const [isLinking, startLinkTransition] = useTransition();
   const [rentalMode, setRentalMode] = useState(property.rental_mode ?? "long_term");
+  const [savedRentalMode, setSavedRentalMode] = useState(property.rental_mode ?? "long_term");
 
   // Browser close / refresh guard
   useEffect(() => {
@@ -209,7 +210,7 @@ export function BuildListingPageClient({
             details={details}
             formRef={formRef}
             onDirty={() => setIsDirty(true)}
-            onClean={() => setIsDirty(false)}
+            onClean={() => { setIsDirty(false); setSavedRentalMode(rentalMode); }}
             onRentalModeChange={setRentalMode}
           />
         </div>
@@ -304,7 +305,7 @@ export function BuildListingPageClient({
         <ShortStayRateEditor
           propertyId={property.id}
           rentalMode={rentalMode}
-          savedRentalMode={property.rental_mode ?? "long_term"}
+          savedRentalMode={savedRentalMode}
           initialRate={shortStayRate}
         />
       </div>
