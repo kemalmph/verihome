@@ -38,9 +38,12 @@ export async function PATCH(
       const { data, error } = await admin
         .from("viewings")
         .update({
-          status:       "confirmed",
-          scheduled_at: body.scheduled_at,
-          confirmed_at: new Date().toISOString(),
+          status:          "confirmed",
+          scheduled_at:    body.scheduled_at,
+          confirmed_at:    new Date().toISOString(),
+          // Admin has verified the receipt — deposit is now confirmed
+          deposit_paid:    true,
+          deposit_paid_at: new Date().toISOString(),
         })
         .eq("id", id)
         .select()
@@ -64,9 +67,14 @@ export async function PATCH(
       });
 
       if (creditError) {
-        // Non-fatal — credit issuance can be retried; viewing is already marked attended
-        console.error("[viewings/attend] credit issuance failed:", creditError.message);
-        return NextResponse.json({ attended: true, creditError: creditError.message });
+        const msg = creditError.message ?? "";
+        // deposit_not_confirmed: admin hasn't verified the receipt yet — non-fatal,
+        // attendance is recorded; credit will be issued once admin confirms the deposit.
+        if (msg.includes("deposit_not_confirmed")) {
+          return NextResponse.json({ attended: true, credit: null, note: "deposit not yet confirmed — credit pending" });
+        }
+        console.error("[viewings/attend] credit issuance failed:", msg);
+        return NextResponse.json({ attended: true, creditError: msg });
       }
 
       return NextResponse.json({ attended: true, credit });
