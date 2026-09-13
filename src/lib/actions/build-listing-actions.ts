@@ -34,12 +34,14 @@ export async function saveBuildListing(propertyId: string, formData: FormData) {
   const is_furnished        = formData.get("is_furnished") === "on";
   const is_instant_bookable = formData.get("is_instant_bookable") === "on";
 
-  await admin.from("properties").update({
+  const { error: propError } = await admin.from("properties").update({
     name, area, address, property_type, price_monthly, bedrooms,
     bathrooms, size_sqm, min_stay_months, google_maps_url,
     rental_mode, is_furnished, is_instant_bookable,
     status: "draft",
   }).eq("id", propertyId);
+
+  if (propError) throw new Error(`Properties update failed: ${propError.message}`);
 
   // ── 2. RLA assessment ────────────────────────────────────────────────────
   const rlaPayload = {

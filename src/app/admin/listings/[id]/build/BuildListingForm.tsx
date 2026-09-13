@@ -140,6 +140,7 @@ function SectionHeading({ icon, title, subtitle }: { icon: string; title: string
 export function BuildListingForm({ property, rla, area, details, formRef, onDirty, onClean, onRentalModeChange }: BuildListingFormProps) {
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
+  const [saveError, setSaveError] = useState("");
   const [dirtyFired, setDirtyFired] = useState(false);
 
   function markDirty() {
@@ -152,13 +153,18 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
     setSaved(false);
+    setSaveError("");
     const formData = new FormData(e.currentTarget);
     startTransition(async () => {
-      await saveBuildListing(property.id, formData);
-      setSaved(true);
-      setDirtyFired(false);
-      onClean();
-      window.scrollTo({ top: 0, behavior: "smooth" });
+      try {
+        await saveBuildListing(property.id, formData);
+        setSaved(true);
+        setDirtyFired(false);
+        onClean();
+        window.scrollTo({ top: 0, behavior: "smooth" });
+      } catch (err) {
+        setSaveError(err instanceof Error ? err.message : "Save failed");
+      }
     });
   }
 
@@ -184,6 +190,12 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
         <div className="flex items-center gap-3 p-4 bg-[#e8f5f0] border border-[#9cf4d1] rounded-xl text-sm text-[#1a7a5e] font-medium">
           <span className="material-symbols-outlined" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
           Saved — listing moved to <strong>Draft</strong>. Review the publish checklist when ready.
+        </div>
+      )}
+      {saveError && (
+        <div className="flex items-center gap-3 p-4 bg-red-50 border border-red-200 rounded-xl text-sm text-red-700">
+          <span className="material-symbols-outlined text-red-500">error</span>
+          {saveError}
         </div>
       )}
 

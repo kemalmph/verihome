@@ -31,20 +31,6 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
-  // First check the property has a short-stay rental_mode
-  const { data: property } = await admin
-    .from("properties")
-    .select("rental_mode")
-    .eq("id", body.propertyId)
-    .single();
-
-  if (!property || !["short_stay", "both"].includes(property.rental_mode)) {
-    return NextResponse.json(
-      { error: "Property rental mode must be short_stay or both before setting rates" },
-      { status: 400 }
-    );
-  }
-
   const { error } = await admin
     .from("short_stay_rates")
     .upsert(
