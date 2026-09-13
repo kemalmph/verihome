@@ -64,11 +64,12 @@ export async function bookConsultation(formData: FormData) {
   // be matched back: a unique transfer amount, or the gateway's own invoice id.
   await admin
     .from("consultations")
-    .update(
-      isBankTransfer(intent.action)
-        ? { bank_transfer_code: intent.action.transferCode, payment_status: "unpaid" }
-        : { xendit_invoice_id: intent.action.externalId,    payment_status: "unpaid" }
-    )
+    .update({
+      payment_provider:    intent.provider,
+      payment_status:      "unpaid",
+      bank_transfer_code:  isBankTransfer(intent.action) ? intent.action.transferCode : null,
+      payment_external_id: isBankTransfer(intent.action) ? null : intent.action.externalId,
+    })
     .eq("id", consultation.id);
 
   const howToPay = isBankTransfer(intent.action)

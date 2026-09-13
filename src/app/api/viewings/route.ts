@@ -40,9 +40,11 @@ export async function POST(req: NextRequest) {
       user_id:            user.id,
       preferred_dates:    preferredDates,
       team_notes:         notes ?? null,
-      deposit_amount:     VIEWING_DEPOSIT,
-      bank_transfer_code: transferCode,
-      status:             "pending",
+      deposit_amount:      VIEWING_DEPOSIT,
+      bank_transfer_code:  transferCode,
+      payment_provider:    intent.provider,
+      payment_external_id: isBankTransfer(intent.action) ? null : intent.action.externalId,
+      status:              "pending",
     })
     .select()
     .single();

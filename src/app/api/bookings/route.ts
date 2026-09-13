@@ -92,6 +92,19 @@ export async function POST(req: NextRequest) {
 
   const { data: booking, error } = await admin.rpc(rpc, rpcArgs);
 
+  // The RPC owns the atomic availability-check-and-insert and knows nothing
+  // about payment, so the provider reference is stamped on afterwards. Only a
+  // redirecting provider has one; manual transfers are matched by amount.
+  if (!error && booking && !isBankTransfer(intent.action)) {
+    await admin
+      .from("bookings")
+      .update({
+        payment_provider:    intent.provider,
+        payment_external_id: intent.action.externalId,
+      })
+      .eq("id", booking.id);
+  }
+
   if (error) {
     if (error.message?.includes("dates_unavailable")) {
       return NextResponse.json({ error: "Selected dates are no longer available" }, { status: 409 });

@@ -1,6 +1,46 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { Resend } from "resend";
 
+type Admin = ReturnType<typeof createAdminClient>;
+
+type Settled =
+  | { kind: "consultation"; row: Record<string, unknown> }
+  | { kind: "booking" }
+  | { kind: "viewing" };
+
+/**
+ * Finds whichever record carries this gateway reference and marks it paid.
+ * Returns null when nothing matches, which is a real condition worth a 404 —
+ * a payment was taken against something we cannot identify.
+ */
+async function settleByExternalId(admin: Admin, externalId: string): Promise<Settled | null> {
+  const { data: consultation } = await admin
+    .from("consultations")
+    .update({ status: "paid", payment_status: "paid" })
+    .eq("payment_external_id", externalId)
+    .select("package_type, user_id")
+    .maybeSingle();
+  if (consultation) return { kind: "consultation", row: consultation };
+
+  const { data: booking } = await admin
+    .from("bookings")
+    .update({ payment_status: "paid", status: "confirmed", confirmed_at: new Date().toISOString() })
+    .eq("payment_external_id", externalId)
+    .select("id")
+    .maybeSingle();
+  if (booking) return { kind: "booking" };
+
+  const { data: viewing } = await admin
+    .from("viewings")
+    .update({ deposit_paid: true, deposit_paid_at: new Date().toISOString() })
+    .eq("payment_external_id", externalId)
+    .select("id")
+    .maybeSingle();
+  if (viewing) return { kind: "viewing" };
+
+  return null;
+}
+
 export async function POST(request: Request) {
   const resend = new Resend(process.env.RESEND_API_KEY ?? "dummy");
   // Verify Xendit webhook token
@@ -10,7 +50,7 @@ export async function POST(request: Request) {
   }
 
   const body = await request.json();
-  const { external_id: consultationId, status, payer_email } = body;
+  const { external_id: externalId, status, payer_email } = body;
 
   if (status !== "PAID") {
     return Response.json({ received: true });
@@ -18,16 +58,20 @@ export async function POST(request: Request) {
 
   const admin = createAdminClient();
 
-  const { data: consultation } = await admin
-    .from("consultations")
-    .update({ status: "paid" })
-    .eq("id", consultationId)
-    .select("package_type, user_id")
-    .single();
-
-  if (!consultation) {
-    return new Response("Consultation not found", { status: 404 });
+  // A gateway reference can belong to any of the three paid things. They share
+  // payment_external_id (migration 019) so this is one lookup shape, not three
+  // special cases — and the partial unique index on each makes a replayed
+  // webhook settle exactly one row.
+  const settled = await settleByExternalId(admin, externalId);
+  if (!settled) {
+    return new Response("No record matches that reference", { status: 404 });
   }
+  if (settled.kind !== "consultation") {
+    // Bookings and viewings have their own confirmation paths and no payer
+    // email on the webhook payload; marking them paid is the whole job.
+    return Response.json({ received: true, settled: settled.kind });
+  }
+  const consultation = settled.row as { package_type: string; user_id: string };
 
   const packageLabels: Record<string, string> = {
     basic: "Basic (30 min)",
