@@ -31,16 +31,20 @@ export async function GET(req: NextRequest) {
       .in("id", checkIns.map(b => b.id));
   }
 
-  // ── Expiry reminders (unpaid bookings expiring within 24h) ──
-  const in24h = new Date(today.getTime() + 24 * 60 * 60 * 1000).toISOString();
+  // ── Expiry reminders: fire when 12–36h remain ──────────────
+  // With 48h default expiry and a daily 08:00 cron, a booking created
+  // at 09:00 expires at 09:00 two days later. The cron at 08:00 on day 2
+  // sees ~25h remaining — within the 12–36h window — and fires once.
+  const in12h = new Date(today.getTime() + 12 * 60 * 60 * 1000).toISOString();
+  const in36h = new Date(today.getTime() + 36 * 60 * 60 * 1000).toISOString();
   const { data: expiring } = await admin
     .from("bookings")
     .select("id, booking_code, user_id, expires_at, bank_transfer_code, total_price, property:properties(name)")
     .eq("payment_status", "unpaid")
     .not("status", "in", '("confirmed","cancelled","expired")')
     .not("expires_at", "is", null)
-    .gt("expires_at", today.toISOString())
-    .lt("expires_at", in24h)
+    .gt("expires_at", in12h)
+    .lt("expires_at", in36h)
     .is("expiry_reminder_sent_at", null);
 
   if (expiring?.length) {

@@ -28,7 +28,7 @@ export async function PATCH(
     if (body.status === "confirmed") update.confirmed_at = new Date().toISOString();
     if (body.status === "cancelled") update.cancelled_at = new Date().toISOString();
   } else {
-    // Users can only upload payment proof
+    // Users can only upload payment proof (via dedicated route)
     if (body.payment_proof_url) {
       update.payment_proof_url = body.payment_proof_url;
       update.payment_status    = "pending_verification";
@@ -48,5 +48,12 @@ export async function PATCH(
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  return NextResponse.json({ booking: data });
+  // Restore credits if cancelling a booking that used them
+  let creditRestoration: { restored: number; expired_skipped: number } | null = null;
+  if (body.status === "cancelled") {
+    const { data: cr } = await admin.rpc("restore_booking_credits", { p_booking_id: id });
+    if (cr?.[0]) creditRestoration = cr[0];
+  }
+
+  return NextResponse.json({ booking: data, creditRestoration });
 }

@@ -3,10 +3,11 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 type AdminAction =
-  | { action: "confirm";   scheduled_at: string }
+  | { action: "confirm";         scheduled_at: string }
   | { action: "attend" }
   | { action: "no_show" }
-  | { action: "refund" };
+  | { action: "request_refund" }   // admin intends to refund — creates a transfer obligation
+  | { action: "confirm_refund" };  // admin confirms money was actually sent
 
 // PATCH /api/viewings/[id] — admin lifecycle actions
 export async function PATCH(
@@ -96,10 +97,10 @@ export async function PATCH(
       return NextResponse.json({ viewing: data, deposit: "forfeited" });
     }
 
-    case "refund": {
+    case "request_refund": {
       const { data: viewing } = await admin
         .from("viewings")
-        .select("deposit_paid, deposit_refunded")
+        .select("deposit_paid, deposit_refunded, deposit_refund_requested_at")
         .eq("id", id)
         .single();
 
@@ -109,14 +110,45 @@ export async function PATCH(
       if (viewing.deposit_refunded) {
         return NextResponse.json({ error: "Deposit already refunded" }, { status: 409 });
       }
+      if (viewing.deposit_refund_requested_at) {
+        return NextResponse.json({ error: "Refund already requested — confirm once sent" }, { status: 409 });
+      }
+
+      const { data, error } = await admin
+        .from("viewings")
+        .update({
+          deposit_refund_requested_at: new Date().toISOString(),
+          status:      "cancelled",
+          cancelled_at: new Date().toISOString(),
+        })
+        .eq("id", id)
+        .select()
+        .single();
+
+      if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+      // deposit_refunded stays false — transfer is pending
+      return NextResponse.json({ viewing: data, deposit: "refund_pending" });
+    }
+
+    case "confirm_refund": {
+      const { data: viewing } = await admin
+        .from("viewings")
+        .select("deposit_refund_requested_at, deposit_refunded")
+        .eq("id", id)
+        .single();
+
+      if (!viewing?.deposit_refund_requested_at) {
+        return NextResponse.json({ error: "No refund request to confirm" }, { status: 409 });
+      }
+      if (viewing.deposit_refunded) {
+        return NextResponse.json({ error: "Already confirmed" }, { status: 409 });
+      }
 
       const { data, error } = await admin
         .from("viewings")
         .update({
           deposit_refunded:    true,
           deposit_refunded_at: new Date().toISOString(),
-          status:              "cancelled",
-          cancelled_at:        new Date().toISOString(),
         })
         .eq("id", id)
         .select()
