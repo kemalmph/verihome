@@ -1,4 +1,5 @@
 import Link from "next/link";
+import { signOut } from "@/lib/supabase/auth-actions";
 
 interface SidebarLink {
   href: string;
@@ -95,13 +96,17 @@ export function DashboardSidebar({
       </nav>
 
       <div className="p-4 mt-auto">
-        <Link
-          href="/auth/login"
-          className="flex items-center gap-4 px-4 py-3 rounded-md text-red-300/60 hover:text-red-300 hover:bg-red-500/10 transition-colors"
-        >
-          <span className="material-symbols-outlined text-[20px]">logout</span>
-          <span className="text-sm font-medium">Logout</span>
-        </Link>
+        {/* A link here would navigate without ending the session — it has to
+            invoke signOut, which clears the cookie and redirects. */}
+        <form action={signOut}>
+          <button
+            type="submit"
+            className="w-full flex items-center gap-4 px-4 py-3 rounded-md text-red-300/60 hover:text-red-300 hover:bg-red-500/10 transition-colors"
+          >
+            <span className="material-symbols-outlined text-[20px]">logout</span>
+            <span className="text-sm font-medium">Logout</span>
+          </button>
+        </form>
       </div>
     </aside>
   );
