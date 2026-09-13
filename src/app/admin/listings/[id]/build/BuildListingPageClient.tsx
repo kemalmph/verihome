@@ -215,15 +215,32 @@ export function BuildListingPageClient({
           />
         </div>
 
-        {/* Right: Tally import + tips */}
+        {/* Right: survey entry + Tally import + tips */}
         <div className="space-y-4 sticky top-8">
+          <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-3">
+            <div className="flex items-center gap-2">
+              <span className="material-symbols-outlined text-[#1a7a5e]">edit_note</span>
+              <h3 className="font-bold text-[#0d2137]">Record a survey</h3>
+            </div>
+            <p className="text-sm text-[#3e4944] leading-relaxed">
+              Enter a site visit directly — RLA scores, area overview, pros and cons. Fills the same fields as a Tally import.
+            </p>
+            <button
+              onClick={() => guardedNavigate(`/admin/listings/${property.id}/survey`)}
+              className="w-full py-2.5 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+            >
+              <span className="material-symbols-outlined text-sm">add</span>
+              New survey
+            </button>
+          </div>
+
           <div className="bg-[#0d2137] text-white rounded-xl p-6 space-y-4">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-[#9cf4d1]">bolt</span>
               <h3 className="font-bold">Import from Tally</h3>
             </div>
             <p className="text-sm text-white/70 leading-relaxed">
-              If the surveyor submitted the Tally form, import it here. RLA scores, area overview, and notes will populate automatically.
+              Alternative remote intake. If a surveyor submitted the Tally form, import it here — it populates the same fields.
             </p>
 
             {pendingImports.length === 0 ? (
