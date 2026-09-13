@@ -11,13 +11,14 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json() as {
-    propertyId: string;
-    checkIn:    string;
-    checkOut:   string;
-    guests:     number;
+    propertyId:    string;
+    checkIn:       string;
+    checkOut:      string;
+    guests:        number;
+    creditAmount?: number;  // IDR credit to apply; must not exceed available balance
   };
 
-  const { propertyId, checkIn, checkOut, guests } = body;
+  const { propertyId, checkIn, checkOut, guests, creditAmount = 0 } = body;
   if (!propertyId || !checkIn || !checkOut || !guests) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
@@ -45,26 +46,49 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not calculate price for this property" }, { status: 400 });
   }
 
+  // Clamp credit to quote total so transfer amount is never negative
+  const appliedCredit = Math.min(Math.round(creditAmount), quote.total);
+  const transferTotal = quote.total - appliedCredit;
+
   const provider = getPaymentProvider();
-  // Payment intent covers total only; security deposit collected separately in person / separate transfer
-  const intent = await provider.createIntent(quote.total);
+  const intent = await provider.createIntent(transferTotal);
 
   const admin = createAdminClient();
-  const { data: booking, error } = await admin.rpc("create_booking_if_available", {
-    p_property_id:     propertyId,
-    p_user_id:         user.id,
-    p_check_in:        checkIn,
-    p_check_out:       checkOut,
-    p_guests:          guests,
-    p_price_per_night: quote.effectivePerNight,
-    p_cleaning_fee:    quote.cleaningFee,
-    p_total_price:     quote.total,
-    p_transfer_code:   intent.transferCode,
-  });
+  const rpc = appliedCredit > 0 ? "create_booking_with_credits" : "create_booking_if_available";
+  const rpcArgs = appliedCredit > 0
+    ? {
+        p_property_id:     propertyId,
+        p_user_id:         user.id,
+        p_check_in:        checkIn,
+        p_check_out:       checkOut,
+        p_guests:          guests,
+        p_price_per_night: quote.effectivePerNight,
+        p_cleaning_fee:    quote.cleaningFee,
+        p_gross_price:     quote.total,
+        p_credit_amount:   appliedCredit,
+        p_total_price:     transferTotal,
+        p_transfer_code:   intent.transferCode,
+      }
+    : {
+        p_property_id:     propertyId,
+        p_user_id:         user.id,
+        p_check_in:        checkIn,
+        p_check_out:       checkOut,
+        p_guests:          guests,
+        p_price_per_night: quote.effectivePerNight,
+        p_cleaning_fee:    quote.cleaningFee,
+        p_total_price:     transferTotal,
+        p_transfer_code:   intent.transferCode,
+      };
+
+  const { data: booking, error } = await admin.rpc(rpc, rpcArgs);
 
   if (error) {
     if (error.message?.includes("dates_unavailable")) {
       return NextResponse.json({ error: "Selected dates are no longer available" }, { status: 409 });
+    }
+    if (error.message?.includes("insufficient_credits")) {
+      return NextResponse.json({ error: "Insufficient credit balance" }, { status: 409 });
     }
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
@@ -74,6 +98,9 @@ export async function POST(req: NextRequest) {
     intent,
     quote: {
       tier:            quote.tier,
+      grossTotal:      quote.total,
+      creditApplied:   appliedCredit,
+      transferTotal,
       securityDeposit: quote.securityDeposit,
       checkInTime:     quote.checkInTime,
       checkOutTime:    quote.checkOutTime,
