@@ -1,4 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
+import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -62,6 +63,11 @@ export async function POST(req: NextRequest) {
       { property_id: body.propertyId, rental_mode_configured: rateComplete },
       { onConflict: "property_id" }
     );
+
+  // Purge the listing page cache so rate changes appear immediately
+  const { data: prop } = await admin.from("properties").select("slug").eq("id", body.propertyId).single();
+  if (prop?.slug) revalidatePath(`/listings/${prop.slug}`);
+  revalidatePath("/listings");
 
   return NextResponse.json({ success: true });
 }

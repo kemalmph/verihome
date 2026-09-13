@@ -9,6 +9,8 @@ import { getPropertyBySlug, getLiveSlugs } from "@/lib/supabase/queries";
 import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
 import { SaveButton } from "@/components/listings/SaveButton";
 
+export const revalidate = 60; // ISR: re-render listing pages at most once per minute
+
 export async function generateStaticParams() {
   const slugs = await getLiveSlugs();
   return slugs.map((slug) => ({ slug }));
