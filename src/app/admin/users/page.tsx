@@ -1,6 +1,6 @@
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { AdminToggle, ActiveClientToggle, DeleteUserButton } from "./UserRowActions";
+import { AdminToggle, SurveyorToggle, ActiveClientToggle, DeleteUserButton } from "./UserRowActions";
 import { CreateAdminForm } from "./CreateAdminForm";
 import { CreateUserForm } from "./CreateUserForm";
 import { EditUserButton } from "./EditUserModal";
@@ -28,7 +28,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
 
   const { data: users } = await admin
     .from("users")
-    .select("id, name, email, phone_whatsapp, user_type, preferred_area, budget_min, budget_max, is_admin, is_active_client, created_at")
+    .select("id, name, email, phone_whatsapp, user_type, preferred_area, budget_min, budget_max, is_admin, is_surveyor, is_active_client, created_at")
     .order("created_at", { ascending: false });
 
   const all = users ?? [];
@@ -95,6 +95,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                 <th className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Contact</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Type</th>
                 <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Admin</th>
+                <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Surveyor</th>
                 {showActiveClientCol && (
                   <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Active Client</th>
                 )}
@@ -122,6 +123,11 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                     <td className="px-6 py-4 text-center">
                       <div className="flex justify-center">
                         <AdminToggle userId={u.id} isAdmin={u.is_admin ?? false} />
+                      </div>
+                    </td>
+                    <td className="px-6 py-4 text-center">
+                      <div className="flex justify-center">
+                        <SurveyorToggle userId={u.id} isSurveyor={u.is_surveyor ?? false} />
                       </div>
                     </td>
                     {showActiveClientCol && (
@@ -152,7 +158,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
               })}
               {displayed.length === 0 && (
                 <tr>
-                  <td colSpan={showActiveClientCol ? 7 : 6} className="px-6 py-12 text-center text-sm text-[#6e7a74]">
+                  <td colSpan={showActiveClientCol ? 8 : 7} className="px-6 py-12 text-center text-sm text-[#6e7a74]">
                     No users found.
                   </td>
                 </tr>

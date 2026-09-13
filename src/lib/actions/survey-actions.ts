@@ -1,8 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireAdmin, requireSurveyAccess } from "@/lib/auth/guards";
 import {
   parseTallyFields,
   writeSurvey,
@@ -14,19 +14,6 @@ import {
   type SurveyPayload,
 } from "@/lib/survey/import";
 
-async function requireAdmin() {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
-  if (!user) throw new Error("Not signed in.");
-
-  const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("users").select("is_admin").eq("id", user.id).single();
-
-  if (!profile?.is_admin) throw new Error("Admin access required.");
-  return user;
-}
-
 function text(formData: FormData, key: string): string {
   return ((formData.get(key) as string) ?? "").trim();
 }
@@ -36,10 +23,23 @@ function text(formData: FormData, key: string): string {
  * webhook's name-matching or manual-link queue applies here.
  */
 export async function submitSurvey(propertyId: string, formData: FormData) {
+  let viewer;
   try {
-    await requireAdmin();
+    viewer = await requireSurveyAccess();
   } catch (err) {
     return { error: (err as Error).message };
+  }
+
+  // Surveyors may only record visits against properties still being worked up.
+  // A live listing's assessment is an admin concern.
+  if (viewer.role === "surveyor") {
+    const admin = createAdminClient();
+    const { data: prop } = await admin
+      .from("properties").select("status").eq("id", propertyId).single();
+
+    if (!prop || !["new_lead", "draft"].includes(prop.status ?? "")) {
+      return { error: "This property is not open for surveying." };
+    }
   }
 
   const surveyorName = text(formData, "surveyor_name");
@@ -102,6 +102,8 @@ export async function submitSurvey(propertyId: string, formData: FormData) {
 // ── Tally pending-import queue ───────────────────────────────────────────────
 
 export async function linkPendingImport(pendingId: string, propertyId: string) {
+  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+
   const admin = createAdminClient();
 
   const { data: pending } = await admin
@@ -136,6 +138,8 @@ export async function linkPendingImport(pendingId: string, propertyId: string) {
 }
 
 export async function rejectPendingImport(pendingId: string) {
+  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+
   const admin = createAdminClient();
   await admin
     .from("pending_survey_imports")

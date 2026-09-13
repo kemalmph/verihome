@@ -226,7 +226,7 @@ export function BuildListingPageClient({
               Enter a site visit directly — RLA scores, area overview, pros and cons. Fills the same fields as a Tally import.
             </p>
             <button
-              onClick={() => guardedNavigate(`/admin/listings/${property.id}/survey`)}
+              onClick={() => guardedNavigate(`/survey/${property.id}`)}
               className="w-full py-2.5 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
             >
               <span className="material-symbols-outlined text-sm">add</span>

@@ -60,8 +60,8 @@ function ScoreSlider({ name, label, hint }: { name: string; label: string; hint:
   );
 }
 
-function Field({ name, label, placeholder, hint, type = "text" }: {
-  name: string; label: string; placeholder?: string; hint?: string; type?: string;
+function Field({ name, label, placeholder, hint, type = "text", defaultValue }: {
+  name: string; label: string; placeholder?: string; hint?: string; type?: string; defaultValue?: string;
 }) {
   return (
     <div>
@@ -69,15 +69,21 @@ function Field({ name, label, placeholder, hint, type = "text" }: {
         {label}
         {hint && <span className="font-normal normal-case tracking-normal text-[#aaa] ml-1.5">{hint}</span>}
       </label>
-      <input id={name} name={name} type={type} placeholder={placeholder} className={input} />
+      <input
+        id={name} name={name} type={type} placeholder={placeholder}
+        defaultValue={defaultValue} className={input}
+      />
     </div>
   );
 }
 
-export function SurveyForm({ propertyId, propertyName }: { propertyId: string; propertyName: string }) {
+export function SurveyForm({ propertyId, propertyName, defaultSurveyor = "" }: {
+  propertyId: string; propertyName: string; defaultSurveyor?: string;
+}) {
   const router = useRouter();
   const [isPending, startTransition] = useTransition();
   const [error, setError] = useState("");
+  const [saved, setSaved] = useState(false);
 
   function handleSubmit(e: React.FormEvent<HTMLFormElement>) {
     e.preventDefault();
@@ -91,8 +97,41 @@ export function SurveyForm({ propertyId, propertyName }: { propertyId: string; p
         window.scrollTo({ top: 0, behavior: "smooth" });
         return;
       }
-      router.push(`/admin/listings/${propertyId}/build`);
+      // Surveyors have no access to the admin console, so the form confirms in
+      // place rather than redirecting somewhere half of its users cannot go.
+      setSaved(true);
+      router.refresh();
+      window.scrollTo({ top: 0, behavior: "smooth" });
     });
+  }
+
+  if (saved) {
+    return (
+      <div className="bg-white rounded-xl border border-[#9cf4d1] p-8 text-center">
+        <span className="material-symbols-outlined text-[#1a7a5e] text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+          check_circle
+        </span>
+        <h2 className="text-lg font-bold text-[#0d2137] mt-2">Survey recorded</h2>
+        <p className="text-sm text-[#6e7a74] mt-1 max-w-sm mx-auto">
+          {propertyName} now has your scores and area notes. The RLA and area overview
+          are marked complete on its publish checklist.
+        </p>
+        <div className="flex items-center justify-center gap-3 mt-6">
+          <button
+            onClick={() => router.push("/survey")}
+            className="px-5 py-2.5 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90"
+          >
+            Back to properties
+          </button>
+          <button
+            onClick={() => setSaved(false)}
+            className="px-5 py-2.5 border border-[#cccccc] text-[#3e4944] rounded-lg text-sm font-semibold hover:border-[#1a7a5e]"
+          >
+            Record another visit
+          </button>
+        </div>
+      </div>
+    );
   }
 
   return (
@@ -115,7 +154,7 @@ export function SurveyForm({ propertyId, propertyName }: { propertyId: string; p
               defaultValue={new Date().toISOString().slice(0, 10)} className={input}
             />
           </div>
-          <Field name="surveyor_name" label="Surveyor Name *" placeholder="Who visited" />
+          <Field name="surveyor_name" label="Surveyor Name *" placeholder="Who visited" defaultValue={defaultSurveyor} />
           <Field name="pic_name" label="PIC on site" placeholder="Owner or caretaker met" />
           <Field name="pic_whatsapp" label="PIC WhatsApp" placeholder="08xx xxxx xxxx" />
           <Field name="duration_minutes" label="Duration" hint="minutes" type="number" placeholder="45" />

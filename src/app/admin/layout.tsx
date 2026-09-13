@@ -1,26 +1,14 @@
 import { redirect } from "next/navigation";
-import { createClient } from "@/lib/supabase/server";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { getViewer } from "@/lib/auth/guards";
 
 export default async function AdminLayout({ children }: { children: React.ReactNode }) {
-  const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const viewer = await getViewer();
 
-  if (!user) {
-    redirect("/admin-login");
-  }
-
-  // Check is_admin in users table
-  const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("users")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile?.is_admin) {
-    redirect("/admin-login");
-  }
+  // Surveyors sign in through the same page and land here. Sending them back to
+  // the login form would loop, since they are already signed in — route them to
+  // the one area they do have access to.
+  if (viewer?.role === "surveyor") redirect("/survey");
+  if (viewer?.role !== "admin")    redirect("/admin-login");
 
   return <>{children}</>;
 }

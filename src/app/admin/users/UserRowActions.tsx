@@ -2,7 +2,7 @@
 
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toggleUserAdmin, toggleActiveClient, deleteUser } from "@/lib/actions/user-actions";
+import { toggleUserAdmin, toggleUserSurveyor, toggleActiveClient, deleteUser } from "@/lib/actions/user-actions";
 
 // ── Admin toggle pill ──────────────────────────────────────────────────────
 
@@ -31,6 +31,42 @@ export function AdminToggle({ userId, isAdmin }: { userId: string; isAdmin: bool
         }`}
       />
     </button>
+  );
+}
+
+// ── Surveyor toggle pill ───────────────────────────────────────────────────
+
+export function SurveyorToggle({ userId, isSurveyor }: { userId: string; isSurveyor: boolean }) {
+  const [pending, start] = useTransition();
+  const [current, setCurrent] = useState(isSurveyor);
+  const [error, setError] = useState("");
+
+  return (
+    <div className="inline-flex flex-col items-start gap-0.5">
+      <button
+        disabled={pending}
+        onClick={() =>
+          start(async () => {
+            const next = !current;
+            const res = await toggleUserSurveyor(userId, next);
+            if (res.error) { setError(res.error); return; }
+            setError("");
+            setCurrent(next);
+          })
+        }
+        title={current ? "Revoke survey access" : "Allow this person to record surveys"}
+        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 ${
+          current ? "bg-[#1a7a5e]" : "bg-[#bec9c2]"
+        }`}
+      >
+        <span
+          className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
+            current ? "translate-x-6" : "translate-x-1"
+          }`}
+        />
+      </button>
+      {error && <span className="text-[10px] text-red-600 max-w-[120px] leading-tight">{error}</span>}
+    </div>
   );
 }
 
