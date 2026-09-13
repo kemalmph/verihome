@@ -41,6 +41,21 @@ function fmt(n: number) {
   return new Intl.NumberFormat("id-ID").format(n);
 }
 
+// Payment deadline is shown in Jakarta time — the transfer is made from an
+// Indonesian bank, so WIB is the only timezone the guest can act on.
+function fmtDeadline(iso: string) {
+  const d = new Date(iso);
+  // Date and time are formatted separately: a combined id-ID format splices in
+  // "pukul", which reads wrong inside the surrounding English sentence.
+  const date = new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Jakarta", day: "numeric", month: "long", year: "numeric",
+  }).format(d);
+  const time = new Intl.DateTimeFormat("id-ID", {
+    timeZone: "Asia/Jakarta", hour: "2-digit", minute: "2-digit", hour12: false,
+  }).format(d);
+  return `${date}, ${time}`;
+}
+
 // ── Step 1: pick dates ────────────────────────────────────────
 
 function StepDates({
@@ -247,9 +262,9 @@ function StepConfirm({
 // ── Step 3: payment instructions ─────────────────────────────
 
 function StepPayment({
-  intent, bookingCode,
+  intent, bookingCode, expiresAt,
 }: {
-  intent: Intent; bookingCode: string;
+  intent: Intent; bookingCode: string; expiresAt: string | null;
 }) {
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
@@ -277,6 +292,23 @@ function StepPayment({
         <p className="text-xs text-[#6e7a74]">{intent.instructions}</p>
       </div>
 
+      {expiresAt && (
+        <div className="flex items-start gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3">
+          <span className="material-symbols-outlined text-amber-500 text-base leading-none mt-0.5">schedule</span>
+          <div className="text-xs text-amber-900 space-y-1">
+            <p className="font-semibold">
+              Transfer before {fmtDeadline(expiresAt)} WIB
+            </p>
+            <p className="text-amber-800">
+              After this time the booking is cancelled automatically and the dates are released to other guests.
+            </p>
+            <p className="text-amber-800">
+              Transfer sebelum waktu tersebut. Lewat batas ini, pemesanan otomatis dibatalkan dan tanggalnya dilepas.
+            </p>
+          </div>
+        </div>
+      )}
+
       <p className="text-xs text-[#6e7a74]">
         After transferring, upload your payment proof in <strong>My Bookings</strong>. We&apos;ll confirm within 24 hours.
       </p>
@@ -303,6 +335,7 @@ export function BookingFlow({ propertyId, rate }: Pick<Props, "propertyId" | "ra
   const [error,   setError]   = useState("");
   const [intent,  setIntent]  = useState<Intent | null>(null);
   const [bookingCode, setBookingCode] = useState("");
+  const [expiresAt,   setExpiresAt]   = useState<string | null>(null);
 
   function handleStep1(ci: string, co: string, g: number, q: Quote) {
     setCheckIn(ci); setCheckOut(co); setGuests(g); setQuote(q);
@@ -322,6 +355,7 @@ export function BookingFlow({ propertyId, rate }: Pick<Props, "propertyId" | "ra
       if (!res.ok) { setError(data.error); return; }
       setIntent(data.intent);
       setBookingCode(data.booking.booking_code);
+      setExpiresAt(data.booking.expires_at ?? null);
       setStep(3);
     } catch {
       setError("Something went wrong. Please try again.");
@@ -357,7 +391,7 @@ export function BookingFlow({ propertyId, rate }: Pick<Props, "propertyId" | "ra
         />
       )}
       {step === 3 && intent && (
-        <StepPayment intent={intent} bookingCode={bookingCode} />
+        <StepPayment intent={intent} bookingCode={bookingCode} expiresAt={expiresAt} />
       )}
     </div>
   );
