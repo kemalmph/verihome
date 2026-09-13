@@ -2,7 +2,7 @@ import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPaymentProvider } from "@/lib/payment";
-import { validateStayRules, calculatePrice, isRangeAvailable } from "@/lib/availability";
+import { validateStayRules, calculatePrice, isRangeAvailable, getBufferDays } from "@/lib/availability";
 
 // POST /api/bookings — create a new short-stay booking
 export async function POST(req: NextRequest) {
@@ -25,29 +25,30 @@ export async function POST(req: NextRequest) {
   const inDate  = new Date(checkIn  + "T00:00:00Z");
   const outDate = new Date(checkOut + "T00:00:00Z");
 
-  // Validate rules
-  const validation = await validateStayRules(propertyId, inDate, outDate);
+  const [validation, bufferDays] = await Promise.all([
+    validateStayRules(propertyId, inDate, outDate),
+    getBufferDays(propertyId),
+  ]);
+
   if (!validation.valid) {
     return NextResponse.json({ error: validation.error }, { status: 400 });
   }
 
-  // Quick availability check (the atomic RPC does it again with a lock)
-  const available = await isRangeAvailable(propertyId, inDate, outDate);
+  // Quick pre-check with buffer (atomic RPC re-checks without buffer for the actual block)
+  const available = await isRangeAvailable(propertyId, inDate, outDate, bufferDays);
   if (!available) {
     return NextResponse.json({ error: "Selected dates are not available" }, { status: 409 });
   }
 
-  // Calculate price
   const quote = await calculatePrice(propertyId, inDate, outDate);
   if (!quote) {
     return NextResponse.json({ error: "Could not calculate price for this property" }, { status: 400 });
   }
 
-  // Create payment intent
   const provider = getPaymentProvider();
-  const intent   = await provider.createIntent(quote.total);
+  // Payment intent covers total only; security deposit collected separately in person / separate transfer
+  const intent = await provider.createIntent(quote.total);
 
-  // Atomic booking creation
   const admin = createAdminClient();
   const { data: booking, error } = await admin.rpc("create_booking_if_available", {
     p_property_id:     propertyId,
@@ -55,7 +56,7 @@ export async function POST(req: NextRequest) {
     p_check_in:        checkIn,
     p_check_out:       checkOut,
     p_guests:          guests,
-    p_price_per_night: quote.pricePerNight,
+    p_price_per_night: quote.effectivePerNight,
     p_cleaning_fee:    quote.cleaningFee,
     p_total_price:     quote.total,
     p_transfer_code:   intent.transferCode,
@@ -68,7 +69,16 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: error.message }, { status: 500 });
   }
 
-  return NextResponse.json({ booking, intent }, { status: 201 });
+  return NextResponse.json({
+    booking,
+    intent,
+    quote: {
+      tier:            quote.tier,
+      securityDeposit: quote.securityDeposit,
+      checkInTime:     quote.checkInTime,
+      checkOutTime:    quote.checkOutTime,
+    },
+  }, { status: 201 });
 }
 
 // GET /api/bookings — list user's own bookings
@@ -83,10 +93,7 @@ export async function GET(req: NextRequest) {
   const admin = createAdminClient();
   let query = admin
     .from("bookings")
-    .select(`
-      *,
-      property:properties ( id, name, area, slug )
-    `)
+    .select(`*, property:properties ( id, name, area, slug )`)
     .eq("user_id", user.id)
     .order("created_at", { ascending: false });
 

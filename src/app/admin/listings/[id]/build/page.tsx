@@ -25,7 +25,7 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
         area_overviews ( nearest_mrt, mrt_distance, nearest_transjakarta, transjakarta_distance, nearest_minimarket, nearest_clinic, nearest_food, nearest_gym, neighborhood_character, expat_friendly, time_to_scbd_min, time_to_sudirman_min, area_notes ),
         property_details ( facilities, included_utilities, rules, additional_notes ),
         property_media ( photos_exterior, photos_common_area, photos_unit, photos_bathroom, video_url ),
-        short_stay_rates ( price_per_night, price_per_night_weekend, min_nights, max_nights, cleaning_fee, active )
+        short_stay_rates ( price_per_night, price_per_night_weekend, price_per_week, price_per_month, min_nights, max_nights, cleaning_fee, security_deposit, check_in_time, check_out_time, buffer_days, active )
       `)
       .eq("id", id)
       .single(),
@@ -131,16 +131,23 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
             photos_bathroom:    (property.property_media[0].photos_bathroom    as string[]) ?? [],
             video_url:          (property.property_media[0].video_url as string | null) ?? null,
           } : null}
-          shortStayRate={property.short_stay_rates?.[0] ? {
-            price_per_night:         Number((property.short_stay_rates[0] as Record<string,unknown>).price_per_night ?? 0),
-            price_per_night_weekend: (property.short_stay_rates[0] as Record<string,unknown>).price_per_night_weekend != null
-              ? Number((property.short_stay_rates[0] as Record<string,unknown>).price_per_night_weekend) : null,
-            min_nights:              Number((property.short_stay_rates[0] as Record<string,unknown>).min_nights ?? 1),
-            max_nights:              (property.short_stay_rates[0] as Record<string,unknown>).max_nights != null
-              ? Number((property.short_stay_rates[0] as Record<string,unknown>).max_nights) : null,
-            cleaning_fee:            Number((property.short_stay_rates[0] as Record<string,unknown>).cleaning_fee ?? 0),
-            active:                  Boolean((property.short_stay_rates[0] as Record<string,unknown>).active),
-          } : null}
+          shortStayRate={property.short_stay_rates?.[0] ? (() => {
+            const r = property.short_stay_rates[0] as Record<string,unknown>;
+            return {
+              price_per_night:         Number(r.price_per_night         ?? 0),
+              price_per_night_weekend: r.price_per_night_weekend != null ? Number(r.price_per_night_weekend) : null,
+              price_per_week:          r.price_per_week  != null ? Number(r.price_per_week)  : null,
+              price_per_month:         r.price_per_month != null ? Number(r.price_per_month) : null,
+              min_nights:              Number(r.min_nights  ?? 1),
+              max_nights:              r.max_nights != null ? Number(r.max_nights) : null,
+              cleaning_fee:            Number(r.cleaning_fee      ?? 0),
+              security_deposit:        Number(r.security_deposit  ?? 0),
+              check_in_time:           String(r.check_in_time     ?? "14:00"),
+              check_out_time:          String(r.check_out_time    ?? "12:00"),
+              buffer_days:             Number(r.buffer_days       ?? 0),
+              active:                  Boolean(r.active),
+            };
+          })() : null}
           pendingImports={parsedPending}
           onLinkImport={handleLinkImport}
         />

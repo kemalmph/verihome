@@ -13,12 +13,19 @@ interface Props {
 // passed down to StepDates via context-like prop
 
 
+type PricingTier = "per_night" | "weekly" | "monthly";
+
 interface Quote {
-  nights:       number;
-  pricePerNight: number;
-  cleaningFee:  number;
-  subtotal:     number;
-  total:        number;
+  nights:           number;
+  tier:             PricingTier;
+  effectivePerNight: number;
+  cleaningFee:      number;
+  securityDeposit:  number;
+  subtotal:         number;
+  total:            number;
+  checkInTime:      string;
+  checkOutTime:     string;
+  breakdown:        { date: string; price: number }[];
 }
 
 interface Intent {
@@ -129,13 +136,50 @@ function StepDates({
 
       {quote && (
         <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-2 text-sm">
-          <div className="flex justify-between"><span>IDR {fmt(quote.pricePerNight)} × {quote.nights} nights</span><span>IDR {fmt(quote.subtotal)}</span></div>
+          {/* Tier-aware price breakdown */}
+          {quote.tier === "monthly" && (
+            <div className="flex justify-between">
+              <span>IDR {fmt(Math.round(quote.subtotal / (quote.nights / 30)))} × {(quote.nights / 30).toFixed(1)} bulan</span>
+              <span>IDR {fmt(quote.subtotal)}</span>
+            </div>
+          )}
+          {quote.tier === "weekly" && (
+            <div className="flex justify-between">
+              <span>IDR {fmt(Math.round(quote.subtotal / (quote.nights / 7)))} × {(quote.nights / 7).toFixed(1)} minggu</span>
+              <span>IDR {fmt(quote.subtotal)}</span>
+            </div>
+          )}
+          {quote.tier === "per_night" && quote.breakdown.length > 0 && (() => {
+            const hasWeekend = quote.breakdown.some((b, i) =>
+              i > 0 && b.price !== quote.breakdown[0].price
+            );
+            return hasWeekend ? (
+              <>
+                {quote.breakdown.map((b) => (
+                  <div key={b.date} className="flex justify-between text-[#3e4944]">
+                    <span>{b.date}</span><span>IDR {fmt(b.price)}</span>
+                  </div>
+                ))}
+              </>
+            ) : (
+              <div className="flex justify-between">
+                <span>IDR {fmt(quote.breakdown[0].price)} × {quote.nights} malam</span>
+                <span>IDR {fmt(quote.subtotal)}</span>
+              </div>
+            );
+          })()}
           {quote.cleaningFee > 0 && (
             <div className="flex justify-between text-[#6e7a74]"><span>Cleaning fee</span><span>IDR {fmt(quote.cleaningFee)}</span></div>
           )}
           <div className="flex justify-between font-bold border-t border-[#cccccc] pt-2">
             <span>Total</span><span className="text-[#1a7a5e]">IDR {fmt(quote.total)}</span>
           </div>
+          {quote.securityDeposit > 0 && (
+            <div className="flex justify-between text-xs text-[#6e7a74] border-t border-[#e4e2e1] pt-2">
+              <span>Security deposit (refundable, paid separately)</span>
+              <span>IDR {fmt(quote.securityDeposit)}</span>
+            </div>
+          )}
 
           <button
             onClick={() => onNext(checkIn, checkOut, guests, quote)}
@@ -169,8 +213,9 @@ function StepConfirm({
           { label: "Nights",      value: String(quote.nights) },
           { label: "Guests",      value: String(guests) },
           { label: "Subtotal",    value: `IDR ${fmt(quote.subtotal)}` },
-          { label: "Cleaning fee", value: `IDR ${fmt(quote.cleaningFee)}` },
-          { label: "Total",       value: `IDR ${fmt(quote.total)}` },
+          ...(quote.cleaningFee > 0 ? [{ label: "Cleaning fee", value: `IDR ${fmt(quote.cleaningFee)}` }] : []),
+          { label: "Total (to transfer)",  value: `IDR ${fmt(quote.total)}` },
+          ...(quote.securityDeposit > 0 ? [{ label: "Security deposit (refundable)", value: `IDR ${fmt(quote.securityDeposit)}` }] : []),
         ].map((row) => (
           <div key={row.label} className="flex justify-between border-b border-[#f6f3f2] pb-2 last:border-0 last:font-bold">
             <span className="text-[#3e4944]">{row.label}</span>
