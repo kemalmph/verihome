@@ -65,9 +65,14 @@ export type PropertyRow = {
 export type ShortStayRateRow = {
   price_per_night: number;
   price_per_night_weekend: number | null;
+  price_per_week: number | null;
+  price_per_month: number | null;
   min_nights: number;
   max_nights: number | null;
   cleaning_fee: number;
+  security_deposit: number;
+  check_in_time: string;
+  check_out_time: string;
   active: boolean;
 };
 
@@ -95,7 +100,7 @@ const PROPERTY_DETAIL_SELECT = `
   property_details ( included_utilities, facilities, rules ),
   area_overviews ( nearest_mrt, mrt_distance, walk_time_to_transit_min, nearest_transjakarta, transjakarta_distance, nearest_minimarket, nearest_clinic, nearest_food, nearest_gym, neighborhood_character, expat_friendly, time_to_scbd_min, time_to_sudirman_min, area_notes ),
   property_media ( photos_exterior, photos_common_area, photos_unit, photos_bathroom, total_photo_count, video_url ),
-  short_stay_rates ( price_per_night, price_per_night_weekend, min_nights, max_nights, cleaning_fee, active )
+  short_stay_rates ( price_per_night, price_per_night_weekend, price_per_week, price_per_month, min_nights, max_nights, cleaning_fee, security_deposit, check_in_time, check_out_time, active )
 `;
 
 export async function getLiveProperties(filters?: {
