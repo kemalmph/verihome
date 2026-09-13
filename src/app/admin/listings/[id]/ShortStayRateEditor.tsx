@@ -298,18 +298,18 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
         <div>
           <label className={labelCls}>Cleaning Fee (IDR)</label>
           <input
-            type="number" min={0} disabled={!isEditable}
-            value={rate.cleaning_fee ?? ""}
-            onChange={(e) => field("cleaning_fee", e.target.value ? Number(e.target.value) : 0)}
+            type="text" inputMode="numeric" disabled={!isEditable}
+            value={rate.cleaning_fee === 0 || rate.cleaning_fee == null ? "" : String(rate.cleaning_fee)}
+            onChange={(e) => field("cleaning_fee", e.target.value.replace(/\D/g, "") ? Number(e.target.value.replace(/\D/g, "")) : 0)}
             placeholder="0" className={input}
           />
         </div>
         <div>
           <label className={labelCls}>Security Deposit (IDR) <span className="font-normal normal-case text-[#aaa]">refundable</span></label>
           <input
-            type="number" min={0} disabled={!isEditable}
-            value={rate.security_deposit ?? ""}
-            onChange={(e) => field("security_deposit", e.target.value ? Number(e.target.value) : 0)}
+            type="text" inputMode="numeric" disabled={!isEditable}
+            value={rate.security_deposit === 0 || rate.security_deposit == null ? "" : String(rate.security_deposit)}
+            onChange={(e) => field("security_deposit", e.target.value.replace(/\D/g, "") ? Number(e.target.value.replace(/\D/g, "")) : 0)}
             placeholder="0" className={input}
           />
         </div>
