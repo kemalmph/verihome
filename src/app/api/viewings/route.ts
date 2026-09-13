@@ -12,14 +12,13 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const body = await req.json() as {
-    propertyId:   string;
-    preferredDate: string;  // ISO date string
-    preferredTime: string;  // e.g. "10:00"
-    notes?:       string;
+    propertyId:    string;
+    preferredDates: { date: string; time: string }[];  // e.g. [{date:"2026-02-10", time:"10:00"}]
+    notes?:        string;
   };
 
-  const { propertyId, preferredDate, preferredTime, notes } = body;
-  if (!propertyId || !preferredDate || !preferredTime) {
+  const { propertyId, preferredDates, notes } = body;
+  if (!propertyId || !preferredDates?.length) {
     return NextResponse.json({ error: "Missing required fields" }, { status: 400 });
   }
 
@@ -32,9 +31,8 @@ export async function POST(req: NextRequest) {
     .insert({
       property_id:        propertyId,
       user_id:            user.id,
-      preferred_date:     preferredDate,
-      preferred_time:     preferredTime,
-      notes:              notes ?? null,
+      preferred_dates:    preferredDates,
+      team_notes:         notes ?? null,
       deposit_amount:     VIEWING_DEPOSIT,
       bank_transfer_code: intent.transferCode,
       status:             "pending",
