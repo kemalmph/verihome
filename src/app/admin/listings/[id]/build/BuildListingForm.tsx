@@ -67,6 +67,7 @@ interface BuildListingFormProps {
   formRef: React.RefObject<HTMLFormElement | null>;
   onDirty: () => void;
   onClean: () => void;
+  onRentalModeChange?: (mode: string) => void;
 }
 
 // ── Shared styles ──────────────────────────────────────────────────────────
@@ -136,7 +137,7 @@ function SectionHeading({ icon, title, subtitle }: { icon: string; title: string
 
 // ── Main form ──────────────────────────────────────────────────────────────
 
-export function BuildListingForm({ property, rla, area, details, formRef, onDirty, onClean }: BuildListingFormProps) {
+export function BuildListingForm({ property, rla, area, details, formRef, onDirty, onClean, onRentalModeChange }: BuildListingFormProps) {
   const [isPending, startTransition] = useTransition();
   const [saved, setSaved] = useState(false);
   const [dirtyFired, setDirtyFired] = useState(false);
@@ -413,7 +414,12 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
         <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
           <div className="col-span-2">
             <label className={labelCls}>Rental Mode</label>
-            <select name="rental_mode" defaultValue={property.rental_mode ?? "long_term"} className={input}>
+            <select
+              name="rental_mode"
+              defaultValue={property.rental_mode ?? "long_term"}
+              onChange={(e) => onRentalModeChange?.(e.target.value)}
+              className={input}
+            >
               <option value="long_term">Long-term only</option>
               <option value="short_stay">Short stay only</option>
               <option value="both">Both long-term &amp; short stay</option>

@@ -5,7 +5,9 @@ import { useRouter } from "next/navigation";
 import { statusColor, statusLabel } from "@/lib/pipeline";
 import { BuildListingForm } from "./BuildListingForm";
 import { MediaSection } from "../MediaSection";
+import { ShortStayRateEditor } from "../ShortStayRateEditor";
 import type { PropertyData, RLAData, AreaData, DetailsData } from "./BuildListingForm";
+import type { ShortStayRateData } from "../ShortStayRateEditor";
 
 interface PendingImport {
   id: string;
@@ -30,6 +32,7 @@ interface Props {
   area: AreaData | null;
   details: DetailsData | null;
   media: MediaData | null;
+  shortStayRate: ShortStayRateData | null;
   pendingImports: PendingImport[];
   onLinkImport: (pendingId: string) => Promise<void>;
 }
@@ -101,6 +104,7 @@ export function BuildListingPageClient({
   area,
   details,
   media,
+  shortStayRate,
   pendingImports,
   onLinkImport,
 }: Props) {
@@ -111,6 +115,7 @@ export function BuildListingPageClient({
   const [saveBeforeLeave, setSaveBeforeLeave] = useState(false);
   const [isSaving, startSaveTransition] = useTransition();
   const [isLinking, startLinkTransition] = useTransition();
+  const [rentalMode, setRentalMode] = useState(property.rental_mode ?? "long_term");
 
   // Browser close / refresh guard
   useEffect(() => {
@@ -205,6 +210,7 @@ export function BuildListingPageClient({
             formRef={formRef}
             onDirty={() => setIsDirty(true)}
             onClean={() => setIsDirty(false)}
+            onRentalModeChange={setRentalMode}
           />
         </div>
 
@@ -291,6 +297,15 @@ export function BuildListingPageClient({
             ))}
           </div>
         </div>
+      </div>
+
+      {/* Short-stay rate editor */}
+      <div className="mt-8">
+        <ShortStayRateEditor
+          propertyId={property.id}
+          rentalMode={rentalMode}
+          initialRate={shortStayRate}
+        />
       </div>
 
       {/* Media section */}

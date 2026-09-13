@@ -24,7 +24,8 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
         rla_assessments ( building_condition, natural_lighting, ventilation, noise_level, cleanliness, security_level, bathroom_condition, furniture_quality, pros, cons, overall_notes, survey_id ),
         area_overviews ( nearest_mrt, mrt_distance, nearest_transjakarta, transjakarta_distance, nearest_minimarket, nearest_clinic, nearest_food, nearest_gym, neighborhood_character, expat_friendly, time_to_scbd_min, time_to_sudirman_min, area_notes ),
         property_details ( facilities, included_utilities, rules, additional_notes ),
-        property_media ( photos_exterior, photos_common_area, photos_unit, photos_bathroom, video_url )
+        property_media ( photos_exterior, photos_common_area, photos_unit, photos_bathroom, video_url ),
+        short_stay_rates ( price_per_night, price_per_night_weekend, min_nights, max_nights, cleaning_fee, active )
       `)
       .eq("id", id)
       .single(),
@@ -129,6 +130,16 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
             photos_unit:        (property.property_media[0].photos_unit        as string[]) ?? [],
             photos_bathroom:    (property.property_media[0].photos_bathroom    as string[]) ?? [],
             video_url:          (property.property_media[0].video_url as string | null) ?? null,
+          } : null}
+          shortStayRate={property.short_stay_rates?.[0] ? {
+            price_per_night:         Number((property.short_stay_rates[0] as Record<string,unknown>).price_per_night ?? 0),
+            price_per_night_weekend: (property.short_stay_rates[0] as Record<string,unknown>).price_per_night_weekend != null
+              ? Number((property.short_stay_rates[0] as Record<string,unknown>).price_per_night_weekend) : null,
+            min_nights:              Number((property.short_stay_rates[0] as Record<string,unknown>).min_nights ?? 1),
+            max_nights:              (property.short_stay_rates[0] as Record<string,unknown>).max_nights != null
+              ? Number((property.short_stay_rates[0] as Record<string,unknown>).max_nights) : null,
+            cleaning_fee:            Number((property.short_stay_rates[0] as Record<string,unknown>).cleaning_fee ?? 0),
+            active:                  Boolean((property.short_stay_rates[0] as Record<string,unknown>).active),
           } : null}
           pendingImports={parsedPending}
           onLinkImport={handleLinkImport}
