@@ -12,16 +12,26 @@ export interface ShortStayRateData {
 }
 
 interface Props {
-  propertyId: string;
-  rentalMode: string;
-  initialRate: ShortStayRateData | null;
+  propertyId:       string;
+  /** Current value of the Rental Mode dropdown (may not yet be saved) */
+  rentalMode:       string;
+  /** The value that is actually persisted in the DB */
+  savedRentalMode:  string;
+  initialRate:      ShortStayRateData | null;
 }
 
 const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white disabled:bg-[#f6f3f2] disabled:text-[#aaa] disabled:cursor-not-allowed";
 const labelCls = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1";
 
-export function ShortStayRateEditor({ propertyId, rentalMode, initialRate }: Props) {
-  const isEditable = rentalMode === "short_stay" || rentalMode === "both";
+function isShortStayMode(mode: string) {
+  return mode === "short_stay" || mode === "both";
+}
+
+export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, initialRate }: Props) {
+  // Editing is only allowed when the DB mode is short_stay/both (mode is persisted)
+  const isEditable     = isShortStayMode(savedRentalMode);
+  // Dropdown points to short_stay/both but hasn't been saved yet
+  const pendingSave    = !isEditable && isShortStayMode(rentalMode);
 
   const [rate, setRate] = useState<ShortStayRateData>({
     price_per_night:         initialRate?.price_per_night         ?? null,
@@ -41,7 +51,13 @@ export function ShortStayRateEditor({ propertyId, rentalMode, initialRate }: Pro
     setRate((prev) => ({ ...prev, [key]: value }));
   }
 
+  function handleToggleActive() {
+    if (!isEditable) return;
+    field("active", !rate.active);
+  }
+
   function handleSave() {
+    if (!isEditable) return;
     if (!rate.price_per_night) { setError("Nightly rate is required."); return; }
     setError("");
     startTransition(async () => {
@@ -68,25 +84,47 @@ export function ShortStayRateEditor({ propertyId, rentalMode, initialRate }: Pro
           <h3 className="font-semibold text-[#0d2137]">Short-stay Rates</h3>
           <p className="text-xs text-[#6e7a74] mt-0.5">Nightly pricing and stay rules</p>
         </div>
-        {/* Active toggle */}
-        <label className={`flex items-center gap-2 text-sm cursor-pointer ${!isEditable ? "opacity-40 pointer-events-none" : ""}`}>
-          <span className="text-[#3e4944]">Active</span>
-          <div
-            onClick={() => isEditable && field("active", !rate.active)}
-            className={`w-10 h-5 rounded-full relative transition-colors ${rate.active && isEditable ? "bg-[#1a7a5e]" : "bg-[#cccccc]"}`}
-          >
-            <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${rate.active && isEditable ? "translate-x-5" : ""}`} />
+
+        {/* Active toggle — only shown when editable */}
+        {isEditable && (
+          <div className="flex flex-col items-end gap-1">
+            <button
+              type="button"
+              onClick={handleToggleActive}
+              className="flex items-center gap-2 text-sm"
+              title={rate.active
+                ? "Deactivating stops new bookings. Confirmed future bookings are not affected."
+                : "Activate to allow new short-stay bookings"}
+            >
+              <span className="text-[#3e4944]">Active</span>
+              <div className={`w-10 h-5 rounded-full relative transition-colors ${rate.active ? "bg-[#1a7a5e]" : "bg-[#cccccc]"}`}>
+                <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${rate.active ? "translate-x-5" : ""}`} />
+              </div>
+            </button>
+            {/* Deactivation note */}
+            {!rate.active && initialRate?.active && (
+              <p className="text-[10px] text-[#6e7a74] text-right max-w-[180px]">
+                Stops new bookings only. Confirmed future bookings are unaffected.
+              </p>
+            )}
           </div>
-        </label>
+        )}
       </div>
 
-      {/* Lock notice */}
-      {!isEditable && (
+      {/* State notices */}
+      {pendingSave && (
+        <div className="flex items-center gap-2 bg-blue-50 border border-blue-200 rounded-lg px-4 py-3 text-sm text-blue-800">
+          <span className="material-symbols-outlined text-blue-500 text-base">info</span>
+          Rental Mode has been changed but not saved yet.
+          <strong className="ml-1">Save as Draft</strong> above first, then return here to set rates.
+        </div>
+      )}
+
+      {!isEditable && !pendingSave && (
         <div className="flex items-center gap-2 bg-amber-50 border border-amber-200 rounded-lg px-4 py-3 text-sm text-amber-800">
           <span className="material-symbols-outlined text-amber-500 text-base">lock</span>
-          Short-stay rates are only editable when <strong className="mx-1">Rental Mode</strong> is set to
-          <strong className="mx-1">&quot;Short stay only&quot;</strong> or <strong className="mx-1">&quot;Both&quot;</strong>.
-          Change the mode above and save first.
+          Short-stay rates are only editable when <strong className="mx-1">Rental Mode</strong> is
+          set to <strong className="mx-1">&quot;Short stay only&quot;</strong> or <strong className="mx-1">&quot;Both&quot;</strong> and saved.
         </div>
       )}
 
@@ -173,7 +211,7 @@ export function ShortStayRateEditor({ propertyId, rentalMode, initialRate }: Pro
       {saved && (
         <div className="flex items-center gap-2 text-sm text-[#1a7a5e] font-medium">
           <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
-          Rate saved successfully.
+          Rate saved. Checklist updated.
         </div>
       )}
 

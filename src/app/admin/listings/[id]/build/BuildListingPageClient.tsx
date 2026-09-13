@@ -304,6 +304,7 @@ export function BuildListingPageClient({
         <ShortStayRateEditor
           propertyId={property.id}
           rentalMode={rentalMode}
+          savedRentalMode={property.rental_mode ?? "long_term"}
           initialRate={shortStayRate}
         />
       </div>

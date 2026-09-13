@@ -56,5 +56,14 @@ export async function POST(req: NextRequest) {
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  // Update publish checklist: rate is configured if there's an active rate with a price
+  const rateComplete = body.active && body.price_per_night > 0;
+  await admin
+    .from("publish_checklist")
+    .upsert(
+      { property_id: body.propertyId, rental_mode_configured: rateComplete },
+      { onConflict: "property_id" }
+    );
+
   return NextResponse.json({ success: true });
 }
