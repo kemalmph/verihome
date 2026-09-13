@@ -29,20 +29,25 @@ export async function signInWithEmail(formData: FormData, redirectTo = "/dashboa
   redirect(redirectTo);
 }
 
-export async function signUpWithEmail(formData: FormData) {
+export async function signUpWithEmail(formData: FormData, redirectTo = "/dashboard") {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const name = formData.get("name") as string;
   const supabase = await createClient();
 
-  const { error } = await supabase.auth.signUp({
+  const { data, error } = await supabase.auth.signUp({
     email,
     password,
     options: { data: { full_name: name } },
   });
   if (error) return { error: error.message };
 
-  return { success: "Check your email to confirm your account." };
+  // Supabase returns a session here only when "Confirm email" is off. Branch on
+  // what actually came back rather than on an assumption about the project
+  // setting, so this stays correct whichever way that toggle is set.
+  if (data.session) redirect(redirectTo);
+
+  return { success: "Almost there — check your email to confirm your account, then sign in." };
 }
 
 export async function sendOtp(formData: FormData) {

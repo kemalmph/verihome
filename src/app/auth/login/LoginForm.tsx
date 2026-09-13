@@ -28,7 +28,9 @@ export function LoginForm({ next, reason }: { next: string; reason?: string }) {
         if (res?.error) setError(res.error);
         return;
       }
-      const res = await signUpWithEmail(formData);
+      // Redirects straight to `next` when the account is usable immediately;
+      // only returns when confirmation is still required.
+      const res = await signUpWithEmail(formData, next);
       if (res?.error)   { setError(res.error); return; }
       if (res?.success) { setNotice(res.success); }
     });
