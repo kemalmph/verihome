@@ -83,24 +83,26 @@ export function computePrice(
   const nights     = nightDates.length;
 
   if (nights >= 28 && pm) {
-    const subtotal = (nights / 30) * pm;
+    const subtotal = Math.round((nights / 30) * pm);
+    const total    = Math.round(subtotal + cleaningFee);
     return {
       nights, tier: "monthly",
-      effectivePerNight: subtotal / nights,
+      effectivePerNight: Math.round(subtotal / nights),
       cleaningFee, securityDeposit,
-      subtotal, total: subtotal + cleaningFee,
+      subtotal, total,
       checkInTime, checkOutTime,
       breakdown: [],
     };
   }
 
   if (nights >= 7 && pw) {
-    const subtotal = (nights / 7) * pw;
+    const subtotal = Math.round((nights / 7) * pw);
+    const total    = Math.round(subtotal + cleaningFee);
     return {
       nights, tier: "weekly",
-      effectivePerNight: subtotal / nights,
+      effectivePerNight: Math.round(subtotal / nights),
       cleaningFee, securityDeposit,
-      subtotal, total: subtotal + cleaningFee,
+      subtotal, total,
       checkInTime, checkOutTime,
       breakdown: [],
     };
@@ -110,13 +112,14 @@ export function computePrice(
     date: toDateString(d),
     price: isWeekend(d) && rate.price_per_night_weekend ? pnw : pn,
   }));
-  const subtotal = breakdown.reduce((s, r) => s + r.price, 0);
+  const subtotal = Math.round(breakdown.reduce((s, r) => s + r.price, 0));
+  const total    = Math.round(subtotal + cleaningFee);
 
   return {
     nights, tier: "per_night",
-    effectivePerNight: nights > 0 ? subtotal / nights : pn,
+    effectivePerNight: nights > 0 ? Math.round(subtotal / nights) : pn,
     cleaningFee, securityDeposit,
-    subtotal, total: subtotal + cleaningFee,
+    subtotal, total,
     checkInTime, checkOutTime,
     breakdown,
   };
