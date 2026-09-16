@@ -1,0 +1,9 @@
+-- Migration 024: reporting aggregates.
+--
+-- These live in SQL so every report shares one definition of each figure --
+-- particularly GBV, which is the number most easily mistaken for revenue.
+-- ledger_gbv counts cash received from guests; it is NOT income, because most
+-- of it is owed onward to owners or returned as deposits.
+--
+-- (Body identical to the applied migration; see ledger_gbv,
+-- ledger_revenue_by_stream, ledger_monthly_revenue, ledger_property_performance.)
