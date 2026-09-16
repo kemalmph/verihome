@@ -21,7 +21,9 @@ export type LedgerEventType =
   | "owner_payout_paid"
   | "placement_commission_earned"
   | "placement_commission_received"
-  | "cleaning_fee_received";
+  | "cleaning_fee_received"
+  | "operating_expense_paid"
+  | "equity_drawing_paid";
 
 export type LedgerAccount =
   | "cash"
@@ -34,7 +36,9 @@ export type LedgerAccount =
   | "revenue_consultation"
   | "revenue_cleaning"
   | "revenue_commission"
-  | "revenue_forfeited_deposit";
+  | "revenue_forfeited_deposit"
+  | "expense_operating"
+  | "equity_drawings";
 
 export type LedgerDirection = "debit" | "credit";
 
@@ -64,9 +68,15 @@ export const REVENUE_ACCOUNTS = [
 export const RETURNABLE_LIABILITIES = ["deposits_held", "credits_outstanding"] as const;
 export const EARNABLE_LIABILITIES = ["unearned_revenue"] as const;
 
-export function accountKind(account: LedgerAccount): "asset" | "liability" | "income" {
+/** Money VeriHome spends on itself. Rises on the debit side, like an asset. */
+export const EXPENSE_ACCOUNTS = ["expense_operating", "equity_drawings"] as const;
+
+export function accountKind(
+  account: LedgerAccount
+): "asset" | "liability" | "income" | "expense" {
   if ((ASSET_ACCOUNTS as readonly string[]).includes(account)) return "asset";
   if ((LIABILITY_ACCOUNTS as readonly string[]).includes(account)) return "liability";
+  if ((EXPENSE_ACCOUNTS as readonly string[]).includes(account)) return "expense";
   return "income";
 }
 
@@ -93,7 +103,7 @@ export interface LedgerEntry {
 
 export interface AccountBalance {
   account: LedgerAccount;
-  kind: "asset" | "liability" | "income";
+  kind: "asset" | "liability" | "income" | "expense";
   debits: number;
   credits: number;
   balance: number;

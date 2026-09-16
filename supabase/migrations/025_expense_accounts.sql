@@ -1,0 +1,15 @@
+-- Migration 025: expense and drawings accounts.
+--
+-- Without these the ledger could not record VeriHome spending its own money.
+-- Every original event type either left cash alone or moved it against a
+-- liability, so spendable cash (W = cash - liabilities) could never fall: the
+-- overdraw warning on the position statement was unreachable.
+--
+-- 'equity_drawings' rather than 'owner_drawings': owner_payable already means
+-- the property owner, and confusing the two in a financial system is expensive.
+--
+-- Expenses rise on the debit side like assets, so ledger_account_kind gains a
+-- fourth kind and ledger_balances keys its sign on that.
+--
+-- (Body identical to the applied migration: CHECK constraints extended on
+-- account and event_type, ledger_account_kind and ledger_balances replaced.)

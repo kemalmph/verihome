@@ -375,6 +375,46 @@ export async function postPlacementCommissionEarned(
   ], opts.client);
 }
 
+// ── VeriHome's own spending ──────────────────────────────────────────────────
+// The only events that reduce spendable cash without reducing a liability.
+// Everything else either leaves cash alone or pays down something owed, which
+// is why the overdraw warning was unreachable before these existed.
+
+/** Operating cost — salaries, rent, tools, marketing. */
+export async function postOperatingExpense(
+  ref: { amount: number; description: string; propertyId?: string | null },
+  opts: { createdBy?: string | null; client?: AdminClient } = {}
+) {
+  const amt = n(ref.amount);
+  if (amt <= 0) return;
+  const base = {
+    event_type: "operating_expense_paid" as const,
+    property_id: ref.propertyId ?? null,
+    created_by: opts.createdBy ?? null,
+  };
+  await postLedgerEntries([
+    { ...base, account: "expense_operating", direction: "debit",  amount: amt, description: ref.description },
+    { ...base, account: "cash",              direction: "credit", amount: amt, description: ref.description },
+  ], opts.client);
+}
+
+/** Money taken out of the business by its owners — not an operating cost. */
+export async function postEquityDrawing(
+  ref: { amount: number; description: string },
+  opts: { createdBy?: string | null; client?: AdminClient } = {}
+) {
+  const amt = n(ref.amount);
+  if (amt <= 0) return;
+  const base = {
+    event_type: "equity_drawing_paid" as const,
+    created_by: opts.createdBy ?? null,
+  };
+  await postLedgerEntries([
+    { ...base, account: "equity_drawings", direction: "debit",  amount: amt, description: ref.description },
+    { ...base, account: "cash",            direction: "credit", amount: amt, description: ref.description },
+  ], opts.client);
+}
+
 export async function postPlacementCommissionReceived(
   ref: { property_id: string | null; owner_id: string | null; amount: number },
   opts: { createdBy?: string | null; client?: AdminClient } = {}
