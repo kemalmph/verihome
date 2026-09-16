@@ -17,6 +17,40 @@ function sum(entries: LedgerEntry[], direction: "debit" | "credit"): number {
 }
 
 /**
+ * Collapses entries that hit the same account on the same side of one event.
+ *
+ * A booking whose cleaning fee belongs to the owner credits owner_payable
+ * twice — once for cleaning, once for their share of rent. Two rows saying the
+ * same thing is not wrong, but one entry per account per event is a stronger
+ * invariant: it is what lets the database reject a replayed event outright,
+ * since a duplicate then repeats an (event_type, record, account, direction)
+ * that already exists. Totals are unchanged, so balance is preserved.
+ */
+function mergeByAccount(entries: LedgerEntry[]): LedgerEntry[] {
+  const merged = new Map<string, LedgerEntry>();
+
+  for (const e of entries) {
+    const key = [
+      e.event_type, e.account, e.direction,
+      e.booking_id ?? "", e.viewing_id ?? "", e.consultation_id ?? "",
+      e.property_id ?? "", e.user_id ?? "", e.owner_id ?? "",
+    ].join("|");
+
+    const existing = merged.get(key);
+    if (!existing) {
+      merged.set(key, { ...e, amount: Math.round(e.amount) });
+      continue;
+    }
+    existing.amount += Math.round(e.amount);
+    if (e.description && existing.description !== e.description) {
+      existing.description = `${existing.description}; ${e.description}`;
+    }
+  }
+
+  return [...merged.values()];
+}
+
+/**
  * The only way anything is written to ledger_entries.
  *
  * Balance is checked here for a readable error at the call site, and checked
@@ -59,10 +93,18 @@ export async function postLedgerEntries(
 
   const admin = client ?? createAdminClient();
   const { error } = await admin.rpc("post_ledger_entries", {
-    p_entries: entries.map((e) => ({ ...e, amount: Math.round(e.amount) })),
+    p_entries: mergeByAccount(entries),
   });
 
   if (error) {
+    // A unique violation here means this event is already on the books —
+    // a retried request or a second admin clicking the same button. The
+    // ledger is correct as it stands, so this is reported, not repaired.
+    if (error.code === "23505" || /duplicate key|already posted/i.test(error.message)) {
+      throw new LedgerError(
+        `${entries[0].event_type} is already posted for this record — not posted again. If the figures are wrong, correct them with a reversing entry.`
+      );
+    }
     throw new LedgerError(`Ledger post failed for ${entries[0].event_type}: ${error.message}`);
   }
 }
