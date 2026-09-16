@@ -1,9 +1,12 @@
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { runIntegrityChecks } from "@/lib/ledger/integrity";
 
 export default async function AdminDashboardPage() {
   const admin = createAdminClient();
+  // Run on every dashboard load: a books mismatch should be impossible to miss.
+  const integrity = await runIntegrityChecks(admin);
 
   const [
     { data: properties },
@@ -46,6 +49,51 @@ export default async function AdminDashboardPage() {
           <h1 className="text-3xl font-bold text-[#0d2137]">Admin Dashboard</h1>
           <p className="text-[#3e4944] mt-1">VeriHome internal management panel</p>
         </header>
+
+        {!integrity.allPassed && (
+          <div className="mb-8 bg-[#cf2f52] text-white rounded-xl p-6">
+            <div className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-2xl">error</span>
+              <div className="flex-1">
+                <p className="font-bold text-lg">
+                  {integrity.failedCount} pemeriksaan buku besar gagal
+                </p>
+                <p className="text-white/90 text-sm mt-1">
+                  Catatan keuangan tidak cocok dengan data transaksi. Angka pada laporan
+                  tidak dapat dipercaya sampai ini diselesaikan.
+                </p>
+                <ul className="mt-4 space-y-3">
+                  {integrity.checks.filter((c) => !c.passed).map((c) => (
+                    <li key={c.id} className="bg-white/10 rounded-lg p-3">
+                      <p className="font-semibold text-sm">{c.label}</p>
+                      {c.difference !== null && (
+                        <p className="text-xs text-white/80 mt-0.5 tabular-nums">
+                          Buku besar {c.ledger?.toLocaleString("id-ID")} · seharusnya{" "}
+                          {c.expected?.toLocaleString("id-ID")} · selisih{" "}
+                          {c.difference.toLocaleString("id-ID")}
+                        </p>
+                      )}
+                      {c.offenders.length > 0 && (
+                        <ul className="mt-2 space-y-0.5">
+                          {c.offenders.slice(0, 5).map((o) => (
+                            <li key={o.id} className="text-xs text-white/85">
+                              <strong>{o.label}</strong> — {o.detail}
+                            </li>
+                          ))}
+                          {c.offenders.length > 5 && (
+                            <li className="text-xs text-white/70">
+                              dan {c.offenders.length - 5} lainnya
+                            </li>
+                          )}
+                        </ul>
+                      )}
+                    </li>
+                  ))}
+                </ul>
+              </div>
+            </div>
+          </div>
+        )}
 
         {missingCommission.length > 0 && (
           <div className="mb-10 bg-amber-50 border border-amber-200 rounded-xl p-5">

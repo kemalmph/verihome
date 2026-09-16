@@ -244,6 +244,31 @@ export default async function SalesReportPage({
           </div>
         </section>
 
+        {/* ── Exports ───────────────────────────────────────────────────────── */}
+        <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
+          <h2 className="font-bold text-[#0d2137] mb-1">Ekspor untuk akuntan</h2>
+          <p className="text-sm text-[#6e7a74] mb-4">
+            CSV dengan angka polos tanpa pemisah ribuan, siap dibuka di spreadsheet.
+          </p>
+          <div className="flex flex-wrap gap-2">
+            {[
+              { type: "ledger",           label: "Buku besar lengkap" },
+              { type: "revenue_by_month", label: "Pendapatan per bulan" },
+              { type: "owner_payable",    label: "Hutang pemilik" },
+              { type: "transactions",     label: "Semua transaksi" },
+            ].map((e) => (
+              <a
+                key={e.type}
+                href={`/api/admin/reports/export?type=${e.type}&from=${period.from.toISOString()}&to=${period.to.toISOString()}`}
+                className="px-4 py-2 border border-[#cccccc] rounded-lg text-sm font-medium text-[#3e4944] hover:border-[#1a7a5e] inline-flex items-center gap-2"
+              >
+                <span className="material-symbols-outlined text-base">table_view</span>
+                {e.label}
+              </a>
+            ))}
+          </div>
+        </section>
+
         {/* ── 6. Needs attention ───────────────────────────────────────────── */}
         <section className="bg-white rounded-xl border border-[#cccccc] p-6">
           <h2 className="font-bold text-[#0d2137] mb-4">Perlu tindakan</h2>
