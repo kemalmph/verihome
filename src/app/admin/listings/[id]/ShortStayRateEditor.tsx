@@ -19,6 +19,16 @@ export interface ShortStayRateData {
   active:                  boolean;
 }
 
+/**
+ * Commission lives on `properties`, not `short_stay_rates`, but it is edited
+ * here because it is a pricing decision — and because a rate with no
+ * commission cannot be split between VeriHome and the owner.
+ */
+export interface CommissionData {
+  platform_commission_pct: number | null;
+  cleaning_fee_goes_to:    "platform" | "owner";
+}
+
 interface Props {
   propertyId:       string;
   /** Current value of the Rental Mode dropdown (may not yet be saved) */
@@ -26,6 +36,7 @@ interface Props {
   /** The value that is actually persisted in the DB */
   savedRentalMode:  string;
   initialRate:      ShortStayRateData | null;
+  initialCommission: CommissionData;
 }
 
 const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white disabled:bg-[#f6f3f2] disabled:text-[#aaa] disabled:cursor-not-allowed";
@@ -149,7 +160,96 @@ function useWarnings(rate: ShortStayRateData) {
 
 // ── Main component ────────────────────────────────────────────
 
-export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, initialRate }: Props) {
+// ── Commission split preview ──────────────────────────────────────────────
+// A 5-night stay at the configured rate, showing the three figures that matter
+// to three different people: what the guest pays, what VeriHome keeps, and
+// what the owner receives.
+
+function CommissionPreview({ rate, commission }: { rate: ShortStayRateData; commission: CommissionData }) {
+  const nights = 5;
+  const perNight = rate.price_per_night ?? 0;
+  const rent = perNight * nights;
+  const cleaning = rate.cleaning_fee ?? 0;
+  const deposit = rate.security_deposit ?? 0;
+  const pct = commission.platform_commission_pct;
+
+  if (!perNight) return null;
+
+  const configured = pct !== null && Number.isFinite(pct);
+  const margin = configured ? Math.round((rent * (pct as number)) / 100) : 0;
+  const ownerRent = rent - margin;
+  const cleaningToOwner = commission.cleaning_fee_goes_to === "owner";
+
+  const veriHome = margin + (cleaningToOwner ? 0 : cleaning);
+  const owner = ownerRent + (cleaningToOwner ? cleaning : 0);
+  const guestPays = rent + cleaning + deposit;
+
+  return (
+    <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm">
+      <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+        Contoh pembagian — menginap 5 malam
+      </div>
+
+      {!configured ? (
+        <div className="px-4 py-4 text-sm text-amber-800 bg-amber-50 flex items-start gap-2">
+          <span className="material-symbols-outlined text-amber-500 text-base">warning</span>
+          <span>
+            Komisi belum diatur. Pemesanan pada properti ini tidak bisa dibagi —
+            seluruh sewa akan tercatat sebagai hak pemilik sampai komisi diisi.
+          </span>
+        </div>
+      ) : (
+        <table className="w-full">
+          <tbody>
+            <tr className="border-b border-[#f6f3f2]">
+              <td className="px-4 py-2.5 text-[#3e4944]">
+                Tamu membayar
+                <span className="block text-xs text-[#6e7a74]">
+                  {nights} malam + kebersihan{deposit > 0 ? " + jaminan" : ""}
+                </span>
+              </td>
+              <td className="px-4 py-2.5 text-right font-semibold text-[#0d2137] tabular-nums">
+                IDR {fmt(guestPays)}
+              </td>
+            </tr>
+            <tr className="border-b border-[#f6f3f2]">
+              <td className="px-4 py-2.5 text-[#3e4944]">
+                VeriHome menerima
+                <span className="block text-xs text-[#6e7a74]">
+                  {pct}% dari sewa{cleaningToOwner ? "" : " + biaya kebersihan"}
+                </span>
+              </td>
+              <td className="px-4 py-2.5 text-right font-semibold text-[#1a7a5e] tabular-nums">
+                IDR {fmt(veriHome)}
+              </td>
+            </tr>
+            <tr className="border-b border-[#f6f3f2]">
+              <td className="px-4 py-2.5 text-[#3e4944]">
+                Pemilik menerima
+                <span className="block text-xs text-[#6e7a74]">
+                  {100 - (pct as number)}% dari sewa{cleaningToOwner ? " + biaya kebersihan" : ""}
+                </span>
+              </td>
+              <td className="px-4 py-2.5 text-right font-semibold text-[#0d2137] tabular-nums">
+                IDR {fmt(owner)}
+              </td>
+            </tr>
+            {deposit > 0 && (
+              <tr>
+                <td className="px-4 py-2.5 text-[#6e7a74] text-xs">
+                  Jaminan IDR {fmt(deposit)} dikembalikan ke tamu — bukan pendapatan
+                </td>
+                <td />
+              </tr>
+            )}
+          </tbody>
+        </table>
+      )}
+    </div>
+  );
+}
+
+export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, initialRate, initialCommission }: Props) {
   const isEditable  = isShortStayMode(savedRentalMode);
   const pendingSave = !isEditable && isShortStayMode(rentalMode);
 
@@ -166,6 +266,11 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
     check_out_time:          (initialRate as ShortStayRateData | null)?.check_out_time  ?? "12:00",
     buffer_days:             (initialRate as ShortStayRateData | null)?.buffer_days     ?? 0,
     active:                  initialRate?.active                  ?? true,
+  });
+
+  const [commission, setCommission] = useState<CommissionData>({
+    platform_commission_pct: initialCommission?.platform_commission_pct ?? null,
+    cleaning_fee_goes_to:    initialCommission?.cleaning_fee_goes_to ?? "platform",
   });
 
   const [isPending, startTransition] = useTransition();
@@ -192,7 +297,7 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
       const res = await fetch("/api/admin/short-stay-rates", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ propertyId, ...rate }),
+        body: JSON.stringify({ propertyId, ...rate, ...commission }),
       });
       if (!res.ok) {
         const d = await res.json();
@@ -361,6 +466,66 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
           />
           {warnings.minmax && <Warn>{warnings.minmax}</Warn>}
         </div>
+      </div>
+
+      {/* Commission — a property-level setting, edited here because it is a
+          pricing decision and because a rate without it cannot be split. */}
+      <div className={`border-t border-[#e4e2e1] pt-5 space-y-4 ${!isEditable ? "opacity-50 pointer-events-none select-none" : ""}`}>
+        <div>
+          <h4 className="font-semibold text-[#0d2137] text-sm">Pembagian pendapatan</h4>
+          <p className="text-xs text-[#6e7a74] mt-0.5">
+            Komisi platform (%) — bagian VeriHome dari harga sewa. Sisanya menjadi hak pemilik.
+          </p>
+        </div>
+
+        <div className="grid grid-cols-1 md:grid-cols-2 gap-4">
+          <div>
+            <label className={labelCls} htmlFor="platform_commission_pct">
+              Komisi platform (%)
+            </label>
+            <input
+              id="platform_commission_pct"
+              type="number" min={0} max={100} step="0.01" disabled={!isEditable}
+              value={commission.platform_commission_pct ?? ""}
+              onChange={(e) => {
+                setSaved(false);
+                const raw = e.target.value;
+                setCommission((p) => ({
+                  ...p,
+                  platform_commission_pct:
+                    raw === "" ? null : Math.min(100, Math.max(0, Number(raw))),
+                }));
+              }}
+              placeholder="mis. 15" className={input}
+            />
+            {commission.platform_commission_pct === null && (
+              <Warn>Belum diatur — pemesanan tidak bisa dibagi otomatis.</Warn>
+            )}
+          </div>
+
+          <div>
+            <label className={labelCls} htmlFor="cleaning_fee_goes_to">
+              Biaya kebersihan untuk
+            </label>
+            <select
+              id="cleaning_fee_goes_to" disabled={!isEditable}
+              value={commission.cleaning_fee_goes_to}
+              onChange={(e) => {
+                setSaved(false);
+                setCommission((p) => ({
+                  ...p,
+                  cleaning_fee_goes_to: e.target.value as CommissionData["cleaning_fee_goes_to"],
+                }));
+              }}
+              className={input}
+            >
+              <option value="platform">VeriHome</option>
+              <option value="owner">Pemilik properti</option>
+            </select>
+          </div>
+        </div>
+
+        {isEditable && <CommissionPreview rate={rate} commission={commission} />}
       </div>
 
       {/* Live pricing preview */}

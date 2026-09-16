@@ -21,6 +21,7 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
         id, name, area, address, property_type, price_monthly,
         bedrooms, bathrooms, size_sqm, min_stay_months, google_maps_url, status,
         rental_mode, is_furnished, is_instant_bookable,
+        platform_commission_pct, cleaning_fee_goes_to,
         rla_assessments ( building_condition, natural_lighting, ventilation, noise_level, cleanliness, security_level, bathroom_condition, furniture_quality, pros, cons, overall_notes, survey_id ),
         area_overviews ( nearest_mrt, mrt_distance, nearest_transjakarta, transjakarta_distance, nearest_minimarket, nearest_clinic, nearest_food, nearest_gym, neighborhood_character, expat_friendly, time_to_scbd_min, time_to_sudirman_min, area_notes ),
         property_details ( facilities, included_utilities, rules, additional_notes ),
@@ -148,6 +149,14 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
               active:                  Boolean(r.active),
             };
           })() : null}
+          commission={{
+            platform_commission_pct:
+              (property as Record<string, unknown>).platform_commission_pct != null
+                ? Number((property as Record<string, unknown>).platform_commission_pct)
+                : null,
+            cleaning_fee_goes_to:
+              ((property as Record<string, unknown>).cleaning_fee_goes_to as "platform" | "owner") ?? "platform",
+          }}
           pendingImports={parsedPending}
           onLinkImport={handleLinkImport}
         />

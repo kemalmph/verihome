@@ -7,7 +7,7 @@ import { BuildListingForm } from "./BuildListingForm";
 import { MediaSection } from "../MediaSection";
 import { ShortStayRateEditor } from "../ShortStayRateEditor";
 import type { PropertyData, RLAData, AreaData, DetailsData } from "./BuildListingForm";
-import type { ShortStayRateData } from "../ShortStayRateEditor";
+import type { ShortStayRateData, CommissionData } from "../ShortStayRateEditor";
 
 interface PendingImport {
   id: string;
@@ -33,6 +33,7 @@ interface Props {
   details: DetailsData | null;
   media: MediaData | null;
   shortStayRate: ShortStayRateData | null;
+  commission: CommissionData;
   pendingImports: PendingImport[];
   onLinkImport: (pendingId: string) => Promise<void>;
 }
@@ -105,6 +106,7 @@ export function BuildListingPageClient({
   details,
   media,
   shortStayRate,
+  commission,
   pendingImports,
   onLinkImport,
 }: Props) {
@@ -324,6 +326,7 @@ export function BuildListingPageClient({
           rentalMode={rentalMode}
           savedRentalMode={savedRentalMode}
           initialRate={shortStayRate}
+          initialCommission={commission}
         />
       </div>
 

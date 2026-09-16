@@ -26,6 +26,9 @@ export async function POST(req: NextRequest) {
     check_out_time:          string;
     buffer_days:             number;
     active:                  boolean;
+    // Property-level, edited alongside the rates
+    platform_commission_pct: number | null;
+    cleaning_fee_goes_to:    "platform" | "owner";
   };
 
   if (!body.propertyId || !body.price_per_night) {
@@ -54,6 +57,27 @@ export async function POST(req: NextRequest) {
     );
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
+
+  // Commission lives on properties. Written only when present so a caller that
+  // omits it cannot silently clear a configured rate.
+  if (body.platform_commission_pct !== undefined || body.cleaning_fee_goes_to !== undefined) {
+    const pct = body.platform_commission_pct;
+    if (pct !== null && pct !== undefined && (!Number.isFinite(pct) || pct < 0 || pct > 100)) {
+      return NextResponse.json({ error: "Komisi platform harus antara 0 dan 100." }, { status: 400 });
+    }
+
+    const { error: propError } = await admin
+      .from("properties")
+      .update({
+        platform_commission_pct: pct ?? null,
+        cleaning_fee_goes_to:    body.cleaning_fee_goes_to ?? "platform",
+      })
+      .eq("id", body.propertyId);
+
+    if (propError) {
+      return NextResponse.json({ error: `Rate saved, commission failed: ${propError.message}` }, { status: 500 });
+    }
+  }
 
   // Update publish checklist: rate is configured if there's an active rate with a price
   const rateComplete = body.active && body.price_per_night > 0;

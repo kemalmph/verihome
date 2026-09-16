@@ -10,7 +10,7 @@ export default async function AdminDashboardPage() {
     { data: consultations },
     { count: pendingReviews },
   ] = await Promise.all([
-    admin.from("properties").select("id, name, area, property_type, status, price_monthly, created_at").order("created_at", { ascending: false }),
+    admin.from("properties").select("id, name, area, property_type, status, price_monthly, created_at, rental_mode, platform_commission_pct").order("created_at", { ascending: false }),
     admin.from("consultations").select("id, status, package_type, created_at").order("created_at", { ascending: false }).limit(50),
     admin.from("reviews").select("id", { count: "exact", head: true }).eq("moderation_status", "pending"),
   ]);
@@ -29,6 +29,15 @@ export default async function AdminDashboardPage() {
 
   const recentSubmissions = properties?.filter((p) => p.status === "unverified").slice(0, 5) ?? [];
 
+  // A short-stay property with no commission rate cannot have its booking
+  // revenue split, so the whole amount lands in owner_payable and VeriHome
+  // recognises nothing. Surfaced here because it is silent everywhere else.
+  const missingCommission = (properties ?? []).filter(
+    (p) =>
+      ["short_stay", "both"].includes((p as { rental_mode?: string }).rental_mode ?? "") &&
+      (p as { platform_commission_pct?: number | null }).platform_commission_pct == null
+  );
+
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AdminSidebar activeHref="/admin" />
@@ -37,6 +46,42 @@ export default async function AdminDashboardPage() {
           <h1 className="text-3xl font-bold text-[#0d2137]">Admin Dashboard</h1>
           <p className="text-[#3e4944] mt-1">VeriHome internal management panel</p>
         </header>
+
+        {missingCommission.length > 0 && (
+          <div className="mb-10 bg-amber-50 border border-amber-200 rounded-xl p-5">
+            <div className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-amber-500">warning</span>
+              <div className="flex-1">
+                <p className="font-semibold text-amber-900">
+                  {missingCommission.length} properti short-stay belum punya komisi platform
+                </p>
+                <p className="text-sm text-amber-800 mt-1 max-w-2xl">
+                  Pemesanan pada properti ini tidak bisa dibagi otomatis. Seluruh sewa
+                  akan tercatat sebagai hutang ke pemilik dan VeriHome tidak mencatat
+                  pendapatan apa pun sampai komisi diisi.
+                </p>
+                <ul className="mt-3 space-y-1">
+                  {missingCommission.slice(0, 6).map((p) => (
+                    <li key={p.id}>
+                      <Link
+                        href={`/admin/listings/${p.id}/build`}
+                        className="text-sm font-semibold text-amber-900 hover:underline"
+                      >
+                        {p.name}
+                        {p.area ? <span className="font-normal text-amber-800"> — {p.area}</span> : null}
+                      </Link>
+                    </li>
+                  ))}
+                </ul>
+                {missingCommission.length > 6 && (
+                  <p className="text-xs text-amber-800 mt-2">
+                    dan {missingCommission.length - 6} lainnya
+                  </p>
+                )}
+              </div>
+            </div>
+          </div>
+        )}
 
         {/* Listing counts by status */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
