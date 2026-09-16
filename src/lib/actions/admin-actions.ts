@@ -3,6 +3,7 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/guards";
+import { postConsultationPaymentReceived, postConsultationRevenueEarned } from "@/lib/ledger/events";
 
 export async function updatePropertyStatus(propertyId: string, status: string) {
   try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
@@ -56,14 +57,50 @@ export async function deleteProperty(propertyId: string) {
 }
 
 export async function updateConsultationStatus(consultationId: string, status: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  let caller;
+  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
+
+  // Prior state decides which money event this is, and it is unrecoverable
+  // once the row is written.
+  const { data: before } = await admin
+    .from("consultations")
+    .select("id, user_id, status, price, final_price, credit_applied")
+    .eq("id", consultationId)
+    .single();
+
   const { error } = await admin
     .from("consultations")
     .update({ status })
     .eq("id", consultationId);
   if (error) return { error: error.message };
+
+  // Cash received is the package price less any credit applied.
+  const amount =
+    Number(before?.final_price ?? before?.price ?? 0) - Number(before?.credit_applied ?? 0);
+
+  let ledgerError: string | null = null;
+  try {
+    // 'paid' is the admin confirming the transfer arrived.
+    if (before && before.status !== "paid" && status === "paid") {
+      await postConsultationPaymentReceived(
+        { id: before.id, user_id: before.user_id, amount },
+        { createdBy: caller.id }
+      );
+    }
+    // 'completed' is the session actually delivered — only then is it revenue.
+    if (before && before.status !== "completed" && status === "completed") {
+      await postConsultationRevenueEarned(
+        { id: before.id, user_id: before.user_id, amount },
+        { createdBy: caller.id }
+      );
+    }
+  } catch (err) {
+    ledgerError = (err as Error).message;
+    console.error("[updateConsultationStatus] ledger:", ledgerError);
+  }
+
   revalidatePath("/admin/consultations");
-  return { success: true };
+  return { success: true, ledgerError };
 }

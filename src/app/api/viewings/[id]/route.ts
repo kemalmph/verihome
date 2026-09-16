@@ -1,6 +1,12 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import {
+  postViewingDepositReceived,
+  postViewingDepositConvertedToCredit,
+  postViewingDepositForfeited,
+  postViewingDepositRefunded,
+} from "@/lib/ledger/events";
 
 type AdminAction =
   | { action: "confirm";         scheduled_at: string }
@@ -36,6 +42,12 @@ export async function PATCH(
       if (!body.scheduled_at) {
         return NextResponse.json({ error: "scheduled_at required" }, { status: 400 });
       }
+
+      // Only post if the deposit was not already confirmed — a second confirm
+      // must not book the same cash twice.
+      const { data: prior } = await admin
+        .from("viewings").select("deposit_paid").eq("id", id).single();
+
       const { data, error } = await admin
         .from("viewings")
         .update({
@@ -50,7 +62,21 @@ export async function PATCH(
         .select()
         .single();
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-      return NextResponse.json({ viewing: data });
+
+      let ledgerError: string | null = null;
+      if (prior?.deposit_paid !== true) {
+        try {
+          await postViewingDepositReceived(
+            { id: data.id, property_id: data.property_id, user_id: data.user_id,
+              amount: Number(data.deposit_amount ?? 0) },
+            { createdBy: user.id }
+          );
+        } catch (err) {
+          ledgerError = (err as Error).message;
+          console.error("[viewings confirm] ledger:", ledgerError);
+        }
+      }
+      return NextResponse.json({ viewing: data, ledgerError });
     }
 
     case "attend": {
@@ -78,7 +104,34 @@ export async function PATCH(
         return NextResponse.json({ attended: true, creditError: msg });
       }
 
-      return NextResponse.json({ attended: true, credit });
+      // The RPC is idempotent and returns the existing row on a repeat call, so
+      // post only when this call actually issued the credit.
+      let ledgerError: string | null = null;
+      const issued = credit as { id?: string; amount?: unknown; user_id?: string } | null;
+      if (issued?.id) {
+        const { data: already } = await admin
+          .from("ledger_entries").select("id")
+          .eq("viewing_id", id)
+          .eq("event_type", "viewing_deposit_converted_to_credit")
+          .limit(1);
+
+        if (!already?.length) {
+          const { data: v } = await admin
+            .from("viewings").select("property_id, user_id").eq("id", id).single();
+          try {
+            await postViewingDepositConvertedToCredit(
+              { id, property_id: v!.property_id, user_id: v!.user_id,
+                amount: Number(issued.amount ?? 0) },
+              { createdBy: user.id }
+            );
+          } catch (err) {
+            ledgerError = (err as Error).message;
+            console.error("[viewings/attend] ledger:", ledgerError);
+          }
+        }
+      }
+
+      return NextResponse.json({ attended: true, credit, ledgerError });
     }
 
     case "no_show": {
@@ -93,8 +146,24 @@ export async function PATCH(
         .select()
         .single();
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-      // Deposit is forfeited — no credit issued, no refund
-      return NextResponse.json({ viewing: data, deposit: "forfeited" });
+
+      // Deposit is forfeited — no credit issued, no refund. Forfeiture is the
+      // one case where a deposit legitimately becomes revenue, and only if the
+      // deposit was actually collected.
+      let ledgerError: string | null = null;
+      if (data.deposit_paid === true) {
+        try {
+          await postViewingDepositForfeited(
+            { id: data.id, property_id: data.property_id, user_id: data.user_id,
+              amount: Number(data.deposit_amount ?? 0) },
+            { createdBy: user.id }
+          );
+        } catch (err) {
+          ledgerError = (err as Error).message;
+          console.error("[viewings no_show] ledger:", ledgerError);
+        }
+      }
+      return NextResponse.json({ viewing: data, deposit: "forfeited", ledgerError });
     }
 
     case "request_refund": {
@@ -155,7 +224,21 @@ export async function PATCH(
         .single();
 
       if (error) return NextResponse.json({ error: error.message }, { status: 500 });
-      return NextResponse.json({ viewing: data, deposit: "refunded" });
+
+      // Cash actually leaves the account here, not at request_refund — which
+      // records only the intention to pay it.
+      let ledgerError: string | null = null;
+      try {
+        await postViewingDepositRefunded(
+          { id: data.id, property_id: data.property_id, user_id: data.user_id,
+            amount: Number(data.deposit_amount ?? 0) },
+          { createdBy: user.id }
+        );
+      } catch (err) {
+        ledgerError = (err as Error).message;
+        console.error("[viewings confirm_refund] ledger:", ledgerError);
+      }
+      return NextResponse.json({ viewing: data, deposit: "refunded", ledgerError });
     }
 
     default:

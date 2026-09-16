@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPaymentProvider, isBankTransfer } from "@/lib/payment";
 import { validateStayRules, calculatePrice, isRangeAvailable, getBufferDays } from "@/lib/availability";
+import { postCreditRedeemed } from "@/lib/ledger/events";
 
 // POST /api/bookings — create a new short-stay booking
 export async function POST(req: NextRequest) {
@@ -46,14 +47,18 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Could not calculate price for this property" }, { status: 400 });
   }
 
-  // Clamp credit to quote total so transfer amount is never negative
-  const appliedCredit = Math.min(Math.round(creditAmount), quote.total);
-  const transferTotal = quote.total - appliedCredit;
+  // Credit reduces the price of the stay only. It must never offset the
+  // security deposit: that is the guest's own refundable money, so discounting
+  // it would mean returning cash they never paid.
+  const appliedCredit   = Math.min(Math.round(creditAmount), quote.total);
+  const stayDue         = quote.total - appliedCredit;
+  const securityDeposit = Math.round(quote.securityDeposit ?? 0);
+  const cashDue         = stayDue + securityDeposit;
 
   const provider = getPaymentProvider();
   const intent = await provider.createIntent({
     reference:   propertyId,
-    amount:      transferTotal,
+    amount:      cashDue,
     description: `VeriHome stay · ${checkIn} to ${checkOut}`,
     payerEmail:  user.email,
   });
@@ -75,7 +80,7 @@ export async function POST(req: NextRequest) {
         p_cleaning_fee:    quote.cleaningFee,
         p_gross_price:     quote.total,
         p_credit_amount:   appliedCredit,
-        p_total_price:     transferTotal,
+        p_total_price:     quote.total,
         p_transfer_code:   transferCode,
       }
     : {
@@ -86,23 +91,50 @@ export async function POST(req: NextRequest) {
         p_guests:          guests,
         p_price_per_night: quote.effectivePerNight,
         p_cleaning_fee:    quote.cleaningFee,
-        p_total_price:     transferTotal,
+        p_total_price:     quote.total,
         p_transfer_code:   transferCode,
       };
 
   const { data: booking, error } = await admin.rpc(rpc, rpcArgs);
 
   // The RPC owns the atomic availability-check-and-insert and knows nothing
-  // about payment, so the provider reference is stamped on afterwards. Only a
-  // redirecting provider has one; manual transfers are matched by amount.
-  if (!error && booking && !isBankTransfer(intent.action)) {
-    await admin
+  // about payment, so what the guest owes is recorded immediately afterwards.
+  // These figures are what the ledger posts against at payment verification —
+  // if this write is lost the booking would later book a deposit liability of
+  // zero against deposit cash that did arrive, so the failure is surfaced.
+  if (!error && booking) {
+    const { error: stampError } = await admin
       .from("bookings")
       .update({
-        payment_provider:    intent.provider,
-        payment_external_id: intent.action.externalId,
+        security_deposit: securityDeposit,
+        credit_applied:   appliedCredit,
+        payment_provider: intent.provider,
+        ...(isBankTransfer(intent.action)
+          ? {}
+          : { payment_external_id: intent.action.externalId }),
       })
       .eq("id", booking.id);
+
+    if (stampError) {
+      console.error("[bookings] could not record deposit/credit:", stampError.message);
+      return NextResponse.json(
+        { error: "Booking created but payment details could not be recorded. Contact support before transferring." },
+        { status: 500 }
+      );
+    }
+
+    // Credit is spent the moment the booking is made, not when cash arrives:
+    // the RPC has already marked those user_credits redeemed. One liability to
+    // the guest becomes another — the obligation to deliver the stay.
+    if (appliedCredit > 0) {
+      try {
+        await postCreditRedeemed(
+          { booking_id: booking.id, user_id: user.id, property_id: propertyId, amount: appliedCredit }
+        );
+      } catch (err) {
+        console.error("[bookings] credit redemption ledger:", (err as Error).message);
+      }
+    }
   }
 
   if (error) {
@@ -122,8 +154,11 @@ export async function POST(req: NextRequest) {
       tier:            quote.tier,
       grossTotal:      quote.total,
       creditApplied:   appliedCredit,
-      transferTotal,
-      securityDeposit: quote.securityDeposit,
+      securityDeposit,
+      /** Stay price after credit, excluding the deposit. */
+      stayDue,
+      /** What the guest actually transfers: stay after credit, plus deposit. */
+      transferTotal:   cashDue,
       checkInTime:     quote.checkInTime,
       checkOutTime:    quote.checkOutTime,
     },

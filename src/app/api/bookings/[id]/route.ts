@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { postBookingPaymentReceived, postBookingRefundIssued } from "@/lib/ledger/events";
 
 // PATCH /api/bookings/[id] — upload payment proof (user) or update status (admin)
 export async function PATCH(
@@ -39,6 +40,15 @@ export async function PATCH(
     return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
   }
 
+  // Read the prior state before writing: whether cash has already been booked
+  // decides whether this change is a payment or a refund, and after the update
+  // that information is gone.
+  const { data: before } = await admin
+    .from("bookings")
+    .select("payment_status, status")
+    .eq("id", id)
+    .single();
+
   const { data, error } = await admin
     .from("bookings")
     .update(update)
@@ -48,6 +58,30 @@ export async function PATCH(
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
+  // ── Ledger ────────────────────────────────────────────────────────────────
+  // Posted after the state change succeeds, and guarded so a repeated admin
+  // action cannot double-post. A ledger failure is reported rather than
+  // swallowed: the booking moved, so the books must be corrected by hand.
+  let ledgerError: string | null = null;
+  const wasPaid = before?.payment_status === "paid";
+  const nowPaid = data.payment_status === "paid";
+
+  try {
+    if (!wasPaid && nowPaid) {
+      await postBookingPaymentReceived(data, { createdBy: user.id });
+    }
+
+    // Cancelling a booking whose cash we hold means paying it back out.
+    if (wasPaid && body.status === "cancelled" && before?.status !== "cancelled") {
+      const stayRefund    = Number(data.total_price ?? 0) - Number(data.credit_applied ?? 0);
+      const depositRefund = Number(data.security_deposit ?? 0);
+      await postBookingRefundIssued(data, { stayRefund, depositRefund }, { createdBy: user.id });
+    }
+  } catch (err) {
+    ledgerError = (err as Error).message;
+    console.error("[bookings PATCH] ledger:", ledgerError);
+  }
+
   // Restore credits if cancelling a booking that used them
   let creditRestoration: { restored: number; expired_skipped: number } | null = null;
   if (body.status === "cancelled") {
@@ -55,5 +89,5 @@ export async function PATCH(
     if (cr?.[0]) creditRestoration = cr[0];
   }
 
-  return NextResponse.json({ booking: data, creditRestoration });
+  return NextResponse.json({ booking: data, creditRestoration, ledgerError });
 }

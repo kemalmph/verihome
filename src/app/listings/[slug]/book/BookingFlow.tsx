@@ -186,15 +186,16 @@ function StepDates({
           {quote.cleaningFee > 0 && (
             <div className="flex justify-between text-[#6e7a74]"><span>Cleaning fee</span><span>IDR {fmt(quote.cleaningFee)}</span></div>
           )}
-          <div className="flex justify-between font-bold border-t border-[#cccccc] pt-2">
-            <span>Total</span><span className="text-[#1a7a5e]">IDR {fmt(quote.total)}</span>
-          </div>
           {quote.securityDeposit > 0 && (
-            <div className="flex justify-between text-xs text-[#6e7a74] border-t border-[#e4e2e1] pt-2">
-              <span>Security deposit (refundable, paid separately)</span>
+            <div className="flex justify-between text-[#6e7a74]">
+              <span>Security deposit <span className="text-xs">(refundable)</span></span>
               <span>IDR {fmt(quote.securityDeposit)}</span>
             </div>
           )}
+          <div className="flex justify-between font-bold border-t border-[#cccccc] pt-2">
+            <span>Total to pay</span>
+            <span className="text-[#1a7a5e]">IDR {fmt(quote.total + quote.securityDeposit)}</span>
+          </div>
 
           <button
             onClick={() => onNext(checkIn, checkOut, guests, quote)}
@@ -229,8 +230,10 @@ function StepConfirm({
           { label: "Guests",      value: String(guests) },
           { label: "Subtotal",    value: `IDR ${fmt(quote.subtotal)}` },
           ...(quote.cleaningFee > 0 ? [{ label: "Cleaning fee", value: `IDR ${fmt(quote.cleaningFee)}` }] : []),
-          { label: "Total (to transfer)",  value: `IDR ${fmt(quote.total)}` },
-          ...(quote.securityDeposit > 0 ? [{ label: "Security deposit (refundable)", value: `IDR ${fmt(quote.securityDeposit)}` }] : []),
+          ...(quote.securityDeposit > 0
+            ? [{ label: "Security deposit (refundable)", value: `IDR ${fmt(quote.securityDeposit)}` }]
+            : []),
+          { label: "Total to transfer", value: `IDR ${fmt(quote.total + quote.securityDeposit)}` },
         ].map((row) => (
           <div key={row.label} className="flex justify-between border-b border-[#f6f3f2] pb-2 last:border-0 last:font-bold">
             <span className="text-[#3e4944]">{row.label}</span>
