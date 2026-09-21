@@ -1,5 +1,9 @@
 export type BookingType    = "short_stay" | "long_term" | "viewing";
-export type BookingStatus  = "pending" | "confirmed" | "cancelled" | "completed";
+// "expired" is written by expire_single_booking() when an unpaid booking passes
+// its payment deadline. It is a distinct outcome from "cancelled": nobody
+// chose it, and no money ever moved, so it must not be reported as a
+// cancellation.
+export type BookingStatus  = "pending" | "confirmed" | "cancelled" | "completed" | "expired";
 export type PaymentStatus  = "unpaid" | "pending_verification" | "paid" | "refunded";
 export type RentalMode     = "long_term" | "short_stay" | "both";
 

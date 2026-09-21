@@ -36,8 +36,13 @@ export function BookingStatusActions({ bookingId, currentStatus, currentPaymentS
   // already stranded still needs a button to escape.
   const canConfirm  = currentStatus === "pending"   &&
     (currentPaymentStatus === "pending_verification" || currentPaymentStatus === "paid");
-  const canCancel   = currentStatus !== "cancelled"  && currentStatus !== "completed";
-  const canMarkPaid = currentPaymentStatus !== "paid" && currentStatus !== "cancelled";
+  // An expired booking is closed to both actions. Expiry deletes the
+  // availability block, so those dates may already be sold to someone else —
+  // marking it paid would revive a booking with no claim on the room. A new
+  // booking is the only correct way back.
+  const isClosed    = currentStatus === "cancelled" || currentStatus === "expired";
+  const canCancel   = !isClosed && currentStatus !== "completed";
+  const canMarkPaid = currentPaymentStatus !== "paid" && !isClosed;
 
   return (
     <div className="mt-4 flex items-center gap-2 flex-wrap border-t border-[#f6f3f2] pt-3">

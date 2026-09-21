@@ -12,6 +12,7 @@ function statusBadge(status: BookingStatus) {
     confirmed: "bg-green-100 text-green-700",
     cancelled: "bg-red-100 text-red-700",
     completed: "bg-[#e8f5f0] text-[#1a7a5e]",
+    expired:   "bg-gray-200 text-gray-600",
   };
   return map[status] ?? "bg-gray-100 text-gray-600";
 }

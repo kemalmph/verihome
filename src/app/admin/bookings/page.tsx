@@ -11,6 +11,8 @@ function statusColor(s: BookingStatus) {
     confirmed: "bg-green-100 text-green-700",
     cancelled: "bg-red-100 text-red-700",
     completed: "bg-[#e8f5f0] text-[#1a7a5e]",
+    // Muted, not red: an expiry is the deadline passing, not a cancellation.
+    expired:   "bg-gray-200 text-gray-600",
   };
   return m[s] ?? "bg-gray-100 text-gray-700";
 }
