@@ -11,7 +11,7 @@ interface Props {
   params: Promise<{ slug: string }>;
 }
 
-const DEPOSIT = Number(process.env.VIEWING_DEPOSIT_AMOUNT ?? 200000);
+const DEPOSIT = Number(process.env.VIEWING_DEPOSIT_AMOUNT ?? 50000);
 
 export default async function ViewingPage({ params }: Props) {
   const { slug } = await params;
@@ -32,9 +32,10 @@ export default async function ViewingPage({ params }: Props) {
           <div className="text-sm text-[#6e7a74] mb-1">{property.area}</div>
           <h1 className="text-2xl font-bold text-[#0d2137]">{property.name}</h1>
           <p className="text-sm text-[#3e4944] mt-2">
-            Request a physical viewing. A refundable deposit of{" "}
-            <strong>IDR {new Intl.NumberFormat("id-ID").format(DEPOSIT)}</strong> is required to confirm your slot.
-            If you attend, the deposit is credited to your VeriHome account.
+            Request a physical viewing. A deposit of{" "}
+            <strong>IDR {new Intl.NumberFormat("id-ID").format(DEPOSIT)}</strong> confirms your slot.
+            If you attend it becomes VeriHome credit rather than a cash refund — the
+            full terms are shown before you pay.
           </p>
         </div>
         <ViewingFlow

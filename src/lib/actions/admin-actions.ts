@@ -76,23 +76,32 @@ export async function updateConsultationStatus(consultationId: string, status: s
     .eq("id", consultationId);
   if (error) return { error: error.message };
 
-  // Cash received is the package price less any credit applied.
-  const amount =
-    Number(before?.final_price ?? before?.price ?? 0) - Number(before?.credit_applied ?? 0);
+  // Two different amounts, and conflating them was a latent sign error.
+  //
+  //   cashDue      what the guest still has to transfer. final_price is already
+  //                net of credit, so subtracting credit again double-counted it
+  //                and went negative as soon as credit_applied was written.
+  //   deliveredValue  the whole package price. unearned_revenue was credited
+  //                   from two sources — cash for the balance, credit for the
+  //                   rest — so delivering the session releases both.
+  const credit         = Number(before?.credit_applied ?? 0);
+  const cashDue        = Number(before?.final_price ?? before?.price ?? 0);
+  const deliveredValue = cashDue + credit;
 
   let ledgerError: string | null = null;
   try {
-    // 'paid' is the admin confirming the transfer arrived.
-    if (before && before.status !== "paid" && status === "paid") {
+    // 'paid' is the admin confirming the transfer arrived. A consultation fully
+    // covered by credit has no transfer, so there is no cash event to post.
+    if (before && before.status !== "paid" && status === "paid" && cashDue > 0) {
       await postConsultationPaymentReceived(
-        { id: before.id, user_id: before.user_id, amount },
+        { id: before.id, user_id: before.user_id, amount: cashDue },
         { createdBy: caller.id }
       );
     }
     // 'completed' is the session actually delivered — only then is it revenue.
     if (before && before.status !== "completed" && status === "completed") {
       await postConsultationRevenueEarned(
-        { id: before.id, user_id: before.user_id, amount },
+        { id: before.id, user_id: before.user_id, amount: deliveredValue },
         { createdBy: caller.id }
       );
     }

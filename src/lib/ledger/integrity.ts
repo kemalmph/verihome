@@ -139,9 +139,16 @@ export async function runIntegrityChecks(client?: AdminClient): Promise<{
   const openConsults = (consultations ?? []).filter(
     (c) => (c.payment_status === "paid" || c.status === "paid") && c.status !== "completed"
   );
+  // Credit ADDS to unearned revenue, it does not reduce it. Applying credit
+  // debits credits_outstanding and credits unearned_revenue, so a service paid
+  // partly in cash and partly in credit sits in unearned at its full value.
+  // Subtracting credit here understated the expectation by exactly the credit
+  // applied, and would have reported a false mismatch the first time anyone
+  // spent any. bookings.total_price and consultations.final_price are both
+  // already net of credit, so the credit has to be added back.
   const expectedUnearned =
-    openBookings.reduce((s, b) => s + (n(b.total_price) - n(b.credit_applied)), 0) +
-    openConsults.reduce((s, c) => s + (n(c.final_price ?? c.price) - n(c.credit_applied)), 0);
+    openBookings.reduce((s, b) => s + n(b.total_price) + n(b.credit_applied), 0) +
+    openConsults.reduce((s, c) => s + n(c.final_price ?? c.price) + n(c.credit_applied), 0);
   const ledgerUnearned = balanceOf(balances, "unearned_revenue");
 
   checks.push({

@@ -2,11 +2,14 @@ import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { runIntegrityChecks } from "@/lib/ledger/integrity";
+import { listPendingCreditRefunds } from "@/lib/actions/credit-actions";
+import { PendingCreditRefunds } from "./PendingCreditRefunds";
 
 export default async function AdminDashboardPage() {
   const admin = createAdminClient();
   // Run on every dashboard load: a books mismatch should be impossible to miss.
   const integrity = await runIntegrityChecks(admin);
+  const pendingCreditRefunds = await listPendingCreditRefunds();
 
   const [
     { data: properties },
@@ -103,6 +106,8 @@ export default async function AdminDashboardPage() {
             </div>
           </div>
         )}
+
+        <PendingCreditRefunds pending={pendingCreditRefunds} />
 
         {missingCommission.length > 0 && (
           <div className="mb-10 bg-amber-50 border border-amber-200 rounded-xl p-5">

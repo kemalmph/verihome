@@ -85,7 +85,10 @@ export async function PATCH(
 
     // Cancelling a booking whose cash we hold means paying it back out.
     if (wasPaid && body.status === "cancelled" && before?.status !== "cancelled") {
-      const stayRefund    = Number(data.total_price ?? 0) - Number(data.credit_applied ?? 0);
+      // Cash back is the cash paid, and total_price is already net of credit.
+      // The credit half is returned as credit by restore_booking_credits below,
+      // not as money — subtracting it here too refunded neither.
+      const stayRefund    = Number(data.total_price ?? 0);
       const depositRefund = Number(data.security_deposit ?? 0);
       await postBookingRefundIssued(data, { stayRefund, depositRefund }, { createdBy: user.id });
     }

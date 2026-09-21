@@ -4,6 +4,8 @@ import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { getAccountStatement } from "@/lib/reports/statement";
 import { PrintButton } from "@/components/print/PrintButton";
 import { PRINT_CSS } from "@/components/print/print.css";
+import { CreditCashbackCard } from "@/components/credits/CreditCashbackCard";
+import { listRefundableCredits } from "@/lib/actions/credit-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -23,6 +25,7 @@ export default async function StatementPage({
   const from = new Date(Date.UTC(to.getUTCFullYear(), to.getUTCMonth() - months + 1, 1));
 
   const s = await getAccountStatement(user.id, from, to);
+  const refundable = await listRefundableCredits();
 
   return (
     <>
@@ -92,12 +95,22 @@ export default async function StatementPage({
             {(s.depositsHeld > 0 || s.creditBalance > 0) && (
               <p className="mt-5 text-xs text-[#3e4944] bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg px-4 py-3">
                 Jaminan dan kredit di atas adalah <strong>milik Anda</strong>. VeriHome hanya
-                menyimpannya — jaminan dikembalikan sesuai ketentuan, dan kredit dapat dipakai
-                untuk pemesanan berikutnya.
+                menyimpannya — jaminan booking dikembalikan sebagai uang sesuai ketentuan,
+                dan kredit dapat dipakai untuk konsultasi atau pemesanan. Kredit dari
+                titipan viewing dapat ditukar kembali menjadi uang dalam 14 hari sejak
+                diterbitkan, selama belum terpakai.
                 <span className="block mt-1 text-[#6e7a74]">
                   Deposits and credit shown above belong to you. VeriHome only holds them.
+                  Credit issued from a viewing deposit can be exchanged back for cash within
+                  14 days of issue, while it is still unused.
                 </span>
               </p>
+            )}
+
+            {refundable.length > 0 && (
+              <div className="mt-6 no-print">
+                <CreditCashbackCard credits={refundable} />
+              </div>
             )}
 
             {/* History */}

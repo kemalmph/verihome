@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { createClient } from "@/lib/supabase/server";
 import { BookingForm } from "./BookingForm";
+import { getAvailableCredit } from "@/lib/actions/book-consultation";
 
 interface BookPageProps {
   searchParams: Promise<{ package?: string }>;
@@ -24,6 +25,8 @@ export default async function BookConsultationPage({ searchParams }: BookPagePro
     .select("property_id, properties(id, name, area)")
     .eq("user_id", user.id)
     .limit(20);
+
+  const availableCredit = await getAvailableCredit();
 
   const savedProperties = (saved ?? [])
     .flatMap((s) => {
@@ -54,7 +57,11 @@ export default async function BookConsultationPage({ searchParams }: BookPagePro
         </div>
 
         <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-8">
-          <BookingForm defaultPackage={packageId} savedProperties={savedProperties} />
+          <BookingForm
+            defaultPackage={packageId}
+            savedProperties={savedProperties}
+            availableCredit={availableCredit}
+          />
         </div>
       </main>
       <Footer />

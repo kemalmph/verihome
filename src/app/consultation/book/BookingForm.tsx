@@ -8,21 +8,33 @@ import type { PaymentAction } from "@/lib/payment";
 type BankTransfer = Extract<PaymentAction, { kind: "bank_transfer" }>;
 
 const PACKAGES = {
-  basic: { label: "Basic", price: "IDR 99,000", duration: "30 min" },
-  premium: { label: "Premium", price: "IDR 199,000", duration: "60 min" },
+  basic: { label: "Basic", price: 99000, duration: "30 min" },
+  premium: { label: "Premium", price: 199000, duration: "60 min" },
 } as const;
+
+const rp = (n: number) => `IDR ${n.toLocaleString("id-ID")}`;
 
 type PackageId = keyof typeof PACKAGES;
 
 interface BookingFormProps {
   defaultPackage: PackageId;
   savedProperties: { id: string; name: string; area: string }[];
+  /** Spendable credit. Display only — the server recomputes what applies. */
+  availableCredit: number;
 }
 
-export function BookingForm({ defaultPackage, savedProperties }: BookingFormProps) {
+export function BookingForm({ defaultPackage, savedProperties, availableCredit }: BookingFormProps) {
   const [selectedPackage, setSelectedPackage] = useState<PackageId>(defaultPackage);
   const [error, setError] = useState<string | null>(null);
   const [transfer, setTransfer] = useState<BankTransfer | null>(null);
+  const [useCredit, setUseCredit] = useState(availableCredit > 0);
+  const [covered, setCovered] = useState<{ creditApplied: number } | null>(null);
+
+  // A preview only. The server applies whole credits oldest-first inside a lock
+  // and returns the real figure — this must never be sent as an amount.
+  const price = PACKAGES[selectedPackage].price;
+  const estimatedCredit = useCredit ? Math.min(availableCredit, price) : 0;
+  const estimatedDue = price - estimatedCredit;
   const [isPending, startTransition] = useTransition();
   const router = useRouter();
 
@@ -42,6 +54,13 @@ export function BookingForm({ defaultPackage, savedProperties }: BookingFormProp
         setError(result.error);
         return;
       }
+      // Credit covered the whole price, so there is no transfer to make and no
+      // payment screen to show.
+      if (result.fullyCovered) {
+        setCovered({ creditApplied: result.creditApplied ?? 0 });
+        return;
+      }
+
       const action = result.intent?.action;
       if (!action) return;
 
@@ -53,6 +72,37 @@ export function BookingForm({ defaultPackage, savedProperties }: BookingFormProp
       }
       setTransfer(action);
     });
+  }
+
+  if (covered) {
+    return (
+      <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+        <div className="flex items-center gap-3">
+          <span className="material-symbols-outlined text-[#1a7a5e] text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+            check_circle
+          </span>
+          <div>
+            <h2 className="font-bold text-[#0d2137] text-lg">Lunas dengan kredit</h2>
+            <p className="text-sm text-[#6e7a74]">Paid in full with credit — nothing to transfer.</p>
+          </div>
+        </div>
+
+        <div className="bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg p-4 text-sm text-[#12614a]">
+          Kredit terpakai: <strong>{rp(covered.creditApplied)}</strong>
+          <span className="block text-xs text-[#3e4944] mt-1">
+            Tim kami menghubungi Anda dalam 24 jam untuk menjadwalkan sesi.
+            <span className="block">Our team contacts you within 24 hours to schedule the session.</span>
+          </span>
+        </div>
+
+        <button
+          onClick={() => router.push("/dashboard/appointments")}
+          className="w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold hover:opacity-90"
+        >
+          View my appointments
+        </button>
+      </div>
+    );
   }
 
   if (transfer) {
@@ -113,7 +163,7 @@ export function BookingForm({ defaultPackage, savedProperties }: BookingFormProp
               }`}
             >
               <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">{pkg.label}</p>
-              <p className="text-xl font-bold text-[#0d2137] mt-1">{pkg.price}</p>
+              <p className="text-xl font-bold text-[#0d2137] mt-1">{rp(pkg.price)}</p>
               <p className="text-xs text-[#6e7a74] mt-0.5">{pkg.duration} session</p>
             </button>
           ))}
@@ -157,6 +207,25 @@ export function BookingForm({ defaultPackage, savedProperties }: BookingFormProp
         </div>
       )}
 
+      {/* Credit */}
+      {availableCredit > 0 && (
+        <label className="flex items-start gap-3 bg-[#e8f5f0] border border-[#9cf4d1] rounded-xl p-4 cursor-pointer">
+          <input
+            type="checkbox"
+            name="use_credit"
+            checked={useCredit}
+            onChange={(e) => setUseCredit(e.target.checked)}
+            className="mt-0.5 w-4 h-4 accent-[#1a7a5e] shrink-0"
+          />
+          <span className="text-sm text-[#12614a]">
+            Pakai kredit VeriHome saya — <strong>{rp(availableCredit)}</strong> tersedia
+            <span className="block text-xs text-[#3e4944] mt-0.5">
+              Use my VeriHome credit. Credit closest to expiring is used first.
+            </span>
+          </span>
+        </label>
+      )}
+
       {/* Order summary */}
       <div className="bg-[#f6f3f2] rounded-xl p-5 space-y-3 border border-[#bec9c2]">
         <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">Order Summary</p>
@@ -164,12 +233,27 @@ export function BookingForm({ defaultPackage, savedProperties }: BookingFormProp
           <span className="text-sm text-[#1b1c1c]">
             {PACKAGES[selectedPackage].label} Consultation ({PACKAGES[selectedPackage].duration})
           </span>
-          <span className="font-bold text-[#1a7a5e]">{PACKAGES[selectedPackage].price}</span>
+          <span className="font-bold text-[#1a7a5e]">{rp(price)}</span>
         </div>
+
+        {estimatedCredit > 0 && (
+          <div className="flex justify-between items-center">
+            <span className="text-sm text-[#1b1c1c]">Kredit VeriHome</span>
+            <span className="font-bold text-[#1a7a5e]">− {rp(estimatedCredit)}</span>
+          </div>
+        )}
+
         <div className="flex justify-between items-center border-t border-[#bec9c2] pt-3">
           <span className="text-sm font-semibold text-[#1b1c1c]">Total</span>
-          <span className="text-lg font-bold text-[#0d2137]">{PACKAGES[selectedPackage].price}</span>
+          <span className="text-lg font-bold text-[#0d2137]">{rp(estimatedDue)}</span>
         </div>
+
+        {estimatedCredit > 0 && (
+          <p className="text-xs text-[#6e7a74]">
+            Jumlah akhir dihitung ulang oleh server saat konfirmasi.
+            <span className="block">The final amount is recomputed by the server on confirmation.</span>
+          </p>
+        )}
       </div>
 
       <button

@@ -127,7 +127,7 @@ export async function getReceipt(id: string): Promise<Receipt | null> {
   const { data: viewing } = await admin
     .from("viewings")
     .select(`id, user_id, deposit_amount, deposit_paid, deposit_paid_at, deposit_refunded,
-             payment_provider, created_at,
+             credit_issued, payment_provider, created_at,
              property:properties ( name, area ), user:users ( name, email )`)
     .eq("id", id)
     .maybeSingle();
@@ -142,12 +142,17 @@ export async function getReceipt(id: string): Promise<Receipt | null> {
       issuedAt: new Date().toISOString().slice(0, 10),
       customerName: u?.name ?? "—",
       customerEmail: u?.email ?? "—",
+      // Once the deposit has become credit it is no longer refundable money —
+      // printing it under "Dapat dikembalikan" would restate the promise this
+      // release exists to correct. Credit is claimed back through the 14-day
+      // cash-out, not through this receipt.
       lines: [{
-        label: "Titipan jaminan kunjungan", labelEn: "Viewing deposit",
-        amount: amt, refundable: !viewing.deposit_refunded,
+        label: viewing.credit_issued ? "Titipan kunjungan — sudah menjadi kredit" : "Titipan jaminan kunjungan",
+        labelEn: viewing.credit_issued ? "Viewing deposit — converted to credit" : "Viewing deposit",
+        amount: amt, refundable: !viewing.deposit_refunded && !viewing.credit_issued,
       }],
       totalPaid: amt,
-      refundableTotal: viewing.deposit_refunded ? 0 : amt,
+      refundableTotal: viewing.deposit_refunded || viewing.credit_issued ? 0 : amt,
       paymentMethod: methodLabel(viewing.payment_provider),
       paidAt: viewing.deposit_paid ? (viewing.deposit_paid_at ?? viewing.created_at) : null,
       property: viewing.property as unknown as { name: string; area: string | null } | null,

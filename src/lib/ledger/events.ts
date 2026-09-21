@@ -24,7 +24,12 @@ export async function postBookingPaymentReceived(
   },
   opts: { createdBy?: string | null; client?: AdminClient } = {}
 ) {
-  const stayDue = n(booking.total_price) - n(booking.credit_applied);
+  // total_price is ALREADY net of credit — /api/bookings passes
+  // quote.total - appliedCredit as p_total_price. Subtracting credit_applied
+  // here as well took it off twice, understating the cash actually received by
+  // the credit amount. Invisible while credit_applied was never written
+  // (migration 031), wrong the moment it was.
+  const stayDue = n(booking.total_price);
   const deposit = n(booking.security_deposit);
   const cash    = stayDue + deposit;
 
@@ -76,7 +81,12 @@ export async function postBookingRevenueEarned(
   },
   opts: { createdBy?: string | null; client?: AdminClient } = {}
 ): Promise<{ split: boolean; reason?: string }> {
-  const stayValue = n(booking.total_price) - n(booking.credit_applied);
+  // The stay is delivered in full regardless of how it was paid for, so the
+  // whole value is released from unearned_revenue. That balance was credited
+  // from two sources — cash (total_price) at payment, and credit
+  // (credit_applied) at redemption — so recognising only the cash half would
+  // strand the credit portion in unearned_revenue forever.
+  const stayValue = n(booking.total_price) + n(booking.credit_applied);
   if (stayValue <= 0) return { split: true };
 
   const cleaning = Math.min(n(booking.cleaning_fee), stayValue);

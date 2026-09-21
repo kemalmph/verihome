@@ -1,6 +1,8 @@
 "use client";
 
 import { useState } from "react";
+import { DepositPolicy } from "@/components/viewings/DepositPolicy";
+import { VIEWING_POLICY_VERSION } from "@/lib/viewings/policy";
 
 interface Props {
   propertyId:    string;
@@ -85,7 +87,14 @@ function StepSchedule({
       <div className="bg-[#f6f3f2] rounded-lg p-3 text-sm text-[#3e4944]">
         Deposit required: <strong className="text-[#1a7a5e]">IDR {fmt(depositAmount)}</strong>
         <br />
-        <span className="text-xs text-[#6e7a74]">Refunded or credited after you attend the viewing.</span>
+        <span className="text-xs text-[#6e7a74]">
+          Jika hadir, deposit menjadi kredit VeriHome — bukan uang kembali.
+          Ketentuan lengkap di langkah berikutnya.
+          <span className="block">
+            If you attend, the deposit becomes VeriHome credit — not a cash refund.
+            Full terms on the next step.
+          </span>
+        </span>
       </div>
 
       <button
@@ -103,9 +112,11 @@ function StepSchedule({
 
 function StepConfirm({
   date, time, notes, depositAmount,
+  acknowledged, onAcknowledge,
   onBack, onConfirm, loading,
 }: {
   date: string; time: string; notes: string; depositAmount: number;
+  acknowledged: boolean; onAcknowledge: (v: boolean) => void;
   onBack: () => void; onConfirm: () => void; loading: boolean;
 }) {
   return (
@@ -131,14 +142,33 @@ function StepConfirm({
         )}
       </div>
 
+      {/* The terms come before the money, not after it. */}
+      <DepositPolicy deposit={depositAmount} />
+
+      <label className="flex items-start gap-3 bg-[#f6f3f2] rounded-lg p-3 cursor-pointer">
+        <input
+          type="checkbox"
+          checked={acknowledged}
+          onChange={(e) => onAcknowledge(e.target.checked)}
+          className="mt-0.5 w-4 h-4 accent-[#1a7a5e] shrink-0"
+        />
+        <span className="text-sm text-[#3e4944]">
+          Saya mengerti deposit menjadi kredit jika saya hadir, dan menyetujui
+          ketentuan di atas.
+          <span className="block text-xs text-[#6e7a74] mt-0.5">
+            I understand the deposit becomes credit if I attend, and I accept the terms above.
+          </span>
+        </span>
+      </label>
+
       <div className="flex gap-3">
         <button onClick={onBack} className="flex-1 py-3 border border-[#cccccc] rounded-lg text-sm font-semibold text-[#3e4944] hover:bg-[#f6f3f2]">
           ← Back
         </button>
         <button
           onClick={onConfirm}
-          disabled={loading}
-          className="flex-1 py-3 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50"
+          disabled={loading || !acknowledged}
+          className="flex-1 py-3 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {loading ? "Submitting…" : "Submit & get payment details"}
         </button>
@@ -196,6 +226,7 @@ export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "property
   const [loading,setLoading]= useState(false);
   const [error,  setError]  = useState("");
   const [intent, setIntent] = useState<Intent | null>(null);
+  const [acknowledged, setAcknowledged] = useState(false);
 
   function handleStep1(d: string, t: string, n: string) {
     setDate(d); setTime(t); setNotes(n);
@@ -209,7 +240,13 @@ export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "property
       const res = await fetch("/api/viewings", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
-        body: JSON.stringify({ propertyId, preferredDate: date, preferredTime: time, notes }),
+        body: JSON.stringify({
+          propertyId,
+          preferredDates: [{ date, time }],
+          notes,
+          policyAcknowledged: acknowledged,
+          policyVersion: VIEWING_POLICY_VERSION,
+        }),
       });
       const data = await res.json();
       if (!res.ok) { setError(data.error); return; }
@@ -245,6 +282,7 @@ export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "property
       {step === 2 && (
         <StepConfirm
           date={date} time={time} notes={notes} depositAmount={depositAmount}
+          acknowledged={acknowledged} onAcknowledge={setAcknowledged}
           onBack={() => setStep(1)} onConfirm={handleConfirm} loading={loading}
         />
       )}
