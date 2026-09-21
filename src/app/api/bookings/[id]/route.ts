@@ -49,6 +49,18 @@ export async function PATCH(
     .eq("id", id)
     .single();
 
+  // Verifying payment IS confirmation. Without this a booking sits at 'pending'
+  // while fully paid, and the completion cron — which only looks at 'confirmed'
+  // — never runs it, so its revenue is never recognised. Done on the server so
+  // it holds for every caller: the admin buttons, the gateway webhook, and
+  // anything added later. An explicit status in the same request wins, so an
+  // admin marking a booking paid and cancelled in one call still cancels it.
+  const becomingPaid = update.payment_status === "paid" && before?.payment_status !== "paid";
+  if (becomingPaid && before?.status === "pending" && update.status === undefined) {
+    update.status       = "confirmed";
+    update.confirmed_at = new Date().toISOString();
+  }
+
   const { data, error } = await admin
     .from("bookings")
     .update(update)

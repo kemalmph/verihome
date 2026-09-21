@@ -30,7 +30,12 @@ export function BookingStatusActions({ bookingId, currentStatus, currentPaymentS
     startTransition(() => router.refresh());
   }
 
-  const canConfirm  = currentStatus === "pending"   && currentPaymentStatus === "pending_verification";
+  // "paid" belongs here too. Marking a booking paid used to clear the only
+  // condition that showed this button, so a booking confirmed that way had no
+  // way out of 'pending'. The server now confirms on payment, but a booking
+  // already stranded still needs a button to escape.
+  const canConfirm  = currentStatus === "pending"   &&
+    (currentPaymentStatus === "pending_verification" || currentPaymentStatus === "paid");
   const canCancel   = currentStatus !== "cancelled"  && currentStatus !== "completed";
   const canMarkPaid = currentPaymentStatus !== "paid" && currentStatus !== "cancelled";
 
