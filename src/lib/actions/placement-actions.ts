@@ -3,10 +3,6 @@
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requireAdmin } from "@/lib/auth/guards";
-import {
-  postPlacementCommissionEarned,
-  postPlacementCommissionReceived,
-} from "@/lib/ledger/events";
 
 const num = (v: FormDataEntryValue | null) => {
   const n = Number(String(v ?? "").replace(/[^\d.]/g, ""));
@@ -61,11 +57,12 @@ export async function recordPlacement(formData: FormData) {
 
   let ledgerError: string | null = null;
   try {
-    await postPlacementCommissionEarned(
-      { property_id: propertyId, owner_id: property?.owner_id ?? null,
-        user_id: userId, amount: commissionAmount },
-      { createdBy: caller.id }
-    );
+    // Reads the placement row it just wrote and posts from that, so the entry
+    // can only describe a placement that actually exists.
+    const { error: e } = await admin.rpc("settle_placement_recorded", {
+      p_placement_id: placement.id, p_actor: caller.id,
+    });
+    if (e) throw new Error(e.message);
   } catch (err) {
     ledgerError = (err as Error).message;
     console.error("[recordPlacement] ledger:", ledgerError);
@@ -91,23 +88,15 @@ export async function markPlacementPaid(placementId: string) {
   if (!before) return { error: "Penempatan tidak ditemukan." };
   if (before.status === "paid") return { error: "Sudah ditandai lunas." };
 
-  const { data: property } = await admin
-    .from("properties").select("owner_id").eq("id", before.property_id).single();
-
-  const { error } = await admin
-    .from("placements").update({ status: "paid" }).eq("id", placementId);
-  if (error) return { error: error.message };
-
+  // Status change and ledger entry commit together.
   let ledgerError: string | null = null;
-  try {
-    await postPlacementCommissionReceived(
-      { property_id: before.property_id, owner_id: property?.owner_id ?? null,
-        amount: Number(before.commission_amount) },
-      { createdBy: caller.id }
-    );
-  } catch (err) {
-    ledgerError = (err as Error).message;
-    console.error("[markPlacementPaid] ledger:", ledgerError);
+  const { error } = await admin.rpc("settle_placement_payment", {
+    p_placement_id: placementId, p_actor: caller.id,
+  });
+  if (error) {
+    ledgerError = error.message;
+    console.error("[markPlacementPaid]:", ledgerError);
+    return { error: ledgerError };
   }
 
   revalidatePath("/admin/placements");

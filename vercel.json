@@ -1,16 +1,8 @@
 {
   "crons": [
     {
-      "path": "/api/cron/expire-bookings",
+      "path": "/api/cron/daily",
       "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cron/complete-bookings",
-      "schedule": "0 0 * * *"
-    },
-    {
-      "path": "/api/cron/send-reminders",
-      "schedule": "0 8 * * *"
     }
   ]
 }

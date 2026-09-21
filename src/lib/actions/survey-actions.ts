@@ -88,7 +88,7 @@ export async function submitSurvey(propertyId: string, formData: FormData) {
 
   let surveyId: string;
   try {
-    surveyId = await writeSurvey(propertyId, payload);
+    surveyId = await writeSurvey(propertyId, payload, viewer.id);
   } catch (err) {
     return { error: `Could not save the survey: ${(err as Error).message}` };
   }

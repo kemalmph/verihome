@@ -147,7 +147,14 @@ export function parseTallyFields(fields: TallyField[]): SurveyPayload {
  */
 export async function writeSurvey(
   propertyId: string,
-  payload: SurveyPayload
+  payload: SurveyPayload,
+  /**
+   * The account submitting this survey, from the session. Not part of the
+   * payload on purpose: surveyor_name is free text the surveyor can edit, so it
+   * cannot answer "which login produced this assessment?". Null for the Tally
+   * webhook, which has no session.
+   */
+  submittedBy?: string | null
 ): Promise<string> {
   const admin = createAdminClient();
 
@@ -161,6 +168,7 @@ export async function writeSurvey(
       pic_whatsapp:          payload.pic_whatsapp,
       duration_minutes:      payload.duration_minutes,
       video_walkthrough_url: payload.video_walkthrough_url,
+      submitted_by:          submittedBy ?? null,
     })
     .select("id")
     .single();

@@ -3,12 +3,53 @@
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/guards";
-import { postConsultationPaymentReceived, postConsultationRevenueEarned } from "@/lib/ledger/events";
+
+
+/** The checklist items, and what to call each one when it is missing. */
+const CHECKLIST_ITEMS: [key: string, label: string][] = [
+  ["min_photos_uploaded",    "Foto belum cukup"],
+  ["video_walkthrough_done", "Video walkthrough belum ada"],
+  ["rla_completed",          "Penilaian RLA belum lengkap"],
+  ["pros_cons_written",      "Kelebihan dan kekurangan belum ditulis"],
+  ["price_verified",         "Harga belum diverifikasi"],
+  ["owner_contact_active",   "Kontak pemilik belum dikonfirmasi"],
+  ["area_overview_filled",   "Data area belum diisi"],
+  ["rental_mode_configured", "Mode sewa belum diatur"],
+];
 
 export async function updatePropertyStatus(propertyId: string, status: string) {
   try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
+
+  // The checklist is written diligently by three subsystems and, until now, read
+  // by nothing — a property could go live with no photos, no rate and no
+  // assessment. Enforced in the action rather than the UI, because a layout or a
+  // disabled button is not a rule: this function is separately callable.
+  if (status === "live") {
+    const { data: checklist } = await admin
+      .from("publish_checklist")
+      .select("*")
+      .eq("property_id", propertyId)
+      .maybeSingle();
+
+    if (!checklist) {
+      return { error: "Checklist publikasi belum ada untuk properti ini — lengkapi Build Listing dulu." };
+    }
+
+    const unmet = CHECKLIST_ITEMS
+      .filter(([key]) => (checklist as Record<string, unknown>)[key] !== true)
+      .map(([, label]) => label);
+
+    if (unmet.length > 0) {
+      // Name what is missing. "Checklist incomplete" tells nobody what to do.
+      return {
+        error: `Belum bisa dipublikasikan. ${unmet.length} item belum selesai: ${unmet.join("; ")}.`,
+        unmet,
+      };
+    }
+  }
+
   const { error } = await admin
     .from("properties")
     .update({ status })
@@ -70,44 +111,32 @@ export async function updateConsultationStatus(consultationId: string, status: s
     .eq("id", consultationId)
     .single();
 
-  const { error } = await admin
-    .from("consultations")
-    .update({ status })
-    .eq("id", consultationId);
-  if (error) return { error: error.message };
-
-  // Two different amounts, and conflating them was a latent sign error.
-  //
-  //   cashDue      what the guest still has to transfer. final_price is already
-  //                net of credit, so subtracting credit again double-counted it
-  //                and went negative as soon as credit_applied was written.
-  //   deliveredValue  the whole package price. unearned_revenue was credited
-  //                   from two sources — cash for the balance, credit for the
-  //                   rest — so delivering the session releases both.
-  const credit         = Number(before?.credit_applied ?? 0);
-  const cashDue        = Number(before?.final_price ?? before?.price ?? 0);
-  const deliveredValue = cashDue + credit;
-
+  // Money transitions go through settlement functions: the status change and
+  // the ledger entries commit together, or neither does. The amounts are
+  // computed in the database from the row itself, so the two cannot disagree
+  // about what a session was worth.
   let ledgerError: string | null = null;
   try {
-    // 'paid' is the admin confirming the transfer arrived. A consultation fully
-    // covered by credit has no transfer, so there is no cash event to post.
-    if (before && before.status !== "paid" && status === "paid" && cashDue > 0) {
-      await postConsultationPaymentReceived(
-        { id: before.id, user_id: before.user_id, amount: cashDue },
-        { createdBy: caller.id }
-      );
-    }
-    // 'completed' is the session actually delivered — only then is it revenue.
-    if (before && before.status !== "completed" && status === "completed") {
-      await postConsultationRevenueEarned(
-        { id: before.id, user_id: before.user_id, amount: deliveredValue },
-        { createdBy: caller.id }
-      );
+    if (before && before.status !== "paid" && status === "paid") {
+      const { error: e } = await admin.rpc("settle_consultation_payment", {
+        p_consultation_id: consultationId, p_actor: caller.id,
+      });
+      if (e) throw new Error(e.message);
+    } else if (before && before.status !== "completed" && status === "completed") {
+      const { error: e } = await admin.rpc("settle_consultation_completion", {
+        p_consultation_id: consultationId, p_actor: caller.id,
+      });
+      if (e) throw new Error(e.message);
+    } else {
+      // No money attached — a plain status change.
+      const { error: e } = await admin
+        .from("consultations").update({ status }).eq("id", consultationId);
+      if (e) return { error: e.message };
     }
   } catch (err) {
     ledgerError = (err as Error).message;
-    console.error("[updateConsultationStatus] ledger:", ledgerError);
+    console.error("[updateConsultationStatus]:", ledgerError);
+    return { error: ledgerError };
   }
 
   revalidatePath("/admin/consultations");

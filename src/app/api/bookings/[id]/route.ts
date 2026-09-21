@@ -1,7 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { postBookingPaymentReceived, postBookingRefundIssued } from "@/lib/ledger/events";
+
 
 // PATCH /api/bookings/[id] — upload payment proof (user) or update status (admin)
 export async function PATCH(
@@ -19,15 +19,45 @@ export async function PATCH(
   const body = await req.json() as Record<string, unknown>;
   const isAdmin = profile?.is_admin === true;
 
-  // Build allowed update fields
+  // ── Financial transitions go through settlement functions ──────────────────
+  // Marking a booking paid, or cancelling a paid one, changes the row AND the
+  // ledger. Those used to be two round trips, so a failed post left a booking
+  // marked paid with nothing behind it. Each RPC now does both in one
+  // transaction and is idempotent on replay.
+  if (isAdmin && (body.payment_status === "paid" || body.status === "cancelled")) {
+    try {
+      if (body.status === "cancelled") {
+        const { data, error } = await admin.rpc("settle_booking_cancellation", {
+          p_booking_id: id, p_actor: user.id,
+        });
+        if (error) throw new Error(error.message);
+        if (body.admin_notes) {
+          await admin.from("bookings").update({ admin_notes: body.admin_notes }).eq("id", id);
+        }
+        return NextResponse.json({ booking: data, ledgerError: null });
+      }
+
+      const { data, error } = await admin.rpc("settle_booking_payment", {
+        p_booking_id: id, p_actor: user.id,
+      });
+      if (error) throw new Error(error.message);
+      if (body.admin_notes) {
+        await admin.from("bookings").update({ admin_notes: body.admin_notes }).eq("id", id);
+      }
+      return NextResponse.json({ booking: data, ledgerError: null });
+    } catch (err) {
+      // Nothing was written — the row and the books are still in step.
+      return NextResponse.json({ error: (err as Error).message }, { status: 500 });
+    }
+  }
+
+  // ── Everything else is a plain field update with no money attached ─────────
   const update: Record<string, unknown> = {};
 
   if (isAdmin) {
-    if (body.status)         update.status         = body.status;
-    if (body.payment_status) update.payment_status = body.payment_status;
-    if (body.admin_notes)    update.admin_notes    = body.admin_notes;
+    if (body.status)      update.status      = body.status;
+    if (body.admin_notes) update.admin_notes = body.admin_notes;
     if (body.status === "confirmed") update.confirmed_at = new Date().toISOString();
-    if (body.status === "cancelled") update.cancelled_at = new Date().toISOString();
   } else {
     // Users can only upload payment proof (via dedicated route)
     if (body.payment_proof_url) {
@@ -40,27 +70,6 @@ export async function PATCH(
     return NextResponse.json({ error: "No valid fields to update" }, { status: 400 });
   }
 
-  // Read the prior state before writing: whether cash has already been booked
-  // decides whether this change is a payment or a refund, and after the update
-  // that information is gone.
-  const { data: before } = await admin
-    .from("bookings")
-    .select("payment_status, status")
-    .eq("id", id)
-    .single();
-
-  // Verifying payment IS confirmation. Without this a booking sits at 'pending'
-  // while fully paid, and the completion cron — which only looks at 'confirmed'
-  // — never runs it, so its revenue is never recognised. Done on the server so
-  // it holds for every caller: the admin buttons, the gateway webhook, and
-  // anything added later. An explicit status in the same request wins, so an
-  // admin marking a booking paid and cancelled in one call still cancels it.
-  const becomingPaid = update.payment_status === "paid" && before?.payment_status !== "paid";
-  if (becomingPaid && before?.status === "pending" && update.status === undefined) {
-    update.status       = "confirmed";
-    update.confirmed_at = new Date().toISOString();
-  }
-
   const { data, error } = await admin
     .from("bookings")
     .update(update)
@@ -70,39 +79,8 @@ export async function PATCH(
 
   if (error) return NextResponse.json({ error: error.message }, { status: 500 });
 
-  // ── Ledger ────────────────────────────────────────────────────────────────
-  // Posted after the state change succeeds, and guarded so a repeated admin
-  // action cannot double-post. A ledger failure is reported rather than
-  // swallowed: the booking moved, so the books must be corrected by hand.
-  let ledgerError: string | null = null;
-  const wasPaid = before?.payment_status === "paid";
-  const nowPaid = data.payment_status === "paid";
-
-  try {
-    if (!wasPaid && nowPaid) {
-      await postBookingPaymentReceived(data, { createdBy: user.id });
-    }
-
-    // Cancelling a booking whose cash we hold means paying it back out.
-    if (wasPaid && body.status === "cancelled" && before?.status !== "cancelled") {
-      // Cash back is the cash paid, and total_price is already net of credit.
-      // The credit half is returned as credit by restore_booking_credits below,
-      // not as money — subtracting it here too refunded neither.
-      const stayRefund    = Number(data.total_price ?? 0);
-      const depositRefund = Number(data.security_deposit ?? 0);
-      await postBookingRefundIssued(data, { stayRefund, depositRefund }, { createdBy: user.id });
-    }
-  } catch (err) {
-    ledgerError = (err as Error).message;
-    console.error("[bookings PATCH] ledger:", ledgerError);
-  }
-
-  // Restore credits if cancelling a booking that used them
-  let creditRestoration: { restored: number; expired_skipped: number } | null = null;
-  if (body.status === "cancelled") {
-    const { data: cr } = await admin.rpc("restore_booking_credits", { p_booking_id: id });
-    if (cr?.[0]) creditRestoration = cr[0];
-  }
-
-  return NextResponse.json({ booking: data, creditRestoration, ledgerError });
+  // Credit restoration moved inside settle_booking_cancellation, which is the
+  // only path that cancels — it now happens in the same transaction as the
+  // cancellation that entitles the guest to it.
+  return NextResponse.json({ booking: data, ledgerError: null });
 }
