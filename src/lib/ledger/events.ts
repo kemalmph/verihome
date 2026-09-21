@@ -66,6 +66,8 @@ export async function postBookingRevenueEarned(
   booking: {
     id: string; property_id: string; user_id: string;
     total_price: unknown; cleaning_fee: unknown; credit_applied: unknown;
+    /** Rate frozen when the booking was taken. See migration 028. */
+    commission_pct?: unknown;
   },
   property: {
     owner_id?: string | null;
@@ -105,14 +107,22 @@ export async function postBookingRevenueEarned(
     );
   }
 
-  const pct = property.platform_commission_pct;
-  const hasRate = pct !== null && pct !== undefined && Number.isFinite(Number(pct));
+  // The rate frozen onto the booking wins. It is what was agreed when the stay
+  // was sold, and a stay sold under one rate must not settle under another
+  // because the property or the platform default changed in between. The
+  // property is read only for bookings taken before migration 028 added the
+  // snapshot.
+  const usable = (v: unknown) => v !== null && v !== undefined && Number.isFinite(Number(v));
+  const pct = usable(booking.commission_pct)
+    ? booking.commission_pct
+    : property.platform_commission_pct;
+  const hasRate = usable(pct);
 
   if (rent > 0 && !hasRate) {
     entries.push({ ...base, account: "owner_payable", direction: "credit", amount: rent,
       description: "No commission rate configured — full rent to owner pending split" });
     await postLedgerEntries(entries, opts.client);
-    return { split: false, reason: "platform_commission_pct is not set on this property" };
+    return { split: false, reason: "no commission rate on the booking, the property or the platform default" };
   }
 
   if (rent > 0) {

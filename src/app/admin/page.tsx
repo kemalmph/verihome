@@ -12,11 +12,16 @@ export default async function AdminDashboardPage() {
     { data: properties },
     { data: consultations },
     { count: pendingReviews },
+    { data: settings },
   ] = await Promise.all([
     admin.from("properties").select("id, name, area, property_type, status, price_monthly, created_at, rental_mode, platform_commission_pct").order("created_at", { ascending: false }),
     admin.from("consultations").select("id, status, package_type, created_at").order("created_at", { ascending: false }).limit(50),
     admin.from("reviews").select("id", { count: "exact", head: true }).eq("moderation_status", "pending"),
+    admin.from("platform_settings").select("default_commission_pct").eq("id", 1).maybeSingle(),
   ]);
+
+  const defaultCommission =
+    settings?.default_commission_pct == null ? null : Number(settings.default_commission_pct);
 
   const byStatus = {
     live: properties?.filter((p) => p.status === "live").length ?? 0,
@@ -35,7 +40,11 @@ export default async function AdminDashboardPage() {
   // A short-stay property with no commission rate cannot have its booking
   // revenue split, so the whole amount lands in owner_payable and VeriHome
   // recognises nothing. Surfaced here because it is silent everywhere else.
-  const missingCommission = (properties ?? []).filter(
+  //
+  // A property with no rate of its own now inherits the platform default, so
+  // this only fires when there is no default either — otherwise it would warn
+  // about every property that is working exactly as intended.
+  const missingCommission = defaultCommission !== null ? [] : (properties ?? []).filter(
     (p) =>
       ["short_stay", "both"].includes((p as { rental_mode?: string }).rental_mode ?? "") &&
       (p as { platform_commission_pct?: number | null }).platform_commission_pct == null

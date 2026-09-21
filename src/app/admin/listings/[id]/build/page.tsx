@@ -14,7 +14,7 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
   const { id } = await params;
   const admin = createAdminClient();
 
-  const [{ data: property }, { data: pendingImports }] = await Promise.all([
+  const [{ data: property }, { data: pendingImports }, { data: settings }] = await Promise.all([
     admin
       .from("properties")
       .select(`
@@ -35,9 +35,15 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
       .select("id, tally_submission_id, property_name_text, created_at, raw_payload")
       .eq("status", "pending")
       .order("created_at", { ascending: false }),
+    admin.from("platform_settings").select("default_commission_pct").eq("id", 1).maybeSingle(),
   ]);
 
   if (!property) notFound();
+
+  // A property with no rate of its own inherits this. The editor needs it to
+  // say "inherits 15%" instead of warning that nothing is configured.
+  const defaultCommissionPct =
+    settings?.default_commission_pct == null ? null : Number(settings.default_commission_pct);
 
   const rlaRows = (property.rla_assessments ?? []) as {
     building_condition: number | null;
@@ -157,6 +163,7 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
             cleaning_fee_goes_to:
               ((property as Record<string, unknown>).cleaning_fee_goes_to as "platform" | "owner") ?? "platform",
           }}
+          defaultCommissionPct={defaultCommissionPct}
           pendingImports={parsedPending}
           onLinkImport={handleLinkImport}
         />

@@ -37,6 +37,8 @@ interface Props {
   savedRentalMode:  string;
   initialRate:      ShortStayRateData | null;
   initialCommission: CommissionData;
+  /** Used when the property has no rate of its own. null means no default set. */
+  defaultCommissionPct: number | null;
 }
 
 const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white disabled:bg-[#f6f3f2] disabled:text-[#aaa] disabled:cursor-not-allowed";
@@ -165,13 +167,20 @@ function useWarnings(rate: ShortStayRateData) {
 // to three different people: what the guest pays, what VeriHome keeps, and
 // what the owner receives.
 
-function CommissionPreview({ rate, commission }: { rate: ShortStayRateData; commission: CommissionData }) {
+function CommissionPreview({ rate, commission, defaultPct }: {
+  rate: ShortStayRateData; commission: CommissionData; defaultPct: number | null;
+}) {
   const nights = 5;
   const perNight = rate.price_per_night ?? 0;
   const rent = perNight * nights;
   const cleaning = rate.cleaning_fee ?? 0;
   const deposit = rate.security_deposit ?? 0;
-  const pct = commission.platform_commission_pct;
+
+  // The property's own rate, or the platform default it inherits. The preview
+  // has to show what will actually happen, not what this field alone says.
+  const own = commission.platform_commission_pct;
+  const pct = own !== null && Number.isFinite(own) ? own : defaultPct;
+  const inherited = (own === null || !Number.isFinite(own)) && defaultPct !== null;
 
   if (!perNight) return null;
 
@@ -186,8 +195,13 @@ function CommissionPreview({ rate, commission }: { rate: ShortStayRateData; comm
 
   return (
     <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm">
-      <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-        Contoh pembagian — menginap 5 malam
+      <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-[#3e4944] uppercase tracking-wider flex justify-between gap-2">
+        <span>Contoh pembagian — menginap 5 malam</span>
+        {inherited && (
+          <span className="font-medium normal-case tracking-normal text-[#6e7a74]">
+            komisi bawaan {pct}%
+          </span>
+        )}
       </div>
 
       {!configured ? (
@@ -249,7 +263,7 @@ function CommissionPreview({ rate, commission }: { rate: ShortStayRateData; comm
   );
 }
 
-export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, initialRate, initialCommission }: Props) {
+export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, initialRate, initialCommission, defaultCommissionPct }: Props) {
   const isEditable  = isShortStayMode(savedRentalMode);
   const pendingSave = !isEditable && isShortStayMode(rentalMode);
 
@@ -499,7 +513,15 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
               placeholder="mis. 15" className={input}
             />
             {commission.platform_commission_pct === null && (
-              <Warn>Belum diatur — pemesanan tidak bisa dibagi otomatis.</Warn>
+              defaultCommissionPct !== null ? (
+                <p className="text-xs text-[#6e7a74] mt-1.5">
+                  Kosong berarti mengikuti komisi bawaan platform,{" "}
+                  <strong className="text-[#0d2137]">{defaultCommissionPct}%</strong>. Isi
+                  hanya jika properti ini berbeda.
+                </p>
+              ) : (
+                <Warn>Belum diatur — pemesanan tidak bisa dibagi otomatis.</Warn>
+              )
             )}
           </div>
 
@@ -525,7 +547,9 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
           </div>
         </div>
 
-        {isEditable && <CommissionPreview rate={rate} commission={commission} />}
+        {isEditable && (
+          <CommissionPreview rate={rate} commission={commission} defaultPct={defaultCommissionPct} />
+        )}
       </div>
 
       {/* Live pricing preview */}

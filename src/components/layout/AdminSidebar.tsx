@@ -16,6 +16,7 @@ const links = [
   { href: "/admin/viewings",  icon: "location_on",    label: "Viewings" },
   { href: "/admin/inventory", icon: "inventory_2",    label: "Inventory" },
   { href: "/admin/users",     icon: "group",          label: "Users" },
+  { href: "/admin/settings",  icon: "settings",       label: "Settings" },
 ];
 
 export function AdminSidebar({ activeHref }: AdminSidebarProps) {

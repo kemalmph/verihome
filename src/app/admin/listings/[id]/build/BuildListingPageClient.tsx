@@ -34,6 +34,8 @@ interface Props {
   media: MediaData | null;
   shortStayRate: ShortStayRateData | null;
   commission: CommissionData;
+  /** Platform-wide fallback used when the property has no rate of its own. */
+  defaultCommissionPct: number | null;
   pendingImports: PendingImport[];
   onLinkImport: (pendingId: string) => Promise<void>;
 }
@@ -107,6 +109,7 @@ export function BuildListingPageClient({
   media,
   shortStayRate,
   commission,
+  defaultCommissionPct,
   pendingImports,
   onLinkImport,
 }: Props) {
@@ -327,6 +330,7 @@ export function BuildListingPageClient({
           savedRentalMode={savedRentalMode}
           initialRate={shortStayRate}
           initialCommission={commission}
+          defaultCommissionPct={defaultCommissionPct}
         />
       </div>
 

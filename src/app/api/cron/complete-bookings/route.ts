@@ -18,6 +18,7 @@ export async function GET(req: NextRequest) {
     .from("bookings")
     .select(`
       id, property_id, user_id, total_price, cleaning_fee, credit_applied, payment_status,
+      commission_pct,
       property:properties ( owner_id, platform_commission_pct, cleaning_fee_goes_to )
     `)
     .eq("status", "confirmed")
