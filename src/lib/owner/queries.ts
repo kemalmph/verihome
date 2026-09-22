@@ -214,7 +214,7 @@ export async function ownerEarnings() {
 
   // Entries carry owner_id sometimes and property_id more often, so match on
   // either — scoped to this owner's properties in both cases.
-  let q = admin
+  const q = admin
     .from("ledger_entries")
     .select("id, entry_date, event_type, direction, amount, booking_id, property_id, owner_id, description")
     .eq("account", "owner_payable")

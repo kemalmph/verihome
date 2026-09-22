@@ -10,6 +10,7 @@ interface SidebarLink {
 
 const mainLinks: SidebarLink[] = [
   { href: "/dashboard", label: "Dashboard", icon: "home" },
+  { href: "/dashboard/unit", label: "Unit Saya", icon: "apartment" },
   { href: "/dashboard/saved", label: "Saved Listings", icon: "favorite" },
   { href: "/dashboard/appointments", label: "Appointments", icon: "calendar_today", badge: 1 },
   { href: "/dashboard/viewings",  label: "Viewings",  icon: "location_on" },
