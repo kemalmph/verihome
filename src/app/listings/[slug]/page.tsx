@@ -75,10 +75,18 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                     <h1 className="text-3xl font-bold text-[#1b1c1c]">{property.name}</h1>
                     <SaveButton propertyId={property.id} initialSaved={isSaved} size="md" />
                   </div>
+                  {/* Area only. The exact address is disclosed after a booking
+                      is confirmed — see the guest unit page — so that the
+                      arrangement stays on the platform and an occupied home's
+                      location is not published to anyone who loads the page. */}
                   <div className="flex items-center gap-1 text-[#3e4944] mt-1">
                     <span className="material-symbols-outlined text-[#1a7a5e] text-lg">location_on</span>
-                    {property.area} · {property.address}
+                    {property.area}
                   </div>
+                  <p className="text-xs text-[#6e7a74] mt-1">
+                    Alamat lengkap diberikan setelah pemesanan dikonfirmasi.
+                    <span className="block">The full address is shared once your booking is confirmed.</span>
+                  </p>
                 </div>
                 <div className="text-left md:text-right">
                   <div className="text-[#1a7a5e] text-2xl font-bold">IDR {price}</div>

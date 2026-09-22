@@ -50,7 +50,6 @@ export type PropertyRow = {
   status: string;
   price_monthly: number;
   area: string;
-  address: string;
   size_sqm: number;
   bedrooms: number;
   bathrooms: number;
@@ -89,8 +88,12 @@ export type PropertyDetailRow = PropertyRow & {
   short_stay_rates: ShortStayRateRow | null;
 };
 
+// `address` and `google_maps_url` are deliberately absent. Everything reached
+// through this file is public, and migration 040 revokes both columns from the
+// anon and authenticated roles — selecting them here would now fail outright
+// rather than leak, which is the intended shape.
 const PROPERTY_LIST_SELECT = `
-  id, name, slug, property_type, status, price_monthly, area, address, size_sqm, bedrooms, bathrooms, min_stay_months, photo_urls,
+  id, name, slug, property_type, status, price_monthly, area, size_sqm, bedrooms, bathrooms, min_stay_months, photo_urls,
   rental_mode, is_furnished, is_instant_bookable,
   rla_assessments ( rla_score, building_condition, natural_lighting, bathroom_condition, ventilation, noise_level, security_level, cleanliness, furniture_quality, pros, cons, overall_notes )
 `;
