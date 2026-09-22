@@ -3,6 +3,7 @@ import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { runIntegrityChecks } from "@/lib/ledger/integrity";
 import { listPendingCreditRefunds } from "@/lib/actions/credit-actions";
+import { countPendingOwnerRequests } from "@/lib/actions/owner-request-actions";
 import { PendingCreditRefunds } from "./PendingCreditRefunds";
 
 export default async function AdminDashboardPage() {
@@ -10,6 +11,7 @@ export default async function AdminDashboardPage() {
   // Run on every dashboard load: a books mismatch should be impossible to miss.
   const integrity = await runIntegrityChecks(admin);
   const pendingCreditRefunds = await listPendingCreditRefunds();
+  const pendingOwnerRequests = await countPendingOwnerRequests();
 
   const [
     { data: properties },
@@ -108,6 +110,26 @@ export default async function AdminDashboardPage() {
         )}
 
         <PendingCreditRefunds pending={pendingCreditRefunds} />
+
+        {pendingOwnerRequests > 0 && (
+          <Link
+            href="/admin/owner-requests"
+            className="block mb-10 bg-blue-50 border border-blue-200 rounded-xl p-5 hover:bg-blue-100 transition-colors"
+          >
+            <div className="flex items-start gap-3">
+              <span className="material-symbols-outlined text-blue-600">rule</span>
+              <div>
+                <p className="font-semibold text-blue-900">
+                  {pendingOwnerRequests} permintaan pemilik menunggu persetujuan
+                </p>
+                <p className="text-sm text-blue-800 mt-1 max-w-2xl">
+                  Perubahan tarif dan rekening pembayaran. Perubahan rekening wajib
+                  dikonfirmasi lewat telepon sebelum disetujui.
+                </p>
+              </div>
+            </div>
+          </Link>
+        )}
 
         {missingCommission.length > 0 && (
           <div className="mb-10 bg-amber-50 border border-amber-200 rounded-xl p-5">

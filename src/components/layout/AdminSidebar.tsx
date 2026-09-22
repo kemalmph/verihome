@@ -16,6 +16,8 @@ const links = [
   { href: "/admin/viewings",  icon: "location_on",    label: "Viewings" },
   { href: "/admin/inventory", icon: "inventory_2",    label: "Inventory" },
   { href: "/admin/users",     icon: "group",          label: "Users" },
+  { href: "/admin/owners",    icon: "real_estate_agent", label: "Owners" },
+  { href: "/admin/owner-requests", icon: "rule",      label: "Owner Requests" },
   { href: "/admin/cron",      icon: "schedule",       label: "Daily Jobs" },
   { href: "/admin/settings",  icon: "settings",       label: "Settings" },
 ];
