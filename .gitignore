@@ -41,3 +41,7 @@ yarn-error.log*
 next-env.d.ts
 .env.local
 .mcp.json
+
+# committed-by-accident credential files (see incident notes)
+env copy.txt
+recovery-codes.txt
