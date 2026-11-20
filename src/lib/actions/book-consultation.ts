@@ -100,8 +100,8 @@ export async function bookConsultation(formData: FormData) {
       // would ask the guest to transfer nothing.
       if (row.fully_covered) {
         await resend.emails.send({
-          from: "VeriHome <onboarding@resend.dev>",
-          to: process.env.TEAM_EMAIL ?? "team@verihome.id",
+          from: "Cosystem <onboarding@resend.dev>",
+          to: process.env.TEAM_EMAIL ?? "team@cosystem.co",
           subject: `Consultation paid with credit: ${pkg.label}`,
           html: `<p>User ${user.email} booked a <strong>${pkg.label}</strong> fully covered by credit (Rp ${creditApplied.toLocaleString("id-ID")}). Consultation ID: ${consultation.id}.</p>`,
         }).catch(() => null);
@@ -117,7 +117,7 @@ export async function bookConsultation(formData: FormData) {
   const intent = await provider.createIntent({
     reference:   consultation.id,
     amount:      amountDue,
-    description: `VeriHome ${pkg.label} (${pkg.duration})`,
+    description: `Cosystem ${pkg.label} (${pkg.duration})`,
     payerEmail:  user.email!,
     returnUrl:   `${origin}/consultation/success?id=${consultation.id}`,
     cancelUrl:   `${origin}/consultation?error=payment_failed`,
@@ -141,8 +141,8 @@ export async function bookConsultation(formData: FormData) {
 
   // Notify team
   await resend.emails.send({
-    from: "VeriHome <onboarding@resend.dev>",
-    to: process.env.TEAM_EMAIL ?? "team@verihome.id",
+    from: "Cosystem <onboarding@resend.dev>",
+    to: process.env.TEAM_EMAIL ?? "team@cosystem.co",
     subject: `New consultation booking: ${pkg.label}`,
     html: `<p>User ${user.email} booked a <strong>${pkg.label}</strong>. Consultation ID: ${consultation.id}. ${howToPay}${creditApplied > 0 ? ` Credit applied: Rp ${creditApplied.toLocaleString("id-ID")}.` : ""}</p>`,
   }).catch(() => null);

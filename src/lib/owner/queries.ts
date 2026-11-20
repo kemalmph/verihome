@@ -178,7 +178,7 @@ export async function ownerViewings() {
   const { data } = await admin
     .from("viewings")
     // No deposit columns selected at all. What an owner cannot receive, they
-    // cannot leak — the deposit is between the guest and VeriHome.
+    // cannot leak — the deposit is between the guest and Cosystem.
     .select("id, property_id, status, scheduled_at, preferred_dates, user:users ( name )")
     .in("property_id", ids)
     .order("scheduled_at", { ascending: true, nullsFirst: false });
@@ -200,7 +200,7 @@ export async function ownerViewings() {
 
 /**
  * Read from the ledger's owner_payable account, never recomputed from
- * bookings. The ledger is the record of what VeriHome owes; a second
+ * bookings. The ledger is the record of what Cosystem owes; a second
  * calculation over bookings would be a second opinion, and the two would
  * eventually disagree with nothing to say which was right.
  */

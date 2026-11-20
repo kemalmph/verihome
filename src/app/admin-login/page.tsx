@@ -21,7 +21,7 @@ export default function AdminLoginPage() {
     <div className="min-h-screen bg-[#0d2137] flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
         <div className="bg-[#0d2137] px-8 py-6 text-white">
-          <p className="text-[#9cf4d1] font-bold text-lg">VeriHome</p>
+          <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
           <h1 className="text-2xl font-bold mt-1">Admin Access</h1>
           <p className="text-white/60 text-sm mt-1">Restricted to authorized staff only.</p>
         </div>
@@ -40,7 +40,7 @@ export default function AdminLoginPage() {
                 name="email"
                 type="email"
                 required
-                placeholder="admin@verihome.id"
+                placeholder="admin@cosystem.co"
                 className="w-full h-11 border border-[#bec9c2] rounded-lg px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
               />
             </div>

@@ -34,7 +34,7 @@ export default async function ViewingPage({ params }: Props) {
           <p className="text-sm text-[#3e4944] mt-2">
             Request a physical viewing. A deposit of{" "}
             <strong>IDR {new Intl.NumberFormat("id-ID").format(DEPOSIT)}</strong> confirms your slot.
-            If you attend it becomes VeriHome credit rather than a cash refund — the
+            If you attend it becomes Cosystem credit rather than a cash refund — the
             full terms are shown before you pay.
           </p>
         </div>

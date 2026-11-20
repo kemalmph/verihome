@@ -107,7 +107,7 @@ export async function runIntegrityChecks(client?: AdminClient): Promise<{
       id: b.id, label: b.booking_code,
       detail: "menginap selesai dan dibayar, tetapi pendapatan belum diakui — hak pemilik belum tercatat",
     })),
-    explanation: "Setiap menginap yang selesai dan lunas harus sudah dibagi antara VeriHome dan pemilik.",
+    explanation: "Setiap menginap yang selesai dan lunas harus sudah dibagi antara Cosystem dan pemilik.",
   });
 
   // ── 4. credits_outstanding vs unredeemed, unexpired credits ────────────────

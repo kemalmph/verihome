@@ -22,7 +22,7 @@ export interface ShortStayRateData {
 /**
  * Commission lives on `properties`, not `short_stay_rates`, but it is edited
  * here because it is a pricing decision — and because a rate with no
- * commission cannot be split between VeriHome and the owner.
+ * commission cannot be split between Cosystem and the owner.
  */
 export interface CommissionData {
   platform_commission_pct: number | null;
@@ -164,7 +164,7 @@ function useWarnings(rate: ShortStayRateData) {
 
 // ── Commission split preview ──────────────────────────────────────────────
 // A 5-night stay at the configured rate, showing the three figures that matter
-// to three different people: what the guest pays, what VeriHome keeps, and
+// to three different people: what the guest pays, what Cosystem keeps, and
 // what the owner receives.
 
 function CommissionPreview({ rate, commission, defaultPct }: {
@@ -189,7 +189,7 @@ function CommissionPreview({ rate, commission, defaultPct }: {
   const ownerRent = rent - margin;
   const cleaningToOwner = commission.cleaning_fee_goes_to === "owner";
 
-  const veriHome = margin + (cleaningToOwner ? 0 : cleaning);
+  const cosystem = margin + (cleaningToOwner ? 0 : cleaning);
   const owner = ownerRent + (cleaningToOwner ? cleaning : 0);
   const guestPays = rent + cleaning + deposit;
 
@@ -228,13 +228,13 @@ function CommissionPreview({ rate, commission, defaultPct }: {
             </tr>
             <tr className="border-b border-[#f6f3f2]">
               <td className="px-4 py-2.5 text-[#3e4944]">
-                VeriHome menerima
+                Cosystem menerima
                 <span className="block text-xs text-[#6e7a74]">
                   {pct}% dari sewa{cleaningToOwner ? "" : " + biaya kebersihan"}
                 </span>
               </td>
               <td className="px-4 py-2.5 text-right font-semibold text-[#1a7a5e] tabular-nums">
-                IDR {fmt(veriHome)}
+                IDR {fmt(cosystem)}
               </td>
             </tr>
             <tr className="border-b border-[#f6f3f2]">
@@ -488,7 +488,7 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
         <div>
           <h4 className="font-semibold text-[#0d2137] text-sm">Pembagian pendapatan</h4>
           <p className="text-xs text-[#6e7a74] mt-0.5">
-            Komisi platform (%) — bagian VeriHome dari harga sewa. Sisanya menjadi hak pemilik.
+            Komisi platform (%) — bagian Cosystem dari harga sewa. Sisanya menjadi hak pemilik.
           </p>
         </div>
 
@@ -541,7 +541,7 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
               }}
               className={input}
             >
-              <option value="platform">VeriHome</option>
+              <option value="platform">Cosystem</option>
               <option value="owner">Pemilik properti</option>
             </select>
           </div>

@@ -27,7 +27,7 @@ export function OwnerSidebar({ activeHref, ownerName }: { activeHref: string; ow
         >
           <span className="material-symbols-outlined text-xl">menu</span>
         </button>
-        <p className="text-[#9cf4d1] font-bold text-lg">VeriHome</p>
+        <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
         <p className="text-white/50 text-xs mt-0.5">Pemilik</p>
       </header>
 
@@ -41,7 +41,7 @@ export function OwnerSidebar({ activeHref, ownerName }: { activeHref: string; ow
         }`}
       >
         <div className="p-6 border-b border-white/10">
-          <p className="text-[#9cf4d1] font-bold text-xl">VeriHome</p>
+          <p className="text-[#9cf4d1] font-bold text-xl">Cosystem</p>
           <p className="text-white/50 text-xs mt-0.5">Portal Pemilik</p>
           {ownerName && (
             <p className="text-white text-sm mt-3 font-medium truncate">{ownerName}</p>

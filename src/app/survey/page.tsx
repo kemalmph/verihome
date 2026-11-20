@@ -30,7 +30,7 @@ export default async function SurveyIndexPage() {
       <header className="bg-[#0d2137] text-white">
         <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between gap-4">
           <div>
-            <p className="text-[#9cf4d1] font-bold text-lg leading-none">VeriHome</p>
+            <p className="text-[#9cf4d1] font-bold text-lg leading-none">Cosystem</p>
             <p className="text-white/60 text-sm mt-1">Surveyor</p>
           </div>
           <div className="text-right">

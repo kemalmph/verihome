@@ -1,4 +1,4 @@
-// VeriHome — shared TypeScript interfaces
+// Cosystem — shared TypeScript interfaces
 
 export interface Property {
   id: string;

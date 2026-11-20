@@ -88,10 +88,10 @@ function StepSchedule({
         Deposit required: <strong className="text-[#1a7a5e]">IDR {fmt(depositAmount)}</strong>
         <br />
         <span className="text-xs text-[#6e7a74]">
-          Jika hadir, deposit menjadi kredit VeriHome — bukan uang kembali.
+          Jika hadir, deposit menjadi kredit Cosystem — bukan uang kembali.
           Ketentuan lengkap di langkah berikutnya.
           <span className="block">
-            If you attend, the deposit becomes VeriHome credit — not a cash refund.
+            If you attend, the deposit becomes Cosystem credit — not a cash refund.
             Full terms on the next step.
           </span>
         </span>

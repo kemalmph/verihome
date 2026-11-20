@@ -34,9 +34,9 @@ export default async function ExpensesPage() {
       <AdminSidebar activeHref="/admin/expenses" />
       <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12 max-w-[900px]">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Pengeluaran VeriHome</h1>
+          <h1 className="text-3xl font-bold text-[#0d2137]">Pengeluaran Cosystem</h1>
           <p className="text-[#3e4944] mt-1">
-            Uang yang keluar untuk keperluan VeriHome sendiri — bukan pengembalian
+            Uang yang keluar untuk keperluan Cosystem sendiri — bukan pengembalian
             jaminan dan bukan hak pemilik properti.
           </p>
         </header>

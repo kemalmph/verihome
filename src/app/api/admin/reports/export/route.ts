@@ -60,7 +60,7 @@ export async function GET(req: NextRequest) {
           String(e.entry_date).slice(0, 10), e.event_type, e.account, e.direction, n(e.amount),
         ]),
       ]),
-      `verihome-rekening-${stamp}.csv`
+      `cosystem-rekening-${stamp}.csv`
     );
   }
 
@@ -89,7 +89,7 @@ export async function GET(req: NextRequest) {
             e.booking_id, e.viewing_id, e.consultation_id, e.property_id, e.user_id, e.owner_id, e.id,
           ]),
         ]),
-        `verihome-buku-besar-${stamp}.csv`
+        `cosystem-buku-besar-${stamp}.csv`
       );
     }
 
@@ -109,7 +109,7 @@ export async function GET(req: NextRequest) {
             return [m, ...vals, vals.reduce((s, v) => s + v, 0)];
           }),
         ]),
-        `verihome-pendapatan-per-bulan-${stamp}.csv`
+        `cosystem-pendapatan-per-bulan-${stamp}.csv`
       );
     }
 
@@ -140,7 +140,7 @@ export async function GET(req: NextRequest) {
             .map((o) => [o.name, o.email, o.phone_whatsapp, totals.get(o.id) ?? 0] as (string | number | null)[])
             .filter((r) => (r[3] as number) !== 0),
         ]),
-        `verihome-hutang-pemilik-${stamp}.csv`
+        `cosystem-hutang-pemilik-${stamp}.csv`
       );
     }
 
@@ -171,7 +171,7 @@ export async function GET(req: NextRequest) {
             ];
           }),
         ]),
-        `verihome-transaksi-${stamp}.csv`
+        `cosystem-transaksi-${stamp}.csv`
       );
     }
 

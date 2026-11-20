@@ -1,4 +1,4 @@
-# VeriHome Design System
+# Cosystem Design System
 
 Extracted from Stitch project `10150202233806739775` (9 screens).
 
@@ -192,7 +192,7 @@ border-radius: full (pill)
 font: label-md, semi-bold
 ```
 
-### Trust & VeriHome Guarantee block
+### Trust & Cosystem Guarantee block
 - Dark navy bg `#0D2137`
 - Icon: `verified_user`, `primary-fixed` color
 - Text: white, small, opacity 90

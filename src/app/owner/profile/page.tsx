@@ -38,7 +38,7 @@ export default async function OwnerProfilePage() {
             </div>
           </dl>
           <p className="text-[11px] text-[#6e7a74] mt-3">
-            Untuk mengubah data kontak, hubungi tim VeriHome.
+            Untuk mengubah data kontak, hubungi tim Cosystem.
           </p>
         </section>
 
