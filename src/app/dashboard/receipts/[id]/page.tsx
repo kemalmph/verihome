@@ -49,10 +49,10 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             {/* Header */}
             <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-[#0d2137]">
               <div>
-                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">Cosystem</p>
+                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">VeriHome</p>
                 <p className="text-xs text-[#6e7a74] mt-1 leading-relaxed">
                   Sewa properti tepercaya di Jakarta<br />
-                  support@cosystem.co
+                  support@verihome.id
                 </p>
               </div>
               <div className="text-right">

@@ -55,7 +55,7 @@ export default async function StatementPage({
           <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
             <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-[#0d2137]">
               <div>
-                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">Cosystem</p>
+                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">VeriHome</p>
                 <p className="text-xs text-[#6e7a74] mt-1">Rekening koran / Account statement</p>
               </div>
               <div className="text-right text-xs text-[#6e7a74]">
@@ -70,7 +70,7 @@ export default async function StatementPage({
             {/* Summary — deposits and credits read as the guest's money, not ours */}
             <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6 border-b border-[#e4e2e1]">
               <Summary label="Total dibayar" labelEn="Total spent" value={s.totalSpent} />
-              <Summary label="Jaminan ditahan Cosystem" labelEn="Deposits held — refundable"
+              <Summary label="Jaminan ditahan VeriHome" labelEn="Deposits held — refundable"
                        value={s.depositsHeld} tone="held" />
               <Summary label="Saldo kredit" labelEn="Available credit"
                        value={s.creditBalance} tone="credit" />
@@ -94,13 +94,13 @@ export default async function StatementPage({
 
             {(s.depositsHeld > 0 || s.creditBalance > 0) && (
               <p className="mt-5 text-xs text-[#3e4944] bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg px-4 py-3">
-                Jaminan dan kredit di atas adalah <strong>milik Anda</strong>. Cosystem hanya
+                Jaminan dan kredit di atas adalah <strong>milik Anda</strong>. VeriHome hanya
                 menyimpannya — jaminan booking dikembalikan sebagai uang sesuai ketentuan,
                 dan kredit dapat dipakai untuk konsultasi atau pemesanan. Kredit dari
                 titipan viewing dapat ditukar kembali menjadi uang dalam 14 hari sejak
                 diterbitkan, selama belum terpakai.
                 <span className="block mt-1 text-[#6e7a74]">
-                  Deposits and credit shown above belong to you. Cosystem only holds them.
+                  Deposits and credit shown above belong to you. VeriHome only holds them.
                   Credit issued from a viewing deposit can be exchanged back for cash within
                   14 days of issue, while it is still unused.
                 </span>
@@ -164,8 +164,8 @@ export default async function StatementPage({
             </section>
 
             <p className="text-xs text-[#6e7a74] mt-8 pt-4 border-t border-[#e4e2e1]">
-              Dokumen ini dibuat otomatis dari catatan keuangan Cosystem.
-              <span className="block">Generated from Cosystem&apos;s financial records.</span>
+              Dokumen ini dibuat otomatis dari catatan keuangan VeriHome.
+              <span className="block">Generated from VeriHome&apos;s financial records.</span>
             </p>
           </article>
         </div>

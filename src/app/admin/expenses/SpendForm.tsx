@@ -66,7 +66,7 @@ export function SpendForm({ available }: { available: number }) {
         <div className="flex items-start gap-2 bg-[#cf2f52] text-white rounded-lg px-4 py-3 text-sm">
           <span className="material-symbols-outlined text-base">warning</span>
           <span>
-            Jumlah ini melebihi dana milik Cosystem (IDR {fmt(Math.max(0, available))}).
+            Jumlah ini melebihi dana milik VeriHome (IDR {fmt(Math.max(0, available))}).
             Mencatatnya berarti memakai uang jaminan, kredit pengguna, atau hak pemilik properti.
           </span>
         </div>

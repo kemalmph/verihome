@@ -25,7 +25,7 @@ export const STRINGS = {
 
   // ── Owner portal: overview ────────────────────────────────────────────────
   "owner.overview.title":        { id: "Ringkasan",                  en: "Overview" },
-  "owner.overview.subtitle":     { id: "Properti dan pendapatan Anda bersama Cosystem", en: "Your properties and earnings with Cosystem" },
+  "owner.overview.subtitle":     { id: "Properti dan pendapatan Anda bersama VeriHome", en: "Your properties and earnings with VeriHome" },
   "owner.overview.thisMonth":    { id: "Bulan ini",                  en: "This month" },
   "owner.overview.nightsBooked": { id: "Malam terisi",               en: "Nights booked" },
   "owner.overview.occupancy":    { id: "Tingkat hunian",             en: "Occupancy" },
@@ -41,16 +41,16 @@ export const STRINGS = {
   "owner.balance.earned":      { id: "Total diperoleh",    en: "Total earned" },
   "owner.balance.paid":        { id: "Sudah dibayarkan",   en: "Paid out" },
   "owner.balance.outstanding": { id: "Belum dibayarkan",   en: "Outstanding" },
-  "owner.balance.fromLedger":  { id: "Angka diambil langsung dari buku besar Cosystem.", en: "Figures are read directly from Cosystem's ledger." },
+  "owner.balance.fromLedger":  { id: "Angka diambil langsung dari buku besar VeriHome.", en: "Figures are read directly from VeriHome's ledger." },
 
   // ── Property detail ───────────────────────────────────────────────────────
   "owner.property.status":         { id: "Status listing",        en: "Listing status" },
   "owner.property.notLive":        { id: "Belum tayang",          en: "Not yet live" },
   "owner.property.missingItems":   { id: "Yang masih kurang",     en: "Still missing" },
-  "owner.property.assessment":     { id: "Penilaian Cosystem",    en: "Cosystem assessment" },
+  "owner.property.assessment":     { id: "Penilaian VeriHome",    en: "VeriHome assessment" },
   "owner.property.assessmentNote": {
-    id: "Penilaian ini dibuat surveyor Cosystem dan tidak dapat diubah. Independensinya yang membuat listing Anda dipercaya calon penyewa.",
-    en: "This assessment is made by a Cosystem surveyor and cannot be edited. Its independence is what makes your listing credible to renters.",
+    id: "Penilaian ini dibuat surveyor VeriHome dan tidak dapat diubah. Independensinya yang membuat listing Anda dipercaya calon penyewa.",
+    en: "This assessment is made by a VeriHome surveyor and cannot be edited. Its independence is what makes your listing credible to renters.",
   },
   "owner.property.pros":        { id: "Kelebihan",             en: "Strengths" },
   "owner.property.cons":        { id: "Kekurangan",            en: "Weaknesses" },
@@ -88,8 +88,8 @@ export const STRINGS = {
     en: "Guest contact appears from 48 hours before check-in until checkout.",
   },
   "owner.bookings.privacyNote": {
-    id: "Cosystem tidak menampilkan nama lengkap, dokumen identitas, atau bukti pembayaran tamu kepada pemilik.",
-    en: "Cosystem never shows a guest's full surname, identity documents or payment proofs to owners.",
+    id: "VeriHome tidak menampilkan nama lengkap, dokumen identitas, atau bukti pembayaran tamu kepada pemilik.",
+    en: "VeriHome never shows a guest's full surname, identity documents or payment proofs to owners.",
   },
   "owner.bookings.none": { id: "Belum ada pemesanan.", en: "No bookings yet." },
 
@@ -101,7 +101,7 @@ export const STRINGS = {
   // ── Earnings ──────────────────────────────────────────────────────────────
   "owner.earnings.title":      { id: "Pendapatan",          en: "Earnings" },
   "owner.earnings.gross":      { id: "Nilai sewa",          en: "Gross rent" },
-  "owner.earnings.commission": { id: "Komisi Cosystem",     en: "Cosystem commission" },
+  "owner.earnings.commission": { id: "Komisi VeriHome",     en: "VeriHome commission" },
   "owner.earnings.cleaning":   { id: "Biaya kebersihan",    en: "Cleaning fee" },
   "owner.earnings.net":        { id: "Bersih untuk Anda",   en: "Net to you" },
   "owner.earnings.payouts":    { id: "Riwayat pembayaran",  en: "Payout history" },
@@ -112,8 +112,8 @@ export const STRINGS = {
   "owner.placements.title":  { id: "Penyewa jangka panjang", en: "Long-term tenants" },
   "owner.placements.report": { id: "Laporkan penyewa baru",  en: "Report a new tenant" },
   "owner.placements.reportNote": {
-    id: "Laporkan sendiri jika Anda menyewakan properti ini ke penyewa jangka panjang. Tim Cosystem akan mengonfirmasi.",
-    en: "Report it yourself if you let this property to a long-term tenant. The Cosystem team will confirm.",
+    id: "Laporkan sendiri jika Anda menyewakan properti ini ke penyewa jangka panjang. Tim VeriHome akan mengonfirmasi.",
+    en: "Report it yourself if you let this property to a long-term tenant. The VeriHome team will confirm.",
   },
   "owner.placements.tenantFirstName": { id: "Nama depan penyewa", en: "Tenant first name" },
   "owner.placements.monthlyRent":     { id: "Sewa per bulan",     en: "Monthly rent" },
@@ -128,8 +128,8 @@ export const STRINGS = {
   "owner.profile.accountNumber": { id: "Nomor rekening",       en: "Account number" },
   "owner.profile.accountHolder": { id: "Atas nama",            en: "Account holder" },
   "owner.profile.payoutPending": {
-    id: "Perubahan rekening menunggu verifikasi. Pembayaran tetap ke rekening lama sampai tim Cosystem mengonfirmasi lewat telepon.",
-    en: "A change to this account is awaiting verification. Payouts continue to the previous account until the Cosystem team confirms by phone.",
+    id: "Perubahan rekening menunggu verifikasi. Pembayaran tetap ke rekening lama sampai tim VeriHome mengonfirmasi lewat telepon.",
+    en: "A change to this account is awaiting verification. Payouts continue to the previous account until the VeriHome team confirms by phone.",
   },
   "owner.profile.documents":     { id: "Dokumen",              en: "Documents" },
   "owner.profile.docRightToLet": { id: "Bukti hak menyewakan", en: "Proof of right to let" },
@@ -148,13 +148,13 @@ export const STRINGS = {
 
   // ── Owner invite / access ─────────────────────────────────────────────────
   "owner.invite.title":   { id: "Aktifkan akses portal", en: "Activate portal access" },
-  "owner.invite.intro":   { id: "Tautan ini menghubungkan akun Anda dengan data properti di Cosystem.", en: "This link connects your account to your property records at Cosystem." },
+  "owner.invite.intro":   { id: "Tautan ini menghubungkan akun Anda dengan data properti di VeriHome.", en: "This link connects your account to your property records at VeriHome." },
   "owner.invite.accept":  { id: "Hubungkan akun saya",   en: "Link my account" },
   "owner.invite.invalid": { id: "Tautan undangan tidak berlaku.", en: "This invite link is not valid." },
   "owner.invite.used":    { id: "Tautan undangan ini sudah dipakai.", en: "This invite link has already been used." },
-  "owner.invite.expired": { id: "Tautan undangan sudah kedaluwarsa. Minta tautan baru kepada tim Cosystem.", en: "This invite link has expired. Ask the Cosystem team for a new one." },
+  "owner.invite.expired": { id: "Tautan undangan sudah kedaluwarsa. Minta tautan baru kepada tim VeriHome.", en: "This invite link has expired. Ask the VeriHome team for a new one." },
   "owner.access.denied":  { id: "Akun Anda tidak memiliki akses portal pemilik.", en: "Your account does not have owner portal access." },
-  "owner.access.revoked": { id: "Akses portal Anda telah dinonaktifkan. Hubungi tim Cosystem.", en: "Your portal access has been switched off. Please contact the Cosystem team." },
+  "owner.access.revoked": { id: "Akses portal Anda telah dinonaktifkan. Hubungi tim VeriHome.", en: "Your portal access has been switched off. Please contact the VeriHome team." },
 
   // ── Admin: invites and requests ───────────────────────────────────────────
   "admin.owner.invite":        { id: "Undang ke portal",     en: "Invite to portal" },
@@ -185,9 +185,9 @@ export const STRINGS = {
   "unit.included":       { id: "Termasuk dalam harga", en: "Included in the price" },
   "unit.notIncluded":    { id: "Tidak termasuk",       en: "Not included" },
   "unit.area":           { id: "Sekitar lokasi",       en: "The area" },
-  "unit.assessment":     { id: "Penilaian Cosystem",   en: "Cosystem assessment" },
+  "unit.assessment":     { id: "Penilaian VeriHome",   en: "VeriHome assessment" },
   "unit.contact":        { id: "Bantuan",              en: "Help" },
-  "unit.contactSupport": { id: "Dukungan Cosystem",    en: "Cosystem support" },
+  "unit.contactSupport": { id: "Dukungan VeriHome",    en: "VeriHome support" },
   "unit.contactOwner":   { id: "Kontak pemilik",       en: "Owner contact" },
   "unit.contactOwnerWindow": {
     id: "Kontak pemilik tampil mulai 48 jam sebelum check-in sampai check-out.",

@@ -21,7 +21,7 @@ export default function ConsultationSuccessPage() {
           Payment received. Your consultation is booked.
         </p>
         <p className="text-[#6e7a74] mb-10">
-          A Cosystem advisor will contact you within <strong>24 hours</strong> to schedule your session. Check your email for the confirmation.
+          A VeriHome advisor will contact you within <strong>24 hours</strong> to schedule your session. Check your email for the confirmation.
         </p>
 
         <div className="bg-[#f6f3f2] rounded-xl border border-[#bec9c2] p-6 mb-8 text-left space-y-3">

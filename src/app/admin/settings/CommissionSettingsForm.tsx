@@ -49,7 +49,7 @@ export function CommissionSettingsForm({
       <div className="p-6 border-b border-[#e4e2e1]">
         <h2 className="text-lg font-semibold text-[#0d2137]">Komisi platform bawaan</h2>
         <p className="text-sm text-[#3e4944] mt-1 max-w-2xl">
-          Bagian Cosystem dari harga sewa untuk properti yang belum punya komisi
+          Bagian VeriHome dari harga sewa untuk properti yang belum punya komisi
           sendiri. Properti dengan komisi khusus tetap memakai angka miliknya.
         </p>
       </div>
@@ -95,7 +95,7 @@ export function CommissionSettingsForm({
               </div>
               <div className="divide-y divide-[#f0eeed]">
                 <div className="px-4 py-2.5 flex justify-between">
-                  <span className="text-[#3e4944]">Cosystem</span>
+                  <span className="text-[#3e4944]">VeriHome</span>
                   <span className="font-semibold text-[#1a7a5e] tabular-nums">
                     {margin.toLocaleString("id-ID")}
                   </span>

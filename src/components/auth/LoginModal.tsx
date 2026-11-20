@@ -41,7 +41,7 @@ export function LoginModal({ onClose }: LoginModalProps) {
           >
             <span className="material-symbols-outlined">close</span>
           </button>
-          <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
+          <p className="text-[#9cf4d1] font-bold text-lg">VeriHome</p>
           <h2 className="text-2xl font-bold mt-1">Sign in to continue</h2>
           <p className="text-white/60 text-sm mt-1">
             Access saved listings and consultations.

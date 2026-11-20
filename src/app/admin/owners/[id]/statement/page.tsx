@@ -64,7 +64,7 @@ export default async function OwnerStatementPage({
 
   const propsById = new Map((properties ?? []).map((p) => [p.id, p]));
 
-  // Per booking: gross guest payment, Cosystem's cut, what is owed onward.
+  // Per booking: gross guest payment, VeriHome's cut, what is owed onward.
   const detail = (bookings ?? []).map((b) => {
     const forBooking = rows.filter((e) => e.booking_id === b.id);
     const sumOf = (acct: string, dir: "debit" | "credit") =>
@@ -125,7 +125,7 @@ export default async function OwnerStatementPage({
           <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
             <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-[#0d2137]">
               <div>
-                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">Cosystem</p>
+                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">VeriHome</p>
                 <p className="text-xs text-[#6e7a74] mt-1">Laporan pemilik properti / Owner statement</p>
               </div>
               <div className="text-right text-xs text-[#6e7a74]">
@@ -143,7 +143,7 @@ export default async function OwnerStatementPage({
               </h2>
               <Row label="Pemesanan pada properti Anda" value={String(detail.length)} plain />
               <Row label="Pembayaran tamu (bruto)" value={fmt(grossTotal)} />
-              <Row label="Dikurangi komisi Cosystem" value={`− ${fmt(commissionTotal)}`} />
+              <Row label="Dikurangi komisi VeriHome" value={`− ${fmt(commissionTotal)}`} />
               {depositClaims > 0 && (
                 <Row label="Ditambah klaim jaminan kerusakan" value={`+ ${fmt(depositClaims)}`} />
               )}

@@ -193,7 +193,7 @@ export async function cancelChangeRequest(requestId: string) {
  * Recorded as reported_by = 'owner' with status 'reported' for the team to
  * confirm — it is a claim, not a confirmed deal. Giving honest owners an easy
  * way to report is part of the answer to commission leakage: the alternative is
- * that a deal closes and nobody tells Cosystem at all.
+ * that a deal closes and nobody tells VeriHome at all.
  */
 export async function reportPlacement(formData: FormData) {
   let owner;

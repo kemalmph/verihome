@@ -14,7 +14,7 @@ export const manualProvider: PaymentProvider = {
   async createIntent({ reference, amount }: PaymentRequest): Promise<PaymentIntent> {
     const bankName      = process.env.BANK_NAME           ?? "BCA";
     const accountNumber = process.env.BANK_ACCOUNT_NUMBER ?? "";
-    const accountHolder = process.env.BANK_ACCOUNT_HOLDER ?? "Cosystem";
+    const accountHolder = process.env.BANK_ACCOUNT_HOLDER ?? "VeriHome";
     const transferCode  = randomTransferCode();
     const payableAmount = amount + Number(transferCode);
 

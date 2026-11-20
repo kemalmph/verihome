@@ -64,7 +64,7 @@ export default async function UnitPage() {
               )}
             </dl>
             <p className="text-xs text-[#6e7a74] mt-4">
-              Butuh bantuan soal properti ini? Hubungi dukungan Cosystem.
+              Butuh bantuan soal properti ini? Hubungi dukungan VeriHome.
             </p>
           </section>
         )}

@@ -243,7 +243,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
             <div className="bg-[#0d2137] text-white p-6 rounded-xl space-y-3">
               <h4 className="font-bold flex items-center gap-2">
                 <span className="material-symbols-outlined text-[#9cf4d1]">verified_user</span>
-                Cosystem Guarantee
+                VeriHome Guarantee
               </h4>
               <p className="text-sm opacity-90 leading-relaxed">
                 We independently audit every listing. If the property doesn&apos;t match our RLA assessment upon arrival, we offer a full deposit refund.

@@ -1,4 +1,4 @@
-// Cosystem Design Tokens — extracted from Stitch project 10150202233806739775
+// VeriHome Design Tokens — extracted from Stitch project 10150202233806739775
 
 export const colors = {
   // Brand

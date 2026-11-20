@@ -52,7 +52,7 @@ export default async function DashboardBookingsPage() {
       <main className="flex-1 ml-72 p-16 max-w-[1400px]">
         <header className="mb-10">
           <h2 className="text-3xl font-bold text-[#0d2137] mb-1">My Bookings</h2>
-          <p className="text-[#3e4944]">Short-stay bookings you&apos;ve made through Cosystem.</p>
+          <p className="text-[#3e4944]">Short-stay bookings you&apos;ve made through VeriHome.</p>
         </header>
 
         {!bookings || bookings.length === 0 ? (

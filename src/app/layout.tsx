@@ -9,9 +9,9 @@ const publicSans = Public_Sans({
 });
 
 export const metadata: Metadata = {
-  title: "Cosystem | Curated Property Rentals in Jakarta",
+  title: "VeriHome | Curated Property Rentals in Jakarta",
   description:
-    "Cosystem is Jakarta's most trusted curated rental marketplace for international professionals, expats, and local talent. Verified listings with independent RLA assessments.",
+    "VeriHome is Jakarta's most trusted curated rental marketplace for international professionals, expats, and local talent. Verified listings with independent RLA assessments.",
 };
 
 export default function RootLayout({

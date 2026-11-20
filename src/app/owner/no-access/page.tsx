@@ -21,7 +21,7 @@ export default function OwnerNoAccessPage() {
         <h1 className="text-xl font-bold text-[#0d2137]">{t("owner.access.denied")}</h1>
         <p className="text-sm text-[#6e7a74] mt-2">{t("owner.access.denied", "en")}</p>
         <p className="text-sm text-[#3e4944] mt-6">
-          Jika Anda pemilik properti dan belum menerima tautan undangan, hubungi tim Cosystem.
+          Jika Anda pemilik properti dan belum menerima tautan undangan, hubungi tim VeriHome.
         </p>
         <Link href="/" className="inline-block mt-8 px-6 py-3 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90">
           Kembali ke beranda

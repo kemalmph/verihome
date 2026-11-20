@@ -33,7 +33,7 @@ export default async function LoginPage({
       <main className="min-h-[70vh] bg-[#f6f3f2] px-4 py-14">
         <div className="max-w-sm mx-auto">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold text-[#0d2137]">Welcome to Cosystem</h1>
+            <h1 className="text-2xl font-bold text-[#0d2137]">Welcome to VeriHome</h1>
             <p className="text-sm text-[#6e7a74] mt-1">
               Sign in to book a stay, request a viewing, and track both in one place.
             </p>

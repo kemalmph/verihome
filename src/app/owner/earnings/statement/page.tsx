@@ -54,7 +54,7 @@ export default async function OwnerOwnStatementPage({
           <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
             <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-[#0d2137]">
               <div>
-                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">Cosystem</p>
+                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">VeriHome</p>
                 <p className="text-xs text-[#6e7a74] mt-1">Laporan pemilik properti / Owner statement</p>
               </div>
               <div className="text-right text-xs text-[#3e4944]">
@@ -128,7 +128,7 @@ export default async function OwnerOwnStatementPage({
             )}
 
             <p className="text-[11px] text-[#6e7a74] pt-6 border-t border-[#e4e2e1]">
-              Seluruh angka diambil dari buku besar Cosystem. Jumlah dalam IDR.
+              Seluruh angka diambil dari buku besar VeriHome. Jumlah dalam IDR.
             </p>
           </article>
         </div>

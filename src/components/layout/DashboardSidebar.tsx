@@ -33,7 +33,7 @@ export function DashboardSidebar({
     <aside className="w-72 bg-[#0d2137] text-white flex flex-col fixed h-full z-40">
       <div className="px-8 py-10">
         <Link href="/" className="text-2xl font-extrabold tracking-tight text-[#9cf4d1]">
-          Cosystem
+          VeriHome
         </Link>
       </div>
 

@@ -36,7 +36,7 @@ export default async function PositionPage({
   const netPosition      = totalAssets - totalLiabilities;
 
   // Spendable cash. Deliberately excludes commission_receivable: money owed to
-  // Cosystem is not money Cosystem can spend.
+  // VeriHome is not money VeriHome can spend.
   const ownFunds = cash - totalLiabilities;
   const overdrawn = ownFunds < 0;
 
@@ -49,7 +49,7 @@ export default async function PositionPage({
         <header className="mb-6">
           <h1 className="text-3xl font-bold text-[#0d2137]">Posisi keuangan</h1>
           <p className="text-[#3e4944] mt-1">
-            Dari uang yang kami pegang, berapa yang benar-benar milik Cosystem?
+            Dari uang yang kami pegang, berapa yang benar-benar milik VeriHome?
           </p>
         </header>
 
@@ -88,7 +88,7 @@ export default async function PositionPage({
             <Line label="Titipan jaminan" value={deposits} indent />
             <Line label="Kredit pengguna" value={credits} indent />
 
-            <p className="text-xs text-[#6e7a74] mt-4 mb-1">Akan menjadi pendapatan Cosystem:</p>
+            <p className="text-xs text-[#6e7a74] mt-4 mb-1">Akan menjadi pendapatan VeriHome:</p>
             <Line label="Pendapatan diterima di muka" value={unearned} indent />
 
             <p className="text-xs text-[#6e7a74] mt-4 mb-1">Terhutang kepada pihak ketiga:</p>
@@ -127,7 +127,7 @@ export default async function PositionPage({
             <div className={`pt-4 mt-4 border-t-2 ${overdrawn ? "border-[#cf2f52]" : "border-[#0d2137]"}`}>
               <div className="flex justify-between items-baseline gap-4">
                 <div>
-                  <p className="font-bold text-[#0d2137]">Dana milik Cosystem</p>
+                  <p className="font-bold text-[#0d2137]">Dana milik VeriHome</p>
                   <p className="text-xs text-[#6e7a74] mt-0.5">
                     Satu-satunya jumlah yang boleh dibelanjakan
                   </p>

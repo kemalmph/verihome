@@ -73,7 +73,7 @@ export function CreateAdminForm() {
               name="email"
               type="email"
               required
-              placeholder="budi@cosystem.co"
+              placeholder="budi@verihome.id"
               className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm"
             />
           </div>

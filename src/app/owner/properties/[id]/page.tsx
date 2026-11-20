@@ -14,7 +14,7 @@ const rp = (n: number) => `Rp ${new Intl.NumberFormat("id-ID").format(Math.round
 const CHECKLIST_LABELS: [key: string, label: string][] = [
   ["min_photos_uploaded",    "Foto properti belum cukup"],
   ["video_walkthrough_done", "Video keliling unit belum ada"],
-  ["rla_completed",          "Penilaian Cosystem belum lengkap"],
+  ["rla_completed",          "Penilaian VeriHome belum lengkap"],
   ["pros_cons_written",      "Catatan kelebihan dan kekurangan belum ditulis"],
   ["price_verified",         "Harga belum diverifikasi tim"],
   ["owner_contact_active",   "Kontak Anda belum dikonfirmasi"],
@@ -113,7 +113,7 @@ export default async function OwnerPropertyPage({
               </ul>
               {unmet.length === 0 && (
                 <p className="text-sm text-[#1a7a5e] mt-2">
-                  Semua sudah lengkap — tim Cosystem akan menayangkan listing ini.
+                  Semua sudah lengkap — tim VeriHome akan menayangkan listing ini.
                 </p>
               )}
             </>
@@ -139,7 +139,7 @@ export default async function OwnerPropertyPage({
                   </div>
                   <div className="px-4 py-2.5 flex justify-between">
                     <span className="text-[#3e4944]">
-                      Komisi Cosystem{pct != null ? ` (${pct}%)` : ""}
+                      Komisi VeriHome{pct != null ? ` (${pct}%)` : ""}
                     </span>
                     <span className="tabular-nums">− {rp(margin)}</span>
                   </div>
@@ -152,7 +152,7 @@ export default async function OwnerPropertyPage({
 
               <p className="text-xs text-[#6e7a74]">
                 Biaya kebersihan {rp(Number(rate?.cleaning_fee ?? 0))} —{" "}
-                {cleaningToOwner ? "menjadi hak Anda" : "menjadi hak Cosystem"}.
+                {cleaningToOwner ? "menjadi hak Anda" : "menjadi hak VeriHome"}.
               </p>
             </>
           ) : (

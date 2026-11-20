@@ -80,7 +80,7 @@ export function RLAScore({ assessment }: RLAScoreProps) {
               &ldquo;{assessment.overall_notes}&rdquo;
               <br />
               <span className="text-[#1b1c1c] font-bold mt-1 inline-block not-italic">
-                — Cosystem Assessment Team
+                — VeriHome Assessment Team
               </span>
             </p>
           </div>

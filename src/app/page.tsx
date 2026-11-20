@@ -41,7 +41,7 @@ export default async function HomePage() {
                 Curated homes. Confident decisions.
               </p>
               <p className="text-lg text-white/80 mb-10 max-w-lg leading-relaxed">
-                Cosystem verifies every listing so you can rent with confidence
+                VeriHome verifies every listing so you can rent with confidence
                 — wherever you&apos;re coming from. We bridge the gap with
                 professional, independent expertise.
               </p>
@@ -117,7 +117,7 @@ export default async function HomePage() {
         <section id="how-it-works" className="bg-white py-24">
           <div className="max-w-7xl mx-auto px-4 md:px-16 flex flex-col lg:flex-row items-center gap-16">
             <div className="lg:w-1/2">
-              <h2 className="text-3xl font-bold text-[#0d2137] mb-12">The Cosystem Process</h2>
+              <h2 className="text-3xl font-bold text-[#0d2137] mb-12">The VeriHome Process</h2>
               <div className="space-y-10">
                 {[
                   { n: "1", title: "Browse Curated Listings", desc: "Access a hand-picked selection of properties that meet international quality standards and are actually available." },
@@ -139,7 +139,7 @@ export default async function HomePage() {
                 <div className="relative w-4/5 h-4/5 rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
                   <Image
                     src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD6x7Y5th2JvBJ0vQETwVH9pa-oQhNT-64n7d2c-8vePEun1SvOzTxPApz0IMaNIaI8_k_x4-jXeY0WdXWEuG6tOb1vqQbEn3UnEw-KYQMMnpiT30cA5glZ8-4kgcdpDZQbWtiLm5HBDFCJ9Q8ZaZ8ggFy2SKoYkmeqyjJUKGBiHdHTRySl25fRpv6EJE5edbZBhqDn7IjCBb0iptp9l4BDi-zj5lsc9uNqszytOu_x5GTzle1arMsxeyBmFV-_A50o0_kdG6_1FB3"
-                    alt="Cosystem consultation process"
+                    alt="VeriHome consultation process"
                     fill
                     className="object-cover"
                   />
@@ -227,13 +227,13 @@ export default async function HomePage() {
                 {[
                   {
                     quote:
-                      "Relocating from London to Jakarta was daunting, but Cosystem made the housing search effortless. The video tours were exactly like the actual apartment.",
+                      "Relocating from London to Jakarta was daunting, but VeriHome made the housing search effortless. The video tours were exactly like the actual apartment.",
                     name: "Sarah C.",
                     role: "Tech Lead @ Grab",
                   },
                   {
                     quote:
-                      "I needed a place in SCBD quickly. Within 48 hours, Cosystem found me a verified studio and handled all the local leasing contracts. Truly premium service.",
+                      "I needed a place in SCBD quickly. Within 48 hours, VeriHome found me a verified studio and handled all the local leasing contracts. Truly premium service.",
                     name: "Mark K.",
                     role: "Diplomat @ EU Embassy",
                   },

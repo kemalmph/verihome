@@ -18,7 +18,7 @@ export async function Navbar() {
       <nav className="flex justify-between items-center w-full px-4 md:px-16 h-20 max-w-7xl mx-auto">
         <div className="flex items-center gap-8">
           <Link href="/" className="text-2xl font-bold text-[#006048]">
-            Cosystem
+            VeriHome
           </Link>
           <div className="hidden md:flex items-center gap-6">
             <Link

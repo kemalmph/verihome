@@ -6,7 +6,7 @@ export function Footer() {
       <div className="max-w-7xl mx-auto px-4 md:px-16 py-12">
         <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
           <div className="md:col-span-1">
-            <h2 className="text-xl font-bold text-[#9cf4d1] mb-4">Cosystem</h2>
+            <h2 className="text-xl font-bold text-[#9cf4d1] mb-4">VeriHome</h2>
             <p className="text-sm text-[#bec9c2] leading-relaxed">
               Bridging the trust gap in the Jakarta rental market with
               independent verification and professional guidance.
@@ -82,7 +82,7 @@ export function Footer() {
 
         <div className="pt-8 border-t border-[#bec9c2]/20 flex flex-col md:flex-row justify-between items-center gap-4">
           <p className="text-xs text-[#bec9c2]/70">
-            © 2024 Cosystem Jakarta. All rights reserved.
+            © 2024 VeriHome Jakarta. All rights reserved.
           </p>
           <div className="flex gap-4 text-xs text-[#bec9c2]/70">
             <Link href="/privacy" className="hover:text-[#9cf4d1] transition-colors">

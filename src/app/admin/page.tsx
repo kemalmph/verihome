@@ -43,7 +43,7 @@ export default async function AdminDashboardPage() {
   const recentSubmissions = properties?.filter((p) => p.status === "unverified").slice(0, 5) ?? [];
 
   // A short-stay property with no commission rate cannot have its booking
-  // revenue split, so the whole amount lands in owner_payable and Cosystem
+  // revenue split, so the whole amount lands in owner_payable and VeriHome
   // recognises nothing. Surfaced here because it is silent everywhere else.
   //
   // A property with no rate of its own now inherits the platform default, so
@@ -61,7 +61,7 @@ export default async function AdminDashboardPage() {
       <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-10">
           <h1 className="text-3xl font-bold text-[#0d2137]">Admin Dashboard</h1>
-          <p className="text-[#3e4944] mt-1">Cosystem internal management panel</p>
+          <p className="text-[#3e4944] mt-1">VeriHome internal management panel</p>
         </header>
 
         {!integrity.allPassed && (
@@ -141,7 +141,7 @@ export default async function AdminDashboardPage() {
                 </p>
                 <p className="text-sm text-amber-800 mt-1 max-w-2xl">
                   Pemesanan pada properti ini tidak bisa dibagi otomatis. Seluruh sewa
-                  akan tercatat sebagai hutang ke pemilik dan Cosystem tidak mencatat
+                  akan tercatat sebagai hutang ke pemilik dan VeriHome tidak mencatat
                   pendapatan apa pun sampai komisi diisi.
                 </p>
                 <ul className="mt-3 space-y-1">

@@ -5,7 +5,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { postOperatingExpense, postEquityDrawing } from "@/lib/ledger/events";
 
 /**
- * Records money leaving the account for Cosystem's own purposes.
+ * Records money leaving the account for VeriHome's own purposes.
  *
  * Unlike every other money event this has no booking, viewing or consultation
  * behind it — which is exactly why it is the only thing that can push spendable

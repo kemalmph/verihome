@@ -65,7 +65,7 @@ export async function postBookingPaymentReceived(
  *
  * Returns whether the split could be made. With no commission rate configured
  * the whole amount goes to the owner rather than guessing a rate: under-paying
- * Cosystem is recoverable, silently under-paying an owner is not.
+ * VeriHome is recoverable, silently under-paying an owner is not.
  */
 export async function postBookingRevenueEarned(
   booking: {
@@ -395,7 +395,7 @@ export async function postPlacementCommissionEarned(
   ], opts.client);
 }
 
-// ── Cosystem's own spending ──────────────────────────────────────────────────
+// ── VeriHome's own spending ──────────────────────────────────────────────────
 // The only events that reduce spendable cash without reducing a liability.
 // Everything else either leaves cash alone or pays down something owed, which
 // is why the overdraw warning was unreachable before these existed.
