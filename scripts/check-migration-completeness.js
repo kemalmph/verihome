@@ -31,29 +31,20 @@ const path = require("path");
 const MIGRATIONS_DIR = path.join(__dirname, "..", "supabase", "migrations");
 
 /**
- * Tables that exist in production but are created by no migration, as of
- * migration 042. Every one was made through the Supabase dashboard and never
- * captured. This list is the scope of the base-schema migration that §20.4
- * calls for — when that migration lands, these all become CREATE TABLEs and
- * this list should be emptied.
+ * Tables that exist in production but are created by no migration.
+ *
+ * EMPTY, and that is the point. Until 2026-11-21 this held fifteen tables —
+ * users, owners, properties, viewings, consultations, reviews, saved_listings,
+ * publish_checklist, property_details, property_media, area_overviews,
+ * rla_assessments, property_surveys, pending_survey_imports and
+ * survey_import_log — every one made through the Supabase dashboard and never
+ * written down. The baseline migration now creates all of them, so there is
+ * nothing left to excuse and `--baseline` has nothing left to do.
+ *
+ * If you find yourself adding a name here, stop: that is the §20.4 gap
+ * reopening. Add the CREATE TABLE to a migration instead.
  */
-const KNOWN_MISSING = new Set([
-  "users",
-  "owners",
-  "properties",
-  "viewings",
-  "consultations",
-  "reviews",
-  "saved_listings",
-  "publish_checklist",
-  "property_details",
-  "property_media",
-  "area_overviews",
-  "rla_assessments",
-  "property_surveys",
-  "pending_survey_imports",
-  "survey_import_log",
-]);
+const KNOWN_MISSING = new Set([]);
 
 /**
  * Strip the things that must not be scanned for DDL dependencies:
@@ -97,7 +88,10 @@ const REFERENCE_PATTERNS = [
   { what: "CREATE INDEX", re: new RegExp(String.raw`\bCREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:CONCURRENTLY\s+)?(?:IF\s+NOT\s+EXISTS\s+)?(?:"[^"]+"|\w+)\s+ON\s+${IDENT}`, "gi") },
   { what: "CREATE POLICY", re: new RegExp(String.raw`\bCREATE\s+POLICY\s+(?:"[^"]+"|\w+)\s+ON\s+${IDENT}`, "gi") },
   { what: "DROP POLICY", re: new RegExp(String.raw`\bDROP\s+POLICY\s+(?:IF\s+EXISTS\s+)?(?:"[^"]+"|\w+)\s+ON\s+${IDENT}`, "gi") },
-  { what: "GRANT/REVOKE", re: new RegExp(String.raw`\b(?:GRANT|REVOKE)\b[\s\S]{0,200}?\bON\s+(?:TABLE\s+)?${IDENT}`, "gi") },
+  // The negative lookahead keeps `GRANT ALL ON ALL TABLES IN SCHEMA public`
+  // and `GRANT ... ON SCHEMA x` out: those name no table, and without it the
+  // words ALL and SCHEMA get reported as missing tables.
+  { what: "GRANT/REVOKE", re: new RegExp(String.raw`\b(?:GRANT|REVOKE)\b[\s\S]{0,200}?\bON\s+(?!ALL\s|SCHEMA\s)(?:TABLE\s+)?${IDENT}`, "gi") },
   { what: "CREATE TRIGGER", re: new RegExp(String.raw`\bCREATE\s+(?:OR\s+REPLACE\s+)?TRIGGER\s+(?:"[^"]+"|\w+)[\s\S]{0,120}?\bON\s+${IDENT}`, "gi") },
   { what: "DROP TRIGGER", re: new RegExp(String.raw`\bDROP\s+TRIGGER\s+(?:IF\s+EXISTS\s+)?(?:"[^"]+"|\w+)\s+ON\s+${IDENT}`, "gi") },
   { what: "INSERT INTO", re: new RegExp(String.raw`\bINSERT\s+INTO\s+${IDENT}`, "gi") },

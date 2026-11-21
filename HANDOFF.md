@@ -31,52 +31,59 @@ file in this repository.
 - Owner portal is built and isolation-tested (25/25) but no real owner has
   been invited.
 
-## §20.4 — the migration history cannot build the database
+## §20.4 — CLOSED on 2026-11-21
 
-Still open, but much closer than the last handoff suggested.
+The migration history now builds the database from nothing. `supabase db reset`
+runs clean.
 
-**What is proven.** A clean replay of `supabase/migrations/` into an empty
-Postgres 17 fails on the first file:
-`ERROR: relation "properties" does not exist (SQLSTATE 42P01)`. Fifteen core
-tables are created by no migration. This is executed, not inferred.
+**What it was.** Fifteen of the 26 tables were made through the Supabase
+dashboard and never written down, so `001_booking_system.sql` opened with
+`ALTER TABLE properties` against a table nothing created. A replay into an
+empty Postgres 17 failed on the first file.
 
-**What now exists in the repo:**
-- `supabase/config.toml`, pinned to Postgres 17. `supabase db reset` works.
-- `scripts/check-migration-completeness.js` — static guard, no Docker or
-  production needed. Run `--baseline` before committing any migration; it
-  fails if a new migration widens the gap.
+**What was done.** The 42 files moved to `supabase/migrations-archive/`, and a
+single `00000000000000_baseline.sql` replaced them. The baseline was read out
+of production's system catalogs, not written by hand.
 
-**What was captured on 2026-11-21 and is NOT in this repo:**
-A full reconstruction of the production schema, read from the live database's
-catalogs and **verified by replaying it into an empty Postgres 17**. The
-rebuilt database matches production exactly on tables, columns, foreign keys,
-checks, indexes, policies, functions, triggers, generated columns and RLS.
-The owner has those files. Ask for `verihome-schema.sql` before writing a
-base-schema migration from scratch — most of the work is done.
+**How it was checked** — six gates, all passed, in this order:
+1. `supabase db reset` from zero — clean.
+2. `scripts/check-migration-completeness.js` with no flag — full pass, and
+   `KNOWN_MISSING` in that script is now empty. A planted regression still
+   makes it exit non-zero, so it has not been defanged.
+3. `scripts/audit-anon-exposure.js --verify` against the rebuilt database with
+   the data loaded — 0 flagged. Run against an empty database this check is
+   hollow, because it reads what `select=*` actually returns; the data was
+   loaded first on purpose.
+4. Directly: `anon` gets 42501 on `properties` for both `select=*` and
+   `select=name,address`, while `select=name,area,price_monthly` returns the
+   live listings. Same behaviour as production (§19.12, §19.13).
+5. Census against production — identical on all ten dimensions: 26 tables,
+   340 columns, 54 foreign keys, 48 checks, 62 indexes, 17 policies, 38
+   functions, 7 triggers, 3 generated columns, 26 tables with RLS.
+6. Exactly one version of every function in `pg_proc`.
 
-Three things that replay caught and reading would not have:
+**Three things the replay caught that reading the catalogs did not:**
 - Column defaults need `search_path` to include `extensions`, or the first
   `CREATE TABLE` fails on `uuid_generate_v4()`.
 - `bookings.nights`, `property_media.total_photo_count` and
   `rla_assessments.rla_score` are **STORED generated columns**, not defaults.
-  Rendering them as defaults produces a database that looks right and silently
+  Rendered as defaults they produce a database that looks right and silently
   stops computing.
-- The system reference says there are two triggers on `auth.users`. There is
-  one (`on_auth_user_created`). `trg_set_admin_flag` is on `public.users`.
+- The system reference says two triggers sit on `auth.users`. One does
+  (`on_auth_user_created`); `trg_set_admin_flag` is on `public.users`.
 
-**The remaining decision** is squash vs prepend. A baseline — whether from
-`supabase db pull` or from the verified `verihome-schema.sql` above — already
-contains everything migrations 001–042 did, so putting it *before* 001 means
-those 42 then re-apply to a finished schema. Some are idempotent
-(`IF NOT EXISTS`), some are not. Squash — the baseline becomes the only
-migration and 001–042 move to an archive directory, with the history still in
-git — is what Supabase's own docs point to, and is the standing recommendation.
+### ⚠ Phase B is NOT done: never run `supabase db push`
 
-**Deferred by the owner on 2026-11-21: do not start this unasked.** Access is
-no longer the blocker, and the harness is ready, so it is a decision waiting
-rather than work waiting. If you are about to add a migration in the meantime,
-run `node scripts/check-migration-completeness.js --baseline` first — that is
-what stops the gap getting wider while this sits.
+Production's `supabase_migrations.schema_migrations` still lists the 48
+timestamp-named migrations it actually ran. It knows nothing about the
+baseline, so a `db push` would read the baseline as unapplied and try to
+`CREATE TABLE` against the live, populated database.
+
+Reconciling it needs `supabase link` plus `supabase migration repair`, which
+needs the database password — the owner's step, not yours. Until it is done,
+`db reset` against the local stack is safe and is the command you want;
+`db push` is the one to stay away from. `supabase/migrations-archive/README.md`
+carries the same warning and the evidence behind it.
 
 ## Environment
 
