@@ -41,12 +41,26 @@ export default async function CoworkingSitePage({ params }: Props) {
               {units.length} unit · {lettable.length} tersedia · kapasitas {seats}
             </p>
           </div>
-          <Link
-            href={`/admin/coworking/${site.id}/dashboard`}
-            className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
-          >
-            Dashboard operator
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href={`/admin/coworking/${site.id}/members`}
+              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
+            >
+              Member
+            </Link>
+            <Link
+              href={`/admin/coworking/${site.id}/calendar`}
+              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
+            >
+              Kalender
+            </Link>
+            <Link
+              href={`/admin/coworking/${site.id}/dashboard`}
+              className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
+            >
+              Dashboard operator
+            </Link>
+          </div>
         </header>
 
         <SiteDetailForm site={site} owners={owners} />

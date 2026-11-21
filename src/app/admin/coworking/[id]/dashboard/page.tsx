@@ -54,12 +54,20 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
             <h1 className="text-3xl font-bold text-[#0d2137]">{site.name}</h1>
             {site.address && <p className="text-[#3e4944] mt-1">{site.address}</p>}
           </div>
-          <Link
-            href={`/admin/coworking/${site.id}`}
-            className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
-          >
-            Kelola unit
-          </Link>
+          <div className="flex gap-2">
+            <Link
+              href={`/admin/coworking/${site.id}/calendar`}
+              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
+            >
+              Kalender
+            </Link>
+            <Link
+              href={`/admin/coworking/${site.id}`}
+              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
+            >
+              Kelola unit
+            </Link>
+          </div>
         </header>
 
         {/* ── the numbers ─────────────────────────────────────────────── */}

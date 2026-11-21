@@ -272,9 +272,15 @@ const RUN_ID = Date.now().toString(36);
   // An instalment that is already overdue must surface as an action, not sit
   // quietly in a table.
   const resId = (await q(`select id from unit_reservations where unit_id = $1 limit 1`, [deskUnit.id]))[0].id;
+  // Five days before *Jakarta* today, not Postgres's current_date.
+  //
+  // current_date is the server's date, which is UTC here. After 17:00 UTC the
+  // two differ by a day, so this test used to pass in the morning and fail in
+  // the evening while the page was right both times. A test whose answer
+  // depends on the hour is worse than no test: it teaches you to ignore it.
   await q(
     `insert into reservation_instalments (reservation_id, seq, due_date, amount, status)
-     values ($1, 1, (current_date - 5), 1234567, 'due')`,
+     values ($1, 1, ((now() at time zone 'Asia/Jakarta')::date - 5), 1234567, 'due')`,
     [resId],
   );
   await page.goto(`${BASE}/admin/coworking/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });

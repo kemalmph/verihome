@@ -71,7 +71,7 @@ async function refused(db, sql, args = []) {
   const nobody = await refused(
     db,
     `insert into memberships (membership_code, site_id, starts_on, ends_on, price, period)
-     values ($1, $2, current_date, current_date + 365, 7200000, 'yearly')`,
+     values ($1, $2, (now() at time zone 'Asia/Jakarta')::date, (now() at time zone 'Asia/Jakarta')::date + 365, 7200000, 'yearly')`,
     [`MB-${RUN}-X`, site.id],
   );
   check(
@@ -82,7 +82,7 @@ async function refused(db, sql, args = []) {
   const blankName = await refused(
     db,
     `insert into memberships (membership_code, site_id, member_name, starts_on, ends_on, price, period)
-     values ($1, $2, '   ', current_date, current_date + 365, 7200000, 'yearly')`,
+     values ($1, $2, '   ', (now() at time zone 'Asia/Jakarta')::date, (now() at time zone 'Asia/Jakarta')::date + 365, 7200000, 'yearly')`,
     [`MB-${RUN}-Y`, site.id],
   );
   check(
@@ -93,7 +93,7 @@ async function refused(db, sql, args = []) {
   const backwards = await refused(
     db,
     `insert into memberships (membership_code, site_id, member_name, starts_on, ends_on, price, period)
-     values ($1, $2, 'Budi', current_date, current_date - 1, 1, 'monthly')`,
+     values ($1, $2, 'Budi', (now() at time zone 'Asia/Jakarta')::date, (now() at time zone 'Asia/Jakarta')::date - 1, 1, 'monthly')`,
     [`MB-${RUN}-Z`, site.id],
   );
   check(backwards !== null && /period_order/.test(backwards), "a membership ending before it starts is refused");
@@ -106,8 +106,8 @@ async function refused(db, sql, args = []) {
         day_passes_per_month, meeting_room_hours_per_month, hot_desk_included,
         discount_pct, mail_handling, address_use, status, payment_status)
      select $1, $2, p.id, 'Budi Santoso', '0812-000-000', 'PT Contoh Nusantara',
-            date_trunc('month', current_date)::date,
-            (date_trunc('month', current_date) + interval '1 year')::date,
+            date_trunc('month', (now() at time zone 'Asia/Jakarta')::date)::date,
+            (date_trunc('month', (now() at time zone 'Asia/Jakarta')::date) + interval '1 year')::date,
             p.price, p.period,
             p.day_passes_per_month, p.meeting_room_hours_per_month, p.hot_desk_included,
             p.discount_pct, p.mail_handling, p.address_use, 'active', 'paid'
@@ -129,7 +129,7 @@ async function refused(db, sql, args = []) {
   await q(`update membership_plans set meeting_room_hours_per_month = 5, price = 7200000 where id = $1`, [plan.id]);
 
   // ── usage is derived, and in the right month ──────────────────────────────
-  const zero = (await q(`select * from membership_usage($1, current_date)`, [mb.id]))[0];
+  const zero = (await q(`select * from membership_usage($1, (now() at time zone 'Asia/Jakarta')::date)`, [mb.id]))[0];
   check(
     Number(zero.meeting_room_hours) === 0 && Number(zero.day_passes) === 0,
     "a membership with no bookings has used nothing",
@@ -149,14 +149,14 @@ async function refused(db, sql, args = []) {
     ))[0];
 
   // Two hours this month, in Jakarta time.
-  const thisMonth = (await q(`select to_char(current_date, 'YYYY-MM') as m`))[0].m;
+  const thisMonth = (await q(`select to_char((now() at time zone 'Asia/Jakarta')::date, 'YYYY-MM') as m`))[0].m;
   await bookHours(room.id, `${thisMonth}-05T09:00:00+07:00`, `${thisMonth}-05T11:00:00+07:00`, mb.id);
-  const used2 = (await q(`select * from membership_usage($1, current_date)`, [mb.id]))[0];
+  const used2 = (await q(`select * from membership_usage($1, (now() at time zone 'Asia/Jakarta')::date)`, [mb.id]))[0];
   check(Number(used2.meeting_room_hours) === 2, `two hours booked reads as 2 (got ${used2.meeting_room_hours})`);
 
   // A day pass is counted by the booking, not by hours.
   await bookHours(deskDay.id, `${thisMonth}-06T08:00:00+07:00`, `${thisMonth}-06T18:00:00+07:00`, mb.id);
-  const withPass = (await q(`select * from membership_usage($1, current_date)`, [mb.id]))[0];
+  const withPass = (await q(`select * from membership_usage($1, (now() at time zone 'Asia/Jakarta')::date)`, [mb.id]))[0];
   check(
     Number(withPass.meeting_room_hours) === 2 && Number(withPass.day_passes) === 1,
     `a daily booking is a day pass, not ten meeting hours (${withPass.meeting_room_hours}h, ${withPass.day_passes} pass)`,
@@ -178,7 +178,7 @@ async function refused(db, sql, args = []) {
   check(Number(nov.meeting_room_hours) === 0, `…and not in November (${nov.meeting_room_hours})`);
 
   // Another member's bookings are not this member's usage.
-  const mine = (await q(`select * from membership_usage($1, current_date)`, [mb.id]))[0];
+  const mine = (await q(`select * from membership_usage($1, (now() at time zone 'Asia/Jakarta')::date)`, [mb.id]))[0];
   check(Number(mine.meeting_room_hours) === 2, "usage is per membership, not per site");
 
   // ── events hold space only through reservations ───────────────────────────
