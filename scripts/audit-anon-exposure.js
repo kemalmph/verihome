@@ -145,6 +145,7 @@ const CLOSED_TO_ALL = new Set([
   "cron_runs", "platform_settings", "property_surveys",
   "pending_survey_imports", "survey_import_log",
   "sites", "lettable_units", "unit_reservations", "reservation_instalments",
+  "membership_plans", "memberships", "events",
 ]);
 
 /**
