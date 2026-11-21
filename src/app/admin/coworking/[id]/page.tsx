@@ -5,6 +5,8 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { getSite, listOwnerOptions } from "@/lib/actions/coworking-actions";
 import { SiteDetailForm } from "./SiteDetailForm";
 import { UnitManager } from "./UnitManager";
+import { AmenityManager } from "./AmenityManager";
+import { getAmenityAssignments } from "@/lib/actions/amenity-actions";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +18,9 @@ export default async function CoworkingSitePage({ params }: Props) {
   await requireAdmin();
   const { id } = await params;
 
-  const [result, owners] = await Promise.all([getSite(id), listOwnerOptions()]);
+  const [result, owners, amenities] = await Promise.all([
+    getSite(id), listOwnerOptions(), getAmenityAssignments(id),
+  ]);
   if (!result) notFound();
 
   const { site, units } = result;
@@ -66,6 +70,8 @@ export default async function CoworkingSitePage({ params }: Props) {
         <SiteDetailForm site={site} owners={owners} />
 
         <UnitManager siteId={site.id} units={units} />
+
+        <AmenityManager siteId={site.id} units={units} assignments={amenities} />
       </main>
     </div>
   );

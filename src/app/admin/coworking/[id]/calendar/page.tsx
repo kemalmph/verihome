@@ -4,6 +4,7 @@ import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { requireAdmin } from "@/lib/auth/guards";
 import { getSiteCalendar, type CalBooking } from "@/lib/actions/coworking-calendar";
 import { unitTypeLabel } from "@/lib/coworking/taxonomy";
+import { NewEventForm, EventControls } from "./EventForm";
 
 export const dynamic = "force-dynamic";
 
@@ -68,6 +69,14 @@ export default async function SiteCalendarPage({
             <NavLink href={`/admin/coworking/${site.id}/calendar?week=${cal.next_week}`}>Minggu depan →</NavLink>
           </div>
         </header>
+
+        <div className="mb-6">
+          <NewEventForm
+            siteId={site.id}
+            units={units.filter((u) => u.status === "available")}
+            defaultDay={days[0].ymd}
+          />
+        </div>
 
         {/* An event announced in a room nobody booked is the failure this
             whole design exists to prevent, so it goes at the top. */}
@@ -163,7 +172,13 @@ export default async function SiteCalendarPage({
                   <li key={b.id} className="px-5 py-3 text-sm">
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
-                        <div className="font-medium text-[#0d2137] truncate" title={b.who}>{b.who}</div>
+                        <Link
+                          href={`/admin/coworking/booking/${b.id}`}
+                          className="font-medium text-[#1a7a5e] hover:underline truncate block"
+                          title={b.who}
+                        >
+                          {b.who}
+                        </Link>
                         <div className="text-xs text-[#6e7a74]">
                           {units.find((u) => u.id === b.unit_id)?.name}
                           {" · "}
@@ -207,7 +222,17 @@ export default async function SiteCalendarPage({
                       ) : (
                         <span className="text-[#8c3a2c]">Belum memesan ruangan</span>
                       )}
+                      {e.status !== "confirmed" && (
+                        <span className="text-[#6e7a74]"> · {e.status === "draft" ? "draf" : e.status}</span>
+                      )}
                     </div>
+                    <EventControls
+                      siteId={site.id}
+                      eventId={e.id}
+                      status={e.status}
+                      hasGaps={e.gaps.length > 0}
+                      units={units.filter((u) => u.status === "available").map((u) => ({ id: u.id, name: u.name }))}
+                    />
                   </li>
                 ))}
               </ul>
