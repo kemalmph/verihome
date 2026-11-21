@@ -90,13 +90,40 @@ function classify(col, table) {
 }
 
 /** Tables where ANY readable row is a finding — nothing here is public data. */
-const MUST_BE_CLOSED = new Set([
-  "owners", "users", "bookings", "availability_blocks", "viewings", "placements",
-  "consultations", "ledger_entries", "owner_change_requests", "owner_documents",
-  "owner_invites", "user_credits", "saved_listings", "cron_runs",
-  "platform_settings", "property_surveys", "pending_survey_imports",
-  "survey_import_log",
+/**
+ * Tables that must return NOTHING to anon or authenticated. RLS is on and no
+ * read policy exists, so ANY row is a finding — not merely seeing every row.
+ *
+ * Until 2026-11-21 this list sat behind the `everything` guard below, which
+ * meant a table was only reported when the caller could see all of it. Three
+ * rows of ten out of ledger_entries passed in silence. A security check is not
+ * allowed to fail towards open.
+ */
+const CLOSED_TO_ALL = new Set([
+  "owners", "availability_blocks", "viewings", "placements", "consultations",
+  "ledger_entries", "owner_change_requests", "owner_documents", "owner_invites",
+  "cron_runs", "platform_settings", "property_surveys",
+  "pending_survey_imports", "survey_import_log",
+  "sites", "lettable_units",
 ]);
+
+/**
+ * Tables that carry a legitimate own-row read policy, mapped to the column
+ * that decides ownership. These cannot simply be "closed" — a signed-in guest
+ * is supposed to see their own bookings. So the expectation is stated as a
+ * number rather than a mood: anon owns nothing and must see zero, and
+ * authenticated must see no more than the rows that are genuinely theirs,
+ * counted through the service role at the time of the probe.
+ *
+ * This is what makes a partial leak visible. Seeing one row more than you own
+ * is the finding, and it no longer matters how many rows the table holds.
+ */
+const OWN_ROW_ONLY = {
+  users: "id",
+  bookings: "user_id",
+  user_credits: "user_id",
+  saved_listings: "user_id",
+};
 
 /**
  * `limit=1` returning a row proves nothing on its own: for a table with a
@@ -155,10 +182,39 @@ async function guestToken() {
       rows.push({ table, role, readable: r.readable, reason: r.reason,
                   columns: r.columns, visible: r.visible, total: total ?? 0, everything });
 
-      if (r.columns.length > 0) {
-        const flagged = r.columns
-          .map((c) => ({ col: c, kind: classify(c, table) }))
-          .filter((x) => x.kind);
+      const classifyCols = () =>
+        r.columns.map((c) => ({ col: c, kind: classify(c, table) })).filter((x) => x.kind);
+
+      // Where the correct answer is a number, use the number. This covers
+      // every table whose exposure is a scope question rather than a question
+      // about which columns came back.
+      let allowed = null;
+      let why = "";
+      if (CLOSED_TO_ALL.has(table)) {
+        allowed = 0;
+        why = "must return nothing to this role";
+      } else if (OWN_ROW_ONLY[table]) {
+        if (role === "anon") {
+          allowed = 0;
+          why = "own-row table, and anon owns nothing";
+        } else {
+          const { count: owned } = await admin
+            .from(table)
+            .select("*", { count: "exact", head: true })
+            .eq(OWN_ROW_ONLY[table], guest.userId);
+          allowed = owned ?? 0;
+          why = `own-row table; this caller owns ${allowed}`;
+        }
+      }
+
+      if (allowed !== null) {
+        if (r.visible > allowed) {
+          findings.push({ table, role, flagged: classifyCols(), all: r.columns,
+                          visible: r.visible, total: total ?? 0,
+                          why: `${why} — saw ${r.visible}` });
+        }
+      } else if (r.columns.length > 0) {
+        const flagged = classifyCols();
 
         // Seeing SOME rows of a table with an own-row policy is the policy
         // working. Only seeing them ALL is the finding.
@@ -174,9 +230,10 @@ async function guestToken() {
         // it has been run is not a check.
         const everythingMeaningfully = everything && (total ?? 0) > 1;
 
-        if (everythingMeaningfully && (flagged.length || MUST_BE_CLOSED.has(table))) {
+        if (everythingMeaningfully && flagged.length) {
           findings.push({ table, role, flagged, all: r.columns,
-                          visible: r.visible, total: total ?? 0 });
+                          visible: r.visible, total: total ?? 0,
+                          why: "every row readable" });
         }
       }
     }
@@ -209,8 +266,8 @@ async function guestToken() {
       for (const [kind, cols] of Object.entries(by)) {
         console.log(`    ${w(kind, 11)} ${cols.join(", ")}`);
       }
-      if (f.flagged.length === 0) {
-        console.log(`    ${w("scope", 11)} table should not be readable at all`);
+      if (f.why) {
+        console.log(`    ${w("scope", 11)} ${f.why}`);
       }
     }
   }
