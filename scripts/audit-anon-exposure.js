@@ -162,7 +162,19 @@ async function guestToken() {
 
         // Seeing SOME rows of a table with an own-row policy is the policy
         // working. Only seeing them ALL is the finding.
-        if (everything && (flagged.length || MUST_BE_CLOSED.has(table))) {
+        //
+        // ...except when there is only one row in the table, where "all of
+        // them" and "my own" are the same sentence. That is inconclusive, not
+        // a finding. Without this guard the audit reports a false security
+        // failure on a freshly reset database: `supabase db reset` empties
+        // public.users, the audit creates one test user for itself, reads its
+        // own row, and visible === total === 1 trips `everything`. Run it a
+        // second time and the finding evaporates, because the previous run's
+        // user made total 2 — a check whose verdict depends on how many times
+        // it has been run is not a check.
+        const everythingMeaningfully = everything && (total ?? 0) > 1;
+
+        if (everythingMeaningfully && (flagged.length || MUST_BE_CLOSED.has(table))) {
           findings.push({ table, role, flagged, all: r.columns,
                           visible: r.visible, total: total ?? 0 });
         }
