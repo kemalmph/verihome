@@ -64,11 +64,19 @@ Three things that replay caught and reading would not have:
 - The system reference says there are two triggers on `auth.users`. There is
   one (`on_auth_user_created`). `trg_set_admin_flag` is on `public.users`.
 
-**The remaining decision** is squash vs prepend. `supabase db pull` produces a
-baseline that already contains everything migrations 001–042 did, so putting it
-*before* 001 means those 42 then re-apply to a finished schema. Squash — the
-baseline becomes the only migration, 001–042 move to an archive directory — is
-what Supabase's own docs point to. Not done; the owner has not decided.
+**The remaining decision** is squash vs prepend. A baseline — whether from
+`supabase db pull` or from the verified `verihome-schema.sql` above — already
+contains everything migrations 001–042 did, so putting it *before* 001 means
+those 42 then re-apply to a finished schema. Some are idempotent
+(`IF NOT EXISTS`), some are not. Squash — the baseline becomes the only
+migration and 001–042 move to an archive directory, with the history still in
+git — is what Supabase's own docs point to, and is the standing recommendation.
+
+**Deferred by the owner on 2026-11-21: do not start this unasked.** Access is
+no longer the blocker, and the harness is ready, so it is a decision waiting
+rather than work waiting. If you are about to add a migration in the meantime,
+run `node scripts/check-migration-completeness.js --baseline` first — that is
+what stops the gap getting wider while this sits.
 
 ## Environment
 
@@ -78,11 +86,21 @@ named `verihome` exists (`env_019h1qiey4NpoNWKsHFsY7So`): it allows the Supabase
 host and its setup script installs dependencies, the Supabase CLI and starts
 Docker. Pick it in the environment menu — a running session cannot switch to it.
 
-**Supabase connector**: one OAuth grant reaches one organization. VeriHome
-lives in `malgrown dev`, Pasarin in `maldev`. Granting one revokes the other;
-there is no way to hold both. The owner was considering transferring VeriHome
-into `maldev` so a single grant covers both. If the connector cannot see
-project `hxktoewssuahtkrksbpx`, that is why — it is not a permissions bug.
+**Supabase connector**: resolved 2026-11-21, and no longer something you have
+to work around. VeriHome was transferred from `malgrown dev` into `maldev`, so
+both projects now sit in one organization and one grant reaches both. Verified
+from a single session: `verihome` (`hxktoewssuahtkrksbpx`) and `pasarin`
+(`acwksgoziqenaqqnzhtk`) are both listed and both queryable. The transfer
+changed no data and did not change the project ref, so every Vercel variable,
+API key and URL kept working.
+
+The constraint behind it still holds and is worth knowing: **one OAuth grant
+reaches exactly one organization**, and granting a second revokes the first.
+If a future project lands in a different org, that is the trap — the fix is to
+move the project, not to reconnect.
+
+Pasarin's database is readable from here as a side effect. It is a different
+product; leave it alone unless asked.
 
 ## Smaller things worth knowing
 
