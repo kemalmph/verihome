@@ -131,7 +131,58 @@ product; leave it alone unless asked.
   run and it made every session report a dirty tree.
 - Pre-existing eslint error in `BuildListingPageClient.tsx:141` (setState inside
   an effect). Not caused by recent work, still open.
+- **Never put an event handler in a server component.** Two admin pages had
+  `onClick={… confirm() …}` on a submit button inside a server component;
+  Next.js cannot serialize it, so it threw while rendering and both routes
+  returned **500 — no page at all**, not a button that failed to warn. Fixed
+  2026-11-21 with one client component, `src/components/ui/ConfirmSubmitButton.tsx`.
+  Use it rather than writing the inline version again. The grep that finds a
+  recurrence:
+
+      for f in $(grep -rl "onClick=\|onChange=\|onSubmit=" src --include=*.tsx); do
+        head -3 "$f" | grep -q '"use client"' || echo "$f"
+      done
+
+## Open bug: every on-demand public listing page returns 500
+
+`/listings/[slug]` sets `revalidate = 60` and prerenders the live slugs via
+`generateStaticParams`, but the page also calls `getSavedPropertyIds()`, which
+reads cookies. Any slug **not** in the build-time set therefore renders on
+demand and trips `DYNAMIC_SERVER_USAGE`.
+
+Reproduced 2026-11-21 against a local production build: a live listing created
+after the build returned **500**, and so did a nonexistent slug, which should
+be a 404.
+
+What it means in production: existing live listings work, because the build
+prerendered them. A listing **published after the last deploy** is unreachable
+on the public site until the next build, and a stale or mistyped URL shows an
+error page instead of "not found".
+
+Not fixed, deliberately — it is a choice between dropping ISR on the listing
+page (`force-dynamic`) and moving the saved-state read to the client, and that
+is the owner's call. §20 risk material; the owner decides what goes in.
+
+`scripts/test-coworking-admin.js` scopes its 5xx guard to admin routes for this
+reason, and says so in a comment. It is excluded there, not hidden: the bug is
+written down here.
+
+## Tests
+
+Both need the local stack, a built app, and an admin account the caller
+creates (`admin@verihome.id` picks up `is_admin` from the `set_admin_flag`
+trigger):
+
+    dockerd &                       # dies most sessions; restart it
+    npx supabase start && npx supabase db reset
+    # seed admin via auth.admin.createUser, then:
+    npm run build && npm run start
+    NODE_PATH=/opt/node-tools/node_modules node scripts/test-coworking-admin.js   # 33 checks
+    NODE_PATH=/opt/node-tools/node_modules node scripts/test-publish-gate.js      # 6 checks
+
+`test-publish-gate.js` was A/B'd against the gate removed and correctly failed,
+so it detects the bug's return rather than merely passing today.
 
 ## Branch
 
-Work happens on `main-g2jjf1`. `main` is behind it.
+Work happens on `main-g2jjf1`. `main` is level with it as of `f1aca50`.
