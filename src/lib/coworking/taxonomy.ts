@@ -50,6 +50,38 @@ export const SITE_TYPES = [
   { value: "coworking", label: "Coworking" },
 ] as const;
 
+/**
+ * Reservation state. Mirrors unit_reservations_status_check.
+ *
+ * `completed` is what releases unearned_revenue into revenue_coworking, so it
+ * is an accounting event, not a label — settle_unit_reservation_completion is
+ * the only thing that should set it.
+ */
+export const RESERVATION_STATUSES = [
+  { value: "pending",   label: "Menunggu",   hint: "Belum dibayar, masih menahan unit" },
+  { value: "confirmed", label: "Terkonfirmasi", hint: "Sudah dibayar" },
+  { value: "completed", label: "Selesai",    hint: "Sudah dipakai, pendapatan diakui" },
+  { value: "cancelled", label: "Dibatalkan", hint: "Unit dilepas kembali" },
+  { value: "expired",   label: "Kedaluwarsa", hint: "Tidak dibayar sampai batas waktu" },
+] as const;
+
+/** Mirrors unit_reservations_payment_status_check, and bookings' own list. */
+export const PAYMENT_STATUSES = [
+  { value: "unpaid",               label: "Belum bayar" },
+  { value: "pending_verification", label: "Menunggu verifikasi" },
+  { value: "paid",                 label: "Lunas" },
+  { value: "refunded",             label: "Dikembalikan" },
+] as const;
+
+/**
+ * Which statuses hold a unit.
+ *
+ * The same two the exclusion constraint and the capacity check use. Defined
+ * once because a dashboard that counted a cancelled reservation as occupancy
+ * would disagree with the database about whether a room is free.
+ */
+export const HOLDING_STATUSES = ["pending", "confirmed"] as const;
+
 export const SITE_STATUSES = [
   { value: "draft",  label: "Draf" },
   { value: "active", label: "Aktif" },
@@ -61,6 +93,8 @@ export type LettingMode = (typeof LETTING_MODES)[number]["value"];
 export type UnitStatus  = (typeof UNIT_STATUSES)[number]["value"];
 export type SiteStatus  = (typeof SITE_STATUSES)[number]["value"];
 export type SiteType    = (typeof SITE_TYPES)[number]["value"];
+export type ReservationStatus = (typeof RESERVATION_STATUSES)[number]["value"];
+export type PaymentStatus     = (typeof PAYMENT_STATUSES)[number]["value"];
 
 const setOf = (xs: readonly { value: string }[]) => new Set(xs.map((x) => x.value));
 
@@ -80,6 +114,15 @@ export const siteStatusLabel = (v: string) =>
   SITE_STATUSES.find((s) => s.value === v)?.label ?? v;
 export const siteTypeLabel = (v: string) =>
   SITE_TYPES.find((t) => t.value === v)?.label ?? v;
+export const reservationStatusLabel = (v: string) =>
+  RESERVATION_STATUSES.find((s) => s.value === v)?.label ?? v;
+export const paymentStatusLabel = (v: string) =>
+  PAYMENT_STATUSES.find((s) => s.value === v)?.label ?? v;
+
+export const isReservationStatus = (v: unknown): v is ReservationStatus =>
+  typeof v === "string" && setOf(RESERVATION_STATUSES).has(v);
+export const isPaymentStatus = (v: unknown): v is PaymentStatus =>
+  typeof v === "string" && setOf(PAYMENT_STATUSES).has(v);
 
 /** What a price means, given how the unit is let. Shown next to every amount. */
 export const pricePeriodLabel = (mode: string) =>

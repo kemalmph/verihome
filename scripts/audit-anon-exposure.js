@@ -39,7 +39,27 @@ const admin = createClient(SUPA, process.env.SUPABASE_SERVICE_ROLE_KEY, {
   auth: { autoRefreshToken: false, persistSession: false },
 });
 
-const TABLES = [
+/**
+ * The tables to probe, read from the database rather than written down here.
+ *
+ * This used to be a hardcoded list, and it had gone stale: `sites`,
+ * `lettable_units` and `unit_reservations` were all named in CLOSED_TO_ALL
+ * below — which reads as a statement that they are checked — while never being
+ * probed at all. A deliberate `GRANT SELECT ... TO anon` plus a permissive
+ * policy on unit_reservations was staged on 2026-11-21 and the audit reported
+ * "0 flagged". Reservations say where a named person will be at a given hour.
+ *
+ * A list maintained by hand fails open: forget an entry and the audit passes
+ * by saying nothing about it, which is indistinguishable from passing. Asking
+ * the database means a table is covered from the moment it exists, and the
+ * next person to add one gets the check for free rather than having to know
+ * this file exists.
+ *
+ * KNOWN is kept only as a floor: if the query ever returns fewer tables than
+ * this, something is wrong with the query and the audit must not quietly
+ * shrink.
+ */
+const KNOWN = [
   "area_overviews", "availability_blocks", "bookings", "consultations",
   "cron_runs", "ledger_entries", "owner_change_requests", "owner_documents",
   "owner_invites", "owners", "pending_survey_imports", "placements",
@@ -48,6 +68,26 @@ const TABLES = [
   "saved_listings", "short_stay_rates", "survey_import_log", "user_credits",
   "users", "viewings",
 ];
+
+async function listPublicTables() {
+  const { data, error } = await admin.rpc("audit_public_tables");
+  if (error) {
+    throw new Error(
+      `could not list public tables (${error.message}). ` +
+      `The audit refuses to fall back to a hardcoded list: a short list is how this ` +
+      `check failed open before.`,
+    );
+  }
+  const found = (data ?? []).map((r) => r.table_name).sort();
+  const missing = KNOWN.filter((t) => !found.includes(t));
+  if (missing.length) {
+    throw new Error(
+      `the table query returned fewer tables than are known to exist ` +
+      `(missing: ${missing.join(", ")}). Refusing to audit a partial list.`,
+    );
+  }
+  return found;
+}
 
 /**
  * Columns whose disclosure to a stranger is the finding. Grouped by what kind
@@ -104,7 +144,7 @@ const CLOSED_TO_ALL = new Set([
   "ledger_entries", "owner_change_requests", "owner_documents", "owner_invites",
   "cron_runs", "platform_settings", "property_surveys",
   "pending_survey_imports", "survey_import_log",
-  "sites", "lettable_units",
+  "sites", "lettable_units", "unit_reservations",
 ]);
 
 /**
@@ -169,6 +209,9 @@ async function guestToken() {
   const guest = await guestToken();
   const findings = [];
   const rows = [];
+
+  const TABLES = await listPublicTables();
+  console.log(`Auditing ${TABLES.length} public tables, read from the database.\n`);
 
   for (const table of TABLES) {
     const a = await probe(table, ANON);

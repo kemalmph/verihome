@@ -88,10 +88,18 @@ const REFERENCE_PATTERNS = [
   { what: "CREATE INDEX", re: new RegExp(String.raw`\bCREATE\s+(?:UNIQUE\s+)?INDEX\s+(?:CONCURRENTLY\s+)?(?:IF\s+NOT\s+EXISTS\s+)?(?:"[^"]+"|\w+)\s+ON\s+${IDENT}`, "gi") },
   { what: "CREATE POLICY", re: new RegExp(String.raw`\bCREATE\s+POLICY\s+(?:"[^"]+"|\w+)\s+ON\s+${IDENT}`, "gi") },
   { what: "DROP POLICY", re: new RegExp(String.raw`\bDROP\s+POLICY\s+(?:IF\s+EXISTS\s+)?(?:"[^"]+"|\w+)\s+ON\s+${IDENT}`, "gi") },
-  // The negative lookahead keeps `GRANT ALL ON ALL TABLES IN SCHEMA public`
-  // and `GRANT ... ON SCHEMA x` out: those name no table, and without it the
-  // words ALL and SCHEMA get reported as missing tables.
-  { what: "GRANT/REVOKE", re: new RegExp(String.raw`\b(?:GRANT|REVOKE)\b[\s\S]{0,200}?\bON\s+(?!ALL\s|SCHEMA\s)(?:TABLE\s+)?${IDENT}`, "gi") },
+  // The negative lookahead keeps the GRANT forms that name no table out.
+  // Without it the word after ON gets reported as a missing table:
+  //
+  //   GRANT ALL ON ALL TABLES IN SCHEMA public   -> "ALL"
+  //   GRANT USAGE ON SCHEMA public               -> "SCHEMA"
+  //   REVOKE ALL ON FUNCTION public.f()          -> "FUNCTION"
+  //
+  // The last one was a live false positive: audit_public_tables' migration
+  // revokes on a FUNCTION and the guard failed the build over a table called
+  // "FUNCTION". Every object kind Postgres accepts after ON is listed, because
+  // the next one to be used will otherwise do the same thing again.
+  { what: "GRANT/REVOKE", re: new RegExp(String.raw`\b(?:GRANT|REVOKE)\b[\s\S]{0,200}?\bON\s+(?!ALL\s|SCHEMA\s|FUNCTION\s|PROCEDURE\s|ROUTINE\s|SEQUENCE\s|TYPE\s|DOMAIN\s|DATABASE\s|LARGE\s+OBJECT\s|TABLESPACE\s|FOREIGN\s|LANGUAGE\s|PARAMETER\s)(?:TABLE\s+)?${IDENT}`, "gi") },
   { what: "CREATE TRIGGER", re: new RegExp(String.raw`\bCREATE\s+(?:OR\s+REPLACE\s+)?TRIGGER\s+(?:"[^"]+"|\w+)[\s\S]{0,120}?\bON\s+${IDENT}`, "gi") },
   { what: "DROP TRIGGER", re: new RegExp(String.raw`\bDROP\s+TRIGGER\s+(?:IF\s+EXISTS\s+)?(?:"[^"]+"|\w+)\s+ON\s+${IDENT}`, "gi") },
   { what: "INSERT INTO", re: new RegExp(String.raw`\bINSERT\s+INTO\s+${IDENT}`, "gi") },
