@@ -37,6 +37,15 @@ COMMENT ON COLUMN public.unit_reservations.tenant_name IS
 COMMENT ON COLUMN public.unit_reservations.contract_ref IS
   'The operator''s own contract number, e.g. 006/PMK/OPS/SK-DU/XI/2026. Not generated here; it comes from their paperwork.';
 
+-- A contract number identifies one contract. Without this, re-importing a
+-- register would quietly create a second reservation for the same contract
+-- rather than updating the first — and the importer matches on this column,
+-- so it is the difference between "re-runnable" and "duplicates every run".
+-- Partial, because a self-serve booking has no contract number.
+CREATE UNIQUE INDEX unit_reservations_contract_ref_key
+  ON public.unit_reservations USING btree (contract_ref)
+  WHERE (contract_ref IS NOT NULL);
+
 -- ─── 2. The payment schedule ────────────────────────────────────────────────
 --
 -- A year's rent paid in two instalments is two obligations with two dates, and
