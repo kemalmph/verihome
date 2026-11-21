@@ -75,6 +75,12 @@ export default async function CoworkingSitesPage() {
                       {s.address && (
                         <div className="text-xs text-[#6e7a74] mt-0.5">{s.address}</div>
                       )}
+                      <Link
+                        href={`/admin/coworking/${s.id}/dashboard`}
+                        className="text-xs text-[#6e7a74] hover:text-[#1a7a5e] hover:underline"
+                      >
+                        Dashboard operator →
+                      </Link>
                     </td>
                     <td className="px-4 py-3 text-[#3e4944]">{siteTypeLabel(s.site_type)}</td>
                     <td className="px-4 py-3 text-[#3e4944]">{s.area ?? "—"}</td>

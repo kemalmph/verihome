@@ -34,11 +34,19 @@ export default async function CoworkingSitePage({ params }: Props) {
           <span className="text-[#3e4944]">{site.name}</span>
         </nav>
 
-        <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">{site.name}</h1>
-          <p className="text-[#3e4944] mt-1">
-            {units.length} unit · {lettable.length} tersedia · kapasitas {seats}
-          </p>
+        <header className="mb-8 flex items-start justify-between gap-6 flex-wrap">
+          <div>
+            <h1 className="text-3xl font-bold text-[#0d2137]">{site.name}</h1>
+            <p className="text-[#3e4944] mt-1">
+              {units.length} unit · {lettable.length} tersedia · kapasitas {seats}
+            </p>
+          </div>
+          <Link
+            href={`/admin/coworking/${site.id}/dashboard`}
+            className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
+          >
+            Dashboard operator
+          </Link>
         </header>
 
         <SiteDetailForm site={site} owners={owners} />

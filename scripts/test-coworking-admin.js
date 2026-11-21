@@ -30,6 +30,9 @@ const pass = [];
 const fail = [];
 const check = (ok, what) => (ok ? pass : fail).push(what);
 
+/** Unique per run, so fixtures with a UNIQUE column survive a second run. */
+const RUN_ID = Date.now().toString(36);
+
 (async () => {
   const db = new Client({ host: "127.0.0.1", port: 54322, user: "postgres", password: "postgres", database: "postgres" });
   await db.connect();
@@ -215,6 +218,72 @@ const check = (ok, what) => (ok ? pass : fail).push(what);
   await page.waitForTimeout(2000);
   const unlinked = await q("select site_id from properties where id = $1", [prop.id]);
   check(unlinked[0]?.site_id === null, "choosing 'berdiri sendiri' clears site_id");
+
+  // ── the operator dashboard ────────────────────────────────────────────────
+  //
+  // Occupancy is the thing most likely to be got wrong here, in a specific
+  // way: lettable_units.status is lettability, not occupancy, and reading it
+  // as "is it free" reports every let unit as empty. So the test lets a unit
+  // and then asserts the dashboard changed its mind about it.
+  // A unit that is still lettable. This test retires one earlier, and a
+  // retired unit correctly reads "Tidak aktif" rather than "Kosong" — a
+  // different assertion from the one being made here.
+  const deskUnit = (await q(
+    `select id, name from lettable_units
+      where site_id = $1 and status = 'available' order by name limit 1`,
+    [site.id],
+  ))[0];
+  check(!!deskUnit, "a lettable unit exists to test occupancy with");
+
+  await page.goto(`${BASE}/admin/coworking/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
+  check(await page.getByRole("heading", { name: "Cosystem Kemang" }).isVisible(), "dashboard renders");
+  const beforeLet = await page.locator("tbody tr").allInnerTexts();
+  check(
+    beforeLet.some((r) => r.includes(deskUnit.name) && /Kosong/.test(r)),
+    `an unlet unit reads Kosong (${deskUnit.name})`,
+  );
+
+  // Let it, right now, to a tenant with no account — the paper-contract path
+  // the importer uses. create_unit_reservation_if_available is not the route
+  // here: it takes a user id, and this tenant has none, which is the whole
+  // reason user_id became nullable.
+  await q(
+    `insert into unit_reservations
+       (reservation_code, unit_id, user_id, tenant_name, contract_ref, starts_at, ends_at,
+        seats, letting_mode, unit_price, total_price, exclusive_use, status)
+     values ($2, $1, null, 'PT Uji Coba', 'E2E/001',
+             now() - interval '1 hour', now() + interval '8 hours',
+             1, 'daily', 100000, 100000,
+             (select exclusive_use from lettable_units where id = $1), 'confirmed')`,
+    [deskUnit.id, `CW-E2E-${RUN_ID}`],
+  );
+
+  await page.goto(`${BASE}/admin/coworking/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
+  const afterLet = await page.locator("tbody tr").allInnerTexts();
+  check(
+    afterLet.some((r) => r.includes(deskUnit.name) && /Terisi/.test(r)),
+    `a let unit reads Terisi, not Kosong — occupancy comes from the reservation, not the status column (${deskUnit.name})`,
+  );
+  check(
+    afterLet.some((r) => r.includes("PT Uji Coba")),
+    "a tenant with no user account is shown by name",
+  );
+
+  // An instalment that is already overdue must surface as an action, not sit
+  // quietly in a table.
+  const resId = (await q(`select id from unit_reservations where unit_id = $1 limit 1`, [deskUnit.id]))[0].id;
+  await q(
+    `insert into reservation_instalments (reservation_id, seq, due_date, amount, status)
+     values ($1, 1, (current_date - 5), 1234567, 'due')`,
+    [resId],
+  );
+  await page.goto(`${BASE}/admin/coworking/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
+  const actions = await page.locator("section", { hasText: "Perlu tindakan" }).first().innerText();
+  check(/lewat 5 hari/.test(actions), `an overdue instalment is raised as an action (${actions.replace(/\s+/g, " ").slice(0, 120)})`);
+  check(
+    /Rp1\.234\.567/.test(await page.locator("body").innerText()),
+    "…with the amount formatted in rupiah",
+  );
 
   check(errors.length === 0, `no admin page errors or 5xx (${errors.slice(0, 3).join(" | ") || "none"})`);
 

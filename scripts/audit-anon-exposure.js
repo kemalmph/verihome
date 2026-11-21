@@ -144,7 +144,7 @@ const CLOSED_TO_ALL = new Set([
   "ledger_entries", "owner_change_requests", "owner_documents", "owner_invites",
   "cron_runs", "platform_settings", "property_surveys",
   "pending_survey_imports", "survey_import_log",
-  "sites", "lettable_units", "unit_reservations",
+  "sites", "lettable_units", "unit_reservations", "reservation_instalments",
 ]);
 
 /**
