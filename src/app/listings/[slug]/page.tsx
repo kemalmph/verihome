@@ -5,16 +5,42 @@ import { Footer } from "@/components/layout/Footer";
 import { RLAScore } from "@/components/listings/RLAScore";
 import { PhotoGallery, type CategorizedPhotos } from "@/components/listings/PhotoGallery";
 import { BookingOptions } from "@/components/listings/BookingOptions";
-import { getPropertyBySlug, getLiveSlugs } from "@/lib/supabase/queries";
+import { getPropertyBySlug } from "@/lib/supabase/queries";
 import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
 import { SaveButton } from "@/components/listings/SaveButton";
 
-export const revalidate = 60; // ISR: re-render listing pages at most once per minute
-
-export async function generateStaticParams() {
-  const slugs = await getLiveSlugs();
-  return slugs.map((slug) => ({ slug }));
-}
+/**
+ * This route renders per request, and says so rather than letting the build
+ * work it out.
+ *
+ * It used to carry `revalidate = 60` and a `generateStaticParams`, which made
+ * the rendering mode depend on what was in the database *at build time*:
+ *
+ *   - live listings present -> Next.js attempts a prerender, discovers that
+ *     getSavedPropertyIds() reads cookies, and marks the route dynamic. Works.
+ *   - no live listings       -> generateStaticParams returns [], nothing is
+ *     ever rendered, the cookie read is never discovered, and the route stays
+ *     static. Every request then renders on demand and throws
+ *     DYNAMIC_SERVER_USAGE — a 500 on every listing page, and a 500 instead of
+ *     a 404 for an unknown slug.
+ *
+ * `dynamic = 'auto'` is the default and means "cache as much as possible
+ * without preventing dynamic behaviour", which is how one empty table turned
+ * into two different rendering modes. Production happened to take the working
+ * branch; a fresh environment, or a database briefly unreachable during a
+ * build, takes the other one. Reproduced both ways on 2026-11-21.
+ *
+ * force-dynamic is what production already does, now stated instead of
+ * inferred. It is not a performance decision and does not make these pages
+ * slower than they are today.
+ *
+ * If the listing pages should be prerendered for SEO — a fair argument, they
+ * are the most-visited pages here — the cookie read has to move to the client
+ * first: SaveButton would fetch its own saved state, and only then can this
+ * route go back to ISR. That is a real change with its own tests, not a
+ * config line.
+ */
+export const dynamic = "force-dynamic";
 
 interface ListingDetailPageProps {
   params: Promise<{ slug: string }>;

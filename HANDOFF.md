@@ -143,29 +143,33 @@ product; leave it alone unless asked.
         head -3 "$f" | grep -q '"use client"' || echo "$f"
       done
 
-## Open bug: every on-demand public listing page returns 500
+## Fixed: the listing route's rendering mode was decided by build-time data
 
-`/listings/[slug]` sets `revalidate = 60` and prerenders the live slugs via
-`generateStaticParams`, but the page also calls `getSavedPropertyIds()`, which
-reads cookies. Any slug **not** in the build-time set therefore renders on
-demand and trips `DYNAMIC_SERVER_USAGE`.
+`/listings/[slug]` carried `revalidate = 60` and a `generateStaticParams`, and
+also calls `getSavedPropertyIds()`, which reads cookies. With `dynamic` left at
+its default `'auto'`, that made the rendering mode depend on what was in the
+database when the build ran:
 
-Reproduced 2026-11-21 against a local production build: a live listing created
-after the build returned **500**, and so did a nonexistent slug, which should
-be a 404.
+- **live listings present** — Next.js attempts a prerender, discovers the
+  cookie read, marks the route dynamic (`f`). Works. This is what production
+  built, which is why nothing was ever broken there.
+- **no live listings** — `generateStaticParams` returns `[]`, nothing is
+  rendered, the cookie read is never discovered, the route stays static
+  (`●`). Every request then throws `DYNAMIC_SERVER_USAGE`: 500 on every
+  listing page, and 500 where a 404 belonged.
 
-What it means in production: existing live listings work, because the build
-prerendered them. A listing **published after the last deploy** is unreachable
-on the public site until the next build, and a stale or mistyped URL shows an
-error page instead of "not found".
+Both reproduced on 2026-11-21. Fixed by `export const dynamic = "force-dynamic"`,
+which is what production already did, now stated instead of inferred.
+`revalidate` and `generateStaticParams` are gone; `getLiveSlugs()` is kept for
+a future sitemap and says so.
 
-Not fixed, deliberately — it is a choice between dropping ISR on the listing
-page (`force-dynamic`) and moving the saved-state read to the client, and that
-is the owner's call. §20 risk material; the owner decides what goes in.
+**I first reported this as a live production bug. It was not** — production's
+build takes the working branch. The fragility was real, the breakage was not.
 
-`scripts/test-coworking-admin.js` scopes its 5xx guard to admin routes for this
-reason, and says so in a comment. It is excluded there, not hidden: the bug is
-written down here.
+If these pages should be prerendered for SEO, the cookie read has to move to
+the client first (`SaveButton` fetching its own saved state), and only then can
+the route go back to ISR. That is a real change with its own tests, not a
+config line, and it is still open.
 
 ## Tests
 
@@ -179,6 +183,11 @@ trigger):
     npm run build && npm run start
     NODE_PATH=/opt/node-tools/node_modules node scripts/test-coworking-admin.js   # 33 checks
     NODE_PATH=/opt/node-tools/node_modules node scripts/test-publish-gate.js      # 6 checks
+    NODE_PATH=/opt/node-tools/node_modules node scripts/test-listing-render-mode.js  # 4 checks
+
+Run the last one twice: once after a build made with no live listings, once
+after a build made with one present. Both must pass — that is the whole
+point of it, and before the fix the first run failed.
 
 `test-publish-gate.js` was A/B'd against the gate removed and correctly failed,
 so it detects the bug's return rather than merely passing today.

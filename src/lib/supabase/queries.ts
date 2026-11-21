@@ -158,7 +158,16 @@ export async function getPropertyBySlug(slug: string) {
   return data as unknown as PropertyDetailRow;
 }
 
-// Uses a cookie-free client safe for generateStaticParams at build time
+/**
+ * Every live listing's slug, read with a cookie-free client.
+ *
+ * No caller as of 2026-11-21: /listings/[slug] used this in a
+ * generateStaticParams that was removed when the route was made explicitly
+ * dynamic (see the comment there). Kept because it is the right query for a
+ * sitemap, and because being cookie-free is the hard part — that is what lets
+ * it run at build time, and it is easy to lose by reaching for the ordinary
+ * server client.
+ */
 export async function getLiveSlugs() {
   const supabase = createBuildClient(
     process.env.NEXT_PUBLIC_SUPABASE_URL!,
