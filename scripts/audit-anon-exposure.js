@@ -146,6 +146,7 @@ const CLOSED_TO_ALL = new Set([
   "pending_survey_imports", "survey_import_log",
   "sites", "lettable_units", "unit_reservations", "reservation_instalments",
   "membership_plans", "memberships", "events",
+  "items", "reservation_items", "unit_amenities", "site_amenities",
 ]);
 
 /**

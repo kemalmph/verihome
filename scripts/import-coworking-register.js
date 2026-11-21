@@ -342,9 +342,13 @@ on conflict (slug) do update set
 
     if (APPLY) {
       const { data: existing } = await db
-        .from("lettable_units").select("id").eq("site_id", site.id).eq("name", name).maybeSingle();
+        .from("lettable_units").select("id, price").eq("site_id", site.id).eq("name", name).maybeSingle();
       if (existing) {
-        const { error } = await db.from("lettable_units").update(payload).eq("id", existing.id);
+        // Same rule as the emitted SQL: the register having no price for a
+        // unit is not a statement that the unit has no price. Several are
+        // priced in the database and nowhere else.
+        const update = payload.price === null ? { ...payload, price: existing.price } : payload;
+        const { error } = await db.from("lettable_units").update(update).eq("id", existing.id);
         if (error) throw new Error(`unit ${name}: ${error.message}`);
         unitIdByName.set(name, existing.id);
       } else {
@@ -366,7 +370,13 @@ ${unitTuples.join(",\n")}
  where s.slug = ${lit(SITE_SLUG)}
 on conflict (site_id, name) do update set
   unit_type = excluded.unit_type, letting_mode = excluded.letting_mode,
-  size_sqm = excluded.size_sqm, price = excluded.price,
+  size_sqm = excluded.size_sqm,
+  -- A register with no price for a unit is not a statement that the unit has
+  -- no price. Twelve of these units are priced in the database and nowhere
+  -- else; writing excluded.price straight through would wipe all twelve on
+  -- the next import, silently, and the dashboard would go back to saying
+  -- they cannot be let.
+  price = coalesce(excluded.price, lettable_units.price),
   status = excluded.status, notes = excluded.notes;`);
   }
 

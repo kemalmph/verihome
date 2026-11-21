@@ -244,6 +244,72 @@ async function refused(db, sql, args = []) {
   );
   check(badWindow !== null && /time_order/.test(badWindow), "an event ending before it starts is refused");
 
+  // ── amenities and consumables ─────────────────────────────────────────────
+  const amenities = await q(`select code from amenities where code in ('ac','wifi','projector')`);
+  check(amenities.length === 3, "the amenity vocabulary is seeded");
+
+  const dupAmenity = await refused(db, `insert into amenities (code, label) values ('ac', 'AC lagi')`);
+  check(dupAmenity !== null && /amenities_code_key/.test(dupAmenity), "an amenity code cannot be duplicated");
+
+  const badCategory = await refused(db, `insert into amenities (code, label, category) values ('x1', 'X', 'nonsense')`);
+  check(badCategory !== null && /category_check/.test(badCategory), "an amenity category outside the list is refused");
+
+  await q(`insert into unit_amenities (unit_id, amenity_id)
+           select $1, id from amenities where code in ('ac','projector','whiteboard')`, [room.id]);
+  const roomHas = await q(
+    `select a.code from unit_amenities ua join amenities a on a.id = ua.amenity_id where ua.unit_id = $1 order by a.code`,
+    [room.id]);
+  check(roomHas.length === 3, `a unit carries its amenities (${roomHas.map((r) => r.code).join(",")})`);
+
+  const dupLink = await refused(db,
+    `insert into unit_amenities (unit_id, amenity_id) select $1, id from amenities where code = 'ac'`, [room.id]);
+  check(dupLink !== null, "the same amenity cannot be attached to a unit twice");
+
+  // One catalogue, cost and price kept apart.
+  const aqua = (await q(
+    `insert into items (site_id, name, kind, unit, cost_price, sell_price)
+     values ($1, 'Air mineral 600ml', 'consumable', 'botol', 2500, 5000) returning *`,
+    [site.id]))[0];
+  check(Number(aqua.cost_price) === 2500 && Number(aqua.sell_price) === 5000,
+    "an item keeps cost and sell price apart");
+
+  const res = (await q(
+    `select id from unit_reservations where membership_id = $1 limit 1`, [mb.id]))[0];
+
+  // Bundled into the room rate: it still costs the business something.
+  await q(
+    `insert into reservation_items (reservation_id, item_id, name, qty, cost_price, sell_price, included)
+     values ($1, $2, 'Air mineral 600ml', 4, 2500, 0, true)`,
+    [res.id, aqua.id]);
+  // Charged on top.
+  await q(
+    `insert into reservation_items (reservation_id, item_id, name, qty, cost_price, sell_price, included)
+     values ($1, $2, 'Air mineral 600ml', 2, 2500, 5000, false)`,
+    [res.id, aqua.id]);
+
+  const billedBundle = await refused(db,
+    `insert into reservation_items (reservation_id, name, qty, cost_price, sell_price, included)
+     values ($1, 'Kopi', 1, 5000, 15000, true)`, [res.id]);
+  check(
+    billedBundle !== null && /included_is_free/.test(billedBundle),
+    "an item cannot be both bundled and billed",
+  );
+
+  const tally = (await q(
+    `select sum(qty * cost_price)::int as cogs, sum(qty * sell_price)::int as sold
+       from reservation_items where reservation_id = $1`, [res.id]))[0];
+  check(
+    tally.cogs === 15000 && tally.sold === 10000,
+    `consumables give a real COGS and a real sale (COGS ${tally.cogs}, dijual ${tally.sold})`,
+  );
+
+  // Who pays the electricity is a column now, not a sentence in a note.
+  const util = (await q(`select utilities_included from unit_reservations where id = $1`, [res.id]))[0];
+  check(util.utilities_included === true, "utilities are included by default");
+  await q(`update unit_reservations set utilities_included = false where id = $1`, [res.id]);
+  const util2 = (await q(`select utilities_included from unit_reservations where id = $1`, [res.id]))[0];
+  check(util2.utilities_included === false, "…and can be turned off, as contract 006 needs");
+
   await db.end();
 
   console.log(`\nPASS ${pass.length}`);
