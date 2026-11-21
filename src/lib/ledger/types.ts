@@ -61,14 +61,14 @@ export const REVENUE_ACCOUNTS = [
 
 /**
  * Liabilities that are returned to whoever paid them, as distinct from those
- * that become VeriHome revenue. Reports must never merge the two: adding
+ * that become Cosystem revenue. Reports must never merge the two: adding
  * deposits to unearned revenue would overstate future income by the value of
  * every deposit the platform holds.
  */
 export const RETURNABLE_LIABILITIES = ["deposits_held", "credits_outstanding"] as const;
 export const EARNABLE_LIABILITIES = ["unearned_revenue"] as const;
 
-/** Money VeriHome spends on itself. Rises on the debit side, like an asset. */
+/** Money Cosystem spends on itself. Rises on the debit side, like an asset. */
 export const EXPENSE_ACCOUNTS = ["expense_operating", "equity_drawings"] as const;
 
 export function accountKind(

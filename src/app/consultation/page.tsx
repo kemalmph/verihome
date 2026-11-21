@@ -48,7 +48,7 @@ export default function ConsultationPage() {
           </h1>
           <p className="text-lg text-[#3e4944] max-w-2xl">
             Both packages include a live virtual walkthrough with an independent
-            VeriHome advisor. Get expert guidance from the comfort of your home.
+            Cosystem advisor. Get expert guidance from the comfort of your home.
           </p>
         </div>
 

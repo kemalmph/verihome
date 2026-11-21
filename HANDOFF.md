@@ -87,7 +87,7 @@ host and its setup script installs dependencies, the Supabase CLI and starts
 Docker. Pick it in the environment menu — a running session cannot switch to it.
 
 **Supabase connector**: resolved 2026-11-21, and no longer something you have
-to work around. VeriHome was transferred from `malgrown dev` into `maldev`, so
+to work around. The `verihome` project was transferred from `malgrown dev` into `maldev`, so
 both projects now sit in one organization and one grant reaches both. Verified
 from a single session: `verihome` (`hxktoewssuahtkrksbpx`) and `pasarin`
 (`acwksgoziqenaqqnzhtk`) are both listed and both queryable. The transfer
@@ -110,8 +110,16 @@ product; leave it alone unless asked.
   back to returning the whole URL when it does not match. So changing the R2
   public URL 404s every photo *and* makes deletes silently target a bogus key.
   Payment proofs do store keys (§11); photos are the exception.
-- A rebrand to "Cosystem" was done and then reverted at the owner's request
-  (`f70c836`, reverted by `1e5e01a`). The tree is back to VeriHome exactly.
+- **The product is now Cosystem.** The rename landed on 2026-11-21 and is
+  brand-only: no behaviour, schema or data changed, and the property rental
+  marketplace works exactly as before. It was applied once (`f70c836`),
+  reverted at the owner's request (`1e5e01a`), then re-applied.
+
+  Four things still say "verihome" on purpose, so do not "fix" them:
+  the Supabase project and its ref `hxktoewssuahtkrksbpx`, which cannot be
+  renamed; the R2 buckets `verihome-media` and `verihome-private`, for the
+  reason in the photo-URL note above; the applied migration files, which are
+  history; and the system reference's own title, which `AGENTS.md` cites.
 - `supabase/.temp/cli-latest` is untracked now; the CLI rewrites it on every
   run and it made every session report a dirty tree.
 - Pre-existing eslint error in `BuildListingPageClient.tsx:141` (setState inside

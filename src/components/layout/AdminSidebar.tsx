@@ -36,7 +36,7 @@ export function AdminSidebar({ activeHref }: AdminSidebarProps) {
         >
           <span className="material-symbols-outlined text-xl">menu</span>
         </button>
-        <p className="text-[#9cf4d1] font-bold text-lg">VeriHome</p>
+        <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
         <p className="text-white/50 text-xs mt-0.5">Admin</p>
       </header>
 
@@ -60,7 +60,7 @@ export function AdminSidebar({ activeHref }: AdminSidebarProps) {
         {/* Header */}
         <div className="px-6 py-8 flex items-center justify-between">
           <div>
-            <p className="text-[#9cf4d1] font-bold text-xl">VeriHome</p>
+            <p className="text-[#9cf4d1] font-bold text-xl">Cosystem</p>
             <p className="text-white/50 text-xs mt-1">Admin Panel</p>
           </div>
           {/* Close button — mobile only */}

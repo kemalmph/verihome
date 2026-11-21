@@ -82,13 +82,13 @@ export async function POST(request: Request) {
   // Send booking confirmation to user
   if (payer_email) {
     await resend.emails.send({
-      from: "VeriHome <onboarding@resend.dev>",
+      from: "Cosystem <onboarding@resend.dev>",
       to: payer_email,
-      subject: "Your consultation is confirmed — VeriHome",
+      subject: "Your consultation is confirmed — Cosystem",
       html: `
         <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #1b1c1c;">
           <div style="background: #0d2137; padding: 24px 32px; border-radius: 12px 12px 0 0;">
-            <p style="color: #9cf4d1; font-weight: 700; font-size: 18px; margin: 0;">VeriHome</p>
+            <p style="color: #9cf4d1; font-weight: 700; font-size: 18px; margin: 0;">Cosystem</p>
           </div>
           <div style="background: #fff; padding: 32px; border: 1px solid #cccccc; border-top: none; border-radius: 0 0 12px 12px;">
             <h2 style="color: #0d2137; margin-top: 0;">Payment received!</h2>

@@ -77,7 +77,7 @@ export async function createOwnerInvite(ownerId: string) {
   // link is the delivery mechanism, not a convenience.
   const phone = String(owner.phone_whatsapp ?? "").replace(/\D/g, "");
   const message =
-    `Halo ${owner.name}, ini tautan untuk mengaktifkan portal pemilik VeriHome Anda. ` +
+    `Halo ${owner.name}, ini tautan untuk mengaktifkan portal pemilik Cosystem Anda. ` +
     `Berlaku ${INVITE_DAYS} hari dan hanya dapat dipakai sekali: ${url}`;
   const whatsappUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}` : null;
 

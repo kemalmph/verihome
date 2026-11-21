@@ -59,7 +59,7 @@ export async function POST(req: NextRequest) {
   const intent = await provider.createIntent({
     reference:   propertyId,
     amount:      cashDue,
-    description: `VeriHome stay · ${checkIn} to ${checkOut}`,
+    description: `Cosystem stay · ${checkIn} to ${checkOut}`,
     payerEmail:  user.email,
   });
 

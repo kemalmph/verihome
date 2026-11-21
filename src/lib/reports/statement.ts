@@ -22,7 +22,7 @@ export interface AccountStatement {
 }
 
 // How each ledger event reads from the guest's side of the table. The ledger
-// records VeriHome's books; a statement has to be phrased from the customer's.
+// records Cosystem's books; a statement has to be phrased from the customer's.
 const EVENT_LABEL: Record<string, { label: string; type: string; outgoing: boolean }> = {
   booking_payment_received:            { label: "Pembayaran pemesanan",       type: "Pemesanan",  outgoing: true },
   booking_refund_issued:               { label: "Pengembalian dana",          type: "Refund",     outgoing: false },

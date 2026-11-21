@@ -38,11 +38,11 @@ export function viewingPolicyLines(deposit: number): PolicyLine[] {
       en: "You attend the viewing",
       outcome: "credit",
       idOutcome:
-        `Deposit menjadi kredit VeriHome senilai Rp ${rp}, berlaku ${CREDIT_VALID_MONTHS} bulan, ` +
+        `Deposit menjadi kredit Cosystem senilai Rp ${rp}, berlaku ${CREDIT_VALID_MONTHS} bulan, ` +
         `dapat dipakai untuk konsultasi atau booking. Kredit yang belum terpakai dapat ditukar ` +
         `kembali menjadi uang dalam ${CREDIT_CASHBACK_DAYS} hari.`,
       enOutcome:
-        `Your deposit becomes VeriHome credit worth Rp ${rp}, valid ${CREDIT_VALID_MONTHS} months, ` +
+        `Your deposit becomes Cosystem credit worth Rp ${rp}, valid ${CREDIT_VALID_MONTHS} months, ` +
         `usable for a consultation or a booking. Unused credit can be exchanged back for cash ` +
         `within ${CREDIT_CASHBACK_DAYS} days.`,
     },
@@ -68,8 +68,8 @@ export function viewingPolicyLines(deposit: number): PolicyLine[] {
       enOutcome: "The deposit is forfeited.",
     },
     {
-      id: "Dibatalkan VeriHome/pemilik",
-      en: "VeriHome or the owner cancels",
+      id: "Dibatalkan Cosystem/pemilik",
+      en: "Cosystem or the owner cancels",
       outcome: "cash",
       idOutcome: "Dikembalikan penuh sebagai uang.",
       enOutcome: "Refunded in full, as cash.",

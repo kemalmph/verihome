@@ -51,7 +51,7 @@ export async function POST(req: NextRequest) {
   const intent   = await provider.createIntent({
     reference:   propertyId,
     amount:      VIEWING_DEPOSIT,
-    description: "VeriHome viewing deposit",
+    description: "Cosystem viewing deposit",
     payerEmail:  user.email,
   });
 

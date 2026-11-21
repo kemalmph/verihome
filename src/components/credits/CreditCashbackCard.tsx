@@ -55,7 +55,7 @@ export function CreditCashbackCard({ credits }: { credits: RefundableCredit[] })
                 <p className="font-semibold text-[#0d2137] tabular-nums">{rp(c.amount)}</p>
                 <p className="text-xs text-[#6e7a74] mt-0.5">
                   {pending ? (
-                    "Menunggu transfer dari VeriHome / Awaiting transfer"
+                    "Menunggu transfer dari Cosystem / Awaiting transfer"
                   ) : c.daysLeft > 0 ? (
                     <>Sisa {c.daysLeft} hari untuk menukar / {c.daysLeft} days left</>
                   ) : (

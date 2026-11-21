@@ -67,7 +67,7 @@ export default async function OwnerEarningsPage() {
                       <td className="px-3 py-2.5 text-right tabular-nums">{rp(b.gross)}</td>
                       <td className="px-3 py-2.5 text-right tabular-nums">− {rp(b.commission)}</td>
                       <td className="px-3 py-2.5 text-right tabular-nums text-xs">
-                        {b.cleaning > 0 ? (b.cleaningToOwner ? `+ ${rp(b.cleaning)}` : `VeriHome`) : "—"}
+                        {b.cleaning > 0 ? (b.cleaningToOwner ? `+ ${rp(b.cleaning)}` : `Cosystem`) : "—"}
                       </td>
                       <td className="px-4 py-2.5 text-right font-semibold text-[#1a7a5e] tabular-nums">{rp(b.net)}</td>
                     </tr>

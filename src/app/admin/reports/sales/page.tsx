@@ -76,10 +76,10 @@ export default async function SalesReportPage({
             deliberately quieter so the two are never read as the same thing. */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
           <div className="bg-[#0d2137] text-white rounded-xl p-6 md:row-span-1">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#9cf4d1]">Pendapatan VeriHome</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-[#9cf4d1]">Pendapatan Cosystem</p>
             <p className="text-4xl font-bold mt-2 tabular-nums">IDR {fmt(r.netRevenue)}</p>
             <p className="text-sm text-white/60 mt-2">
-              Yang benar-benar menjadi milik VeriHome pada periode ini
+              Yang benar-benar menjadi milik Cosystem pada periode ini
             </p>
           </div>
 
@@ -87,7 +87,7 @@ export default async function SalesReportPage({
             <p className="text-xs font-bold uppercase tracking-wider text-[#6e7a74]">Nilai transaksi bruto</p>
             <p className="text-3xl font-semibold text-[#3e4944] mt-2 tabular-nums">IDR {fmt(r.gbv)}</p>
             <p className="text-sm text-[#6e7a74] mt-2">
-              Total transaksi — <strong className="text-[#3e4944]">bukan pendapatan VeriHome</strong>
+              Total transaksi — <strong className="text-[#3e4944]">bukan pendapatan Cosystem</strong>
             </p>
           </div>
 
@@ -205,7 +205,7 @@ export default async function SalesReportPage({
         {/* ── 5. Top properties ────────────────────────────────────────────── */}
         <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
           <h2 className="font-bold text-[#0d2137] mb-1">Properti teratas</h2>
-          <p className="text-sm text-[#6e7a74] mb-4">Diurutkan berdasarkan kontribusi pendapatan VeriHome</p>
+          <p className="text-sm text-[#6e7a74] mb-4">Diurutkan berdasarkan kontribusi pendapatan Cosystem</p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: 680 }}>
               <thead>

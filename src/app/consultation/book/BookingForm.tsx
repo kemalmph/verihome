@@ -218,9 +218,9 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
             className="mt-0.5 w-4 h-4 accent-[#1a7a5e] shrink-0"
           />
           <span className="text-sm text-[#12614a]">
-            Pakai kredit VeriHome saya — <strong>{rp(availableCredit)}</strong> tersedia
+            Pakai kredit Cosystem saya — <strong>{rp(availableCredit)}</strong> tersedia
             <span className="block text-xs text-[#3e4944] mt-0.5">
-              Use my VeriHome credit. Credit closest to expiring is used first.
+              Use my Cosystem credit. Credit closest to expiring is used first.
             </span>
           </span>
         </label>
@@ -238,7 +238,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
 
         {estimatedCredit > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-sm text-[#1b1c1c]">Kredit VeriHome</span>
+            <span className="text-sm text-[#1b1c1c]">Kredit Cosystem</span>
             <span className="font-bold text-[#1a7a5e]">− {rp(estimatedCredit)}</span>
           </div>
         )}

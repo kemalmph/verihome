@@ -5,7 +5,7 @@
 @custom-variant dark (&:is(.dark *));
 
 @theme inline {
-  /* VeriHome brand tokens */
+  /* Cosystem brand tokens */
   --color-brand-green: #1A7A5E;
   --color-brand-navy: #0D2137;
   --color-brand-light-green: #E8F5F0;
@@ -13,7 +13,7 @@
   --color-text-muted: #888888;
   --color-border-default: #CCCCCC;
 
-  /* VeriHome material color system */
+  /* Cosystem material color system */
   --color-vh-primary: #006048;
   --color-vh-primary-container: #1A7A5E;
   --color-vh-on-primary: #FFFFFF;

@@ -90,18 +90,18 @@ export async function submitProperty(formData: FormData) {
 
   // Send emails (fire and forget — don't fail the submission if email fails)
   const resend = new Resend(process.env.RESEND_API_KEY ?? "dummy");
-  const emailFrom = "VeriHome <onboarding@resend.dev>";
+  const emailFrom = "Cosystem <onboarding@resend.dev>";
 
   await Promise.allSettled([
     // Confirmation to owner
     resend.emails.send({
       from: emailFrom,
       to: owner_email,
-      subject: "We received your property submission — VeriHome",
+      subject: "We received your property submission — Cosystem",
       html: `
         <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto; color: #1b1c1c;">
           <div style="background: #0d2137; padding: 24px 32px; border-radius: 12px 12px 0 0;">
-            <p style="color: #9cf4d1; font-weight: 700; font-size: 18px; margin: 0;">VeriHome</p>
+            <p style="color: #9cf4d1; font-weight: 700; font-size: 18px; margin: 0;">Cosystem</p>
           </div>
           <div style="background: #fff; padding: 32px; border: 1px solid #cccccc; border-top: none; border-radius: 0 0 12px 12px;">
             <h2 style="color: #0d2137; margin-top: 0;">Thanks, ${owner_name}!</h2>
@@ -110,7 +110,7 @@ export async function submitProperty(formData: FormData) {
             <div style="background: #e8f5f0; border-radius: 8px; padding: 16px; margin: 24px 0;">
               <p style="margin: 0; font-size: 14px; color: #1a7a5e;"><strong>What happens next?</strong></p>
               <ol style="margin: 8px 0 0; padding-left: 20px; font-size: 14px; color: #3e4944;">
-                <li>VeriHome conducts an in-person RLA inspection</li>
+                <li>Cosystem conducts an in-person RLA inspection</li>
                 <li>We photograph and document the property</li>
                 <li>Your listing goes live on the marketplace</li>
               </ol>
@@ -121,10 +121,10 @@ export async function submitProperty(formData: FormData) {
       `,
     }),
 
-    // Internal notification to VeriHome team
+    // Internal notification to Cosystem team
     resend.emails.send({
       from: emailFrom,
-      to: process.env.TEAM_EMAIL ?? "team@verihome.id",
+      to: process.env.TEAM_EMAIL ?? "team@cosystem.co",
       subject: `New property submission: ${name} (${area})`,
       html: `
         <div style="font-family: sans-serif; max-width: 560px; margin: 0 auto;">

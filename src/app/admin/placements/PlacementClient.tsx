@@ -95,7 +95,7 @@ export function PlacementForm({ properties }: { properties: { id: string; name: 
         <div>
           <label className={labelCls} htmlFor="reported_by">Dilaporkan oleh</label>
           <select id="reported_by" name="reported_by" className={input} defaultValue="team">
-            <option value="team">Tim VeriHome</option>
+            <option value="team">Tim Cosystem</option>
             <option value="owner">Pemilik</option>
             <option value="tenant">Penyewa</option>
           </select>
