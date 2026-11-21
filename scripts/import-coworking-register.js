@@ -40,6 +40,8 @@ const APPLY = process.argv.includes("--apply");
  * output twice changes nothing the second time.
  */
 const EMIT_SQL = process.argv.includes("--emit-sql");
+/** Which figure to believe when the annual column and the instalments disagree. */
+const TRUST = (process.argv.find((a) => a.startsWith("--trust=")) ?? "").split("=")[1] || null;
 const out = [];
 const emit = (s) => out.push(s);
 /** Single-quote escaping for SQL literals; null stays NULL. */
@@ -203,6 +205,88 @@ on conflict (slug) do update set
     }
   }
 
+  /**
+   * A unit's annual price, taken from its contract.
+   *
+   * The Unit sheet's price column is not data — it is
+   * `XLOOKUP(unit, Kontrak!B:B, Kontrak!H:H)`, a view of the Kontrak sheet.
+   * Any tool that writes the file without evaluating formulas (openpyxl, for
+   * one) leaves those cells empty, and the import would then wipe the price of
+   * every let unit while looking like it worked.
+   *
+   * So the contract is read first and treated as the source it already is.
+   * The Unit sheet's value still wins when present, because a unit can be
+   * priced before anyone has signed anything.
+   */
+  const annualByUnit = new Map();
+  const resolvedAnnual = new Map();
+
+  /**
+   * The annual figure and the instalments are two statements about the same
+   * money, and they have to agree.
+   *
+   * This is not hypothetical. Contract 007 said Rp21.000.000 a year while its
+   * instalments said Rp7.000.000 for two months — Rp42.000.000 annualised,
+   * exactly double. The owner confirmed Rp3,5 jt a month, so the column was
+   * wrong and the instalments were right.
+   *
+   * A warning was not enough. The importer writes the annual figure to the
+   * unit's price, so re-running against an uncorrected sheet would have
+   * quietly put the wrong number back after someone fixed the database by
+   * hand. A correction the next import undoes is not a correction.
+   *
+   * So a material disagreement stops the import and asks which to believe.
+   * Guessing is worse than stopping: the instalments are right when the annual
+   * figure is stale, and the annual figure is right when the instalment list
+   * is merely incomplete, and nothing in the file says which it is.
+   *
+   * Resolved here, before any unit is written, so a unit's price and its
+   * contract's annual figure cannot disagree with each other.
+   */
+  for (const row of contracts) {
+    const u = text(row["Unit"]);
+    const ref = text(row["No. Kontrak"]);
+    const annual = money(row["Harga / tahun (Rp)"]);
+    const starts = text(row["Mulai"]);
+    const ends = text(row["Selesai"]);
+    let use = annual;
+
+    const scheduled = schedule
+      .filter((s) => text(s["No. Kontrak"]) === ref)
+      .reduce((n, s) => n + (money(s["Jumlah (Rp)"]) ?? 0), 0);
+    const months = starts && ends
+      ? (new Date(ends) - new Date(starts)) / (1000 * 60 * 60 * 24 * 30.44)
+      : 0;
+
+    if (annual && scheduled && months > 0) {
+      const implied = Math.round((scheduled / months) * 12);
+      if (Math.abs(implied - annual) / annual > 0.2) {
+        const complaint =
+          `contract ${ref}: the annual column says Rp${annual.toLocaleString("id-ID")}, ` +
+          `but the instalments total Rp${scheduled.toLocaleString("id-ID")} over ~${months.toFixed(1)} months, ` +
+          `which annualises to about Rp${implied.toLocaleString("id-ID")}.`;
+        if (TRUST === "instalments") {
+          use = implied;
+          problems.push(`${complaint} Using the instalments (--trust=instalments).`);
+        } else if (TRUST === "column") {
+          problems.push(`${complaint} Using the column (--trust=column).`);
+        } else {
+          console.error(
+            `\nSTOPPED. ${complaint}\n\n` +
+            `  Fix the register, or re-run with --trust=instalments or --trust=column.\n` +
+            `  Nothing was written. The importer will not guess which figure is the\n` +
+            `  real one, and it will not quietly overwrite a database someone has\n` +
+            `  already corrected by hand.\n`,
+          );
+          process.exit(1);
+        }
+      }
+    }
+
+    if (ref && use) resolvedAnnual.set(ref, use);
+    if (u && use) annualByUnit.set(u, use);
+  }
+
   // ── units ─────────────────────────────────────────────────────────────────
   const unitIdByName = new Map();
   const unitTuples = [];
@@ -229,7 +313,12 @@ on conflict (slug) do update set
       unit_type,
       letting_mode,
       size_sqm: num(row["Luas (m²)"]),
-      price: money(row["Harga / tahun (Rp)"]),
+      // The contract wins where there is one. That is not a preference, it is
+      // the register's own design: the Unit sheet's price cell is
+      // XLOOKUP(unit, Kontrak!B:B, Kontrak!H:H) — a view of the contract. The
+      // Unit column is used only when no contract exists, which is how a unit
+      // gets an asking price before anyone has signed.
+      price: annualByUnit.get(name) ?? money(row["Harga / tahun (Rp)"]) ?? null,
       status: "available",
       notes: [text(row["Dimensi (m)"]) && `Dimensi ${text(row["Dimensi (m)"])}`, text(row["Catatan"])]
         .filter(Boolean).join(". ") || null,
@@ -317,20 +406,36 @@ on conflict (site_id, name) do update set
     }
     const total_price = scheduled > 0 ? scheduled : (annual ?? 0);
 
-    const months = (new Date(ends) - new Date(starts)) / (1000 * 60 * 60 * 24 * 30.44);
-    if (annual && scheduled && months > 0) {
-      const impliedAnnual = Math.round((scheduled / months) * 12);
-      if (Math.abs(impliedAnnual - annual) / annual > 0.2) {
-        problems.push(
-          `contract ${contract_ref}: the annual column says Rp${annual.toLocaleString("id-ID")}, ` +
-          `but the instalments total Rp${scheduled.toLocaleString("id-ID")} over ~${months.toFixed(1)} months, ` +
-          `which annualises to about Rp${impliedAnnual.toLocaleString("id-ID")}. Using the instalments.`,
-        );
-      }
-    }
+    // The annual figure and the instalments are two statements about the same
+    // money and they have to agree.
+    //
+    // This is not hypothetical. Contract 007 said Rp21.000.000 a year while
+    // its instalments said Rp7.000.000 for two months — Rp42.000.000
+    // annualised, exactly double. The owner confirmed Rp3,5 jt a month, so the
+    // column was wrong and the instalments were right.
+    //
+    // A warning was not enough. The importer writes the annual figure to the
+    // unit's price, so re-running it against an uncorrected sheet would have
+    // quietly put the wrong number back after someone fixed the database. A
+    // correction that the next import undoes is not a correction.
+    //
+    // So a material disagreement stops the import and asks which to believe.
+    // Guessing is worse than stopping: the instalments are right when the
+    // annual figure is stale, and the annual figure is right when the
+    // instalment list is merely incomplete, and nothing in the file says which.
+    // Resolved once, before the units were written, so the unit's price and
+    // the contract's annual figure cannot end up disagreeing with each other.
+    const annualToUse = resolvedAnnual.get(contract_ref) ?? annual;
 
-    const anyPaid = instalments.some((s) => (text(s["Status"]) ?? "").toLowerCase() === "lunas");
-    const allPaid = instalments.length > 0 && instalments.every((s) => (text(s["Status"]) ?? "").toLowerCase() === "lunas");
+    // Same rule as the instalment rows below: the register's Status cell is a
+    // formula over "Tgl dibayar", so the date is the fact and the status is
+    // the view. Reading only the view made a fully paid contract import as
+    // unpaid whenever the file had been written by a tool that does not
+    // evaluate formulas.
+    const isPaidRow = (s) =>
+      (text(s["Status"]) ?? "").toLowerCase() === "lunas" || text(s["Tgl dibayar"]) !== null;
+    const anyPaid = instalments.some(isPaidRow);
+    const allPaid = instalments.length > 0 && instalments.every(isPaidRow);
 
     const payload = {
       unit_id: unitIdByName.get(unitName),
@@ -342,7 +447,7 @@ on conflict (site_id, name) do update set
       ends_at: `${ends}T23:59:59+07:00`,
       seats: 1,
       letting_mode: "lease",
-      unit_price: annual ?? total_price,
+      unit_price: annualToUse ?? total_price,
       total_price,
       exclusive_use: true,
       // A signed contract is confirmed, whatever the document's own draft
@@ -421,12 +526,25 @@ on conflict (contract_ref) where contract_ref is not null do update set
       problems.push(`instalment on ${contract_ref ?? "?"}: incomplete row — not imported`);
       continue;
     }
+    // Paid is decided by "Tgl dibayar", not by the Status cell.
+    //
+    // The register's own formula is
+    //   =IF(F<>"", "Lunas", IF(TODAY()>D, "Terlambat", ...))
+    // so Status is a *view* of whether a payment date exists. Reading the view
+    // works only while the spreadsheet carries cached results; any tool that
+    // writes the file without evaluating formulas leaves Status empty and
+    // every paid instalment silently reverts to "due".
+    //
+    // Reading the underlying fact instead gives the same answer and keeps
+    // giving it. Status is still honoured when it is there, because a register
+    // marked Lunas by hand should be believed.
     const rawStatus = (text(row["Status"]) ?? "").toLowerCase();
-    const paid = rawStatus === "lunas";
+    const rawPaidOnCell = text(row["Tgl dibayar"]);
+    const paid = rawStatus === "lunas" || rawPaidOnCell !== null;
 
     // "Di muka" is not a date. Paid in advance means paid on or before the due
     // date, and the due date is the only date the register actually gives.
-    const rawPaidOn = text(row["Tgl dibayar"]);
+    const rawPaidOn = rawPaidOnCell;
     const paid_at = paid ? (/^\d{4}-\d{2}-\d{2}$/.test(rawPaidOn ?? "") ? rawPaidOn : due) : null;
     if (paid && rawPaidOn && !/^\d{4}-\d{2}-\d{2}$/.test(rawPaidOn)) {
       problems.push(`instalment ${contract_ref} #${seq}: "Tgl dibayar" is "${rawPaidOn}", not a date — recorded as ${due}`);
