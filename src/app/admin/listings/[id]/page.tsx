@@ -7,6 +7,7 @@ import { listSiteOptions } from "@/lib/actions/coworking-actions";
 import { siteTypeLabel } from "@/lib/coworking/taxonomy";
 import { PIPELINE_STAGES } from "@/lib/pipeline";
 import { MediaSection } from "./MediaSection";
+import { ConfirmSubmitButton } from "@/components/ui/ConfirmSubmitButton";
 
 interface EditListingPageProps {
   params: Promise<{ id: string }>;
@@ -118,15 +119,12 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
             >
               View live →
             </Link>
-            <form action={handleDelete}>
-              <button
-                type="submit"
-                onClick={(e) => { if (!confirm("Delete this listing permanently?")) e.preventDefault(); }}
-                className="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm hover:bg-red-100"
-              >
-                Delete
-              </button>
-            </form>
+            <ConfirmSubmitButton
+              action={handleDelete}
+              confirmText="Delete this listing permanently?"
+              label="Delete"
+              className="px-4 py-2 bg-red-50 text-red-600 border border-red-200 rounded-lg text-sm hover:bg-red-100"
+            />
           </div>
         </div>
 

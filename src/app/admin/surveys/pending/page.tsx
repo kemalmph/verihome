@@ -1,6 +1,7 @@
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { linkPendingImport, rejectPendingImport } from "@/lib/actions/survey-actions";
+import { ConfirmSubmitButton } from "@/components/ui/ConfirmSubmitButton";
 import Link from "next/link";
 
 export const dynamic = "force-dynamic";
@@ -119,15 +120,12 @@ export default async function PendingSurveysPage() {
                       </button>
                     </form>
 
-                    <form action={handleReject}>
-                      <button
-                        type="submit"
-                        onClick={(e) => { if (!confirm("Reject this submission?")) e.preventDefault(); }}
-                        className="h-11 px-4 border border-red-200 text-red-600 bg-red-50 rounded-lg text-sm hover:bg-red-100 whitespace-nowrap"
-                      >
-                        Reject
-                      </button>
-                    </form>
+                    <ConfirmSubmitButton
+                      action={handleReject}
+                      confirmText="Reject this submission?"
+                      label="Reject"
+                      className="h-11 px-4 border border-red-200 text-red-600 bg-red-50 rounded-lg text-sm hover:bg-red-100 whitespace-nowrap"
+                    />
 
                     <Link
                       href={`/admin/surveys/pending/${item.id}`}
