@@ -17,6 +17,45 @@ const CHECKLIST_ITEMS: [key: string, label: string][] = [
   ["rental_mode_configured", "Mode sewa belum diatur"],
 ];
 
+/**
+ * The publish gate, in one place.
+ *
+ * It used to live inside updatePropertyStatus only — but updatePropertyDetails
+ * also writes `status`, and the listing edit form has a <select name="status">
+ * that posts to it. So there were two roads to `live` and a guard on one of
+ * them, which is §19.6's shape exactly: the control sits on one separately
+ * addressable endpoint and not on the other that does the same work.
+ *
+ * Returns the refusal message, or null when the property may go live.
+ */
+async function publishRefusal(
+  admin: ReturnType<typeof createAdminClient>,
+  propertyId: string,
+): Promise<{ error: string; unmet?: string[] } | null> {
+  const { data: checklist } = await admin
+    .from("publish_checklist")
+    .select("*")
+    .eq("property_id", propertyId)
+    .maybeSingle();
+
+  if (!checklist) {
+    return { error: "Checklist publikasi belum ada untuk properti ini — lengkapi Build Listing dulu." };
+  }
+
+  const unmet = CHECKLIST_ITEMS
+    .filter(([key]) => (checklist as Record<string, unknown>)[key] !== true)
+    .map(([, label]) => label);
+
+  if (unmet.length > 0) {
+    // Name what is missing. "Checklist incomplete" tells nobody what to do.
+    return {
+      error: `Belum bisa dipublikasikan. ${unmet.length} item belum selesai: ${unmet.join("; ")}.`,
+      unmet,
+    };
+  }
+  return null;
+}
+
 export async function updatePropertyStatus(propertyId: string, status: string) {
   try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
 
@@ -27,27 +66,8 @@ export async function updatePropertyStatus(propertyId: string, status: string) {
   // assessment. Enforced in the action rather than the UI, because a layout or a
   // disabled button is not a rule: this function is separately callable.
   if (status === "live") {
-    const { data: checklist } = await admin
-      .from("publish_checklist")
-      .select("*")
-      .eq("property_id", propertyId)
-      .maybeSingle();
-
-    if (!checklist) {
-      return { error: "Checklist publikasi belum ada untuk properti ini — lengkapi Build Listing dulu." };
-    }
-
-    const unmet = CHECKLIST_ITEMS
-      .filter(([key]) => (checklist as Record<string, unknown>)[key] !== true)
-      .map(([, label]) => label);
-
-    if (unmet.length > 0) {
-      // Name what is missing. "Checklist incomplete" tells nobody what to do.
-      return {
-        error: `Belum bisa dipublikasikan. ${unmet.length} item belum selesai: ${unmet.join("; ")}.`,
-        unmet,
-      };
-    }
+    const refusal = await publishRefusal(admin, propertyId);
+    if (refusal) return refusal;
   }
 
   const { error } = await admin
@@ -76,9 +96,34 @@ export async function updatePropertyDetails(propertyId: string, formData: FormDa
   const status = formData.get("status") as string;
   const min_stay_months = parseInt(formData.get("min_stay_months") as string) || 1;
 
+  // Optional building this property sits in. Empty select means standalone,
+  // which is the normal case.
+  //
+  // A form that does not carry the field at all is different from one that
+  // carries it empty: the first must leave the link alone, the second clears
+  // it. Collapsing the two would let any other form that posts here silently
+  // unlink a property from its building.
+  const hasSiteField = formData.has("site_id");
+  const rawSiteId = ((formData.get("site_id") as string) ?? "").trim();
+  const site_id = rawSiteId === "" ? null : rawSiteId;
+
+  // This form carries a status dropdown, so it is a second road to `live` and
+  // needs the same gate as updatePropertyStatus. Without it the publish
+  // checklist is enforced on one endpoint and waved through on the other.
+  if (status === "live") {
+    const refusal = await publishRefusal(admin, propertyId);
+    // Return the message alone, so this action keeps the two return shapes its
+    // caller already narrows on.
+    if (refusal) return { error: refusal.error };
+  }
+
   const { error } = await admin
     .from("properties")
-    .update({ name, area, property_type, price_monthly, bedrooms, bathrooms, size_sqm, address, status, min_stay_months })
+    .update({
+      name, area, property_type, price_monthly, bedrooms, bathrooms,
+      size_sqm, address, status, min_stay_months,
+      ...(hasSiteField ? { site_id } : {}),
+    })
     .eq("id", propertyId);
 
   if (error) return { error: error.message };

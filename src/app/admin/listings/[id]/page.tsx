@@ -3,6 +3,8 @@ import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updatePropertyDetails, deleteProperty } from "@/lib/actions/admin-actions";
+import { listSiteOptions } from "@/lib/actions/coworking-actions";
+import { siteTypeLabel } from "@/lib/coworking/taxonomy";
 import { PIPELINE_STAGES } from "@/lib/pipeline";
 import { MediaSection } from "./MediaSection";
 
@@ -29,6 +31,10 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
     .single();
 
   if (!property) notFound();
+
+  // The buildings this property could sit in. Empty for almost every listing —
+  // a standalone house or apartment belongs to no site at all.
+  const sites = await listSiteOptions();
 
   const rla     = property.rla_assessments?.[0];
   const details = property.property_details?.[0];
@@ -157,6 +163,23 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
               <div>
                 <label className={labelClass}>Address</label>
                 <input name="address" defaultValue={property.address ?? ""} className={inputClass} />
+              </div>
+
+              <div>
+                <label className={labelClass}>Site (gedung)</label>
+                <select name="site_id" defaultValue={property.site_id ?? ""} className={inputClass}>
+                  <option value="">— berdiri sendiri —</option>
+                  {sites.map((s) => (
+                    <option key={s.id} value={s.id}>
+                      {s.name} · {siteTypeLabel(s.site_type)}
+                    </option>
+                  ))}
+                </select>
+                <p className="text-xs text-[#6e7a74] mt-1">
+                  {sites.length === 0
+                    ? "Belum ada site. Tambahkan di menu Coworking kalau properti ini berada di dalam sebuah gedung yang dikelola."
+                    : "Kosongkan kalau properti ini bukan bagian dari gedung yang dikelola — ini kasus yang normal."}
+                </p>
               </div>
 
               <div className="grid grid-cols-3 gap-4">

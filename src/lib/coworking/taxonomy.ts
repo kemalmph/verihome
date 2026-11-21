@@ -35,6 +35,21 @@ export const UNIT_STATUSES = [
   { value: "retired",     label: "Tidak aktif", hint: "Tidak lagi dipakai" },
 ] as const;
 
+/**
+ * What kind of building a site is.
+ *
+ * One value today. Kosan, hostel and event space are on the roadmap and are
+ * deliberately absent: a dropdown offering a business line that does not exist
+ * is a promise the product cannot keep.
+ *
+ * Adding one means widening sites_site_type_check in the same change — a DROP
+ * then ADD, never an ALTER, and the new value proven by writing a row with it
+ * (§19.9).
+ */
+export const SITE_TYPES = [
+  { value: "coworking", label: "Coworking" },
+] as const;
+
 export const SITE_STATUSES = [
   { value: "draft",  label: "Draf" },
   { value: "active", label: "Aktif" },
@@ -45,6 +60,7 @@ export type UnitType    = (typeof UNIT_TYPES)[number]["value"];
 export type LettingMode = (typeof LETTING_MODES)[number]["value"];
 export type UnitStatus  = (typeof UNIT_STATUSES)[number]["value"];
 export type SiteStatus  = (typeof SITE_STATUSES)[number]["value"];
+export type SiteType    = (typeof SITE_TYPES)[number]["value"];
 
 const setOf = (xs: readonly { value: string }[]) => new Set(xs.map((x) => x.value));
 
@@ -52,6 +68,7 @@ export const isUnitType    = (v: unknown): v is UnitType    => typeof v === "str
 export const isLettingMode = (v: unknown): v is LettingMode => typeof v === "string" && setOf(LETTING_MODES).has(v);
 export const isUnitStatus  = (v: unknown): v is UnitStatus  => typeof v === "string" && setOf(UNIT_STATUSES).has(v);
 export const isSiteStatus  = (v: unknown): v is SiteStatus  => typeof v === "string" && setOf(SITE_STATUSES).has(v);
+export const isSiteType    = (v: unknown): v is SiteType    => typeof v === "string" && setOf(SITE_TYPES).has(v);
 
 export const unitTypeLabel = (v: string) =>
   UNIT_TYPES.find((t) => t.value === v)?.label ?? v;
@@ -61,6 +78,8 @@ export const unitStatusLabel = (v: string) =>
   UNIT_STATUSES.find((s) => s.value === v)?.label ?? v;
 export const siteStatusLabel = (v: string) =>
   SITE_STATUSES.find((s) => s.value === v)?.label ?? v;
+export const siteTypeLabel = (v: string) =>
+  SITE_TYPES.find((t) => t.value === v)?.label ?? v;
 
 /** What a price means, given how the unit is let. Shown next to every amount. */
 export const pricePeriodLabel = (mode: string) =>

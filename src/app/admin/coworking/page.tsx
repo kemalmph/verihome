@@ -2,7 +2,7 @@ import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { requireAdmin } from "@/lib/auth/guards";
 import { listSites, listOwnerOptions } from "@/lib/actions/coworking-actions";
-import { siteStatusLabel } from "@/lib/coworking/taxonomy";
+import { siteStatusLabel, siteTypeLabel } from "@/lib/coworking/taxonomy";
 import { NewSiteForm } from "./NewSiteForm";
 
 export const dynamic = "force-dynamic";
@@ -53,6 +53,7 @@ export default async function CoworkingSitesPage() {
               <thead className="bg-[#efeae8] text-left">
                 <tr>
                   <Th>Nama</Th>
+                  <Th>Tipe</Th>
                   <Th>Area</Th>
                   <Th>Pemilik</Th>
                   <Th>Status</Th>
@@ -75,6 +76,7 @@ export default async function CoworkingSitesPage() {
                         <div className="text-xs text-[#6e7a74] mt-0.5">{s.address}</div>
                       )}
                     </td>
+                    <td className="px-4 py-3 text-[#3e4944]">{siteTypeLabel(s.site_type)}</td>
                     <td className="px-4 py-3 text-[#3e4944]">{s.area ?? "—"}</td>
                     <td className="px-4 py-3 text-[#3e4944]">{s.owner_name ?? "—"}</td>
                     <td className="px-4 py-3">

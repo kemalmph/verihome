@@ -4,7 +4,7 @@ import { revalidatePath } from "next/cache";
 import { requireAdmin } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
-  isLettingMode, isSiteStatus, isUnitStatus, isUnitType,
+  isLettingMode, isSiteStatus, isSiteType, isUnitStatus, isUnitType,
 } from "@/lib/coworking/taxonomy";
 
 /**
@@ -22,6 +22,7 @@ export interface SiteRow {
   name: string;
   slug: string;
   status: string;
+  site_type: string;
   area: string | null;
   address: string | null;
   owner_id: string | null;
@@ -81,7 +82,7 @@ export async function listSites(): Promise<SiteRow[]> {
 
   const { data: sites } = await admin
     .from("sites")
-    .select("id, name, slug, status, area, address, owner_id, opening_time, closing_time, notes")
+    .select("id, name, slug, status, site_type, area, address, owner_id, opening_time, closing_time, notes")
     .order("name");
 
   if (!sites?.length) return [];
@@ -119,7 +120,7 @@ export async function getSite(siteId: string) {
 
   const { data: site } = await admin
     .from("sites")
-    .select("id, name, slug, status, area, address, google_maps_url, owner_id, opening_time, closing_time, notes")
+    .select("id, name, slug, status, site_type, area, address, google_maps_url, owner_id, opening_time, closing_time, notes")
     .eq("id", siteId)
     .maybeSingle();
 
@@ -153,6 +154,9 @@ export async function createSite(fd: FormData): Promise<{ error?: string; id?: s
   const status = text(fd, "status") || "draft";
   if (!isSiteStatus(status)) return { error: "Status site tidak dikenal." };
 
+  const siteType = text(fd, "site_type") || "coworking";
+  if (!isSiteType(siteType)) return { error: "Tipe site tidak dikenal." };
+
   const opening = optionalText(fd, "opening_time");
   const closing = optionalText(fd, "closing_time");
   // The database enforces this too; saying it here means the person gets a
@@ -168,6 +172,7 @@ export async function createSite(fd: FormData): Promise<{ error?: string; id?: s
       name,
       slug: slugify(name),
       status,
+      site_type: siteType,
       area: optionalText(fd, "area"),
       address: optionalText(fd, "address"),
       google_maps_url: optionalText(fd, "google_maps_url"),
@@ -197,6 +202,9 @@ export async function updateSite(fd: FormData): Promise<{ error?: string }> {
   const status = text(fd, "status");
   if (!isSiteStatus(status)) return { error: "Status site tidak dikenal." };
 
+  const siteType = text(fd, "site_type");
+  if (!isSiteType(siteType)) return { error: "Tipe site tidak dikenal." };
+
   const opening = optionalText(fd, "opening_time");
   const closing = optionalText(fd, "closing_time");
   if ((opening === null) !== (closing === null)) {
@@ -209,6 +217,7 @@ export async function updateSite(fd: FormData): Promise<{ error?: string }> {
     .update({
       name,
       status,
+      site_type: siteType,
       area: optionalText(fd, "area"),
       address: optionalText(fd, "address"),
       google_maps_url: optionalText(fd, "google_maps_url"),
@@ -361,4 +370,12 @@ export async function retireUnit(fd: FormData): Promise<{ error?: string }> {
   revalidatePath(`/admin/coworking/${siteId}`);
   revalidatePath("/admin/coworking");
   return {};
+}
+
+/** Sites a property can be linked to. Used by the listing edit form. */
+export async function listSiteOptions() {
+  await requireAdmin();
+  const admin = createAdminClient();
+  const { data } = await admin.from("sites").select("id, name, site_type").order("name");
+  return (data ?? []) as { id: string; name: string; site_type: string }[];
 }

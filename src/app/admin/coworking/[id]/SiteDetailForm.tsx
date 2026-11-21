@@ -3,12 +3,13 @@
 import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { updateSite } from "@/lib/actions/coworking-actions";
-import { SITE_STATUSES } from "@/lib/coworking/taxonomy";
+import { SITE_STATUSES, SITE_TYPES } from "@/lib/coworking/taxonomy";
 
 interface Site {
   id: string;
   name: string;
   status: string;
+  site_type: string;
   area: string | null;
   address: string | null;
   google_maps_url: string | null;
@@ -55,6 +56,14 @@ export function SiteDetailForm({
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Nama" className="sm:col-span-2">
           <input name="name" required defaultValue={site.name} className={inputCls} />
+        </Field>
+
+        <Field label="Tipe">
+          <select name="site_type" defaultValue={site.site_type} className={inputCls}>
+            {SITE_TYPES.map((t) => (
+              <option key={t.value} value={t.value}>{t.label}</option>
+            ))}
+          </select>
         </Field>
 
         <Field label="Area">
