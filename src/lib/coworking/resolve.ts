@@ -3,8 +3,8 @@ import { createAdminClient } from "@/lib/supabase/admin";
 /**
  * Turning a readable URL segment back into a row.
  *
- * /admin/coworking/coco-lokalima/dashboard reads like something a person
- * wrote down; /admin/coworking/4fdac801-6383-4473-9707-ee41729b5b22/dashboard
+ * /site/coco-lokalima/dashboard reads like something a person
+ * wrote down; /site/4fdac801-6383-4473-9707-ee41729b5b22/dashboard
  * is a thing you can only arrive at by clicking. Slugs and contract codes are
  * already unique, so they can carry the route.
  *

@@ -38,14 +38,14 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/coworking" />
+      <AdminSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <nav className="text-sm text-[#6e7a74] mb-4">
-          <Link href="/admin/coworking" className="hover:underline">Coworking</Link>
+          <Link href="/site" className="hover:underline">Coworking</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${r.site_slug}`} className="hover:underline">{r.site_name}</Link>
+          <Link href={`/site/${r.site_slug}`} className="hover:underline">{r.site_name}</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${r.site_slug}/calendar`} className="hover:underline">Kalender</Link>
+          <Link href={`/site/${r.site_slug}/calendar`} className="hover:underline">Kalender</Link>
           <span className="mx-2">/</span>
           <span className="text-[#3e4944]">{r.reservation_code}</span>
         </nav>

@@ -18,7 +18,7 @@ export default async function CoworkingSitesPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/coworking" />
+      <AdminSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-[#0d2137]">Coworking</h1>
@@ -67,7 +67,7 @@ export default async function CoworkingSitesPage() {
                   <tr key={s.id} className="border-t border-[#e8e3e0] hover:bg-[#faf9f8]">
                     <td className="px-4 py-3">
                       <Link
-                        href={`/admin/coworking/${s.slug}`}
+                        href={`/site/${s.slug}`}
                         className="font-medium text-[#1a7a5e] hover:underline"
                       >
                         {s.name}
@@ -76,7 +76,7 @@ export default async function CoworkingSitesPage() {
                         <div className="text-xs text-[#6e7a74] mt-0.5">{s.address}</div>
                       )}
                       <Link
-                        href={`/admin/coworking/${s.slug}/dashboard`}
+                        href={`/site/${s.slug}/dashboard`}
                         className="text-xs text-[#6e7a74] hover:text-[#1a7a5e] hover:underline"
                       >
                         Dashboard operator →

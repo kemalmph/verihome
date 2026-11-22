@@ -165,7 +165,7 @@ export async function createPlan(siteId: string, fd: FormData) {
   });
   if (error) return { error: error.message };
 
-  revalidatePath(`/admin/coworking/${siteId}/members`);
+  revalidatePath(`/site/${siteId}/members`);
   return { success: true };
 }
 
@@ -248,7 +248,7 @@ export async function createMembership(siteId: string, fd: FormData) {
 
   if (error) return { error: error.message };
 
-  revalidatePath(`/admin/coworking/${siteId}/members`);
+  revalidatePath(`/site/${siteId}/members`);
   return {
     success: true,
     id: created.id,
@@ -267,7 +267,7 @@ export async function setMembershipStatus(siteId: string, membershipId: string, 
   const admin = createAdminClient();
   const { error } = await admin.from("memberships").update({ status }).eq("id", membershipId);
   if (error) return { error: error.message };
-  revalidatePath(`/admin/coworking/${siteId}/members`);
+  revalidatePath(`/site/${siteId}/members`);
   return { success: true };
 }
 
@@ -284,6 +284,6 @@ export async function setMembershipPayment(siteId: string, membershipId: string,
   // membership used. Saying so rather than quietly booking it as income.
   const { error } = await admin.from("memberships").update({ payment_status }).eq("id", membershipId);
   if (error) return { error: error.message };
-  revalidatePath(`/admin/coworking/${siteId}/members`);
+  revalidatePath(`/site/${siteId}/members`);
   return { success: true };
 }

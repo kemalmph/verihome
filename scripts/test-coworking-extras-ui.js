@@ -52,7 +52,7 @@ const RUN = Date.now().toString(36);
   await page.waitForTimeout(2500);
 
   // ── amenities ─────────────────────────────────────────────────────────────
-  const sitePage = `${BASE}/admin/coworking/${site.id}`;
+  const sitePage = `${BASE}/site/${site.id}`;
   await page.goto(sitePage, { waitUntil: "domcontentloaded" });
   check(await page.getByRole("heading", { name: "Fasilitas" }).isVisible(), "amenity section renders");
 
@@ -101,7 +101,7 @@ const RUN = Date.now().toString(36);
   check(unitAms.length === 1 && unitAms[0].code === "projector", "a unit carries its own amenities");
 
   // ── events ────────────────────────────────────────────────────────────────
-  const calendar = `${BASE}/admin/coworking/${site.id}/calendar`;
+  const calendar = `${BASE}/site/${site.id}/calendar`;
   await page.goto(calendar, { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Tambah event" }).click();
 
@@ -184,7 +184,7 @@ const RUN = Date.now().toString(36);
     [hall.id, `CW-EX-${RUN}`],
   ))[0];
 
-  const booking = `${BASE}/admin/coworking/booking/${res.id}`;
+  const booking = `${BASE}/site/booking/${res.id}`;
   await page.goto(booking, { waitUntil: "domcontentloaded" });
   check(await page.getByRole("heading", { name: "PT Rapat Panjang" }).isVisible(), "booking detail renders");
 

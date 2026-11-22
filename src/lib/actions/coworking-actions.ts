@@ -145,7 +145,9 @@ export async function listOwnerOptions() {
 
 // ─── Sites ──────────────────────────────────────────────────────────────────
 
-export async function createSite(fd: FormData): Promise<{ error?: string; id?: string }> {
+export async function createSite(
+  fd: FormData,
+): Promise<{ error?: string; id?: string; slug?: string }> {
   await requireAdmin();
 
   const name = text(fd, "name");
@@ -181,13 +183,16 @@ export async function createSite(fd: FormData): Promise<{ error?: string; id?: s
       closing_time: closing,
       notes: optionalText(fd, "notes"),
     })
-    .select("id")
+    .select("id, slug")
     .single();
 
   if (error) return { error: error.message };
 
-  revalidatePath("/admin/coworking");
-  return { id: data.id as string };
+  revalidatePath("/site");
+  // The slug goes back too, so a site created in the browser lands on
+  // /site/cosystem-kemang rather than on its uuid. Both resolve, but the
+  // first URL someone sees is the one they copy.
+  return { id: data.id as string, slug: data.slug as string };
 }
 
 export async function updateSite(fd: FormData): Promise<{ error?: string }> {
@@ -230,8 +235,8 @@ export async function updateSite(fd: FormData): Promise<{ error?: string }> {
 
   if (error) return { error: error.message };
 
-  revalidatePath("/admin/coworking");
-  revalidatePath(`/admin/coworking/${id}`);
+  revalidatePath("/site");
+  revalidatePath(`/site/${id}`);
   return {};
 }
 
@@ -282,8 +287,8 @@ export async function createUnit(fd: FormData): Promise<{ error?: string }> {
     return { error: error.message };
   }
 
-  revalidatePath(`/admin/coworking/${siteId}`);
-  revalidatePath("/admin/coworking");
+  revalidatePath(`/site/${siteId}`);
+  revalidatePath("/site");
   return {};
 }
 
@@ -338,8 +343,8 @@ export async function updateUnit(fd: FormData): Promise<{ error?: string }> {
     return { error: error.message };
   }
 
-  revalidatePath(`/admin/coworking/${siteId}`);
-  revalidatePath("/admin/coworking");
+  revalidatePath(`/site/${siteId}`);
+  revalidatePath("/site");
   return {};
 }
 
@@ -367,8 +372,8 @@ export async function retireUnit(fd: FormData): Promise<{ error?: string }> {
 
   if (error) return { error: error.message };
 
-  revalidatePath(`/admin/coworking/${siteId}`);
-  revalidatePath("/admin/coworking");
+  revalidatePath(`/site/${siteId}`);
+  revalidatePath("/site");
   return {};
 }
 

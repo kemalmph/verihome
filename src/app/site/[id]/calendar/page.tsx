@@ -50,12 +50,12 @@ export default async function SiteCalendarPage({
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/coworking" />
+      <AdminSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-[#6e7a74] mb-4">
-          <Link href="/admin/coworking" className="hover:underline">Coworking</Link>
+          <Link href="/site" className="hover:underline">Coworking</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${site.slug}`} className="hover:underline">{site.name}</Link>
+          <Link href={`/site/${site.slug}`} className="hover:underline">{site.name}</Link>
           <span className="mx-2">/</span>
           <span className="text-[#3e4944]">Kalender</span>
         </nav>
@@ -68,9 +68,9 @@ export default async function SiteCalendarPage({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <NavLink href={`/admin/coworking/${site.slug}/calendar?week=${cal.prev_week}`}>← Minggu lalu</NavLink>
-            <NavLink href={`/admin/coworking/${site.slug}/calendar`}>Minggu ini</NavLink>
-            <NavLink href={`/admin/coworking/${site.slug}/calendar?week=${cal.next_week}`}>Minggu depan →</NavLink>
+            <NavLink href={`/site/${site.slug}/calendar?week=${cal.prev_week}`}>← Minggu lalu</NavLink>
+            <NavLink href={`/site/${site.slug}/calendar`}>Minggu ini</NavLink>
+            <NavLink href={`/site/${site.slug}/calendar?week=${cal.next_week}`}>Minggu depan →</NavLink>
           </div>
         </header>
 
@@ -177,7 +177,7 @@ export default async function SiteCalendarPage({
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <Link
-                          href={`/admin/coworking/booking/${b.code}`}
+                          href={`/site/booking/${b.code}`}
                           className="font-medium text-[#1a7a5e] hover:underline truncate block"
                           title={b.who}
                         >

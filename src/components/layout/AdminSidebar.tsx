@@ -15,7 +15,7 @@ const links = [
   { href: "/admin/bookings",  icon: "hotel",          label: "Bookings" },
   { href: "/admin/viewings",  icon: "location_on",    label: "Viewings" },
   { href: "/admin/inventory", icon: "inventory_2",    label: "Inventory" },
-  { href: "/admin/coworking", icon: "desk",           label: "Coworking" },
+  { href: "/site", icon: "desk",           label: "Coworking" },
   { href: "/admin/users",     icon: "group",          label: "Users" },
   { href: "/admin/owners",    icon: "real_estate_agent", label: "Owners" },
   { href: "/admin/owner-requests", icon: "rule",      label: "Owner Requests" },

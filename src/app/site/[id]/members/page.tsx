@@ -33,12 +33,12 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/coworking" />
+      <AdminSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-[#6e7a74] mb-4">
-          <Link href="/admin/coworking" className="hover:underline">Coworking</Link>
+          <Link href="/site" className="hover:underline">Coworking</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${site.slug}`} className="hover:underline">{site.name}</Link>
+          <Link href={`/site/${site.slug}`} className="hover:underline">{site.name}</Link>
           <span className="mx-2">/</span>
           <span className="text-[#3e4944]">Member</span>
         </nav>

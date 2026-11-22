@@ -83,7 +83,7 @@ export async function createEvent(siteId: string, fd: FormData) {
     }
   }
 
-  revalidatePath(`/admin/coworking/${siteId}/calendar`);
+  revalidatePath(`/site/${siteId}/calendar`);
   return { success: true, id: ev.id };
 }
 
@@ -147,7 +147,7 @@ export async function bookRoomForEvent(
     return { error: error.message };
   }
 
-  revalidatePath(`/admin/coworking/${siteId}/calendar`);
+  revalidatePath(`/site/${siteId}/calendar`);
   return { success: true };
 }
 
@@ -193,6 +193,6 @@ export async function setEventStatus(siteId: string, eventId: string, status: st
     if (relErr) return { error: relErr.message };
   }
 
-  revalidatePath(`/admin/coworking/${siteId}/calendar`);
+  revalidatePath(`/site/${siteId}/calendar`);
   return { success: true };
 }

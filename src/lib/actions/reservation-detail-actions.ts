@@ -228,7 +228,7 @@ export async function addReservationItem(reservationId: string, fd: FormData) {
   });
   if (error) return { error: error.message };
 
-  revalidatePath(`/admin/coworking/booking/${reservationId}`);
+  revalidatePath(`/site/booking/${reservationId}`);
   return { success: true };
 }
 
@@ -238,7 +238,7 @@ export async function removeReservationItem(reservationId: string, itemRowId: st
   const { error } = await admin
     .from("reservation_items").delete().eq("id", itemRowId).eq("reservation_id", reservationId);
   if (error) return { error: error.message };
-  revalidatePath(`/admin/coworking/booking/${reservationId}`);
+  revalidatePath(`/site/booking/${reservationId}`);
   return { success: true };
 }
 
@@ -248,7 +248,7 @@ export async function setReservationUtilities(reservationId: string, included: b
   const { error } = await admin
     .from("unit_reservations").update({ utilities_included: included }).eq("id", reservationId);
   if (error) return { error: error.message };
-  revalidatePath(`/admin/coworking/booking/${reservationId}`);
+  revalidatePath(`/site/booking/${reservationId}`);
   return { success: true };
 }
 
@@ -266,6 +266,6 @@ export async function removeDocument(reservationId: string, documentId: string) 
   const { error } = await admin
     .from("coworking_documents").delete().eq("id", documentId).eq("reservation_id", reservationId);
   if (error) return { error: error.message };
-  revalidatePath(`/admin/coworking/booking/${reservationId}`);
+  revalidatePath(`/site/booking/${reservationId}`);
   return { success: true };
 }

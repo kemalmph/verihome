@@ -50,7 +50,7 @@ const RUN = Date.now().toString(36);
   await page.click('button[type="submit"]');
   await page.waitForTimeout(2500);
 
-  const members = `${BASE}/admin/coworking/${site.id}/members`;
+  const members = `${BASE}/site/${site.id}/members`;
 
   // ── a plan ────────────────────────────────────────────────────────────────
   await page.goto(members, { waitUntil: "domcontentloaded" });
@@ -150,7 +150,7 @@ const RUN = Date.now().toString(36);
   check(/9\s*\/\s*5/.test(overText), `going over quota is shown, not clamped (${overText.slice(0, 90)})`);
 
   // ── the calendar ──────────────────────────────────────────────────────────
-  const calendar = `${BASE}/admin/coworking/${site.id}/calendar`;
+  const calendar = `${BASE}/site/${site.id}/calendar`;
   await page.goto(calendar, { waitUntil: "domcontentloaded" });
   check(await page.getByRole("heading", { name: "Kalender" }).isVisible(), "calendar renders");
   check(
@@ -190,7 +190,7 @@ const RUN = Date.now().toString(36);
 
   // ── readable URLs ─────────────────────────────────────────────────────────
   //
-  // /admin/coworking/coco-lokalima/dashboard is something a person can write
+  // /site/coco-lokalima/dashboard is something a person can write
   // down. The uuid form must keep working anyway: links already exist in
   // chats and bookmarks, and a URL scheme improving is not a reason for them
   // to start returning 404.
@@ -198,23 +198,61 @@ const RUN = Date.now().toString(36);
 
   for (const [label, seg] of [["slug", slugRow.slug], ["uuid", site.id]]) {
     for (const page_ of ["", "/dashboard", "/calendar", "/members"]) {
-      const r = await page.goto(`${BASE}/admin/coworking/${seg}${page_}`, { waitUntil: "domcontentloaded" });
+      const r = await page.goto(`${BASE}/site/${seg}${page_}`, { waitUntil: "domcontentloaded" });
       check(r?.status() === 200, `${label}${page_ || " (site)"} → ${r?.status()}`);
     }
   }
 
-  const bad = await page.goto(`${BASE}/admin/coworking/tidak-ada-site-ini/dashboard`, { waitUntil: "domcontentloaded" });
+  const bad = await page.goto(`${BASE}/site/tidak-ada-site-ini/dashboard`, { waitUntil: "domcontentloaded" });
   check(bad?.status() === 404, `an unknown slug is 404, not a crash (${bad?.status()})`);
 
   // A booking is reachable by its code, in either case.
   const code = (await q(
     `select reservation_code from unit_reservations where unit_id = $1 limit 1`, [room.id]))[0]?.reservation_code;
   if (code) {
-    const byCode = await page.goto(`${BASE}/admin/coworking/booking/${code}`, { waitUntil: "domcontentloaded" });
+    const byCode = await page.goto(`${BASE}/site/booking/${code}`, { waitUntil: "domcontentloaded" });
     check(byCode?.status() === 200, `booking by code ${code} → ${byCode?.status()}`);
-    const byLower = await page.goto(`${BASE}/admin/coworking/booking/${code.toLowerCase()}`, { waitUntil: "domcontentloaded" });
+    const byLower = await page.goto(`${BASE}/site/booking/${code.toLowerCase()}`, { waitUntil: "domcontentloaded" });
     check(byLower?.status() === 200, "…and the same code lower-cased, as a mail client might send it");
   }
+
+  // ── the move from /admin/coworking to /site ───────────────────────────────
+  //
+  // Two things had to travel with the pages: the layout's redirect for people
+  // who are not admins, and the proxy's PROTECTED_PREFIXES. Moving a folder
+  // silently drops both, and the pages would still render for a signed-in
+  // admin, so nothing would look wrong.
+  const oldPaths = [
+    ["/admin/coworking", "/site"],
+    [`/admin/coworking/${slugRow.slug}/dashboard`, `/site/${slugRow.slug}/dashboard`],
+    [`/admin/coworking/${slugRow.slug}/calendar`, `/site/${slugRow.slug}/calendar`],
+  ];
+  for (const [from, to] of oldPaths) {
+    const r = await page.goto(`${BASE}${from}`, { waitUntil: "domcontentloaded" });
+    const landed = new URL(page.url()).pathname;
+    check(r?.status() === 200 && landed === to, `${from} → ${landed} (want ${to})`);
+  }
+
+  // The query string must survive, or a link to a particular week lands on
+  // this week and quietly shows the wrong one.
+  await page.goto(`${BASE}/admin/coworking/${slugRow.slug}/calendar?week=2026-11-16`, { waitUntil: "domcontentloaded" });
+  const movedUrl = new URL(page.url());
+  check(
+    movedUrl.pathname === `/site/${slugRow.slug}/calendar` && movedUrl.searchParams.get("week") === "2026-11-16",
+    `the week parameter survives the redirect (${movedUrl.pathname}?${movedUrl.searchParams})`,
+  );
+
+  // Signed out, /site must send you to the staff login — not to an error, and
+  // not to the public one.
+  const anon = await browser.newContext();
+  const anonPage = await anon.newPage();
+  const anonRes = await anonPage.goto(`${BASE}/site/${slugRow.slug}/dashboard`, { waitUntil: "domcontentloaded" });
+  const anonPath = new URL(anonPage.url()).pathname;
+  check(
+    anonPath === "/admin-login",
+    `a signed-out visitor to /site lands on ${anonPath} (want /admin-login), status ${anonRes?.status()}`,
+  );
+  await anon.close();
 
   check(errors.length === 0, `no page errors or 5xx (${errors.slice(0, 3).join(" | ") || "none"})`);
 

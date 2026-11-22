@@ -27,7 +27,8 @@ export function NewSiteForm({ owners }: Props) {
       return;
     }
     startTransition(() => {
-      if (res.id) router.push(`/admin/coworking/${res.id}`);
+      if (res.slug) router.push(`/site/${res.slug}`);
+      else if (res.id) router.push(`/site/${res.id}`);
       else router.refresh();
     });
   }

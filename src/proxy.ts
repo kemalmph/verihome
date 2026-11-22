@@ -1,7 +1,17 @@
 import { createServerClient } from "@supabase/ssr";
 import { NextResponse, type NextRequest } from "next/server";
 
-const PROTECTED_PREFIXES = ["/dashboard", "/admin"];
+/**
+ * /site holds the coworking operator pages. They are staff-only, like /admin,
+ * and were under it until the URLs were shortened — so it belongs here too.
+ * Leaving it out would not have opened the data (every page and every action
+ * calls requireAdmin), but a signed-out visitor would have met an error
+ * instead of the login page.
+ */
+const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/site"];
+
+/** Prefixes whose visitors belong at the staff login, not the public one. */
+const STAFF_PREFIXES = ["/admin", "/site"];
 
 export async function proxy(request: NextRequest) {
   let supabaseResponse = NextResponse.next({ request });
@@ -38,7 +48,7 @@ export async function proxy(request: NextRequest) {
 
   if (isProtected && !isAdminLogin && !user) {
     const redirectUrl = request.nextUrl.clone();
-    if (pathname.startsWith("/admin")) {
+    if (STAFF_PREFIXES.some((p) => pathname.startsWith(p))) {
       redirectUrl.pathname = "/admin-login";
     } else {
       redirectUrl.pathname = "/";

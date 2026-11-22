@@ -72,7 +72,7 @@ export async function setSiteAmenities(siteId: string, amenityIds: string[]) {
       .insert(amenityIds.map((amenity_id) => ({ site_id: siteId, amenity_id })));
     if (error) return { error: error.message };
   }
-  revalidatePath(`/admin/coworking/${siteId}`);
+  revalidatePath(`/site/${siteId}`);
   return { success: true };
 }
 
@@ -96,6 +96,6 @@ export async function setUnitAmenities(siteId: string, unitId: string, amenityId
       .insert(amenityIds.map((amenity_id) => ({ unit_id: unitId, amenity_id })));
     if (error) return { error: error.message };
   }
-  revalidatePath(`/admin/coworking/${siteId}`);
+  revalidatePath(`/site/${siteId}`);
   return { success: true };
 }

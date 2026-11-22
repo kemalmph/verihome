@@ -64,8 +64,8 @@ const RUN_ID = Date.now().toString(36);
   await page.waitForTimeout(2500);
 
   // ── the list page ─────────────────────────────────────────────────────────
-  await page.goto(`${BASE}/admin/coworking`, { waitUntil: "domcontentloaded" });
-  check(!page.url().includes("/auth/login"), "admin reaches /admin/coworking");
+  await page.goto(`${BASE}/site`, { waitUntil: "domcontentloaded" });
+  check(!page.url().includes("/auth/login"), "admin reaches /site");
   check(await page.getByRole("heading", { name: "Coworking" }).isVisible(), "page renders");
   check(await page.getByText("Belum ada site").isVisible(), "empty state shown when there are no sites");
 
@@ -78,7 +78,9 @@ const RUN_ID = Date.now().toString(36);
   await page.fill('input[name="opening_time"]', "08:00");
   await page.fill('input[name="closing_time"]', "22:00");
   await page.getByRole("button", { name: "Simpan site" }).click();
-  await page.waitForURL(/\/admin\/coworking\/[0-9a-f-]{36}/, { timeout: 15000 });
+  // A new site lands on its slug, not its uuid — that is the URL the
+  // operator will copy out of the address bar.
+  await page.waitForURL(/\/site\/[a-z0-9-]+$/, { timeout: 15000 });
 
   const [site] = await q("select id, name, slug, status, area, opening_time, closing_time from sites");
   check(!!site, "site row written to the database");
@@ -88,7 +90,7 @@ const RUN_ID = Date.now().toString(36);
   check(String(site?.opening_time).startsWith("08:00"), "opening hours stored");
 
   // ── half-filled hours must be refused, by the action not the database ─────
-  await page.goto(`${BASE}/admin/coworking`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site`, { waitUntil: "domcontentloaded" });
   await page.getByRole("button", { name: "Tambah site" }).click();
   await page.fill('input[name="name"]', "Jam Timpang");
   await page.fill('input[name="opening_time"]', "09:00");
@@ -99,7 +101,7 @@ const RUN_ID = Date.now().toString(36);
   check((await q("select 1 from sites where name='Jam Timpang'")).length === 0, "...and no row written");
 
   // ── add units ─────────────────────────────────────────────────────────────
-  await page.goto(`${BASE}/admin/coworking/${site.id}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site/${site.id}`, { waitUntil: "domcontentloaded" });
   const addUnit = async (name, type, mode, capacity, price) => {
     await page.getByRole("button", { name: "Tambah unit" }).click();
     // Scope to the unit form: the site form on this page also has an
@@ -132,11 +134,11 @@ const RUN_ID = Date.now().toString(36);
   check((await q("select 1 from lettable_units")).length === 4, "...and no fifth row written");
 
   // ── capacity counts only lettable stock ───────────────────────────────────
-  await page.goto(`${BASE}/admin/coworking`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site`, { waitUntil: "domcontentloaded" });
   const beforeRetire = await page.locator("tbody tr").first().innerText();
   check(/\b40\b/.test(beforeRetire), `capacity 1+8+1+30 = 40 shown (row: ${beforeRetire.replace(/\s+/g, " ").trim()})`);
 
-  await page.goto(`${BASE}/admin/coworking/${site.id}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site/${site.id}`, { waitUntil: "domcontentloaded" });
   page.once("dialog", (d) => d.accept());
   await page.getByRole("button", { name: "Nonaktifkan" }).first().click();
   await page.waitForTimeout(1500);
@@ -145,11 +147,11 @@ const RUN_ID = Date.now().toString(36);
   check(retired.length === 1, "retire marked exactly one unit");
   check((await q("select 1 from lettable_units")).length === 4, "retire did not delete the row");
 
-  await page.goto(`${BASE}/admin/coworking`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site`, { waitUntil: "domcontentloaded" });
   const afterRetire = await page.locator("tbody tr").first().innerText();
   check(!/\b40\b/.test(afterRetire), `capacity dropped after retiring (row: ${afterRetire.replace(/\s+/g, " ").trim()})`);
 
-  await page.goto(`${BASE}/admin/coworking/${site.id}`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site/${site.id}`, { waitUntil: "domcontentloaded" });
   await page.screenshot({ path: `${OUT}/coworking-site.png`, fullPage: true });
 
   // ── site_type ─────────────────────────────────────────────────────────────
@@ -235,7 +237,7 @@ const RUN_ID = Date.now().toString(36);
   ))[0];
   check(!!deskUnit, "a lettable unit exists to test occupancy with");
 
-  await page.goto(`${BASE}/admin/coworking/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
   check(await page.getByRole("heading", { name: "Cosystem Kemang" }).isVisible(), "dashboard renders");
   const beforeLet = await page.locator("tbody tr").allInnerTexts();
   check(
@@ -258,7 +260,7 @@ const RUN_ID = Date.now().toString(36);
     [deskUnit.id, `CW-E2E-${RUN_ID}`],
   );
 
-  await page.goto(`${BASE}/admin/coworking/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
   const afterLet = await page.locator("tbody tr").allInnerTexts();
   check(
     afterLet.some((r) => r.includes(deskUnit.name) && /Terisi/.test(r)),
@@ -283,7 +285,7 @@ const RUN_ID = Date.now().toString(36);
      values ($1, 1, ((now() at time zone 'Asia/Jakarta')::date - 5), 1234567, 'due')`,
     [resId],
   );
-  await page.goto(`${BASE}/admin/coworking/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
+  await page.goto(`${BASE}/site/${site.id}/dashboard`, { waitUntil: "domcontentloaded" });
   const actions = await page.locator("section", { hasText: "Perlu tindakan" }).first().innerText();
   check(/lewat 5 hari/.test(actions), `an overdue instalment is raised as an action (${actions.replace(/\s+/g, " ").slice(0, 120)})`);
   check(
