@@ -143,6 +143,19 @@ const money = (v) => {
   return Number.isFinite(n) ? n : null;
 };
 const num = money;
+/**
+ * A yearly figure from the register, expressed in the period the column holds.
+ *
+ * lettable_units.price and unit_reservations.unit_price are per hour, per day
+ * or PER MONTH depending on letting_mode. The register only ever states a year.
+ * Not rounded: Rp50.000.000 a year is Rp4.166.666,67 a month, and rounding
+ * money someone signed for is changing the figure, not tidying it.
+ */
+const perPeriod = (yearly, lettingMode) => {
+  if (yearly === null || yearly === undefined) return null;
+  return ["lease", "monthly"].includes(lettingMode) ? yearly / 12 : yearly;
+};
+
 const text = (v) => {
   const s = (v ?? "").toString().trim();
   return s === "" ? null : s;
@@ -318,7 +331,11 @@ on conflict (slug) do update set
       // XLOOKUP(unit, Kontrak!B:B, Kontrak!H:H) — a view of the contract. The
       // Unit column is used only when no contract exists, which is how a unit
       // gets an asking price before anyone has signed.
-      price: annualByUnit.get(name) ?? money(row["Harga / tahun (Rp)"]) ?? null,
+      // The register states a YEARLY figure; lettable_units.price is the price
+      // list per the unit's own period, which for a lease or a monthly let is
+      // PER MONTH. Writing the annual number straight in would put a figure
+      // twelve times too large next to a "/bulan" label.
+      price: perPeriod(annualByUnit.get(name) ?? money(row["Harga / tahun (Rp)"]), letting_mode),
       status: "available",
       notes: [text(row["Dimensi (m)"]) && `Dimensi ${text(row["Dimensi (m)"])}`, text(row["Catatan"])]
         .filter(Boolean).join(". ") || null,
@@ -457,7 +474,8 @@ on conflict (site_id, name) do update set
       ends_at: `${ends}T23:59:59+07:00`,
       seats: 1,
       letting_mode: "lease",
-      unit_price: annualToUse ?? total_price,
+      // Same conversion: the agreed rate is per month, like the price list.
+      unit_price: perPeriod(annualToUse, 'lease') ?? total_price,
       total_price,
       exclusive_use: true,
       // A signed contract is confirmed, whatever the document's own draft

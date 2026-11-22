@@ -79,8 +79,13 @@ export interface SiteDashboard {
     /** Area, not seats: these are offices let by the square metre. */
     sqm_total: number;
     sqm_occupied: number;
-    /** Sum of price on units with one. Annual, as the register records it. */
-    contracted_annual: number;
+    /**
+     * Rent per month already committed, from the CONTRACTS — not from the
+     * units' asking prices. A let room earns what its tenant agreed to, which
+     * may be below list; summing the price list would report revenue nobody
+     * promised.
+     */
+    committed_monthly: number;
   };
   instalments: {
     overdue: DashboardInstalment[];
@@ -155,7 +160,7 @@ export async function getSiteDashboard(siteId: string): Promise<SiteDashboard | 
   const { data: resRows } = unitIds.length
     ? await admin
         .from("unit_reservations")
-        .select("id, unit_id, tenant_name, user_id, contract_ref, starts_at, ends_at, status, payment_status, total_price")
+        .select("id, unit_id, tenant_name, user_id, contract_ref, starts_at, ends_at, status, payment_status, total_price, unit_price")
         .in("unit_id", unitIds)
         .in("status", HOLDING as unknown as string[])
         .order("starts_at")
@@ -238,7 +243,9 @@ export async function getSiteDashboard(siteId: string): Promise<SiteDashboard | 
       unpriced: dashUnits.filter((u) => u.price === null).length,
       sqm_total: dashUnits.reduce((n, u) => n + (u.size_sqm ?? 0), 0),
       sqm_occupied: occupied.reduce((n, u) => n + (u.size_sqm ?? 0), 0),
-      contracted_annual: dashUnits.reduce((n, u) => n + (u.occupied_by || u.next_up ? (u.price ?? 0) : 0), 0),
+      committed_monthly: reservations
+        .filter((r) => r.ends_at > nowIso)
+        .reduce((n, r) => n + Number(r.unit_price ?? 0), 0),
     },
     instalments: {
       overdue: due.filter((i) => i.days_until_due < 0),

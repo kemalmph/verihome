@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { getReservationDetail, listItems } from "@/lib/actions/reservation-detail-actions";
 import { unitTypeLabel, paymentStatusLabel, reservationStatusLabel } from "@/lib/coworking/taxonomy";
 import { BookingItems, UtilitiesToggle } from "./BookingItems";
+import { BookingDocuments } from "./BookingDocuments";
 
 export const dynamic = "force-dynamic";
 
@@ -53,8 +54,23 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         </header>
 
         {/* ── the money ───────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
-          <Stat label="Sewa" value={rupiah(r.total_price)} />
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
+          <Stat
+            label="Nilai kontrak"
+            value={rupiah(r.total_price)}
+            hint={r.monthly_rate ? `${rupiah(r.monthly_rate)}/bulan disepakati` : "untuk seluruh masa kontrak"}
+          />
+          <Stat
+            label="Tarif disepakati"
+            value={`${rupiah(r.monthly_rate)}/bln`}
+            hint={
+              r.list_price === null ? "price list unit belum diisi"
+              : r.monthly_rate < r.list_price ? `di bawah price list ${rupiah(r.list_price)}`
+              : r.monthly_rate > r.list_price ? `di atas price list ${rupiah(r.list_price)}`
+              : "sama dengan price list"
+            }
+            tone={r.list_price !== null && r.monthly_rate < r.list_price ? "cost" : undefined}
+          />
           <Stat label="Barang terjual" value={rupiah(r.item_sales)} />
           <Stat label="HPP konsumsi" value={rupiah(r.cogs)} tone={r.cogs > 0 ? "cost" : undefined} />
           <Stat
@@ -81,6 +97,8 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           items={r.items}
           catalog={catalog}
         />
+
+        <BookingDocuments reservationId={r.id} documents={r.documents} />
 
         <p className="text-xs text-[#6e7a74] mt-6 max-w-3xl">
           Margin di sini hanya menghitung yang bisa diukur per booking: sewa,

@@ -147,6 +147,7 @@ const CLOSED_TO_ALL = new Set([
   "sites", "lettable_units", "unit_reservations", "reservation_instalments",
   "membership_plans", "memberships", "events",
   "items", "reservation_items", "unit_amenities", "site_amenities",
+  "coworking_documents",
 ]);
 
 /**

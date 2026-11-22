@@ -28,6 +28,15 @@ export interface ResItem {
   notes: string | null;
 }
 
+export interface ResDocument {
+  id: string;
+  kind: string;
+  title: string | null;
+  file_name: string;
+  size_bytes: number;
+  created_at: string;
+}
+
 export interface ReservationDetail {
   id: string;
   reservation_code: string;
@@ -41,11 +50,17 @@ export interface ReservationDetail {
   ends_at: string;
   status: string;
   payment_status: string;
+  /** NILAI KONTRAK — the whole term. */
   total_price: number;
+  /** The agreed rate, per the unit's own period (per month for a lease). */
+  monthly_rate: number;
+  /** The unit's asking rate, for comparison. */
+  list_price: number | null;
   utilities_included: boolean;
   event_title: string | null;
   membership_holder: string | null;
   items: ResItem[];
+  documents: ResDocument[];
   /** What the consumables cost, and what they brought in. */
   cogs: number;
   item_sales: number;
@@ -61,9 +76,9 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
     .from("unit_reservations")
     .select(`
       id, reservation_code, unit_id, tenant_name, user_id, contract_ref,
-      starts_at, ends_at, status, payment_status, total_price, utilities_included,
+      starts_at, ends_at, status, payment_status, total_price, unit_price, utilities_included,
       event_id, membership_id,
-      lettable_units!inner(name, unit_type, site_id, sites!inner(id, name)),
+      lettable_units!inner(name, unit_type, site_id, price, sites!inner(id, name)),
       events(title),
       memberships(member_name)
     `)
@@ -71,9 +86,11 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
     .maybeSingle();
   if (!r) return null;
 
-  const unit = r.lettable_units as unknown as {
-    name: string; unit_type: string; site_id: string; sites: { id: string; name: string };
-  };
+  const unit = first<{
+    name: string; unit_type: string; site_id: string; price: number | null;
+    sites: { id: string; name: string } | { id: string; name: string }[];
+  }>(r.lettable_units)!;
+  const site = first<{ id: string; name: string }>(unit.sites)!;
 
   const { data: itemRows } = await admin
     .from("reservation_items")
@@ -91,6 +108,12 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
     notes: i.notes,
   }));
 
+  const { data: docRows } = await admin
+    .from("coworking_documents")
+    .select("id, kind, title, file_name, size_bytes, created_at")
+    .eq("reservation_id", reservationId)
+    .order("created_at", { ascending: false });
+
   const cogs = items.reduce((n, i) => n + i.qty * i.cost_price, 0);
   const item_sales = items.reduce((n, i) => n + i.qty * i.sell_price, 0);
   const total = Number(r.total_price);
@@ -98,8 +121,8 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
   return {
     id: r.id,
     reservation_code: r.reservation_code,
-    site_id: unit.sites.id,
-    site_name: unit.sites.name,
+    site_id: site.id,
+    site_name: site.name,
     unit_name: unit.name,
     unit_type: unit.unit_type,
     who: r.tenant_name ?? (r.user_id ? "Akun terdaftar" : "—"),
@@ -109,6 +132,8 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
     status: r.status,
     payment_status: r.payment_status,
     total_price: total,
+    monthly_rate: Number(r.unit_price ?? 0),
+    list_price: unit.price === null || unit.price === undefined ? null : Number(unit.price),
     utilities_included: r.utilities_included,
     // PostgREST returns an embedded row as an object or a one-element array
     // depending on how it infers the relationship, and the generated types
@@ -117,6 +142,7 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
     event_title: first<{ title: string }>(r.events)?.title ?? null,
     membership_holder: first<{ member_name: string | null }>(r.memberships)?.member_name ?? null,
     items,
+    documents: (docRows ?? []).map((d) => ({ ...d, size_bytes: Number(d.size_bytes) })),
     cogs,
     item_sales,
     margin: total + item_sales - cogs,
@@ -219,6 +245,24 @@ export async function setReservationUtilities(reservationId: string, included: b
   const admin = createAdminClient();
   const { error } = await admin
     .from("unit_reservations").update({ utilities_included: included }).eq("id", reservationId);
+  if (error) return { error: error.message };
+  revalidatePath(`/admin/coworking/booking/${reservationId}`);
+  return { success: true };
+}
+
+/**
+ * Remove a document.
+ *
+ * The row goes; the object in the bucket stays. That is deliberate for now —
+ * a signed contract someone deleted by mistake is not recoverable from a
+ * bucket we have already emptied, and orphaned private objects cost pennies.
+ * When a real retention policy exists, it sweeps by key.
+ */
+export async function removeDocument(reservationId: string, documentId: string) {
+  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  const admin = createAdminClient();
+  const { error } = await admin
+    .from("coworking_documents").delete().eq("id", documentId).eq("reservation_id", reservationId);
   if (error) return { error: error.message };
   revalidatePath(`/admin/coworking/booking/${reservationId}`);
   return { success: true };

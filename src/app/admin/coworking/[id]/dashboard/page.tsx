@@ -3,7 +3,7 @@ import { notFound } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { requireAdmin } from "@/lib/auth/guards";
 import { getSiteDashboard, type DashboardUnit, type DashboardInstalment } from "@/lib/actions/coworking-dashboard";
-import { unitTypeLabel, paymentStatusLabel } from "@/lib/coworking/taxonomy";
+import { unitTypeLabel, paymentStatusLabel, pricePeriodLabel } from "@/lib/coworking/taxonomy";
 
 export const dynamic = "force-dynamic";
 
@@ -71,13 +71,18 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
         </header>
 
         {/* ── the numbers ─────────────────────────────────────────────── */}
-        <div className="grid grid-cols-2 lg:grid-cols-4 gap-4 mb-8">
+        <div className="grid grid-cols-2 lg:grid-cols-5 gap-4 mb-8">
           <Stat
             label="Keterisian"
             value={`${occPct}%`}
             hint={`${totals.sqm_occupied.toFixed(1)} dari ${totals.sqm_total.toFixed(1)} m²`}
           />
           <Stat label="Terisi" value={`${totals.occupied} unit`} hint={`${totals.vacant} kosong`} />
+          <Stat
+            label="Sewa terikat"
+            value={`${rupiah(totals.committed_monthly)}/bln`}
+            hint="Dari kontrak yang berjalan, bukan price list"
+          />
           <Stat
             label="Tagihan belum dibayar"
             value={rupiah(instalments.outstanding_total)}
@@ -120,7 +125,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
               <thead className="text-left">
                 <tr className="border-b border-[#e8e3e0]">
                   <Th>Unit</Th><Th>Tipe</Th><Th className="text-right">Luas</Th>
-                  <Th className="text-right">Harga / tahun</Th><Th>Keadaan</Th><Th>Penyewa</Th>
+                  <Th className="text-right">Price list</Th><Th>Keadaan</Th><Th>Penyewa</Th>
                 </tr>
               </thead>
               <tbody>
@@ -169,7 +174,12 @@ function UnitRow({ u }: { u: DashboardUnit }) {
       </td>
       <td className="px-4 py-3 text-right tabular-nums">
         {u.price !== null
-          ? <span className="text-[#3e4944]">{rupiah(u.price)}</span>
+          ? (
+            <>
+              <span className="text-[#3e4944]">{rupiah(u.price)}</span>
+              <span className="text-[#6e7a74] text-xs">{pricePeriodLabel(u.letting_mode)}</span>
+            </>
+          )
           : <span className="text-[#8c3a2c]">belum ada harga</span>}
       </td>
       <td className="px-4 py-3">

@@ -310,6 +310,84 @@ async function refused(db, sql, args = []) {
   const util2 = (await q(`select utilities_included from unit_reservations where id = $1`, [res.id]))[0];
   check(util2.utilities_included === false, "…and can be turned off, as contract 006 needs");
 
+  // ── monthly prices, and the two money columns ────────────────────────────
+  //
+  // The migration divided lease and monthly prices by twelve. The risk is not
+  // that it failed — it is that it ran twice, or ran on an hourly rate, and
+  // nobody noticed because every number still looks like money.
+  const hourly = (await q(
+    `insert into lettable_units (site_id, name, unit_type, letting_mode, capacity, price, status)
+     values ($1, 'Rapat Per Jam', 'meeting_room', 'hourly', 6, 150000, 'available') returning price`,
+    [site.id]))[0];
+  check(Number(hourly.price) === 150000, "an hourly rate is stored as typed, not divided");
+
+  // A contract: Rp3.500.000 a month for two months.
+  const leaseUnit = (await q(
+    `insert into lettable_units (site_id, name, unit_type, letting_mode, capacity, price, status)
+     values ($1, 'Kantor Sewa', 'private_room', 'lease', 4, 3500000, 'available') returning id, price`,
+    [site.id]))[0];
+  check(Number(leaseUnit.price) === 3500000, "a lease price list is a monthly figure");
+
+  const lease = (await q(
+    `insert into unit_reservations
+       (reservation_code, unit_id, user_id, tenant_name, starts_at, ends_at, seats,
+        letting_mode, unit_price, total_price, exclusive_use, status)
+     values ($2, $1, null, 'PT Dua Bulan',
+             '2027-02-01T00:00:00+07:00', '2027-03-31T23:59:59+07:00',
+             1, 'lease', 3200000, 6400000, true, 'confirmed')
+     returning unit_price, total_price`,
+    [leaseUnit.id, `CW-RATE-${RUN}`]))[0];
+  check(
+    Number(lease.unit_price) === 3200000 && Number(lease.total_price) === 6400000,
+    `the agreed rate and the contract value are separate numbers (${lease.unit_price} / ${lease.total_price})`,
+  );
+  check(
+    Number(lease.total_price) === Number(lease.unit_price) * 2,
+    "a two-month contract is worth twice its monthly rate",
+  );
+  check(
+    Number(lease.unit_price) < Number(leaseUnit.price),
+    "a contract may be agreed below the price list, and both are kept",
+  );
+
+  // ── documents ─────────────────────────────────────────────────────────────
+  const resId = (await q(`select id from unit_reservations where reservation_code = $1`, [`CW-RATE-${RUN}`]))[0].id;
+
+  await q(
+    `insert into coworking_documents (reservation_id, kind, file_key, file_name, content_type, size_bytes)
+     values ($1, 'contract', $2, 'kontrak.pdf', 'application/pdf', 12345)`,
+    [resId, `coworking/reservations/${resId}/1-kontrak.pdf`]);
+  const docs = await q(`select * from coworking_documents where reservation_id = $1`, [resId]);
+  check(docs.length === 1, "a document attaches to a contract");
+  check(!/^https?:/.test(docs[0].file_key), `the key is stored, not a URL (${docs[0].file_key})`);
+
+  const noOwner = await refused(db,
+    `insert into coworking_documents (kind, file_key, file_name, content_type, size_bytes)
+     values ('contract', 'x/1', 'a.pdf', 'application/pdf', 1)`);
+  check(noOwner !== null && /one_owner/.test(noOwner), "a document belonging to nothing is refused");
+
+  const twoOwners = await refused(db,
+    `insert into coworking_documents (site_id, reservation_id, kind, file_key, file_name, content_type, size_bytes)
+     values ($1, $2, 'contract', 'x/2', 'a.pdf', 'application/pdf', 1)`, [site.id, resId]);
+  check(twoOwners !== null && /one_owner/.test(twoOwners), "…and one belonging to two things is refused");
+
+  const dupKey = await refused(db,
+    `insert into coworking_documents (reservation_id, kind, file_key, file_name, content_type, size_bytes)
+     values ($1, 'contract', $2, 'lagi.pdf', 'application/pdf', 99)`,
+    [resId, docs[0].file_key]);
+  check(dupKey !== null && /file_key/.test(dupKey), "the same object cannot be filed twice");
+
+  const badKind = await refused(db,
+    `insert into coworking_documents (reservation_id, kind, file_key, file_name, content_type, size_bytes)
+     values ($1, 'surat_cinta', 'x/3', 'a.pdf', 'application/pdf', 1)`, [resId]);
+  check(badKind !== null && /kind_check/.test(badKind), "a document kind outside the list is refused");
+
+  // Deleting the contract takes its paperwork with it; nothing is left
+  // pointing at a reservation that no longer exists.
+  await q(`delete from unit_reservations where id = $1`, [resId]);
+  const orphans = await q(`select 1 from coworking_documents where reservation_id = $1`, [resId]);
+  check(orphans.length === 0, "deleting a contract removes its document rows");
+
   await db.end();
 
   console.log(`\nPASS ${pass.length}`);
