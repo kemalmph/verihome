@@ -7,7 +7,7 @@ import { unitTypeLabel, paymentStatusLabel, pricePeriodLabel } from "@/lib/cowor
 
 export const dynamic = "force-dynamic";
 
-const rupiah = (n: number) => `Rp${n.toLocaleString("id-ID")}`;
+const rupiah = (n: number) => `Rp${Math.round(n).toLocaleString("id-ID")}`;
 
 /**
  * Dates are rendered in Jakarta time, explicitly.

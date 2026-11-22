@@ -350,6 +350,39 @@ async function refused(db, sql, args = []) {
     "a contract may be agreed below the price list, and both are kept",
   );
 
+  // A rate is whole rupiah, on both sides of the comparison.
+  //
+  // lettable_units.price is numeric(12,0) and unit_reservations.unit_price was
+  // not, so the same division landed two-thirds of a rupiah apart and the
+  // booking page reported a contract priced AT list as "di bawah price list".
+  const odd = (await q(
+    `insert into lettable_units (site_id, name, unit_type, letting_mode, capacity, price, status)
+     values ($1, 'Pembagi Ganjil', 'private_room', 'lease', 2, 50000000::numeric / 12, 'available')
+     returning price`, [site.id]))[0];
+  const oddRes = (await q(
+    `insert into unit_reservations
+       (reservation_code, unit_id, user_id, tenant_name, starts_at, ends_at, seats,
+        letting_mode, unit_price, total_price, exclusive_use, status)
+     select $2, u.id, null, 'PT Seperdua Belas',
+            '2027-05-01T00:00:00+07:00', '2028-04-30T23:59:59+07:00',
+            1, 'lease', 50000000::numeric / 12, 50000000, true, 'confirmed'
+       from lettable_units u where u.name = 'Pembagi Ganjil' and u.site_id = $1
+     returning unit_price, total_price`,
+    [site.id, `CW-ODD-${RUN}`]))[0];
+
+  check(
+    Number(odd.price) === Number(oddRes.unit_price),
+    `the price list and the agreed rate round the same way (${odd.price} vs ${oddRes.unit_price})`,
+  );
+  check(
+    Number(oddRes.unit_price) % 1 === 0,
+    `a rate has no sen (${oddRes.unit_price})`,
+  );
+  check(
+    Number(oddRes.total_price) === 50000000,
+    `…while the contract value keeps its exact figure (${oddRes.total_price}), not 12 x the rounded rate`,
+  );
+
   // ── documents ─────────────────────────────────────────────────────────────
   const resId = (await q(`select id from unit_reservations where reservation_code = $1`, [`CW-RATE-${RUN}`]))[0].id;
 

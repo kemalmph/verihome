@@ -9,7 +9,15 @@ import { BookingDocuments } from "./BookingDocuments";
 
 export const dynamic = "force-dynamic";
 
-const rupiah = (n: number) => `Rp${n.toLocaleString("id-ID")}`;
+/**
+ * Whole rupiah.
+ *
+ * toLocaleString defaults to three fraction digits, so a rate that is not a
+ * whole number rendered as "Rp4.166.666,667" — sen, which nothing here
+ * transacts in, and three of them at that. Rounding at the point of display
+ * keeps the stored figure exact and the shown one readable.
+ */
+const rupiah = (n: number) => `Rp${Math.round(n).toLocaleString("id-ID")}`;
 const waktu = (iso: string) =>
   new Intl.DateTimeFormat("id-ID", {
     timeZone: "Asia/Jakarta", day: "numeric", month: "short", year: "numeric",
@@ -65,11 +73,17 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
             value={`${rupiah(r.monthly_rate)}/bln`}
             hint={
               r.list_price === null ? "price list unit belum diisi"
-              : r.monthly_rate < r.list_price ? `di bawah price list ${rupiah(r.list_price)}`
-              : r.monthly_rate > r.list_price ? `di atas price list ${rupiah(r.list_price)}`
+              // Compared in whole rupiah, like they are shown. Comparing the
+              // raw numerics made a two-thirds-of-a-rupiah rounding gap read
+              // as a discount.
+              : Math.round(r.monthly_rate) < Math.round(r.list_price) ? `di bawah price list ${rupiah(r.list_price)}`
+              : Math.round(r.monthly_rate) > Math.round(r.list_price) ? `di atas price list ${rupiah(r.list_price)}`
               : "sama dengan price list"
             }
-            tone={r.list_price !== null && r.monthly_rate < r.list_price ? "cost" : undefined}
+            tone={
+              r.list_price !== null && Math.round(r.monthly_rate) < Math.round(r.list_price)
+                ? "cost" : undefined
+            }
           />
           <Stat label="Barang terjual" value={rupiah(r.item_sales)} />
           <Stat label="HPP konsumsi" value={rupiah(r.cogs)} tone={r.cogs > 0 ? "cost" : undefined} />

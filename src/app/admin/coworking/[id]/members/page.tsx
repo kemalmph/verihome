@@ -8,7 +8,7 @@ import { NewMembershipForm, NewPlanForm, MembershipControls } from "./MemberForm
 
 export const dynamic = "force-dynamic";
 
-const rupiah = (n: number) => `Rp${n.toLocaleString("id-ID")}`;
+const rupiah = (n: number) => `Rp${Math.round(n).toLocaleString("id-ID")}`;
 const tgl = (ymd: string) =>
   new Intl.DateTimeFormat("id-ID", { day: "numeric", month: "short", year: "numeric", timeZone: "Asia/Jakarta" })
     .format(new Date(`${ymd}T00:00:00+07:00`));

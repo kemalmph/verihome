@@ -7,7 +7,7 @@ import {
   type ResItem,
 } from "@/lib/actions/reservation-detail-actions";
 
-const rupiah = (n: number) => `Rp${n.toLocaleString("id-ID")}`;
+const rupiah = (n: number) => `Rp${Math.round(n).toLocaleString("id-ID")}`;
 const inputCls =
   "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-[#0d2137] focus:outline-none focus:ring-2 focus:ring-[#1a7a5e]/30 focus:border-[#1a7a5e]";
 
