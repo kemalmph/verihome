@@ -21,7 +21,7 @@ export default async function CoworkingSitesPage() {
       <AdminSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Coworking</h1>
+          <h1 className="text-3xl font-bold text-[#0d2137]">Site</h1>
           <p className="text-[#3e4944] mt-1">
             Gedung dan unit yang disewakan di dalamnya
           </p>

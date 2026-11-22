@@ -66,7 +66,7 @@ const RUN_ID = Date.now().toString(36);
   // ── the list page ─────────────────────────────────────────────────────────
   await page.goto(`${BASE}/site`, { waitUntil: "domcontentloaded" });
   check(!page.url().includes("/auth/login"), "admin reaches /site");
-  check(await page.getByRole("heading", { name: "Coworking" }).isVisible(), "page renders");
+  check(await page.getByRole("heading", { name: "Site" }).isVisible(), "page renders");
   check(await page.getByText("Belum ada site").isVisible(), "empty state shown when there are no sites");
 
   // ── create a site ─────────────────────────────────────────────────────────
