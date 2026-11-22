@@ -6,6 +6,7 @@ import { getReservationDetail, listItems } from "@/lib/actions/reservation-detai
 import { unitTypeLabel, paymentStatusLabel, reservationStatusLabel } from "@/lib/coworking/taxonomy";
 import { BookingItems, UtilitiesToggle } from "./BookingItems";
 import { BookingDocuments } from "./BookingDocuments";
+import { resolveReservationId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -26,7 +27,9 @@ const waktu = (iso: string) =>
 
 export default async function BookingDetailPage({ params }: { params: Promise<{ resId: string }> }) {
   await requireAdmin();
-  const { resId } = await params;
+  const { resId: param } = await params;
+  const resId = await resolveReservationId(param);
+  if (!resId) notFound();
 
   const r = await getReservationDetail(resId);
   if (!r) notFound();
@@ -40,9 +43,9 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
         <nav className="text-sm text-[#6e7a74] mb-4">
           <Link href="/admin/coworking" className="hover:underline">Coworking</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${r.site_id}`} className="hover:underline">{r.site_name}</Link>
+          <Link href={`/admin/coworking/${r.site_slug}`} className="hover:underline">{r.site_name}</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${r.site_id}/calendar`} className="hover:underline">Kalender</Link>
+          <Link href={`/admin/coworking/${r.site_slug}/calendar`} className="hover:underline">Kalender</Link>
           <span className="mx-2">/</span>
           <span className="text-[#3e4944]">{r.reservation_code}</span>
         </nav>

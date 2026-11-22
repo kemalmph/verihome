@@ -4,6 +4,7 @@ import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { requireAdmin } from "@/lib/auth/guards";
 import { getSiteDashboard, type DashboardUnit, type DashboardInstalment } from "@/lib/actions/coworking-dashboard";
 import { unitTypeLabel, paymentStatusLabel, pricePeriodLabel } from "@/lib/coworking/taxonomy";
+import { resolveSiteId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -25,7 +26,10 @@ const tanggal = (iso: string) =>
 
 export default async function SiteDashboardPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
-  const { id } = await params;
+  const { id: param } = await params;
+  const id = await resolveSiteId(param);
+  if (!id) notFound();
+
 
   const d = await getSiteDashboard(id);
   if (!d) notFound();
@@ -44,7 +48,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
         <nav className="text-sm text-[#6e7a74] mb-4">
           <Link href="/admin/coworking" className="hover:underline">Coworking</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${site.id}`} className="hover:underline">{site.name}</Link>
+          <Link href={`/admin/coworking/${site.slug}`} className="hover:underline">{site.name}</Link>
           <span className="mx-2">/</span>
           <span className="text-[#3e4944]">Dashboard</span>
         </nav>
@@ -56,13 +60,13 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
           </div>
           <div className="flex gap-2">
             <Link
-              href={`/admin/coworking/${site.id}/calendar`}
+              href={`/admin/coworking/${site.slug}/calendar`}
               className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
             >
               Kalender
             </Link>
             <Link
-              href={`/admin/coworking/${site.id}`}
+              href={`/admin/coworking/${site.slug}`}
               className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
             >
               Kelola unit

@@ -49,6 +49,8 @@ export interface CalUnit {
 
 export interface CalBooking {
   id: string;
+  /** The human-readable code, which is what the URL uses. */
+  code: string;
   unit_id: string;
   starts_at: string;
   ends_at: string;
@@ -79,7 +81,7 @@ export interface CalEvent {
 }
 
 export interface SiteCalendar {
-  site: { id: string; name: string };
+  site: { id: string; name: string; slug: string };
   week_start: string;
   week_end: string;
   prev_week: string;
@@ -113,7 +115,7 @@ export async function getSiteCalendar(siteId: string, weekParam?: string): Promi
   const toTs = toExclusive.toISOString();
 
   const { data: site } = await admin
-    .from("sites").select("id, name").eq("id", siteId).maybeSingle();
+    .from("sites").select("id, name, slug").eq("id", siteId).maybeSingle();
   if (!site) return null;
 
   const { data: unitRows } = await admin
@@ -134,7 +136,7 @@ export async function getSiteCalendar(siteId: string, weekParam?: string): Promi
   const { data: resRows } = unitIds.length
     ? await admin
         .from("unit_reservations")
-        .select("id, unit_id, starts_at, ends_at, status, payment_status, tenant_name, user_id, contract_ref, event_id, membership_id")
+        .select("id, reservation_code, unit_id, starts_at, ends_at, status, payment_status, tenant_name, user_id, contract_ref, event_id, membership_id")
         .in("unit_id", unitIds)
         .in("status", ["pending", "confirmed", "completed"])
         .lt("starts_at", toTs)
@@ -170,6 +172,7 @@ export async function getSiteCalendar(siteId: string, weekParam?: string): Promi
 
     bookings.push({
       id: r.id,
+      code: r.reservation_code,
       unit_id: r.unit_id,
       starts_at: r.starts_at,
       ends_at: r.ends_at,

@@ -188,6 +188,34 @@ const RUN = Date.now().toString(36);
   check(!/Event tanpa ruangan/.test(body2), "booking the room clears the warning");
   check(/Ruangan: Ruang Rapat UI/.test(body2), "…and the event shows which room it holds");
 
+  // ── readable URLs ─────────────────────────────────────────────────────────
+  //
+  // /admin/coworking/coco-lokalima/dashboard is something a person can write
+  // down. The uuid form must keep working anyway: links already exist in
+  // chats and bookmarks, and a URL scheme improving is not a reason for them
+  // to start returning 404.
+  const slugRow = (await q(`select slug from sites where id = $1`, [site.id]))[0];
+
+  for (const [label, seg] of [["slug", slugRow.slug], ["uuid", site.id]]) {
+    for (const page_ of ["", "/dashboard", "/calendar", "/members"]) {
+      const r = await page.goto(`${BASE}/admin/coworking/${seg}${page_}`, { waitUntil: "domcontentloaded" });
+      check(r?.status() === 200, `${label}${page_ || " (site)"} → ${r?.status()}`);
+    }
+  }
+
+  const bad = await page.goto(`${BASE}/admin/coworking/tidak-ada-site-ini/dashboard`, { waitUntil: "domcontentloaded" });
+  check(bad?.status() === 404, `an unknown slug is 404, not a crash (${bad?.status()})`);
+
+  // A booking is reachable by its code, in either case.
+  const code = (await q(
+    `select reservation_code from unit_reservations where unit_id = $1 limit 1`, [room.id]))[0]?.reservation_code;
+  if (code) {
+    const byCode = await page.goto(`${BASE}/admin/coworking/booking/${code}`, { waitUntil: "domcontentloaded" });
+    check(byCode?.status() === 200, `booking by code ${code} → ${byCode?.status()}`);
+    const byLower = await page.goto(`${BASE}/admin/coworking/booking/${code.toLowerCase()}`, { waitUntil: "domcontentloaded" });
+    check(byLower?.status() === 200, "…and the same code lower-cased, as a mail client might send it");
+  }
+
   check(errors.length === 0, `no page errors or 5xx (${errors.slice(0, 3).join(" | ") || "none"})`);
 
   await browser.close();

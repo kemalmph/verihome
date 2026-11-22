@@ -41,6 +41,7 @@ export interface ReservationDetail {
   id: string;
   reservation_code: string;
   site_id: string;
+  site_slug: string;
   site_name: string;
   unit_name: string;
   unit_type: string;
@@ -78,7 +79,7 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
       id, reservation_code, unit_id, tenant_name, user_id, contract_ref,
       starts_at, ends_at, status, payment_status, total_price, unit_price, utilities_included,
       event_id, membership_id,
-      lettable_units!inner(name, unit_type, site_id, price, sites!inner(id, name)),
+      lettable_units!inner(name, unit_type, site_id, price, sites!inner(id, name, slug)),
       events(title),
       memberships(member_name)
     `)
@@ -88,9 +89,9 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
 
   const unit = first<{
     name: string; unit_type: string; site_id: string; price: number | null;
-    sites: { id: string; name: string } | { id: string; name: string }[];
+    sites: { id: string; name: string; slug: string } | { id: string; name: string; slug: string }[];
   }>(r.lettable_units)!;
-  const site = first<{ id: string; name: string }>(unit.sites)!;
+  const site = first<{ id: string; name: string; slug: string }>(unit.sites)!;
 
   const { data: itemRows } = await admin
     .from("reservation_items")
@@ -122,6 +123,7 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
     id: r.id,
     reservation_code: r.reservation_code,
     site_id: site.id,
+    site_slug: site.slug,
     site_name: site.name,
     unit_name: unit.name,
     unit_type: unit.unit_type,

@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { getSiteCalendar, type CalBooking } from "@/lib/actions/coworking-calendar";
 import { unitTypeLabel } from "@/lib/coworking/taxonomy";
 import { NewEventForm, EventControls } from "./EventForm";
+import { resolveSiteId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -23,7 +24,10 @@ export default async function SiteCalendarPage({
   searchParams: Promise<{ week?: string }>;
 }) {
   await requireAdmin();
-  const { id } = await params;
+  const { id: param } = await params;
+  const id = await resolveSiteId(param);
+  if (!id) notFound();
+
   const { week } = await searchParams;
 
   const cal = await getSiteCalendar(id, week);
@@ -51,7 +55,7 @@ export default async function SiteCalendarPage({
         <nav className="text-sm text-[#6e7a74] mb-4">
           <Link href="/admin/coworking" className="hover:underline">Coworking</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${site.id}`} className="hover:underline">{site.name}</Link>
+          <Link href={`/admin/coworking/${site.slug}`} className="hover:underline">{site.name}</Link>
           <span className="mx-2">/</span>
           <span className="text-[#3e4944]">Kalender</span>
         </nav>
@@ -64,9 +68,9 @@ export default async function SiteCalendarPage({
             </p>
           </div>
           <div className="flex items-center gap-2">
-            <NavLink href={`/admin/coworking/${site.id}/calendar?week=${cal.prev_week}`}>← Minggu lalu</NavLink>
-            <NavLink href={`/admin/coworking/${site.id}/calendar`}>Minggu ini</NavLink>
-            <NavLink href={`/admin/coworking/${site.id}/calendar?week=${cal.next_week}`}>Minggu depan →</NavLink>
+            <NavLink href={`/admin/coworking/${site.slug}/calendar?week=${cal.prev_week}`}>← Minggu lalu</NavLink>
+            <NavLink href={`/admin/coworking/${site.slug}/calendar`}>Minggu ini</NavLink>
+            <NavLink href={`/admin/coworking/${site.slug}/calendar?week=${cal.next_week}`}>Minggu depan →</NavLink>
           </div>
         </header>
 
@@ -173,7 +177,7 @@ export default async function SiteCalendarPage({
                     <div className="flex items-start justify-between gap-3">
                       <div className="min-w-0">
                         <Link
-                          href={`/admin/coworking/booking/${b.id}`}
+                          href={`/admin/coworking/booking/${b.code}`}
                           className="font-medium text-[#1a7a5e] hover:underline truncate block"
                           title={b.who}
                         >

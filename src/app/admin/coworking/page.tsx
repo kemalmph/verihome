@@ -67,7 +67,7 @@ export default async function CoworkingSitesPage() {
                   <tr key={s.id} className="border-t border-[#e8e3e0] hover:bg-[#faf9f8]">
                     <td className="px-4 py-3">
                       <Link
-                        href={`/admin/coworking/${s.id}`}
+                        href={`/admin/coworking/${s.slug}`}
                         className="font-medium text-[#1a7a5e] hover:underline"
                       >
                         {s.name}
@@ -76,7 +76,7 @@ export default async function CoworkingSitesPage() {
                         <div className="text-xs text-[#6e7a74] mt-0.5">{s.address}</div>
                       )}
                       <Link
-                        href={`/admin/coworking/${s.id}/dashboard`}
+                        href={`/admin/coworking/${s.slug}/dashboard`}
                         className="text-xs text-[#6e7a74] hover:text-[#1a7a5e] hover:underline"
                       >
                         Dashboard operator →

@@ -5,6 +5,7 @@ import { requireAdmin } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { listMemberships, listPlans, type MembershipRow } from "@/lib/actions/membership-actions";
 import { NewMembershipForm, NewPlanForm, MembershipControls } from "./MemberForms";
+import { resolveSiteId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -15,10 +16,13 @@ const tgl = (ymd: string) =>
 
 export default async function MembersPage({ params }: { params: Promise<{ id: string }> }) {
   await requireAdmin();
-  const { id } = await params;
+  const { id: param } = await params;
+  const id = await resolveSiteId(param);
+  if (!id) notFound();
+
 
   const admin = createAdminClient();
-  const { data: site } = await admin.from("sites").select("id, name").eq("id", id).maybeSingle();
+  const { data: site } = await admin.from("sites").select("id, name, slug").eq("id", id).maybeSingle();
   if (!site) notFound();
 
   const [members, plans] = await Promise.all([listMemberships(id), listPlans(id)]);
@@ -34,7 +38,7 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
         <nav className="text-sm text-[#6e7a74] mb-4">
           <Link href="/admin/coworking" className="hover:underline">Coworking</Link>
           <span className="mx-2">/</span>
-          <Link href={`/admin/coworking/${site.id}`} className="hover:underline">{site.name}</Link>
+          <Link href={`/admin/coworking/${site.slug}`} className="hover:underline">{site.name}</Link>
           <span className="mx-2">/</span>
           <span className="text-[#3e4944]">Member</span>
         </nav>

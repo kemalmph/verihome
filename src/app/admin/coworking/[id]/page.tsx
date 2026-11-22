@@ -7,6 +7,7 @@ import { SiteDetailForm } from "./SiteDetailForm";
 import { UnitManager } from "./UnitManager";
 import { AmenityManager } from "./AmenityManager";
 import { getAmenityAssignments } from "@/lib/actions/amenity-actions";
+import { resolveSiteId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -16,7 +17,10 @@ interface Props {
 
 export default async function CoworkingSitePage({ params }: Props) {
   await requireAdmin();
-  const { id } = await params;
+  const { id: param } = await params;
+  const id = await resolveSiteId(param);
+  if (!id) notFound();
+
 
   const [result, owners, amenities] = await Promise.all([
     getSite(id), listOwnerOptions(), getAmenityAssignments(id),
@@ -47,19 +51,19 @@ export default async function CoworkingSitePage({ params }: Props) {
           </div>
           <div className="flex gap-2">
             <Link
-              href={`/admin/coworking/${site.id}/members`}
+              href={`/admin/coworking/${site.slug}/members`}
               className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
             >
               Member
             </Link>
             <Link
-              href={`/admin/coworking/${site.id}/calendar`}
+              href={`/admin/coworking/${site.slug}/calendar`}
               className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
             >
               Kalender
             </Link>
             <Link
-              href={`/admin/coworking/${site.id}/dashboard`}
+              href={`/admin/coworking/${site.slug}/dashboard`}
               className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
             >
               Dashboard operator
