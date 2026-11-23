@@ -48,22 +48,45 @@ catatan handoff bilang "jaga tetap sinkron". Kalau menemukan sesuatu yang
 pantas masuk, **sebutkan di chat beserta nomor bagiannya** dan biarkan
 dokumennya. Owner yang memutuskan.
 
-**Bagian yang sudah tertinggal, per 2026-11-23** — dicek dengan membaca
-dokumennya, bukan dari ingatan:
+**Diperbarui 2026-11-23 (versi 20), atas permintaan owner.** Yang masuk:
 
-| Bagian | Yang sudah tidak cocok |
-|---|---|
-| Judul & masthead | Masih "VeriHome" dan "the Jakarta rental marketplace". Produknya kini **Cosystem**, dan separuhnya adalah manajemen site/coworking. Masthead juga masih menulis *Replay from zero: **Fails** · §20.4*, padahal §20.4 sudah ditutup 2026-11-21 dan `check-migration-completeness.js` lulus. |
-| §01 Topologi | Tidak ada audiens `/site`. Fig. 1 masih menulis Server Components **ISR 60s**; sejak root layout membaca cookie bahasa, **semua rute dinamis** dan tidak ada satu pun halaman statis. |
-| §02 Model data | Tidak memuat `sites`, `lettable_units`, `unit_reservations`, `reservation_instalments`, `memberships`, `membership_plans`, `membership_periods`, `events`, `amenities`, `items` — yaitu seluruh sisi coworking. |
-| §13 Buku besar | Daftar akunnya belum memuat `revenue_coworking` dan `revenue_membership`; daftar jenis peristiwa belum memuat enam yang baru (tiga reservasi, tiga membership). Model pengakuan per **bulan keanggotaan** juga belum ada di sana. |
-| §19 Jebakan | Empat jebakan baru dari session 22–23 Nov layak dicatat: kontrol `onClick` yang mati sebelum hidrasi; `REVOKE … FROM PUBLIC` tidak cukup di Supabase karena *default privileges* menambah hibah bernama ke `anon`/`authenticated`; `<details>` tertutup tetap punya kotak tata letak (`content-visibility`), jadi `boundingBox` melaporkan laci terbuka yang sebenarnya tertutup; `curl -L` membuang header Cookie saat redirect lintas host. |
-| §20 Risiko | **Bagi hasil site pihak ketiga** belum tercatat sebagai risiko terbuka, padahal sekarang memblokir reservasi *dan* membership. Kebijakan **pengembalian dana membership** juga belum ada. Sebaliknya, §20.4 sudah bisa ditandai tertutup. |
-| Tidak ada bagiannya | Subsistem **i18n** (locale di cookie, `t(key, lang)`, 529 kunci) dan modul **site/coworking** sama sekali belum punya bagian sendiri. |
+- **Masthead** — produknya kini Cosystem di `cosystem.co`; nama lama bertahan
+  di repo, project Supabase, bucket R2, dan judul dokumen ini, karena menamai
+  ulang semua itu adalah migrasi tersendiri.
+- **§01** — klaim ISR 60 detik dicabut: sejak root layout membaca cookie
+  bahasa, semua rute dinamis dan tidak ada halaman statis.
+- **§02** — sepuluh tabel sisi coworking masuk, sebagai graf paralel yang
+  bertemu marketplace hanya di `owners` dan `ledger_entries`.
+- **§13** — `revenue_coworking` dan `revenue_membership`, enam jenis
+  peristiwa baru, dan aturan pengakuan per bulan keanggotaan lengkap dengan
+  dua jebakan aritmetikanya (tanggal 31, sisa pembulatan).
+- **§19.14–19.17** — empat jebakan baru: kontrol mati sebelum hidrasi;
+  `REVOKE FROM PUBLIC` tidak cukup di Supabase; `<details>` tertutup tetap
+  punya kotak tata letak; dan dua kebiasaan verifikasi yang tidak
+  membuktikan apa pun.
+- **§20.4 ditutup**, **§20.6 diverifikasi ulang** (lihat di bawah), dan dua
+  risiko baru: **§20.7** bagi hasil site pihak ketiga, **§20.8** refund
+  membership dan cicilan.
+- **§21 Sites & coworking** dan **§22 Bilingual interface** — bagian baru.
+  Dinomori 21 dan 22, bukan disisipkan di tempat yang secara tema lebih
+  cocok, karena §1–§20 dirujuk lewat nomor dari komentar kode dan dari
+  dokumen itu sendiri; menomori ulang akan memutus semua penunjuk itu
+  diam-diam.
+
+⚠ **Catatan ketidakcocokan yang belum dibereskan.** Beberapa komentar migrasi
+menulis "§19.9" untuk aturan *CHECK diperlebar lewat DROP lalu ADD*, padahal
+§19.9 di dokumen adalah "Booking expiry never worked". Nomor di komentar kode
+itu kemungkinan merujuk versi dokumen yang berbeda. Belum saya ubah — mengubah
+nomor rujukan di seluruh migrasi perlu pengecekan satu per satu, dan salah
+menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 ---
 
 ## Selesai
+
+- **VeriHome System Reference diperbarui ke versi 20** (23 Nov) atas
+  permintaan owner: §21 dan §22 baru, §13 dan §19 diperluas, §20.4 ditutup,
+  §20.6 diverifikasi ulang, dua risiko baru dicatat.
 
 - **Modul site/coworking** — `sites`, `lettable_units`, `unit_reservations`
   dengan exclusion constraint + advisory lock (tidak bisa double-booking),
@@ -185,6 +208,22 @@ Urut prioritas:
 ---
 
 ## Masalah terbuka
+
+- 🔴 **Service-role key produksi masih terpublikasi dan belum dirotasi
+  (§20.6).** File `env copy.txt` pernah di-commit ke repo publik
+  `kemalmph/verihome`. Sekarang sudah tidak terlacak dan masuk `.gitignore`,
+  **tapi mencabut dari pelacakan tidak menghapusnya dari riwayat** — blob-nya
+  masih bisa diambil dari commit yang menambahkannya, di repo yang masih
+  publik. Diverifikasi 2026-11-23: anon key di commit itu **identik
+  byte-per-byte** dengan yang proyek pakai hari ini, dibandingkan lewat hash.
+  Karena keduanya ditandatangani JWT secret proyek yang sama, anon key yang
+  tidak berubah berarti `service_role` juga tidak berubah. **Anggap kunci itu
+  masih berlaku.**
+  Yang menutupnya hanya **rotasi kunci di Supabase** — bukan menghapus file,
+  bukan menulis ulang riwayat, bukan menjadikan repo privat, karena paparan
+  dua bulan di repo publik tidak bisa ditarik kembali. File itu juga memuat
+  `RESEND_API_KEY`, `XENDIT_SECRET_KEY`, dan `XENDIT_WEBHOOK_TOKEN`; ketiganya
+  perlu diperlakukan sama.
 
 - **Empat keputusan pemilik** di daftar "Berikutnya" (1–4) memblokir pekerjaan
   nyata, bukan sekadar kerapian.
