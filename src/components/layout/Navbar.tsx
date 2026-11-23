@@ -20,30 +20,36 @@ export async function Navbar() {
           <Link href="/" className="text-2xl font-bold text-[#006048]">
             Cosystem
           </Link>
+          {/* Anchors point at section ids that exist on the homepage —
+              #cara-kerja and #harga. The previous menu linked #how-it-works
+              and #neighborhoods, and neither id survived the rewrite, so both
+              scrolled nowhere. */}
           <div className="hidden md:flex items-center gap-6">
+            {[
+              { href: "/#fitur-kelola", label: "Fitur Kelola" },
+              { href: "/#monetisasi", label: "Cara Monetisasi" },
+              { href: "/#workspace-hunian", label: "Workspace & Hunian" },
+              { href: "/#harga", label: "Harga" },
+            ].map((l) => (
+              <Link
+                key={l.href}
+                href={l.href}
+                className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
+              >
+                {l.label}
+              </Link>
+            ))}
             <Link
               href="/listings"
               className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
             >
-              Listings
+              Jelajahi Listing
             </Link>
             <Link
-              href="/#how-it-works"
-              className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
+              href="/contact"
+              className="text-sm font-semibold px-4 py-2 rounded-lg bg-[#1a7a5e] text-white hover:bg-[#166750] transition-colors"
             >
-              How it Works
-            </Link>
-            <Link
-              href="/#neighborhoods"
-              className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
-            >
-              Neighborhoods
-            </Link>
-            <Link
-              href="/list-your-property"
-              className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
-            >
-              List Your Property
+              Kontak Kami
             </Link>
           </div>
         </div>

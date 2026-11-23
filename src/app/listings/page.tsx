@@ -1,3 +1,4 @@
+import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ListingCard } from "@/components/listings/ListingCard";
@@ -31,6 +32,23 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
   return (
     <>
       <Navbar />
+      {/* Pemilik properti yang mendarat di halaman penyewa perlu satu jalan
+          kembali ke sisi pengelola. */}
+      <div className="bg-[#0d2137] text-white">
+        <div className="max-w-7xl mx-auto px-4 md:px-16 py-3.5 flex flex-wrap items-center justify-between gap-3">
+          <p className="text-sm text-white/85">
+            Punya ruang kerja atau hunian kosong? Kelola jadwal, tagihan, dan
+            pasarkan unit Anda dalam satu platform bersama Cosystem.
+          </p>
+          <Link
+            href="/contact"
+            className="text-sm font-semibold whitespace-nowrap px-4 py-2 rounded-lg bg-[#1a7a5e] hover:bg-[#166750] transition-colors"
+          >
+            Kontak Kami →
+          </Link>
+        </div>
+      </div>
+
       <main className="max-w-7xl mx-auto px-4 md:px-16 py-12">
         <header className="mb-10">
           <h1 className="text-4xl font-bold text-[#1b1c1c] mb-1">

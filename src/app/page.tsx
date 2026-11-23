@@ -1,10 +1,18 @@
-import Image from "next/image";
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { getFeaturedProperties } from "@/lib/supabase/queries";
 import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
+
+/**
+ * The marketing homepage.
+ *
+ * Every link to the marketplace goes to /listings, plural. The copy this was
+ * written from says /listing — that route does not exist and never has, so
+ * following it literally would have put a 404 behind the two busiest buttons
+ * on the page.
+ */
 
 export default async function HomePage() {
   const [featuredListings, savedIds] = await Promise.all([
@@ -16,276 +24,342 @@ export default async function HomePage() {
     <>
       <Navbar />
       <main>
-        {/* Hero */}
-        <section className="relative min-h-[600px] md:min-h-[720px] flex items-center overflow-hidden bg-[#0d2137]">
-          <Image
-            src="https://lh3.googleusercontent.com/aida-public/AB6AXuCcksN-p-DaXBjiUxEHR1FaW24hMXJk8TVSU21Z4YMT4Wey8sS9xPDMnnqS8kj8r5PAu55TVtFKgwKiK841DDSBhLcNlKj2UjKEpMCC8w60A16LKW_d2lVdeeBZ5qtZEiY92LByl39oiD_eB5kJ18I9dpbYV1nBQ8YPYdB7HNmlmVqilg5ly-G6LOyfRGWudOapiAzr-BdowVi0e3dYz0XewyMhNXNUysxD8rUAAC0uQJAlOE-hz_3ChCjD-wNEWzDfdBL5vxc9zIkW"
-            alt="Luxury Jakarta apartment interior"
-            fill
-            className="object-cover object-center"
-            priority
+        {/* ── Hero ────────────────────────────────────────────────── */}
+        <section className="relative bg-[#0d2137] overflow-hidden">
+          <div
+            aria-hidden
+            className="absolute inset-0 opacity-[0.07]"
+            style={{
+              backgroundImage:
+                "radial-gradient(circle at 1px 1px, #9cf4d1 1px, transparent 0)",
+              backgroundSize: "28px 28px",
+            }}
           />
-          <div className="absolute inset-0 bg-gradient-to-r from-[#0d2137]/90 via-[#0d2137]/60 to-transparent z-10" />
-          <div className="relative z-20 w-full max-w-7xl mx-auto px-4 md:px-16 py-20">
-            <div className="max-w-2xl text-white">
-              <span className="inline-flex items-center px-3 py-1 bg-[#cee1ff] text-[#081c32] rounded-full text-xs font-semibold mb-6">
-                <span className="material-symbols-outlined text-[14px] mr-1">
-                  verified
-                </span>
-                Independently Verified for Expats
+          <div className="relative max-w-7xl mx-auto px-4 md:px-16 py-20 md:py-28">
+            <div className="max-w-3xl">
+              <span className="inline-block text-xs font-semibold tracking-wider uppercase text-[#9cf4d1] border border-[#9cf4d1]/30 bg-[#9cf4d1]/10 rounded-full px-3 py-1.5">
+                Satu Platform untuk Ruang Kerja &amp; Hunian
               </span>
-              <h1 className="text-3xl md:text-5xl font-bold mb-4 leading-tight">
-                Find your curated home in Jakarta.
+
+              <h1 className="mt-6 text-4xl md:text-[3.25rem] md:leading-[1.1] font-bold text-white">
+                Kelola Operasional dan Monetisasi Properti Anda dalam Satu Sistem.
               </h1>
-              <p className="text-xl text-[#80d7b6] font-semibold mb-4">
-                Curated homes. Confident decisions.
+
+              <p className="mt-6 text-lg text-white/80 max-w-2xl">
+                Dari coworking space, ruang rapat, dan studio kerja hingga rumah
+                tinggal, kos, dan vila. Otomatiskan jadwal dan tagihan penyewa,
+                lalu pasarkan unit kosong Anda langsung ke Marketplace Cosystem.
               </p>
-              <p className="text-lg text-white/80 mb-10 max-w-lg leading-relaxed">
-                Cosystem verifies every listing so you can rent with confidence
-                — wherever you&apos;re coming from. We bridge the gap with
-                professional, independent expertise.
-              </p>
-              <div className="flex flex-col sm:flex-row gap-4">
+
+              <div className="mt-9 flex flex-wrap gap-3">
+                <Link
+                  href="/contact"
+                  className="px-6 py-3.5 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
+                >
+                  Kontak Kami
+                </Link>
                 <Link
                   href="/listings"
-                  className="px-8 py-4 bg-[#1a7a5e] text-white rounded-lg font-semibold shadow-lg hover:opacity-90 transition-all text-center"
+                  className="px-6 py-3.5 rounded-lg border border-white/25 text-white font-semibold hover:bg-white/10 transition-colors"
                 >
-                  Browse Listings
-                </Link>
-                <Link
-                  href="/consultation"
-                  className="px-8 py-4 border-2 border-white text-white rounded-lg font-semibold hover:bg-white hover:text-[#0d2137] transition-all text-center"
-                >
-                  Book a Consultation
+                  Lihat Listing Tersedia
                 </Link>
               </div>
-            </div>
-          </div>
-        </section>
 
-        {/* Trust Bar */}
-        <section className="bg-[#f6f3f2] py-6 border-b border-[#bec9c2]">
-          <div className="max-w-7xl mx-auto px-4 md:px-16">
-            <div className="flex flex-wrap justify-center md:justify-between items-center gap-8 opacity-50">
-              {[
-                "SCBD JAKARTA",
-                "KEMANG HUB",
-                "SUDIRMAN CENTER",
-                "KUNINGAN PLACE",
-                "MEGA KUNINGAN",
-              ].map((name) => (
-                <span
-                  key={name}
-                  className="font-bold text-[#3e4944] tracking-widest text-sm"
-                >
-                  {name}
-                </span>
-              ))}
-            </div>
-          </div>
-        </section>
-
-        {/* Featured Listings */}
-        <section className="py-20 max-w-7xl mx-auto px-4 md:px-16">
-          <div className="flex justify-between items-end mb-10">
-            <div>
-              <h2 className="text-3xl font-bold text-[#0d2137]">
-                Featured Listings
-              </h2>
-              <p className="text-[#3e4944] mt-1">
-                Our top picks for this month&apos;s relocations.
+              <p className="mt-5 text-sm text-white/55">
+                Konsultasi kebutuhan properti &nbsp;•&nbsp; Setup dibantu tim kami
+                &nbsp;•&nbsp; Terintegrasi penuh
               </p>
             </div>
+          </div>
+        </section>
+
+        {/* ── Satu sistem untuk dua jenis aset ────────────────────── */}
+        <section id="workspace-hunian" className="scroll-mt-20 py-20 md:py-24 max-w-7xl mx-auto px-4 md:px-16">
+          <Eyebrow>Fleksibel untuk Berbagai Aset</Eyebrow>
+          <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-3xl">
+            Dirancang untuk Mengelola Workspace maupun Hunian
+          </h2>
+          <p className="mt-4 text-[#3e4944] text-lg max-w-3xl">
+            Satu dashboard terpusat yang otomatis menyesuaikan fitur dengan jenis
+            properti dan skema sewa Anda—baik hitungan jam, harian, maupun bulanan.
+          </p>
+
+          <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
+            <AssetCard
+              icon="desk"
+              title="Ruang Kerja & Workspace"
+              description="Kelola coworking space, private office, meeting room, hingga studio kreatif dengan sistem reservasi dan kuota yang presisi."
+              points={[
+                "Kalender booking per jam atau per sesi anti-bentrok",
+                "Manajemen paket membership & kredit jam penggunaan",
+                "Kode akses & check-in otomatis untuk penyewa harian",
+              ]}
+            />
+            <AssetCard
+              icon="apartment"
+              title="Hunian & Rumah Tinggal"
+              description="Permudah operasional kos eksklusif, rumah kontrakan, apartemen, vila, hingga guesthouse tanpa pencatatan manual."
+              points={[
+                "Penagihan sewa bulanan atau harian otomatis (VA & QRIS)",
+                "Pengelolaan kontrak sewa, deposit, dan data penghuni",
+                "Pencatatan utilitas (listrik/air) & tiket pemeliharaan unit",
+              ]}
+            />
+          </div>
+        </section>
+
+        {/* ── Fitur kelola & monetisasi ───────────────────────────── */}
+        <section id="fitur-kelola" className="scroll-mt-20 bg-white py-20 md:py-24 border-y border-[#e4e2e1]">
+          <div className="max-w-7xl mx-auto px-4 md:px-16">
+            <Eyebrow>Operasional &amp; Pertumbuhan</Eyebrow>
+            <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-3xl">
+              Rapikan Manajemen Harian, Maksimalkan Okupansi Unit
+            </h2>
+
+            <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
+              <ValueBlock
+                number="01"
+                title="Otomatiskan Jadwal & Tagihan Sewa"
+                description="Hentikan rekap manual di spreadsheet. Sistem mengirim pengingat tagihan otomatis via WhatsApp dan email lengkap dengan payment link, lalu mencatat setiap pelunasan langsung ke laporan arus kas properti Anda."
+                highlights={["0% risiko double booking", "Rekonsiliasi pembayaran otomatis"]}
+              />
+              <ValueBlock
+                id="monetisasi"
+                number="02"
+                title="Ubah Slot Kosong Menjadi Pendapatan"
+                description="Aktifkan opsi tayangkan di Marketplace Cosystem hanya dengan satu klik. Foto, deskripsi, tarif, dan jadwal kosong langsung terbit ke halaman listing publik tanpa perlu input ulang data."
+                highlights={["Sinkronisasi jadwal real-time", "Tanpa kelola dua aplikasi"]}
+                href="/listings"
+                hrefLabel="Lihat halaman listing"
+              />
+              <ValueBlock
+                number="03"
+                title="Halaman Reservasi Instan Milik Anda Sendiri"
+                description="Dapatkan tautan pemesanan khusus (cosystem.co/p/nama-properti) untuk dipasang di bio Instagram, Google Maps, atau WhatsApp Business sehingga calon penyewa bisa langsung cek ketersediaan dan membayar sendiri."
+                highlights={["Terima booking 24/7", "Terhubung langsung ke kalender unit"]}
+              />
+            </div>
+          </div>
+        </section>
+
+        {/* ── Cara kerja ──────────────────────────────────────────── */}
+        <section id="cara-kerja" className="scroll-mt-20 py-20 md:py-24 max-w-7xl mx-auto px-4 md:px-16">
+          <Eyebrow>Cara Kerja</Eyebrow>
+          <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137]">
+            Mulai Kelola &amp; Monetisasi dalam 3 Langkah
+          </h2>
+
+          <ol className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
+            {[
+              {
+                t: "Konsultasi & Daftarkan Properti Anda",
+                d: "Hubungi tim kami untuk menyesuaikan konfigurasi sistem dengan jumlah unit dan jenis aset workspace maupun hunian Anda.",
+              },
+              {
+                t: "Atur Jadwal & Tayangkan di Listing",
+                d: "Kelola penyewa yang sudah ada dari satu dashboard, lalu nyalakan visibilitas listing publik untuk menjaring penyewa baru.",
+              },
+              {
+                t: "Terima Pembayaran & Pantau Laporan",
+                d: "Dana sewa masuk secara terstruktur lengkap dengan laporan okupansi, riwayat transaksi, dan performa tiap unit.",
+              },
+            ].map((s, i) => (
+              <li key={s.t}>
+                <div className="w-11 h-11 rounded-full bg-[#1a7a5e] text-white font-bold flex items-center justify-center">
+                  {i + 1}
+                </div>
+                <h3 className="mt-5 text-lg font-bold text-[#0d2137]">{s.t}</h3>
+                <p className="mt-2 text-[#3e4944] leading-relaxed">{s.d}</p>
+              </li>
+            ))}
+          </ol>
+        </section>
+
+        {/* ── Etalase listing aktif ───────────────────────────────── */}
+        <section className="bg-[#f0eded] py-20 md:py-24">
+          <div className="max-w-7xl mx-auto px-4 md:px-16">
+            <Eyebrow>Ekosistem Aktif</Eyebrow>
+            <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-3xl">
+              Workspace &amp; Hunian yang Dikelola Melalui Cosystem
+            </h2>
+            <p className="mt-4 text-[#3e4944] text-lg max-w-3xl">
+              Jelajahi ruang kerja siap pakai dan hunian nyaman yang jadwalnya
+              terhubung langsung dengan sistem pengelola.
+            </p>
+
+            {featuredListings.length > 0 ? (
+              <div className="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+                {featuredListings.map((p) => (
+                  <ListingCard key={p.id} property={p} savedIds={savedIds} />
+                ))}
+              </div>
+            ) : (
+              /* An empty grid with a heading above it reads as a broken page.
+                 Saying so plainly is better than three grey rectangles. */
+              <p className="mt-12 text-[#6e7a74]">
+                Belum ada unit yang tayang saat ini.
+              </p>
+            )}
+
+            <div className="mt-10">
+              <Link
+                href="/listings"
+                className="inline-flex items-center gap-2 text-[#1a7a5e] font-semibold hover:underline"
+              >
+                Lihat Semua Listing
+                <span aria-hidden>→</span>
+              </Link>
+            </div>
+          </div>
+        </section>
+
+        {/* ── Skema harga ─────────────────────────────────────────── */}
+        <section id="harga" className="scroll-mt-20 py-20 md:py-24 max-w-7xl mx-auto px-4 md:px-16">
+          <Eyebrow>Skema Kerja Sama</Eyebrow>
+          <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-3xl">
+            Solusi Fleksibel Sesuai Skala Properti Anda
+          </h2>
+          <p className="mt-4 text-[#3e4944] text-lg max-w-3xl">
+            Setiap properti memiliki kebutuhan operasional dan target okupansi yang
+            berbeda. Konsultasikan kebutuhan Anda dengan tim kami untuk mendapatkan
+            penawaran terbaik.
+          </p>
+
+          <div className="mt-12 max-w-3xl bg-white border border-[#ddd7d4] rounded-2xl p-8 md:p-10 shadow-sm">
+            <p className="text-sm font-semibold uppercase tracking-wide text-[#1a7a5e]">
+              Paket Kemitraan Pengelola
+            </p>
+            <p className="mt-2 text-2xl md:text-3xl font-bold text-[#0d2137]">
+              Penawaran Khusus — Kontak Kami
+            </p>
+            <p className="mt-4 text-[#3e4944] leading-relaxed">
+              Akses penuh sistem manajemen properti terintegrasi dengan katalog
+              marketplace Cosystem untuk meningkatkan efisiensi dan tingkat hunian
+              unit Anda.
+            </p>
+
+            <ul className="mt-7 space-y-3">
+              {[
+                "Sistem manajemen ruang kerja & hunian terpadu",
+                "Kalender okupansi, otomasi tagihan, dan laporan keuangan",
+                "Link booking pribadi untuk kanal pemasaran mandiri",
+                "Tayang di halaman Listing Marketplace Cosystem",
+                "Pendampingan onboarding dan migrasi data awal oleh tim Cosystem",
+              ].map((f) => (
+                <li key={f} className="flex items-start gap-3 text-[#3e4944]">
+                  <span className="material-symbols-outlined text-[#1a7a5e] text-xl leading-6">
+                    check_circle
+                  </span>
+                  <span>{f}</span>
+                </li>
+              ))}
+            </ul>
+
             <Link
-              href="/listings"
-              className="hidden sm:flex items-center gap-1 text-[#1a7a5e] font-bold hover:underline text-sm"
+              href="/contact"
+              className="mt-9 inline-block px-6 py-3.5 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
             >
-              View All Listings
-              <span className="material-symbols-outlined text-sm">
-                arrow_forward
-              </span>
+              Kontak Kami untuk Penawaran
             </Link>
           </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {featuredListings.map((property) => (
-              <ListingCard key={property.id} property={property} savedIds={savedIds} />
-            ))}
-          </div>
         </section>
 
-        {/* How It Works */}
-        <section id="how-it-works" className="bg-white py-24">
-          <div className="max-w-7xl mx-auto px-4 md:px-16 flex flex-col lg:flex-row items-center gap-16">
-            <div className="lg:w-1/2">
-              <h2 className="text-3xl font-bold text-[#0d2137] mb-12">The Cosystem Process</h2>
-              <div className="space-y-10">
-                {[
-                  { n: "1", title: "Browse Curated Listings", desc: "Access a hand-picked selection of properties that meet international quality standards and are actually available." },
-                  { n: "2", title: "Independent Consultation", desc: "Talk to an advisor who works for you, not the landlord. Get honest feedback on neighborhoods, pricing, and amenities." },
-                  { n: "3", title: "Move In with Confidence", desc: "Enjoy a seamless transaction and the peace of mind that your new home is exactly what was promised." },
-                ].map((step) => (
-                  <div key={step.n} className="flex gap-6">
-                    <div className="flex-shrink-0 w-12 h-12 rounded-full bg-[#1a7a5e] text-white flex items-center justify-center font-bold text-xl">{step.n}</div>
-                    <div>
-                      <h3 className="text-lg font-semibold text-[#1b1c1c] mb-1">{step.title}</h3>
-                      <p className="text-[#3e4944] leading-relaxed">{step.desc}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
-            </div>
-            <div className="lg:w-1/2 flex justify-center">
-              <div className="w-full max-w-md aspect-square bg-[#f0eded] rounded-full flex items-center justify-center relative overflow-hidden">
-                <div className="relative w-4/5 h-4/5 rounded-3xl overflow-hidden shadow-2xl rotate-3 hover:rotate-0 transition-transform duration-500">
-                  <Image
-                    src="https://lh3.googleusercontent.com/aida-public/AB6AXuDD6x7Y5th2JvBJ0vQETwVH9pa-oQhNT-64n7d2c-8vePEun1SvOzTxPApz0IMaNIaI8_k_x4-jXeY0WdXWEuG6tOb1vqQbEn3UnEw-KYQMMnpiT30cA5glZ8-4kgcdpDZQbWtiLm5HBDFCJ9Q8ZaZ8ggFy2SKoYkmeqyjJUKGBiHdHTRySl25fRpv6EJE5edbZBhqDn7IjCBb0iptp9l4BDi-zj5lsc9uNqszytOu_x5GTzle1arMsxeyBmFV-_A50o0_kdG6_1FB3"
-                    alt="Cosystem consultation process"
-                    fill
-                    className="object-cover"
-                  />
-                </div>
-              </div>
-            </div>
-          </div>
-        </section>
-
-        {/* Neighborhoods */}
-        <section
-          id="neighborhoods"
-          className="py-20 max-w-7xl mx-auto px-4 md:px-16"
-        >
-          <div className="mb-10">
-            <h2 className="text-3xl font-bold text-[#0d2137]">
-              Explore Neighborhoods
+        {/* ── Banner penutup ──────────────────────────────────────── */}
+        <section className="bg-[#0d2137] py-16 md:py-20">
+          <div className="max-w-7xl mx-auto px-4 md:px-16 text-center">
+            <h2 className="text-3xl md:text-4xl font-bold text-white max-w-3xl mx-auto">
+              Siap Mengelola dan Memonetisasi Properti Anda Lebih Efisien?
             </h2>
-            <p className="text-[#3e4944] mt-1">
-              Find the Jakarta that fits your lifestyle.
+            <p className="mt-4 text-white/75 text-lg max-w-2xl mx-auto">
+              Diskusikan kebutuhan pengelolaan workspace atau hunian Anda bersama
+              tim Cosystem hari ini.
             </p>
-          </div>
-          <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
-            {[
-              {
-                name: "Kemang",
-                desc: "The leafy heart of Jakarta's expat community. Full of villas and trendy cafes.",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDnu9lA3Tbbjwi9fmwwMCinoaLpY557NcN-8V5cFhxNeInVc2h_y1TW9w1lQAeTsP9u4sCRs3N019NYREc-BiYh3I1w3gLyyKrJPoxNDwQhri2Wmk1s_HEjnVkiEk4vaUVUFbud3kpiHEbUd-ulg6n5grHtLsfsHnILAp3aSfbZzdNbnBB1ztybuP82_mi9lgLb50nZBsA7oVWfXagEyDXVgrxKdkxkfehoctJtrUR-kOY6Wwz-80M_wciAU0_hapEnE6P_QlRCURg4",
-              },
-              {
-                name: "SCBD",
-                desc: "Modern luxury living just steps away from the city's financial headquarters.",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuDie1Xp1Fuzrbd2YKZwW0geG0EzgtJsPTtowEcKIZ1N-I8NmcM90U523OeufOqwSyYM-n53j8eprYP6Iu4tD-cxGgwg1ncMzLXcNrmBGCWRSGk2pMmcRR3kwnsbon86hm2Xf60B_qktfbYSvCOWvCwNHFBZCXIkYgu-TGGRLT9TieP9iG_BlwEf2SKCicQJRkp6VGQF0dyAPRBCirVjH7u9bGaMGbFDc6juO1Pno3WAyzNeJjbytnOcDFMMaXmzpgImvxhrwPSZ-QZl",
-              },
-              {
-                name: "Menteng",
-                desc: "Quiet, prestigious, and full of history. Jakarta's most elite diplomatic district.",
-                img: "https://lh3.googleusercontent.com/aida-public/AB6AXuCK-ErtDsxD1mVxFZLMDpSb2FdDHG7fa2T5wCIPbO9iT_cUzhJHJRwxrLFwzvIvrrrTGdpeEbau4jQ3Z9ERj-lm2LDFoKgVAcY39W_DORxDwRdpB9N3eBH6-Gl2YExzmPSaQkhzvLGCeLqbtG508Gad4m3aEBr9Is0PyyEjdjB_ktgmToUVqr9L5o1Ula5UAdfutrELptodCcBIvvJDJBtHtZadFV7g0tLKcjppF9twYsn7c6gUVSpF0qNhL7xkbzgeHZFsiTriYyXV",
-              },
-            ].map((hood) => (
-              <div
-                key={hood.name}
-                className="relative h-72 rounded-xl overflow-hidden group cursor-pointer bg-[#0d2137]"
+            <div className="mt-9 flex flex-wrap gap-3 justify-center">
+              <Link
+                href="/contact"
+                className="px-6 py-3.5 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
               >
-                <Image src={hood.img} alt={hood.name} fill className="object-cover group-hover:scale-105 transition-transform duration-500" />
-                <div className="absolute inset-0 bg-gradient-to-t from-black/80 via-black/20 to-transparent" />
-                <div className="absolute bottom-0 left-0 w-full p-6">
-                  <h3 className="text-xl font-semibold text-white mb-2">
-                    {hood.name}
-                  </h3>
-                  <p className="text-white/80 text-sm mb-4">{hood.desc}</p>
-                  <Link
-                    href={`/listings?area=${hood.name.toLowerCase()}`}
-                    className="bg-white/20 hover:bg-white/30 backdrop-blur-md text-white border border-white/30 px-5 py-2 rounded-lg text-sm font-semibold transition-all"
-                  >
-                    Explore {hood.name}
-                  </Link>
-                </div>
-              </div>
-            ))}
-          </div>
-        </section>
-
-        {/* Testimonials */}
-        <section className="py-20 bg-[#f0eded]">
-          <div className="max-w-7xl mx-auto px-4 md:px-16">
-            <div className="flex flex-col md:flex-row gap-12 items-center">
-              <div className="md:w-1/3">
-                <h2 className="text-3xl font-bold text-[#0d2137] mb-4">
-                  Trusted by hundreds of professionals.
-                </h2>
-                <div className="flex gap-1 text-[#1a7a5e]">
-                  {Array.from({ length: 5 }).map((_, i) => (
-                    <span
-                      key={i}
-                      className="material-symbols-outlined"
-                      style={{ fontVariationSettings: "'FILL' 1" }}
-                    >
-                      star
-                    </span>
-                  ))}
-                </div>
-              </div>
-              <div className="md:w-2/3 grid grid-cols-1 md:grid-cols-2 gap-6">
-                {[
-                  {
-                    quote:
-                      "Relocating from London to Jakarta was daunting, but Cosystem made the housing search effortless. The video tours were exactly like the actual apartment.",
-                    name: "Sarah C.",
-                    role: "Tech Lead @ Grab",
-                  },
-                  {
-                    quote:
-                      "I needed a place in SCBD quickly. Within 48 hours, Cosystem found me a verified studio and handled all the local leasing contracts. Truly premium service.",
-                    name: "Mark K.",
-                    role: "Diplomat @ EU Embassy",
-                  },
-                ].map((t) => (
-                  <div
-                    key={t.name}
-                    className="bg-white p-6 rounded-xl border border-[#cccccc] shadow-sm"
-                  >
-                    <p className="text-[#3e4944] italic mb-6 leading-relaxed">
-                      &ldquo;{t.quote}&rdquo;
-                    </p>
-                    <div className="flex items-center gap-3">
-                      <div className="w-10 h-10 rounded-full bg-[#9cf4d1] flex items-center justify-center font-bold text-[#002116] text-sm">
-                        {t.name.charAt(0)}
-                      </div>
-                      <div>
-                        <span className="block font-bold text-[#1b1c1c] text-sm">
-                          {t.name}
-                        </span>
-                        <span className="block text-xs text-[#3e4944]">
-                          {t.role}
-                        </span>
-                      </div>
-                    </div>
-                  </div>
-                ))}
-              </div>
+                Kontak Kami
+              </Link>
+              <Link
+                href="/listings"
+                className="px-6 py-3.5 rounded-lg border border-white/25 text-white font-semibold hover:bg-white/10 transition-colors"
+              >
+                Cari Ruang Kerja &amp; Hunian
+              </Link>
             </div>
-          </div>
-        </section>
-
-        {/* Stats */}
-        <section className="bg-[#0d2137] py-14 px-4 md:px-16">
-          <div className="max-w-7xl mx-auto grid grid-cols-1 md:grid-cols-3 gap-10 text-center">
-            {[
-              { value: "200+", label: "Verified Listings" },
-              { value: "100%", label: "Independent Advisors" },
-              { value: "4.9/5", label: "Consultation Rating" },
-            ].map((stat) => (
-              <div key={stat.label}>
-                <p className="text-5xl font-bold text-[#80d7b6] mb-2">
-                  {stat.value}
-                </p>
-                <p className="text-[#e4e2e1] text-xs font-bold uppercase tracking-widest">
-                  {stat.label}
-                </p>
-              </div>
-            ))}
           </div>
         </section>
       </main>
       <Footer />
     </>
+  );
+}
+
+function Eyebrow({ children }: { children: React.ReactNode }) {
+  return (
+    <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1a7a5e]">
+      {children}
+    </p>
+  );
+}
+
+function AssetCard({
+  icon, title, description, points,
+}: {
+  icon: string; title: string; description: string; points: string[];
+}) {
+  return (
+    <div className="bg-white border border-[#ddd7d4] rounded-2xl p-8 h-full">
+      <span className="material-symbols-outlined text-[#1a7a5e] text-3xl">{icon}</span>
+      <h3 className="mt-4 text-xl font-bold text-[#0d2137]">{title}</h3>
+      <p className="mt-3 text-[#3e4944] leading-relaxed">{description}</p>
+      <ul className="mt-6 space-y-3">
+        {points.map((p) => (
+          <li key={p} className="flex items-start gap-3 text-[#3e4944]">
+            <span className="material-symbols-outlined text-[#1a7a5e] text-xl leading-6">
+              check_circle
+            </span>
+            <span>{p}</span>
+          </li>
+        ))}
+      </ul>
+    </div>
+  );
+}
+
+function ValueBlock({
+  id, number, title, description, highlights, href, hrefLabel,
+}: {
+  id?: string;
+  number: string;
+  title: string;
+  description: string;
+  highlights: string[];
+  href?: string;
+  hrefLabel?: string;
+}) {
+  return (
+    <div
+      id={id}
+      className="bg-[#f6f3f2] border border-[#e4e2e1] rounded-2xl p-7 h-full flex flex-col scroll-mt-28"
+    >
+      <span className="text-sm font-bold text-[#1a7a5e]">{number}</span>
+      <h3 className="mt-3 text-lg font-bold text-[#0d2137]">{title}</h3>
+      <p className="mt-3 text-[#3e4944] leading-relaxed flex-1">{description}</p>
+      <ul className="mt-5 space-y-1.5">
+        {highlights.map((h) => (
+          <li key={h} className="text-sm text-[#1a7a5e] font-medium">
+            • {h}
+          </li>
+        ))}
+      </ul>
+      {href && (
+        <Link href={href} className="mt-5 text-sm font-semibold text-[#1a7a5e] hover:underline">
+          {hrefLabel} →
+        </Link>
+      )}
+    </div>
   );
 }
