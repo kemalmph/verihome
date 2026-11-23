@@ -15,6 +15,8 @@ export interface Str { id: string; en: string }
 
 export const STRINGS = {
   // ── Owner portal: navigation ──────────────────────────────────────────────
+  "owner.portal":          { id: "Portal Pemilik",       en: "Owner Portal" },
+  "owner.short":           { id: "Pemilik",              en: "Owner" },
   "owner.nav.overview":    { id: "Ringkasan",            en: "Overview" },
   "owner.nav.properties":  { id: "Properti Saya",        en: "My Properties" },
   "owner.nav.bookings":    { id: "Menginap",             en: "Stays" },

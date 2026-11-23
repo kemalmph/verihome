@@ -1,8 +1,9 @@
 "use client";
 
 import Link from "next/link";
-import { useState } from "react";
-import { t, type StringKey } from "@/lib/i18n/strings";
+import { useRef } from "react";
+import { type StringKey } from "@/lib/i18n/strings";
+import { useT } from "@/lib/i18n/LocaleProvider";
 
 const links: { href: string; icon: string; key: StringKey }[] = [
   { href: "/owner",            icon: "dashboard",   key: "owner.nav.overview" },
@@ -14,67 +15,100 @@ const links: { href: string; icon: string; key: StringKey }[] = [
   { href: "/owner/profile",    icon: "person",      key: "owner.nav.profile" },
 ];
 
+/**
+ * The same drawer as the admin sidebar, for the same reason.
+ *
+ * It had the same defect too: a button with onClick that did nothing until
+ * React hydrated, on the one screen where the menu is the only route to any
+ * other page. A <details> opens without JavaScript, and the drawer sits
+ * below the bar so the control that opened it can also close it.
+ *
+ * It also called t() with no language, so the owner portal stayed Indonesian
+ * whatever the EN/ID switch said. It reads the switch now.
+ */
 export function OwnerSidebar({ activeHref, ownerName }: { activeHref: string; ownerName: string }) {
-  const [open, setOpen] = useState(false);
+  const t = useT();
+  const drawer = useRef<HTMLDetailsElement>(null);
+
+  const closeDrawer = () => {
+    if (drawer.current) drawer.current.open = false;
+  };
+
+  const nav = (
+    <>
+      <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
+        {links.map((l) => {
+          const active =
+            activeHref === l.href ||
+            (l.href !== "/owner" && activeHref.startsWith(l.href));
+          return (
+            <Link
+              key={l.href}
+              href={l.href}
+              onClick={closeDrawer}
+              className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
+                active ? "bg-[#1a7a5e] text-white font-semibold" : "text-white/70 hover:bg-white/10"
+              }`}
+            >
+              <span className="material-symbols-outlined text-xl">{l.icon}</span>
+              <span>{t(l.key)}</span>
+            </Link>
+          );
+        })}
+      </nav>
+
+      <div className="p-3 border-t border-white/10">
+        <Link
+          href="/"
+          onClick={closeDrawer}
+          className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 hover:bg-white/10"
+        >
+          <span className="material-symbols-outlined text-xl">logout</span>
+          <span>{t("owner.access.home")}</span>
+        </Link>
+      </div>
+    </>
+  );
+
+  const header = (
+    <div className="p-6 border-b border-white/10">
+      <p className="text-[#9cf4d1] font-bold text-xl">Cosystem</p>
+      <p className="text-white/50 text-xs mt-0.5">{t("owner.portal")}</p>
+      {ownerName && (
+        <p className="text-white text-sm mt-3 font-medium truncate">{ownerName}</p>
+      )}
+    </div>
+  );
 
   return (
     <>
-      <header className="md:hidden fixed top-0 left-0 right-0 h-14 bg-[#0d2137] flex items-center px-4 z-50 gap-3">
-        <button
-          onClick={() => setOpen(true)}
-          className="text-white p-1.5 rounded-md hover:bg-white/10"
-          aria-label="Buka menu"
+      {/* ── Phone ─────────────────────────────────────────────────────── */}
+      <details ref={drawer} className="md:hidden">
+        <summary
+          aria-label={t("nav.menu")}
+          className="list-none cursor-pointer fixed top-0 left-0 right-0 h-14 bg-[#0d2137] flex items-center px-4 z-50 gap-3 [&::-webkit-details-marker]:hidden"
         >
-          <span className="material-symbols-outlined text-xl">menu</span>
-        </button>
-        <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
-        <p className="text-white/50 text-xs mt-0.5">Pemilik</p>
-      </header>
+          <span aria-hidden className="material-symbols-outlined text-white text-xl p-1.5">
+            menu
+          </span>
+          <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
+          <p className="text-white/50 text-xs mt-0.5">{t("owner.short")}</p>
+        </summary>
 
-      {open && (
-        <div className="md:hidden fixed inset-0 bg-black/40 z-50" onClick={() => setOpen(false)} />
-      )}
+        <div
+          onClick={closeDrawer}
+          className="fixed top-14 left-0 right-0 bottom-0 bg-black/40 z-40"
+        />
 
-      <aside
-        className={`fixed top-0 left-0 h-full w-64 bg-[#0d2137] z-50 flex flex-col transition-transform md:translate-x-0 ${
-          open ? "translate-x-0" : "-translate-x-full"
-        }`}
-      >
-        <div className="p-6 border-b border-white/10">
-          <p className="text-[#9cf4d1] font-bold text-xl">Cosystem</p>
-          <p className="text-white/50 text-xs mt-0.5">Portal Pemilik</p>
-          {ownerName && (
-            <p className="text-white text-sm mt-3 font-medium truncate">{ownerName}</p>
-          )}
-        </div>
+        <aside className="fixed top-14 left-0 bottom-0 w-64 bg-[#0d2137] flex flex-col z-50">
+          {nav}
+        </aside>
+      </details>
 
-        <nav className="flex-1 p-3 space-y-1 overflow-y-auto">
-          {links.map((l) => {
-            const active =
-              activeHref === l.href ||
-              (l.href !== "/owner" && activeHref.startsWith(l.href));
-            return (
-              <Link
-                key={l.href}
-                href={l.href}
-                onClick={() => setOpen(false)}
-                className={`flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm transition-colors ${
-                  active ? "bg-[#1a7a5e] text-white font-semibold" : "text-white/70 hover:bg-white/10"
-                }`}
-              >
-                <span className="material-symbols-outlined text-xl">{l.icon}</span>
-                <span>{t(l.key)}</span>
-              </Link>
-            );
-          })}
-        </nav>
-
-        <div className="p-3 border-t border-white/10">
-          <Link href="/" className="flex items-center gap-3 px-3 py-2.5 rounded-lg text-sm text-white/60 hover:bg-white/10">
-            <span className="material-symbols-outlined text-xl">logout</span>
-            <span>Kembali ke situs</span>
-          </Link>
-        </div>
+      {/* ── Desktop ───────────────────────────────────────────────────── */}
+      <aside className="hidden md:flex fixed top-0 left-0 h-full w-64 bg-[#0d2137] flex-col z-50">
+        {header}
+        {nav}
       </aside>
     </>
   );

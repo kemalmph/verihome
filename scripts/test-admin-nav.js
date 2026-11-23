@@ -108,13 +108,16 @@ function claimedHrefs() {
   // text-transform: uppercase — so the DOM says "General" and the screen says
   // "GENERAL". Comparing case-insensitively tests the words, which is what
   // the assertion is about; the casing is a style decision, not a fact.
-  const navText = (await page.locator("aside nav").innerText()).toUpperCase();
+  // :visible — the sidebar is rendered twice now: a phone drawer inside
+  // <details> and a static desktop aside. Only one is on screen at a time,
+  // and an unqualified "aside nav" matches both and fails strict mode.
+  const navText = (await page.locator("aside:visible nav").innerText()).toUpperCase();
   for (const heading of ["General", "Marketplace", "Site management", "Finance"]) {
     check(navText.includes(heading.toUpperCase()), `the nav shows the "${heading}" group`);
   }
 
-  const headingCount = await page.locator("aside nav p").count();
-  const linkCount = await page.locator("aside nav a").count();
+  const headingCount = await page.locator("aside:visible nav p").count();
+  const linkCount = await page.locator("aside:visible nav a").count();
   check(
     linkCount === hrefs.length,
     `every link in the source renders (${linkCount} of ${hrefs.length})`,
@@ -123,7 +126,7 @@ function claimedHrefs() {
 
   // The active item must be highlighted, or grouping just moved the problem.
   await page.goto(`${BASE}/site`, { waitUntil: "domcontentloaded" });
-  const activeText = await page.locator('aside nav a[class*="80d7b6"]').first().innerText();
+  const activeText = await page.locator('aside:visible nav a[class*="80d7b6"]').first().innerText();
   check(/Site/.test(activeText), `the current page is highlighted (${activeText.trim()})`);
 
   check(errors.length === 0, `no 5xx while walking the nav (${errors.slice(0, 3).join(" | ") || "none"})`);
