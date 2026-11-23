@@ -47,8 +47,8 @@ export default async function HomePage() {
 
               <p className="mt-6 text-lg text-white/80 max-w-2xl">
                 Dari coworking space, ruang rapat, dan studio kerja hingga rumah
-                tinggal, kos, dan vila. Otomatiskan jadwal dan tagihan penyewa,
-                lalu pasarkan unit kosong Anda langsung ke Marketplace Cosystem.
+                tinggal, kos, dan vila. Rapikan jadwal dan tagihan penyewa,
+                lalu pasarkan properti kosong Anda di Marketplace Cosystem.
               </p>
 
               <div className="mt-9 flex flex-wrap gap-3">
@@ -93,7 +93,7 @@ export default async function HomePage() {
               points={[
                 "Kalender booking per jam atau per sesi anti-bentrok",
                 "Manajemen paket membership & kredit jam penggunaan",
-                "Kode akses & check-in otomatis untuk penyewa harian",
+                "Pencatatan konsumsi dan margin per booking",
               ]}
             />
             <AssetCard
@@ -101,9 +101,9 @@ export default async function HomePage() {
               title="Hunian & Rumah Tinggal"
               description="Permudah operasional kos eksklusif, rumah kontrakan, apartemen, vila, hingga guesthouse tanpa pencatatan manual."
               points={[
-                "Penagihan sewa bulanan atau harian otomatis (VA & QRIS)",
+                "Pencatatan tagihan dan verifikasi bukti transfer",
                 "Pengelolaan kontrak sewa, deposit, dan data penghuni",
-                "Pencatatan utilitas (listrik/air) & tiket pemeliharaan unit",
+                "Kalender ketersediaan dan blokir tanggal oleh pemilik",
               ]}
             />
           </div>
@@ -120,24 +120,24 @@ export default async function HomePage() {
             <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
               <ValueBlock
                 number="01"
-                title="Otomatiskan Jadwal & Tagihan Sewa"
-                description="Hentikan rekap manual di spreadsheet. Sistem mengirim pengingat tagihan otomatis via WhatsApp dan email lengkap dengan payment link, lalu mencatat setiap pelunasan langsung ke laporan arus kas properti Anda."
-                highlights={["0% risiko double booking", "Rekonsiliasi pembayaran otomatis"]}
+                title="Satu Catatan untuk Jadwal & Tagihan Sewa"
+                description="Hentikan rekap manual di spreadsheet. Jadwal, kontrak, tagihan, dan jatuh temponya tercatat di satu dashboard — dan setiap pelunasan yang dikonfirmasi langsung masuk ke pembukuan properti Anda pada transaksi yang sama."
+                highlights={["0% risiko double booking", "Pembukuan tercatat saat pembayaran dikonfirmasi"]}
               />
               <ValueBlock
                 id="monetisasi"
                 number="02"
                 title="Ubah Slot Kosong Menjadi Pendapatan"
-                description="Aktifkan opsi tayangkan di Marketplace Cosystem hanya dengan satu klik. Foto, deskripsi, tarif, dan jadwal kosong langsung terbit ke halaman listing publik tanpa perlu input ulang data."
-                highlights={["Sinkronisasi jadwal real-time", "Tanpa kelola dua aplikasi"]}
+                description="Properti yang datanya sudah lengkap bisa ditayangkan ke halaman listing publik dari dashboard yang sama. Foto, deskripsi, dan tarif terbit apa adanya tanpa input ulang, dan tanggal yang Anda blokir tidak bisa dipesan."
+                highlights={["Tanpa input data dua kali", "Tanpa kelola dua aplikasi"]}
                 href="/listings"
                 hrefLabel="Lihat halaman listing"
               />
               <ValueBlock
                 number="03"
-                title="Halaman Reservasi Instan Milik Anda Sendiri"
-                description="Dapatkan tautan pemesanan khusus (cosystem.co/p/nama-properti) untuk dipasang di bio Instagram, Google Maps, atau WhatsApp Business sehingga calon penyewa bisa langsung cek ketersediaan dan membayar sendiri."
-                highlights={["Terima booking 24/7", "Terhubung langsung ke kalender unit"]}
+                title="Lihat Angkanya, Bukan Tebakannya"
+                description="Okupansi per unit, sewa yang sudah terikat, tagihan yang jatuh tempo, dan margin tiap booking setelah dikurangi biaya — dihitung dari transaksi yang tercatat, bukan dari rekap yang diketik ulang."
+                highlights={["Laporan okupansi & arus kas", "Pembukuan berpasangan yang tidak bisa diubah diam-diam"]}
               />
             </div>
           </div>
@@ -184,8 +184,8 @@ export default async function HomePage() {
               Workspace &amp; Hunian yang Dikelola Melalui Cosystem
             </h2>
             <p className="mt-4 text-[#3e4944] text-lg max-w-3xl">
-              Jelajahi ruang kerja siap pakai dan hunian nyaman yang jadwalnya
-              terhubung langsung dengan sistem pengelola.
+              Jelajahi hunian yang jadwalnya terhubung langsung dengan sistem
+              pengelola. Unit ruang kerja menyusul tayang di marketplace.
             </p>
 
             {featuredListings.length > 0 ? (
@@ -242,8 +242,7 @@ export default async function HomePage() {
             <ul className="mt-7 space-y-3">
               {[
                 "Sistem manajemen ruang kerja & hunian terpadu",
-                "Kalender okupansi, otomasi tagihan, dan laporan keuangan",
-                "Link booking pribadi untuk kanal pemasaran mandiri",
+                "Kalender okupansi, pencatatan tagihan, dan laporan keuangan",
                 "Tayang di halaman Listing Marketplace Cosystem",
                 "Pendampingan onboarding dan migrasi data awal oleh tim Cosystem",
               ].map((f) => (
