@@ -80,7 +80,16 @@ function claimedHrefs() {
   await page.goto(`${BASE}/auth/login`, { waitUntil: "domcontentloaded" });
   await page.fill('input[name="email"]', EMAIL);
   await page.fill('input[name="password"]', PASSWORD);
-  await page.click('button[type="submit"]');
+  // Scoped to the login form. Since the EN/ID switch became a <form> in the
+  // navbar, every page carries two submit buttons before this one, and an
+  // unscoped selector presses the language toggle instead — which logs
+  // nobody in and fails several steps later, far from the cause.
+  await page
+    .locator("form")
+    .filter({ has: page.locator('input[name="password"]') })
+    .first()
+    .locator('button[type="submit"]')
+    .click();
   await page.waitForTimeout(2500);
 
   // ── no door without a room ────────────────────────────────────────────────

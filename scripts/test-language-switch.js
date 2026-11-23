@@ -152,12 +152,14 @@ const CHROME = {
 
     const idButton = page.locator('button[lang="id"]');
     check(await idButton.count() === 1, "tombol ID ada di nav");
-    await idButton.click();
-
+    await Promise.all([
+      page.waitForLoadState("domcontentloaded"),
+      idButton.click(),
+    ]);
     await page.waitForFunction(
       () => document.documentElement.lang === "id",
       null,
-      { timeout: 10000 },
+      { timeout: 15000 },
     ).catch(() => {});
     check(
       (await page.locator("html").getAttribute("lang")) === "id",
@@ -184,6 +186,35 @@ const CHROME = {
       "halaman berikutnya juga berbahasa Indonesia",
     );
 
+    await ctx.close();
+  }
+
+  // ── 4: the switch before JavaScript ──────────────────────────────────────
+  //
+  // Disabling JavaScript reproduces the pre-hydration window deterministically.
+  // With onClick handlers this step fails every time; as a form it passes,
+  // which is the whole point of it being a form. Found because the same click
+  // that works locally lost the race against hydration on production.
+  {
+    const ctx = await browser.newContext({ locale: "en-US", javaScriptEnabled: false });
+    const page = await ctx.newPage();
+    await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+    check(
+      (await page.locator("html").getAttribute("lang")) === "en",
+      "tanpa JS: halaman terbuka dalam bahasa Inggris",
+    );
+
+    await page.locator('button[lang="id"]').click().catch(() => {});
+    await page.waitForLoadState("domcontentloaded").catch(() => {});
+
+    check(
+      (await page.locator("html").getAttribute("lang")) === "id",
+      "tanpa JS: klik ID tetap mengganti bahasa",
+    );
+    check(
+      (await page.content()).includes("Kelola Operasional"),
+      "tanpa JS: isi halaman ikut berganti",
+    );
     await ctx.close();
   }
 
