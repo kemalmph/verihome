@@ -31,8 +31,11 @@ export async function Navbar() {
               and #neighborhoods, and neither id survived the rewrite, so both
               scrolled nowhere.
 
-              The three "what does it do" links live in the Fitur dropdown;
-              what stays flat here is what a visitor arrives looking for. */}
+              The three "what does it do" links live in the Fitur dropdown.
+              "Jelajahi Listing" and "Kontak Kami" are gone from here: both
+              still sit in the hero, the closing banner and the footer, so
+              nothing became unreachable — the header just stopped repeating
+              what the page already says twice. */}
           <div className="hidden md:flex items-center gap-6">
             <NavFeaturesMenu />
             <Link
@@ -40,18 +43,6 @@ export async function Navbar() {
               className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
             >
               {t("nav.pricing", lang)}
-            </Link>
-            <Link
-              href="/listings"
-              className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
-            >
-              {t("nav.browse", lang)}
-            </Link>
-            <Link
-              href="/contact"
-              className="text-sm font-semibold px-4 py-2 rounded-lg bg-[#1a7a5e] text-white hover:bg-[#166750] transition-colors"
-            >
-              {t("nav.contact", lang)}
             </Link>
           </div>
         </div>

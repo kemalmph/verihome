@@ -83,9 +83,13 @@ const PAGES = [
 
 // The navbar and footer are on all fifteen public pages, so a miss here is a
 // miss everywhere. Checked separately from the page bodies for that reason.
+// Deliberately avoids words that could also turn up in a listing's own
+// name or description — those come from Indonesian database columns and
+// appear verbatim in both languages, which would fail the "absent" half of
+// each check for a reason that has nothing to do with the switch.
 const CHROME = {
-  id: ["Jelajahi Listing", "Kontak Kami", "Perusahaan", "Penyewa"],
-  en: ["Browse Listings", "Contact Us", "Company", "Renters"],
+  id: ["Harga", "Kontak Kami", "Perusahaan", "Produk"],
+  en: ["Pricing", "Contact Us", "Company", "Product"],
 };
 
 (async () => {

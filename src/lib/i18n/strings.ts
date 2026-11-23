@@ -245,7 +245,6 @@ export const STRINGS = {
   "nav.feat.assets":     { id: "Workspace & Hunian", en: "Workspace & Living" },
   "nav.feat.assetsBlurb":{ id: "Satu sistem untuk dua jenis aset", en: "One system for two kinds of asset" },
   "nav.pricing":         { id: "Harga",            en: "Pricing" },
-  "nav.browse":          { id: "Jelajahi Listing", en: "Browse Listings" },
   "nav.contact":         { id: "Kontak Kami",      en: "Contact Us" },
   "nav.signIn":          { id: "Masuk",            en: "Sign In" },
   "nav.signUp":          { id: "Daftar",           en: "Sign Up" },
