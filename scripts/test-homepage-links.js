@@ -61,6 +61,16 @@ const check = (ok, what) => (ok ? pass : fail).push(what);
   // The previous menu linked #how-it-works and #neighborhoods; neither id was
   // on the page, so both scrolled nowhere and looked like a dead button.
   await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+
+  // Three of these anchors live inside the "Fitur" dropdown and are not in
+  // the DOM until it opens. Collecting without opening it would silently
+  // stop checking them — a menu that folds links away must not also fold
+  // away the test that proves they land somewhere.
+  const fitur = page.locator('button:has-text("Fitur")').first();
+  check(await fitur.count() > 0, 'tombol "Fitur" ada di nav');
+  await fitur.click();
+  await page.locator('a[href="/#monetisasi"]').waitFor({ state: "visible", timeout: 5000 });
+
   const anchors = await page.locator('a[href^="/#"], a[href^="#"]').evaluateAll((as) =>
     [...new Set(as.map((a) => a.getAttribute("href").split("#")[1]).filter(Boolean))],
   );

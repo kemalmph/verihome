@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { NavbarClient } from "./NavbarClient";
+import { NavFeaturesMenu } from "./NavFeaturesMenu";
 
 export async function Navbar() {
   const supabase = await createClient();
@@ -23,22 +24,18 @@ export async function Navbar() {
           {/* Anchors point at section ids that exist on the homepage —
               #cara-kerja and #harga. The previous menu linked #how-it-works
               and #neighborhoods, and neither id survived the rewrite, so both
-              scrolled nowhere. */}
+              scrolled nowhere.
+
+              The three "what does it do" links live in the Fitur dropdown;
+              what stays flat here is what a visitor arrives looking for. */}
           <div className="hidden md:flex items-center gap-6">
-            {[
-              { href: "/#fitur-kelola", label: "Fitur Kelola" },
-              { href: "/#monetisasi", label: "Cara Monetisasi" },
-              { href: "/#workspace-hunian", label: "Workspace & Hunian" },
-              { href: "/#harga", label: "Harga" },
-            ].map((l) => (
-              <Link
-                key={l.href}
-                href={l.href}
-                className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
-              >
-                {l.label}
-              </Link>
-            ))}
+            <NavFeaturesMenu />
+            <Link
+              href="/#harga"
+              className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
+            >
+              Harga
+            </Link>
             <Link
               href="/listings"
               className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
