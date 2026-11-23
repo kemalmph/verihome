@@ -126,8 +126,10 @@ Yang perlu diputuskan:
 
 Bukan fitur, tapi menghalangi beberapa butir di atas:
 
-- **Iuran membership belum masuk buku besar.** Menunggu keputusan pemilik:
-  diakui per bulan kalender, atau per bulan keanggotaan.
+- ~~**Iuran membership belum masuk buku besar.**~~ Diputuskan: diakui **per
+  bulan keanggotaan**, bukan per bulan kalender. Terpasang — jadwalnya
+  dibangun dari tanggal mulai, pembayaran masuk sebagai kewajiban, dan satu
+  bulan dilepas jadi pendapatan setiap kali bulan itu selesai dilayani.
 - **Cicilan (`reservation_instalments`) juga belum posting ke buku besar** —
   keputusan akuntansi yang sama.
 - **Bagi hasil site pihak ketiga** belum ada aturannya.

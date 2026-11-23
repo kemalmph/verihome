@@ -278,10 +278,29 @@ export async function setMembershipPayment(siteId: string, membershipId: string,
   }
   const admin = createAdminClient();
 
-  // Recording payment here does NOT post to the ledger. An annual fee paid up
-  // front is a twelve-month liability, and recognising it needs a decision
-  // about whether revenue is released per calendar month or per month of
-  // membership used. Saying so rather than quietly booking it as income.
+  // Marking it paid posts to the ledger; the other statuses only move the
+  // column. The owner decided revenue is recognised per MONTH OF MEMBERSHIP,
+  // not per calendar month, so settle_membership_payment builds the schedule
+  // anchored to the start date and books the whole fee as a liability —
+  // unearned_revenue — releasing one month at a time as each is served.
+  //
+  // The function also sets payment_status and status, so there is no second
+  // update to drift out of step with it. It is idempotent per period: a
+  // second press settles nothing and posts nothing.
+  if (payment_status === "paid") {
+    const { data, error } = await admin.rpc("settle_membership_payment", {
+      p_membership_id: membershipId,
+    });
+    if (error) return { error: error.message };
+    revalidatePath(`/site/${siteId}/members`);
+    return {
+      success: true,
+      note: Number(data) > 0
+        ? `${data} bulan keanggotaan dicatat sebagai pendapatan diterima di muka.`
+        : "Sudah lunas sebelumnya — tidak ada yang diposting ulang.",
+    };
+  }
+
   const { error } = await admin.from("memberships").update({ payment_status }).eq("id", membershipId);
   if (error) return { error: error.message };
   revalidatePath(`/site/${siteId}/members`);
