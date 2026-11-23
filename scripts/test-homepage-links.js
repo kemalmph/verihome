@@ -75,7 +75,15 @@ const check = (ok, what) => (ok ? pass : fail).push(what);
   const fitur = page.locator('button:has-text("Fitur")').first();
   check(await fitur.count() > 0, 'tombol "Fitur" ada di nav');
   await fitur.click();
-  await page.locator('a[href="/#monetisasi"]').waitFor({ state: "visible", timeout: 5000 });
+  // :visible and .first(): this link now exists twice — once in the desktop
+  // "Fitur" dropdown and once in the phone menu, whose <details> keeps its
+  // contents in the DOM while closed. At this viewport only the desktop one
+  // is on screen, and an unqualified locator matches both and fails strict
+  // mode.
+  await page
+    .locator('a[href="/#monetisasi"]:visible')
+    .first()
+    .waitFor({ state: "visible", timeout: 5000 });
 
   const anchors = await page.locator('a[href^="/#"], a[href^="#"]').evaluateAll((as) =>
     [...new Set(as.map((a) => a.getAttribute("href").split("#")[1]).filter(Boolean))],

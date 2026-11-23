@@ -193,6 +193,55 @@ const CHROME = {
     await ctx.close();
   }
 
+  // ── 3b: the header on a phone ────────────────────────────────────────────
+  //
+  // The desktop links are hidden below 768px, so for the life of the site a
+  // phone got a logo, a language switch and a Sign Up button — Fitur and
+  // Harga were not cramped, they were absent. Checked at 390px, iPhone
+  // width, and with JavaScript off, because the menu is a <details> and the
+  // whole point is that it opens without waiting for hydration.
+  for (const js of [true, false]) {
+    const label = js ? "dengan JS" : "tanpa JS";
+    const ctx = await browser.newContext({
+      viewport: { width: 390, height: 844 },
+      locale: "en-US",
+      javaScriptEnabled: js,
+    });
+    await ctx.addCookies([{ name: COOKIE, value: "id", url: BASE }]);
+    const page = await ctx.newPage();
+    await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+
+    const burger = page.locator("details > summary").first();
+    check(await burger.count() === 1, `ponsel ${label}: tombol menu terlihat`);
+    check(await burger.isVisible(), `ponsel ${label}: tombol menu tidak tersembunyi`);
+
+    const fitur = page.locator('a[href="/#fitur-kelola"]');
+    const harga = page.locator('a[href="/#harga"]');
+    check(!(await fitur.first().isVisible().catch(() => false)),
+      `ponsel ${label}: menu tertutup saat halaman dibuka`);
+
+    await burger.click();
+    check(await fitur.first().isVisible(), `ponsel ${label}: "Fitur Kelola" muncul setelah menu dibuka`);
+    check(await harga.first().isVisible(), `ponsel ${label}: "Harga" muncul setelah menu dibuka`);
+
+    // A menu whose links do not navigate is decoration.
+    await harga.first().click();
+    // With JavaScript the router navigates asynchronously, so the URL is not
+    // updated by the time click() resolves; without it the click is a full
+    // page load and already has. Waiting covers both.
+    await page.waitForFunction(
+      () => location.hash === "#harga",
+      null,
+      { timeout: 5000 },
+    ).catch(() => {});
+    check(
+      new URL(page.url()).hash === "#harga",
+      `ponsel ${label}: menekan Harga membawa ke bagiannya (${page.url().slice(-12)})`,
+    );
+
+    await ctx.close();
+  }
+
   // ── 4: the switch before JavaScript ──────────────────────────────────────
   //
   // Disabling JavaScript reproduces the pre-hydration window deterministically.
