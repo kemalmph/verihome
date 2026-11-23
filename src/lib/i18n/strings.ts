@@ -226,6 +226,219 @@ export const STRINGS = {
   "common.cancel":    { id: "Batal",             en: "Cancel" },
   "common.submit":    { id: "Kirim",             en: "Submit" },
   "common.loading":   { id: "Memuat…",           en: "Loading…" },
+
+  // ══════════════════════════════════════════════════════════════════════════
+  // Public site
+  //
+  // Until the EN/ID switch was wired up, each public page existed in exactly
+  // one language — the marketing pages Indonesian, the booking and login
+  // pages English — so whichever way a visitor set the switch, half the site
+  // contradicted it. The missing halves are written out here.
+  // ══════════════════════════════════════════════════════════════════════════
+
+  // ── Navigation ────────────────────────────────────────────────────────────
+  "nav.features":        { id: "Fitur",            en: "Features" },
+  "nav.feat.manage":     { id: "Fitur Kelola",     en: "Management Features" },
+  "nav.feat.manageBlurb":{ id: "Jadwal, kontrak, dan tagihan dalam satu dashboard", en: "Schedules, contracts and invoices in one dashboard" },
+  "nav.feat.monetise":   { id: "Cara Monetisasi",  en: "How to Monetise" },
+  "nav.feat.monetiseBlurb":{ id: "Dari unit kosong ke listing yang menghasilkan", en: "From an empty unit to a listing that earns" },
+  "nav.feat.assets":     { id: "Workspace & Hunian", en: "Workspace & Living" },
+  "nav.feat.assetsBlurb":{ id: "Satu sistem untuk dua jenis aset", en: "One system for two kinds of asset" },
+  "nav.pricing":         { id: "Harga",            en: "Pricing" },
+  "nav.browse":          { id: "Jelajahi Listing", en: "Browse Listings" },
+  "nav.contact":         { id: "Kontak Kami",      en: "Contact Us" },
+  "nav.signIn":          { id: "Masuk",            en: "Sign In" },
+  "nav.signUp":          { id: "Daftar",           en: "Sign Up" },
+  "nav.dashboard":       { id: "Dashboard",        en: "Dashboard" },
+  "nav.saved":           { id: "Unit Tersimpan",   en: "Saved Listings" },
+  "nav.appointments":    { id: "Jadwal Kunjungan", en: "Appointments" },
+  "nav.signOut":         { id: "Keluar",           en: "Sign Out" },
+
+  // ── Footer ────────────────────────────────────────────────────────────────
+  "footer.tagline":      { id: "Platform terpadu untuk mengelola operasional dan memonetisasi ruang kerja serta hunian dalam satu ekosistem.", en: "One platform to run and monetise workspaces and homes in a single ecosystem." },
+  "footer.product":      { id: "Produk",           en: "Product" },
+  "footer.manageWork":   { id: "Manajemen Workspace", en: "Workspace Management" },
+  "footer.manageLiving": { id: "Manajemen Hunian", en: "Property Management" },
+  "footer.marketplace":  { id: "Listing Marketplace", en: "Marketplace Listings" },
+  "footer.tenants":      { id: "Penyewa",          en: "Renters" },
+  "footer.findCoworking":{ id: "Cari Coworking & Ruang Rapat", en: "Find Coworking & Meeting Rooms" },
+  "footer.findLiving":   { id: "Cari Kos & Hunian", en: "Find Rooms & Homes" },
+  "footer.howToBook":    { id: "Cara Booking",     en: "How to Book" },
+  "footer.company":      { id: "Perusahaan",       en: "Company" },
+  "footer.listProperty": { id: "Daftarkan Properti", en: "List Your Property" },
+  "footer.terms":        { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
+  "footer.privacy":      { id: "Kebijakan Privasi", en: "Privacy Policy" },
+  "footer.rights":       { id: "Hak cipta dilindungi undang-undang.", en: "All rights reserved." },
+
+  // ── Homepage: hero ────────────────────────────────────────────────────────
+  "home.hero.badge":     { id: "Satu Platform untuk Ruang Kerja & Hunian", en: "One Platform for Workspaces & Homes" },
+  "home.hero.title":     { id: "Kelola Operasional dan Monetisasi Properti Anda dalam Satu Sistem.", en: "Run and Monetise Your Property in One System." },
+  "home.hero.sub":       { id: "Dari coworking space, ruang rapat, dan studio kerja hingga rumah tinggal, kos, dan vila. Rapikan jadwal dan tagihan penyewa, lalu pasarkan properti kosong Anda di Marketplace Cosystem.", en: "From coworking spaces, meeting rooms and studios to houses, rooms and villas. Put tenant schedules and invoices in order, then list your empty properties on the Cosystem Marketplace." },
+  "home.hero.note":      { id: "Konsultasi kebutuhan properti  •  Setup dibantu tim kami  •  Terintegrasi penuh", en: "A consultation about your needs  •  Setup help from our team  •  Fully integrated" },
+  "home.hero.browse":    { id: "Lihat Listing Tersedia", en: "See Available Listings" },
+
+  // ── Homepage: two asset types ─────────────────────────────────────────────
+  "home.assets.eyebrow": { id: "Fleksibel untuk Berbagai Aset", en: "Flexible Across Asset Types" },
+  "home.assets.title":   { id: "Dirancang untuk Mengelola Workspace maupun Hunian", en: "Built to Manage Workspaces and Homes Alike" },
+  "home.assets.sub":     { id: "Satu dashboard terpusat yang otomatis menyesuaikan fitur dengan jenis properti dan skema sewa Anda—baik hitungan jam, harian, maupun bulanan.", en: "One dashboard that adapts to your property type and rental model — by the hour, by the day or by the month." },
+  "home.assets.work.title": { id: "Ruang Kerja & Workspace", en: "Workspaces & Offices" },
+  "home.assets.work.desc":  { id: "Kelola coworking space, private office, meeting room, hingga studio kreatif dengan sistem reservasi dan kuota yang presisi.", en: "Run coworking spaces, private offices, meeting rooms and creative studios with precise reservations and quotas." },
+  "home.assets.work.p1":    { id: "Kalender booking per jam atau per sesi anti-bentrok", en: "Hourly or per-session booking calendar that cannot double-book" },
+  "home.assets.work.p2":    { id: "Manajemen paket membership & kredit jam penggunaan", en: "Membership plans and usage-hour credits" },
+  "home.assets.work.p3":    { id: "Pencatatan konsumsi dan margin per booking", en: "Consumables and margin recorded per booking" },
+  "home.assets.live.title": { id: "Hunian & Rumah Tinggal", en: "Homes & Residential" },
+  "home.assets.live.desc":  { id: "Permudah operasional kos eksklusif, rumah kontrakan, apartemen, vila, hingga guesthouse tanpa pencatatan manual.", en: "Simplify the running of boarding houses, rentals, apartments, villas and guesthouses without manual bookkeeping." },
+  "home.assets.live.p1":    { id: "Pencatatan tagihan dan verifikasi bukti transfer", en: "Invoices recorded and transfer receipts verified" },
+  "home.assets.live.p2":    { id: "Pengelolaan kontrak sewa, deposit, dan data penghuni", en: "Leases, deposits and occupant records in one place" },
+  "home.assets.live.p3":    { id: "Kalender ketersediaan dan blokir tanggal oleh pemilik", en: "Availability calendar with owner date blocking" },
+
+  // ── Homepage: operations ──────────────────────────────────────────────────
+  "home.ops.eyebrow":    { id: "Operasional & Pertumbuhan", en: "Operations & Growth" },
+  "home.ops.title":      { id: "Rapikan Manajemen Harian, Maksimalkan Okupansi Unit", en: "Tidy Up Daily Management, Maximise Occupancy" },
+  "home.ops.b1.title":   { id: "Satu Catatan untuk Jadwal & Tagihan Sewa", en: "One Record for Schedules & Rent Invoices" },
+  "home.ops.b1.desc":    { id: "Hentikan rekap manual di spreadsheet. Jadwal, kontrak, tagihan, dan jatuh temponya tercatat di satu dashboard — dan setiap pelunasan yang dikonfirmasi langsung masuk ke pembukuan properti Anda pada transaksi yang sama.", en: "Stop recapping by hand in spreadsheets. Schedules, contracts, invoices and their due dates live in one dashboard — and every confirmed payment reaches your property's books in the same transaction." },
+  "home.ops.b1.h1":      { id: "0% risiko double booking", en: "Zero double-booking risk" },
+  "home.ops.b1.h2":      { id: "Pembukuan tercatat saat pembayaran dikonfirmasi", en: "Books updated the moment a payment is confirmed" },
+  "home.ops.b2.title":   { id: "Ubah Slot Kosong Menjadi Pendapatan", en: "Turn Empty Slots Into Income" },
+  "home.ops.b2.desc":    { id: "Properti yang datanya sudah lengkap bisa ditayangkan ke halaman listing publik dari dashboard yang sama. Foto, deskripsi, dan tarif terbit apa adanya tanpa input ulang, dan tanggal yang Anda blokir tidak bisa dipesan.", en: "A property whose details are complete can be published to the public listing page from the same dashboard. Photos, descriptions and rates go out as they are, with no re-entry, and dates you block cannot be booked." },
+  "home.ops.b2.h1":      { id: "Tanpa input data dua kali", en: "No entering the same data twice" },
+  "home.ops.b2.h2":      { id: "Tanpa kelola dua aplikasi", en: "No juggling two applications" },
+  "home.ops.b2.link":    { id: "Lihat halaman listing", en: "See the listing page" },
+  "home.ops.b3.title":   { id: "Lihat Angkanya, Bukan Tebakannya", en: "See the Numbers, Not the Guesswork" },
+  "home.ops.b3.desc":    { id: "Okupansi per unit, sewa yang sudah terikat, tagihan yang jatuh tempo, dan margin tiap booking setelah dikurangi biaya — dihitung dari transaksi yang tercatat, bukan dari rekap yang diketik ulang.", en: "Occupancy per unit, rent already committed, invoices falling due and the margin on each booking after costs — computed from recorded transactions, not from a recap typed out again." },
+  "home.ops.b3.h1":      { id: "Laporan okupansi & arus kas", en: "Occupancy and cash-flow reports" },
+  "home.ops.b3.h2":      { id: "Pembukuan berpasangan yang tidak bisa diubah diam-diam", en: "Double-entry books that cannot be altered quietly" },
+
+  // ── Homepage: how it works ────────────────────────────────────────────────
+  "home.how.eyebrow":    { id: "Cara Kerja",       en: "How It Works" },
+  "home.how.title":      { id: "Mulai Kelola & Monetisasi dalam 3 Langkah", en: "Start Managing & Monetising in 3 Steps" },
+  "home.how.s1t":        { id: "Konsultasi & Daftarkan Properti Anda", en: "Talk to Us & Register Your Property" },
+  "home.how.s1d":        { id: "Hubungi tim kami untuk menyesuaikan konfigurasi sistem dengan jumlah unit dan jenis aset workspace maupun hunian Anda.", en: "Contact our team so the system is configured for the number of units and the kinds of workspace or residential assets you hold." },
+  "home.how.s2t":        { id: "Atur Jadwal & Tayangkan di Listing", en: "Set Up Schedules & Go Live" },
+  "home.how.s2d":        { id: "Kelola penyewa yang sudah ada dari satu dashboard, lalu nyalakan visibilitas listing publik untuk menjaring penyewa baru.", en: "Manage your existing tenants from one dashboard, then switch on public listing visibility to reach new ones." },
+  "home.how.s3t":        { id: "Terima Pembayaran & Pantau Laporan", en: "Take Payments & Watch the Reports" },
+  "home.how.s3d":        { id: "Dana sewa masuk secara terstruktur lengkap dengan laporan okupansi, riwayat transaksi, dan performa tiap unit.", en: "Rent arrives in an orderly way, with occupancy reports, transaction history and the performance of each unit alongside it." },
+
+  // ── Homepage: showcase ────────────────────────────────────────────────────
+  "home.show.eyebrow":   { id: "Ekosistem Aktif",  en: "The Live Ecosystem" },
+  "home.show.title":     { id: "Workspace & Hunian yang Dikelola Melalui Cosystem", en: "Workspaces & Homes Managed Through Cosystem" },
+  "home.show.sub":       { id: "Jelajahi hunian yang jadwalnya terhubung langsung dengan sistem pengelola. Unit ruang kerja menyusul tayang di marketplace.", en: "Browse homes whose calendars run on the manager's own system. Workspace units will follow onto the marketplace." },
+  "home.show.empty":     { id: "Belum ada unit yang tayang saat ini.", en: "No units are listed at the moment." },
+  "home.show.all":       { id: "Lihat Semua Listing", en: "See All Listings" },
+
+  // ── Homepage: pricing ─────────────────────────────────────────────────────
+  "home.price.eyebrow":  { id: "Skema Kerja Sama", en: "Partnership Model" },
+  "home.price.title":    { id: "Solusi Fleksibel Sesuai Skala Properti Anda", en: "A Flexible Fit for the Scale of Your Portfolio" },
+  "home.price.sub":      { id: "Setiap properti memiliki kebutuhan operasional dan target okupansi yang berbeda. Konsultasikan kebutuhan Anda dengan tim kami untuk mendapatkan penawaran terbaik.", en: "Every property has its own operational needs and occupancy targets. Talk your requirements through with our team to get the right offer." },
+  "home.price.badge":    { id: "Paket Kemitraan Pengelola", en: "Manager Partnership Package" },
+  "home.price.headline": { id: "Penawaran Khusus — Kontak Kami", en: "Tailored Offer — Contact Us" },
+  "home.price.desc":     { id: "Akses penuh sistem manajemen properti terintegrasi dengan katalog marketplace Cosystem untuk meningkatkan efisiensi dan tingkat hunian unit Anda.", en: "Full access to an integrated property management system alongside the Cosystem marketplace catalogue, to lift both efficiency and occupancy." },
+  "home.price.f1":       { id: "Sistem manajemen ruang kerja & hunian terpadu", en: "A single management system for workspaces and homes" },
+  "home.price.f2":       { id: "Kalender okupansi, pencatatan tagihan, dan laporan keuangan", en: "Occupancy calendar, invoice records and financial reports" },
+  "home.price.f3":       { id: "Tayang di halaman Listing Marketplace Cosystem", en: "Published on the Cosystem Marketplace listing page" },
+  "home.price.f4":       { id: "Pendampingan onboarding dan migrasi data awal oleh tim Cosystem", en: "Onboarding support and initial data migration by the Cosystem team" },
+  "home.price.cta":      { id: "Kontak Kami untuk Penawaran", en: "Contact Us for an Offer" },
+
+  // ── Homepage: closing banner ──────────────────────────────────────────────
+  "home.cta.title":      { id: "Siap Mengelola dan Memonetisasi Properti Anda Lebih Efisien?", en: "Ready to Run and Monetise Your Property More Efficiently?" },
+  "home.cta.sub":        { id: "Diskusikan kebutuhan pengelolaan workspace atau hunian Anda bersama tim Cosystem hari ini.", en: "Talk through what your workspace or property needs with the Cosystem team today." },
+  "home.cta.secondary":  { id: "Cari Ruang Kerja & Hunian", en: "Find Workspaces & Homes" },
+
+  // ── Listings index ────────────────────────────────────────────────────────
+  "listings.ownerBanner": { id: "Punya ruang kerja atau hunian kosong? Kelola jadwal, tagihan, dan pasarkan unit Anda dalam satu platform bersama Cosystem.", en: "Have an empty workspace or home? Manage schedules and invoices and market your units on one platform with Cosystem." },
+  "listings.title":       { id: "Semua Listing",   en: "All Listings" },
+  "listings.sub":         { id: "Hanya properti terkurasi dan terverifikasi.", en: "Only verified, curated properties." },
+  "listings.area":        { id: "Area",            en: "Area" },
+  "listings.allAreas":    { id: "Semua Area",      en: "All Areas" },
+  "listings.type":        { id: "Jenis Properti",  en: "Property Type" },
+  "listings.allTypes":    { id: "Semua Jenis",     en: "All Types" },
+  "listings.typeKost":    { id: "Kos",             en: "Kost" },
+  "listings.typeApartment": { id: "Apartemen",     en: "Apartment" },
+  "listings.typeHouse":   { id: "Rumah",           en: "House" },
+  "listings.typeVilla":   { id: "Vila",            en: "Villa" },
+  "listings.minPrice":    { id: "Harga Minimum (IDR)", en: "Min Price (IDR)" },
+  "listings.maxPrice":    { id: "Harga Maksimum (IDR)", en: "Max Price (IDR)" },
+  "listings.apply":       { id: "Terapkan Filter", en: "Apply Filters" },
+  "listings.emptyTitle":  { id: "Tidak ada listing yang cocok", en: "No listings found" },
+  "listings.emptyBody":   { id: "Coba longgarkan filter Anda untuk melihat lebih banyak hasil.", en: "Try adjusting your filters to see more results." },
+
+  // ── Contact ───────────────────────────────────────────────────────────────
+  "contact.metaTitle":    { id: "Kontak Kami — Cosystem", en: "Contact Us — Cosystem" },
+  "contact.metaDesc":     { id: "Diskusikan kebutuhan pengelolaan ruang kerja atau hunian Anda bersama tim Cosystem.", en: "Talk through your workspace or property management needs with the Cosystem team." },
+  "contact.title":        { id: "Diskusikan Kebutuhan Properti Anda", en: "Let's Talk About Your Property" },
+  "contact.sub":          { id: "Ceritakan jenis aset dan jumlah unit Anda — ruang kerja, kos, rumah kontrakan, atau kombinasinya. Tim kami menyesuaikan konfigurasi sistemnya, termasuk membantu memindahkan data yang sudah ada.", en: "Tell us what you hold and how many units — workspaces, rooms, rental houses, or a mix. Our team configures the system to match, and helps move across the records you already keep." },
+  "contact.registerTitle":{ id: "Daftarkan Properti Anda", en: "Register Your Property" },
+  "contact.registerBody": { id: "Isi detail properti Anda dan tim kami menghubungi balik untuk membahas konfigurasi serta langkah onboarding.", en: "Fill in your property details and our team will come back to you about configuration and the onboarding steps." },
+  "contact.registerCta":  { id: "Mulai Pendaftaran", en: "Start Registration" },
+  "contact.talkTitle":    { id: "Bicara Langsung",  en: "Talk to Us Directly" },
+  "contact.talkBody":     { id: "Punya pertanyaan sebelum mendaftar? Hubungi kami langsung.", en: "Questions before you register? Get in touch." },
+  "contact.noChannels":   { id: "Silakan gunakan formulir pendaftaran properti di samping — tim kami akan menghubungi Anda balik.", en: "Please use the property registration form alongside — our team will come back to you." },
+  "contact.renterTitle":  { id: "Mencari ruang kerja atau hunian untuk disewa?", en: "Looking for a workspace or a home to rent?" },
+  "contact.renterBody":   { id: "Halaman ini untuk pemilik dan pengelola properti. Kalau Anda sedang mencari tempat, jelajahi unit yang tersedia.", en: "This page is for owners and managers. If you are looking for a place, browse what is available." },
+  "contact.renterCta":    { id: "Lihat Listing Tersedia", en: "See Available Listings" },
+
+  // ── Terms and privacy ─────────────────────────────────────────────────────
+  "legal.terms.title":    { id: "Syarat & Ketentuan", en: "Terms & Conditions" },
+  "legal.privacy.title":  { id: "Kebijakan Privasi", en: "Privacy Policy" },
+  "legal.pending":        { id: "Dokumen ini sedang disiapkan dan akan diterbitkan di halaman ini.", en: "This document is being prepared and will be published on this page." },
+  "legal.meanwhile":      { id: "Sementara itu, untuk pertanyaan mengenai ketentuan layanan atau penanganan data, silakan hubungi tim kami.", en: "In the meantime, please contact our team with any question about the terms of service or how data is handled." },
+
+  // ── Consultation ──────────────────────────────────────────────────────────
+  "consult.step":         { id: "Langkah 1 dari 3", en: "Step 1 of 3" },
+  "consult.stepName":     { id: "Pilih Paket Konsultasi", en: "Consultation Selection" },
+  "consult.title":        { id: "Pilih paket konsultasi Anda", en: "Choose your consultation package" },
+  "consult.sub":          { id: "Kedua paket mencakup kunjungan virtual langsung bersama penasihat independen Cosystem. Dapatkan panduan ahli dari rumah Anda.", en: "Both packages include a live virtual walkthrough with an independent Cosystem advisor. Get expert guidance from the comfort of your home." },
+  "consult.popular":      { id: "Paling Populer",  en: "Most Popular" },
+  "consult.choose":       { id: "Pilih",           en: "Choose" },
+  "consult.basic.f1":     { id: "Sesi konsultasi 30 menit", en: "30min consultation session" },
+  "consult.basic.f2":     { id: "Kunjungan virtual langsung", en: "Live virtual walkthrough" },
+  "consult.basic.f3":     { id: "Sesi tanya jawab langsung", en: "Direct Q&A session" },
+  "consult.basic.f4":     { id: "Gambaran dasar area sekitar", en: "Basic area insights" },
+  "consult.prem.f1":      { id: "Sesi menyeluruh 60 menit", en: "60min comprehensive session" },
+  "consult.prem.f2":      { id: "Kunjungan virtual langsung", en: "Live virtual walkthrough" },
+  "consult.prem.f3":      { id: "Laporan penilaian kecocokan", en: "Suitability assessment report" },
+  "consult.prem.f4":      { id: "Gambaran mendalam lingkungan sekitar", en: "In-depth neighborhood insights" },
+  "consult.prem.f5":      { id: "Saran properti alternatif", en: "Alternative property suggestions" },
+  "consult.selectLabel":  { id: "Pilih properti yang ingin dikonsultasikan:", en: "Select a property to consult about:" },
+  "consult.selectSaved":  { id: "Pilih dari listing tersimpan Anda", en: "Select from your saved listings" },
+  "consult.browse":       { id: "Jelajahi listing", en: "Browse listings" },
+
+  // ── Consultation: success ─────────────────────────────────────────────────
+  "consultOk.title":      { id: "Pemesanan dikonfirmasi!", en: "Booking confirmed!" },
+  "consultOk.lead":       { id: "Pembayaran diterima. Konsultasi Anda sudah terjadwal.", en: "Payment received. Your consultation is booked." },
+  "consultOk.body":       { id: "Penasihat Cosystem akan menghubungi Anda dalam 24 jam untuk menjadwalkan sesi. Periksa email Anda untuk konfirmasinya.", en: "A Cosystem advisor will contact you within 24 hours to schedule your session. Check your email for the confirmation." },
+  "consultOk.i1":         { id: "Penasihat menghubungi dalam 24 jam", en: "Advisor will reach out within 24 hours" },
+  "consultOk.i2":         { id: "Sesi lewat Google Meet atau Zoom", en: "Session via Google Meet or Zoom" },
+  "consultOk.i3":         { id: "Laporan dikirim lewat email setelah sesi (khusus Premium)", en: "Report emailed after session (Premium only)" },
+  "consultOk.viewAppt":   { id: "Lihat Jadwal",    en: "View Appointment" },
+  "consultOk.browseMore": { id: "Jelajahi Listing Lain", en: "Browse More Listings" },
+
+  // ── Sign in ───────────────────────────────────────────────────────────────
+  "login.title":          { id: "Selamat datang di Cosystem", en: "Welcome to Cosystem" },
+  "login.sub":            { id: "Masuk untuk memesan, meminta kunjungan, dan memantau keduanya di satu tempat.", en: "Sign in to book a stay, request a viewing, and track both in one place." },
+  "login.reasonBook":     { id: "Masuk untuk menyelesaikan pemesanan. Tanggal Anda masih tersedia.", en: "Sign in to finish booking. Your dates are still available." },
+  "login.reasonViewing":  { id: "Masuk untuk meminta kunjungan.", en: "Sign in to request a viewing." },
+  "login.listInstead":    { id: "Ingin mendaftarkan properti?", en: "Listing a property instead?" },
+  "login.submitHere":     { id: "Daftarkan di sini", en: "Submit it here" },
+  "login.tabSignIn":      { id: "Masuk",            en: "Sign in" },
+  "login.tabSignUp":      { id: "Buat akun",        en: "Create account" },
+  "login.fullName":       { id: "Nama lengkap",     en: "Full name" },
+  "login.fullNamePh":     { id: "Nama Anda",        en: "Your name" },
+  "login.email":          { id: "Email",            en: "Email" },
+  "login.password":       { id: "Kata sandi",       en: "Password" },
+  "login.passwordPh":     { id: "Minimal 8 karakter", en: "At least 8 characters" },
+  "login.signingIn":      { id: "Sedang masuk…",    en: "Signing in…" },
+  "login.creating":       { id: "Membuat akun…",    en: "Creating account…" },
+  "login.or":             { id: "atau",             en: "or" },
+  "login.google":         { id: "Lanjutkan dengan Google", en: "Continue with Google" },
+
+  // ── List your property ────────────────────────────────────────────────────
+  "listProp.title":       { id: "Daftarkan properti Anda", en: "List your property" },
+  "listProp.sub":         { id: "Bergabunglah dengan marketplace terkurasi kami. Setiap listing kami verifikasi demi kualitas terbaik untuk penyewa — dan hasil terbaik untuk pemilik.", en: "Join our curated marketplace. We verify every listing to ensure the highest quality for tenants — and best outcomes for owners." },
+
+  // ── Owner: no access ──────────────────────────────────────────────────────
+  "owner.access.noInvite": { id: "Jika Anda pemilik properti dan belum menerima tautan undangan, hubungi tim Cosystem.", en: "If you own a property here and have not received an invite link, please contact the Cosystem team." },
+  "owner.access.home":     { id: "Kembali ke beranda", en: "Back to home" },
 } as const satisfies Record<string, Str>;
 
 export type StringKey = keyof typeof STRINGS;

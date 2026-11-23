@@ -1,6 +1,8 @@
 import type { Metadata } from "next";
 import { Public_Sans } from "next/font/google";
 import "./globals.css";
+import { getLocale } from "@/lib/i18n/server";
+import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
 
 const publicSans = Public_Sans({
   variable: "--font-sans",
@@ -14,13 +16,18 @@ export const metadata: Metadata = {
     "Cosystem is Jakarta's most trusted curated rental marketplace for international professionals, expats, and local talent. Verified listings with independent RLA assessments.",
 };
 
-export default function RootLayout({
+export default async function RootLayout({
   children,
 }: Readonly<{
   children: React.ReactNode;
 }>) {
+  // lang was hardcoded "en" while every marketing page was Indonesian, which
+  // told screen readers and browser translation the wrong thing on every
+  // page. It now matches what is actually rendered.
+  const locale = await getLocale();
+
   return (
-    <html lang="en" className={`${publicSans.variable} h-full antialiased`}>
+    <html lang={locale} className={`${publicSans.variable} h-full antialiased`}>
       <head>
         <link
           rel="stylesheet"
@@ -29,7 +36,7 @@ export default function RootLayout({
         <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }`}</style>
       </head>
       <body className="min-h-full flex flex-col bg-[#fbf9f8] text-[#1b1c1c] font-sans">
-        {children}
+        <LocaleProvider locale={locale}>{children}</LocaleProvider>
       </body>
     </html>
   );

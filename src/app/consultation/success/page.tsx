@@ -1,8 +1,12 @@
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { getLocale } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/strings";
 
-export default function ConsultationSuccessPage() {
+export default async function ConsultationSuccessPage() {
+  const lang = await getLocale();
+
   return (
     <>
       <Navbar />
@@ -16,19 +20,19 @@ export default function ConsultationSuccessPage() {
           </span>
         </div>
 
-        <h1 className="text-3xl font-bold text-[#0d2137] mb-3">Booking confirmed!</h1>
+        <h1 className="text-3xl font-bold text-[#0d2137] mb-3">{t("consultOk.title", lang)}</h1>
         <p className="text-lg text-[#3e4944] mb-2">
-          Payment received. Your consultation is booked.
+          {t("consultOk.lead", lang)}
         </p>
         <p className="text-[#6e7a74] mb-10">
-          A Cosystem advisor will contact you within <strong>24 hours</strong> to schedule your session. Check your email for the confirmation.
+          {t("consultOk.body", lang)}
         </p>
 
         <div className="bg-[#f6f3f2] rounded-xl border border-[#bec9c2] p-6 mb-8 text-left space-y-3">
           {[
-            { icon: "calendar_today", text: "Advisor will reach out within 24 hours" },
-            { icon: "videocam", text: "Session via Google Meet or Zoom" },
-            { icon: "description", text: "Report emailed after session (Premium only)" },
+            { icon: "calendar_today", text: t("consultOk.i1", lang) },
+            { icon: "videocam", text: t("consultOk.i2", lang) },
+            { icon: "description", text: t("consultOk.i3", lang) },
           ].map((item) => (
             <div key={item.icon} className="flex items-center gap-3">
               <span className="material-symbols-outlined text-[#1a7a5e]">{item.icon}</span>
@@ -42,13 +46,13 @@ export default function ConsultationSuccessPage() {
             href="/dashboard/appointments"
             className="px-6 py-3 bg-[#1a7a5e] text-white rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
-            View Appointment
+            {t("consultOk.viewAppt", lang)}
           </Link>
           <Link
             href="/listings"
             className="px-6 py-3 border border-[#0d2137] text-[#0d2137] rounded-lg font-semibold hover:bg-[#f6f3f2] transition-colors"
           >
-            Browse More Listings
+            {t("consultOk.browseMore", lang)}
           </Link>
         </div>
       </main>

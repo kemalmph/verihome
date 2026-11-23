@@ -4,6 +4,8 @@ import { Footer } from "@/components/layout/Footer";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { getFeaturedProperties } from "@/lib/supabase/queries";
 import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
+import { getLocale } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/strings";
 
 /**
  * The marketing homepage.
@@ -15,9 +17,10 @@ import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
  */
 
 export default async function HomePage() {
-  const [featuredListings, savedIds] = await Promise.all([
+  const [featuredListings, savedIds, lang] = await Promise.all([
     getFeaturedProperties(3),
     getSavedPropertyIds(),
+    getLocale(),
   ]);
 
   return (
@@ -38,17 +41,15 @@ export default async function HomePage() {
           <div className="relative max-w-7xl mx-auto px-4 md:px-16 py-20 md:py-28">
             <div className="max-w-3xl">
               <span className="inline-block text-xs font-semibold tracking-wider uppercase text-[#9cf4d1] border border-[#9cf4d1]/30 bg-[#9cf4d1]/10 rounded-full px-3 py-1.5">
-                Satu Platform untuk Ruang Kerja &amp; Hunian
+                {t("home.hero.badge", lang)}
               </span>
 
               <h1 className="mt-6 text-4xl md:text-[3.25rem] md:leading-[1.1] font-bold text-white">
-                Kelola Operasional dan Monetisasi Properti Anda dalam Satu Sistem.
+                {t("home.hero.title", lang)}
               </h1>
 
               <p className="mt-6 text-lg text-white/80 max-w-2xl">
-                Dari coworking space, ruang rapat, dan studio kerja hingga rumah
-                tinggal, kos, dan vila. Rapikan jadwal dan tagihan penyewa,
-                lalu pasarkan properti kosong Anda di Marketplace Cosystem.
+                {t("home.hero.sub", lang)}
               </p>
 
               <div className="mt-9 flex flex-wrap gap-3">
@@ -56,19 +57,18 @@ export default async function HomePage() {
                   href="/contact"
                   className="px-6 py-3.5 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
                 >
-                  Kontak Kami
+                  {t("nav.contact", lang)}
                 </Link>
                 <Link
                   href="/listings"
                   className="px-6 py-3.5 rounded-lg border border-white/25 text-white font-semibold hover:bg-white/10 transition-colors"
                 >
-                  Lihat Listing Tersedia
+                  {t("home.hero.browse", lang)}
                 </Link>
               </div>
 
               <p className="mt-5 text-sm text-white/55">
-                Konsultasi kebutuhan properti &nbsp;•&nbsp; Setup dibantu tim kami
-                &nbsp;•&nbsp; Terintegrasi penuh
+                {t("home.hero.note", lang)}
               </p>
             </div>
           </div>
@@ -76,34 +76,33 @@ export default async function HomePage() {
 
         {/* ── Satu sistem untuk dua jenis aset ────────────────────── */}
         <section id="workspace-hunian" className="scroll-mt-20 py-20 md:py-24 max-w-7xl mx-auto px-4 md:px-16">
-          <Eyebrow>Fleksibel untuk Berbagai Aset</Eyebrow>
+          <Eyebrow>{t("home.assets.eyebrow", lang)}</Eyebrow>
           <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-3xl">
-            Dirancang untuk Mengelola Workspace maupun Hunian
+            {t("home.assets.title", lang)}
           </h2>
           <p className="mt-4 text-[#3e4944] text-lg max-w-3xl">
-            Satu dashboard terpusat yang otomatis menyesuaikan fitur dengan jenis
-            properti dan skema sewa Anda—baik hitungan jam, harian, maupun bulanan.
+            {t("home.assets.sub", lang)}
           </p>
 
           <div className="mt-12 grid grid-cols-1 lg:grid-cols-2 gap-6">
             <AssetCard
               icon="desk"
-              title="Ruang Kerja & Workspace"
-              description="Kelola coworking space, private office, meeting room, hingga studio kreatif dengan sistem reservasi dan kuota yang presisi."
+              title={t("home.assets.work.title", lang)}
+              description={t("home.assets.work.desc", lang)}
               points={[
-                "Kalender booking per jam atau per sesi anti-bentrok",
-                "Manajemen paket membership & kredit jam penggunaan",
-                "Pencatatan konsumsi dan margin per booking",
+                t("home.assets.work.p1", lang),
+                t("home.assets.work.p2", lang),
+                t("home.assets.work.p3", lang),
               ]}
             />
             <AssetCard
               icon="apartment"
-              title="Hunian & Rumah Tinggal"
-              description="Permudah operasional kos eksklusif, rumah kontrakan, apartemen, vila, hingga guesthouse tanpa pencatatan manual."
+              title={t("home.assets.live.title", lang)}
+              description={t("home.assets.live.desc", lang)}
               points={[
-                "Pencatatan tagihan dan verifikasi bukti transfer",
-                "Pengelolaan kontrak sewa, deposit, dan data penghuni",
-                "Kalender ketersediaan dan blokir tanggal oleh pemilik",
+                t("home.assets.live.p1", lang),
+                t("home.assets.live.p2", lang),
+                t("home.assets.live.p3", lang),
               ]}
             />
           </div>
@@ -112,32 +111,32 @@ export default async function HomePage() {
         {/* ── Fitur kelola & monetisasi ───────────────────────────── */}
         <section id="fitur-kelola" className="scroll-mt-20 bg-white py-20 md:py-24 border-y border-[#e4e2e1]">
           <div className="max-w-7xl mx-auto px-4 md:px-16">
-            <Eyebrow>Operasional &amp; Pertumbuhan</Eyebrow>
+            <Eyebrow>{t("home.ops.eyebrow", lang)}</Eyebrow>
             <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-3xl">
-              Rapikan Manajemen Harian, Maksimalkan Okupansi Unit
+              {t("home.ops.title", lang)}
             </h2>
 
             <div className="mt-12 grid grid-cols-1 lg:grid-cols-3 gap-6">
               <ValueBlock
                 number="01"
-                title="Satu Catatan untuk Jadwal & Tagihan Sewa"
-                description="Hentikan rekap manual di spreadsheet. Jadwal, kontrak, tagihan, dan jatuh temponya tercatat di satu dashboard — dan setiap pelunasan yang dikonfirmasi langsung masuk ke pembukuan properti Anda pada transaksi yang sama."
-                highlights={["0% risiko double booking", "Pembukuan tercatat saat pembayaran dikonfirmasi"]}
+                title={t("home.ops.b1.title", lang)}
+                description={t("home.ops.b1.desc", lang)}
+                highlights={[t("home.ops.b1.h1", lang), t("home.ops.b1.h2", lang)]}
               />
               <ValueBlock
                 id="monetisasi"
                 number="02"
-                title="Ubah Slot Kosong Menjadi Pendapatan"
-                description="Properti yang datanya sudah lengkap bisa ditayangkan ke halaman listing publik dari dashboard yang sama. Foto, deskripsi, dan tarif terbit apa adanya tanpa input ulang, dan tanggal yang Anda blokir tidak bisa dipesan."
-                highlights={["Tanpa input data dua kali", "Tanpa kelola dua aplikasi"]}
+                title={t("home.ops.b2.title", lang)}
+                description={t("home.ops.b2.desc", lang)}
+                highlights={[t("home.ops.b2.h1", lang), t("home.ops.b2.h2", lang)]}
                 href="/listings"
-                hrefLabel="Lihat halaman listing"
+                hrefLabel={t("home.ops.b2.link", lang)}
               />
               <ValueBlock
                 number="03"
-                title="Lihat Angkanya, Bukan Tebakannya"
-                description="Okupansi per unit, sewa yang sudah terikat, tagihan yang jatuh tempo, dan margin tiap booking setelah dikurangi biaya — dihitung dari transaksi yang tercatat, bukan dari rekap yang diketik ulang."
-                highlights={["Laporan okupansi & arus kas", "Pembukuan berpasangan yang tidak bisa diubah diam-diam"]}
+                title={t("home.ops.b3.title", lang)}
+                description={t("home.ops.b3.desc", lang)}
+                highlights={[t("home.ops.b3.h1", lang), t("home.ops.b3.h2", lang)]}
               />
             </div>
           </div>
@@ -145,25 +144,16 @@ export default async function HomePage() {
 
         {/* ── Cara kerja ──────────────────────────────────────────── */}
         <section id="cara-kerja" className="scroll-mt-20 py-20 md:py-24 max-w-7xl mx-auto px-4 md:px-16">
-          <Eyebrow>Cara Kerja</Eyebrow>
+          <Eyebrow>{t("home.how.eyebrow", lang)}</Eyebrow>
           <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137]">
-            Mulai Kelola &amp; Monetisasi dalam 3 Langkah
+            {t("home.how.title", lang)}
           </h2>
 
           <ol className="mt-12 grid grid-cols-1 md:grid-cols-3 gap-8">
             {[
-              {
-                t: "Konsultasi & Daftarkan Properti Anda",
-                d: "Hubungi tim kami untuk menyesuaikan konfigurasi sistem dengan jumlah unit dan jenis aset workspace maupun hunian Anda.",
-              },
-              {
-                t: "Atur Jadwal & Tayangkan di Listing",
-                d: "Kelola penyewa yang sudah ada dari satu dashboard, lalu nyalakan visibilitas listing publik untuk menjaring penyewa baru.",
-              },
-              {
-                t: "Terima Pembayaran & Pantau Laporan",
-                d: "Dana sewa masuk secara terstruktur lengkap dengan laporan okupansi, riwayat transaksi, dan performa tiap unit.",
-              },
+              { t: t("home.how.s1t", lang), d: t("home.how.s1d", lang) },
+              { t: t("home.how.s2t", lang), d: t("home.how.s2d", lang) },
+              { t: t("home.how.s3t", lang), d: t("home.how.s3d", lang) },
             ].map((s, i) => (
               <li key={s.t}>
                 <div className="w-11 h-11 rounded-full bg-[#1a7a5e] text-white font-bold flex items-center justify-center">
@@ -179,13 +169,12 @@ export default async function HomePage() {
         {/* ── Etalase listing aktif ───────────────────────────────── */}
         <section className="bg-[#f0eded] py-20 md:py-24">
           <div className="max-w-7xl mx-auto px-4 md:px-16">
-            <Eyebrow>Ekosistem Aktif</Eyebrow>
+            <Eyebrow>{t("home.show.eyebrow", lang)}</Eyebrow>
             <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-3xl">
-              Workspace &amp; Hunian yang Dikelola Melalui Cosystem
+              {t("home.show.title", lang)}
             </h2>
             <p className="mt-4 text-[#3e4944] text-lg max-w-3xl">
-              Jelajahi hunian yang jadwalnya terhubung langsung dengan sistem
-              pengelola. Unit ruang kerja menyusul tayang di marketplace.
+              {t("home.show.sub", lang)}
             </p>
 
             {featuredListings.length > 0 ? (
@@ -198,7 +187,7 @@ export default async function HomePage() {
               /* An empty grid with a heading above it reads as a broken page.
                  Saying so plainly is better than three grey rectangles. */
               <p className="mt-12 text-[#6e7a74]">
-                Belum ada unit yang tayang saat ini.
+                {t("home.show.empty", lang)}
               </p>
             )}
 
@@ -207,7 +196,7 @@ export default async function HomePage() {
                 href="/listings"
                 className="inline-flex items-center gap-2 text-[#1a7a5e] font-semibold hover:underline"
               >
-                Lihat Semua Listing
+                {t("home.show.all", lang)}
                 <span aria-hidden>→</span>
               </Link>
             </div>
@@ -216,35 +205,31 @@ export default async function HomePage() {
 
         {/* ── Skema harga ─────────────────────────────────────────── */}
         <section id="harga" className="scroll-mt-20 py-20 md:py-24 max-w-7xl mx-auto px-4 md:px-16">
-          <Eyebrow>Skema Kerja Sama</Eyebrow>
+          <Eyebrow>{t("home.price.eyebrow", lang)}</Eyebrow>
           <h2 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-3xl">
-            Solusi Fleksibel Sesuai Skala Properti Anda
+            {t("home.price.title", lang)}
           </h2>
           <p className="mt-4 text-[#3e4944] text-lg max-w-3xl">
-            Setiap properti memiliki kebutuhan operasional dan target okupansi yang
-            berbeda. Konsultasikan kebutuhan Anda dengan tim kami untuk mendapatkan
-            penawaran terbaik.
+            {t("home.price.sub", lang)}
           </p>
 
           <div className="mt-12 max-w-3xl bg-white border border-[#ddd7d4] rounded-2xl p-8 md:p-10 shadow-sm">
             <p className="text-sm font-semibold uppercase tracking-wide text-[#1a7a5e]">
-              Paket Kemitraan Pengelola
+              {t("home.price.badge", lang)}
             </p>
             <p className="mt-2 text-2xl md:text-3xl font-bold text-[#0d2137]">
-              Penawaran Khusus — Kontak Kami
+              {t("home.price.headline", lang)}
             </p>
             <p className="mt-4 text-[#3e4944] leading-relaxed">
-              Akses penuh sistem manajemen properti terintegrasi dengan katalog
-              marketplace Cosystem untuk meningkatkan efisiensi dan tingkat hunian
-              unit Anda.
+              {t("home.price.desc", lang)}
             </p>
 
             <ul className="mt-7 space-y-3">
               {[
-                "Sistem manajemen ruang kerja & hunian terpadu",
-                "Kalender okupansi, pencatatan tagihan, dan laporan keuangan",
-                "Tayang di halaman Listing Marketplace Cosystem",
-                "Pendampingan onboarding dan migrasi data awal oleh tim Cosystem",
+                t("home.price.f1", lang),
+                t("home.price.f2", lang),
+                t("home.price.f3", lang),
+                t("home.price.f4", lang),
               ].map((f) => (
                 <li key={f} className="flex items-start gap-3 text-[#3e4944]">
                   <span className="material-symbols-outlined text-[#1a7a5e] text-xl leading-6">
@@ -259,7 +244,7 @@ export default async function HomePage() {
               href="/contact"
               className="mt-9 inline-block px-6 py-3.5 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
             >
-              Kontak Kami untuk Penawaran
+              {t("home.price.cta", lang)}
             </Link>
           </div>
         </section>
@@ -268,24 +253,23 @@ export default async function HomePage() {
         <section className="bg-[#0d2137] py-16 md:py-20">
           <div className="max-w-7xl mx-auto px-4 md:px-16 text-center">
             <h2 className="text-3xl md:text-4xl font-bold text-white max-w-3xl mx-auto">
-              Siap Mengelola dan Memonetisasi Properti Anda Lebih Efisien?
+              {t("home.cta.title", lang)}
             </h2>
             <p className="mt-4 text-white/75 text-lg max-w-2xl mx-auto">
-              Diskusikan kebutuhan pengelolaan workspace atau hunian Anda bersama
-              tim Cosystem hari ini.
+              {t("home.cta.sub", lang)}
             </p>
             <div className="mt-9 flex flex-wrap gap-3 justify-center">
               <Link
                 href="/contact"
                 className="px-6 py-3.5 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
               >
-                Kontak Kami
+                {t("nav.contact", lang)}
               </Link>
               <Link
                 href="/listings"
                 className="px-6 py-3.5 rounded-lg border border-white/25 text-white font-semibold hover:bg-white/10 transition-colors"
               >
-                Cari Ruang Kerja &amp; Hunian
+                {t("home.cta.secondary", lang)}
               </Link>
             </div>
           </div>

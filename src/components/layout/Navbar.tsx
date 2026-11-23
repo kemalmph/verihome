@@ -2,10 +2,15 @@ import Link from "next/link";
 import { createClient } from "@/lib/supabase/server";
 import { NavbarClient } from "./NavbarClient";
 import { NavFeaturesMenu } from "./NavFeaturesMenu";
+import { getLocale } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/strings";
 
 export async function Navbar() {
   const supabase = await createClient();
-  const { data: { user } } = await supabase.auth.getUser();
+  const [{ data: { user } }, lang] = await Promise.all([
+    supabase.auth.getUser(),
+    getLocale(),
+  ]);
 
   const profile = user
     ? {
@@ -34,19 +39,19 @@ export async function Navbar() {
               href="/#harga"
               className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
             >
-              Harga
+              {t("nav.pricing", lang)}
             </Link>
             <Link
               href="/listings"
               className="text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
             >
-              Jelajahi Listing
+              {t("nav.browse", lang)}
             </Link>
             <Link
               href="/contact"
               className="text-sm font-semibold px-4 py-2 rounded-lg bg-[#1a7a5e] text-white hover:bg-[#166750] transition-colors"
             >
-              Kontak Kami
+              {t("nav.contact", lang)}
             </Link>
           </div>
         </div>

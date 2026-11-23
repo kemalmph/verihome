@@ -5,12 +5,15 @@ import Link from "next/link";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
 import { LoginModal } from "@/components/auth/LoginModal";
 import { signOut } from "@/lib/supabase/auth-actions";
+import { useT } from "@/lib/i18n/LocaleProvider";
+import type { StringKey } from "@/lib/i18n/strings";
 
 interface NavbarClientProps {
   user: { name: string; email: string } | null;
 }
 
 export function NavbarClient({ user }: NavbarClientProps) {
+  const t = useT();
   const [showModal, setShowModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
@@ -43,9 +46,9 @@ export function NavbarClient({ user }: NavbarClientProps) {
                     <p className="text-xs text-[#6e7a74] truncate">{user.email}</p>
                   </div>
                   {[
-                    { href: "/dashboard", icon: "dashboard", label: "Dashboard" },
-                    { href: "/dashboard/saved", icon: "favorite", label: "Saved Listings" },
-                    { href: "/dashboard/appointments", icon: "calendar_today", label: "Appointments" },
+                    { href: "/dashboard", icon: "dashboard", label: "nav.dashboard" as StringKey },
+                    { href: "/dashboard/saved", icon: "favorite", label: "nav.saved" as StringKey },
+                    { href: "/dashboard/appointments", icon: "calendar_today", label: "nav.appointments" as StringKey },
                   ].map((item) => (
                     <Link
                       key={item.href}
@@ -54,7 +57,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
                       className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#1b1c1c] hover:bg-[#f6f3f2] transition-colors"
                     >
                       <span className="material-symbols-outlined text-[18px] text-[#6e7a74]">{item.icon}</span>
-                      {item.label}
+                      {t(item.label)}
                     </Link>
                   ))}
                   <div className="border-t border-[#bec9c2]">
@@ -64,7 +67,7 @@ export function NavbarClient({ user }: NavbarClientProps) {
                         className="w-full flex items-center gap-3 px-4 py-2.5 text-sm text-red-600 hover:bg-red-50 transition-colors"
                       >
                         <span className="material-symbols-outlined text-[18px]">logout</span>
-                        Sign Out
+                        {t("nav.signOut")}
                       </button>
                     </form>
                   </div>
@@ -78,13 +81,13 @@ export function NavbarClient({ user }: NavbarClientProps) {
               onClick={() => setShowModal(true)}
               className="hidden lg:block px-5 py-2 rounded-lg border border-[#1a7a5e] text-[#1a7a5e] text-sm font-medium hover:bg-[#e8f5f0] transition-colors"
             >
-              Sign In
+              {t("nav.signIn")}
             </button>
             <button
               onClick={() => setShowModal(true)}
               className="px-5 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:opacity-90 transition-all shadow-sm"
             >
-              Sign Up
+              {t("nav.signUp")}
             </button>
           </>
         )}

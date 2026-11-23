@@ -4,6 +4,8 @@ import { Footer } from "@/components/layout/Footer";
 import { ListingCard } from "@/components/listings/ListingCard";
 import { getLiveProperties } from "@/lib/supabase/queries";
 import { getSavedPropertyIds } from "@/lib/supabase/save-actions";
+import { getLocale } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/strings";
 
 interface ListingsPageProps {
   searchParams: Promise<{
@@ -18,7 +20,7 @@ interface ListingsPageProps {
 export default async function ListingsPage({ searchParams }: ListingsPageProps) {
   const filters = await searchParams;
 
-  const [properties, savedIds] = await Promise.all([
+  const [properties, savedIds, lang] = await Promise.all([
     getLiveProperties({
       area: filters.area,
       type: filters.type,
@@ -27,6 +29,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       rentalMode: filters.mode,
     }),
     getSavedPropertyIds(),
+    getLocale(),
   ]);
 
   return (
@@ -37,14 +40,13 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       <div className="bg-[#0d2137] text-white">
         <div className="max-w-7xl mx-auto px-4 md:px-16 py-3.5 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-white/85">
-            Punya ruang kerja atau hunian kosong? Kelola jadwal, tagihan, dan
-            pasarkan unit Anda dalam satu platform bersama Cosystem.
+            {t("listings.ownerBanner", lang)}
           </p>
           <Link
             href="/contact"
             className="text-sm font-semibold whitespace-nowrap px-4 py-2 rounded-lg bg-[#1a7a5e] hover:bg-[#166750] transition-colors"
           >
-            Kontak Kami →
+            {t("nav.contact", lang)} →
           </Link>
         </div>
       </div>
@@ -52,10 +54,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       <main className="max-w-7xl mx-auto px-4 md:px-16 py-12">
         <header className="mb-10">
           <h1 className="text-4xl font-bold text-[#1b1c1c] mb-1">
-            All Listings
+            {t("listings.title", lang)}
           </h1>
           <p className="text-lg text-[#3e4944]">
-            Only verified, curated properties.
+            {t("listings.sub", lang)}
           </p>
         </header>
 
@@ -63,13 +65,13 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
         <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-12 shadow-sm">
           <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-[#3e4944]">Area</label>
+              <label className="text-xs font-medium text-[#3e4944]">{t("listings.area", lang)}</label>
               <select
                 name="area"
                 defaultValue={filters.area ?? ""}
                 className="w-full h-11 border border-[#bec9c2] rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
               >
-                <option value="">All Areas</option>
+                <option value="">{t("listings.allAreas", lang)}</option>
                 {["Senayan", "Kemang", "SCBD", "Sudirman", "Kuningan", "Menteng"].map(
                   (a) => (
                     <option key={a} value={a.toLowerCase()}>
@@ -82,24 +84,24 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-[#3e4944]">
-                Property Type
+                {t("listings.type", lang)}
               </label>
               <select
                 name="type"
                 defaultValue={filters.type ?? ""}
                 className="w-full h-11 border border-[#bec9c2] rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
               >
-                <option value="">All Types</option>
-                <option value="kost">Kost</option>
-                <option value="apartment">Apartment</option>
-                <option value="house">House</option>
-                <option value="villa">Villa</option>
+                <option value="">{t("listings.allTypes", lang)}</option>
+                <option value="kost">{t("listings.typeKost", lang)}</option>
+                <option value="apartment">{t("listings.typeApartment", lang)}</option>
+                <option value="house">{t("listings.typeHouse", lang)}</option>
+                <option value="villa">{t("listings.typeVilla", lang)}</option>
               </select>
             </div>
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-[#3e4944]">
-                Min Price (IDR)
+                {t("listings.minPrice", lang)}
               </label>
               <input
                 type="number"
@@ -112,7 +114,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
             <div className="space-y-1">
               <label className="text-xs font-medium text-[#3e4944]">
-                Max Price (IDR)
+                {t("listings.maxPrice", lang)}
               </label>
               <input
                 type="number"
@@ -127,7 +129,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               type="submit"
               className="h-11 bg-[#1a7a5e] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all shadow-sm"
             >
-              Apply Filters
+              {t("listings.apply", lang)}
             </button>
           </form>
         </section>
@@ -139,10 +141,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
               search_off
             </span>
             <h3 className="text-xl font-semibold text-[#1b1c1c] mb-2">
-              No listings found
+              {t("listings.emptyTitle", lang)}
             </h3>
             <p className="text-[#3e4944]">
-              Try adjusting your filters to see more results.
+              {t("listings.emptyBody", lang)}
             </p>
           </div>
         ) : (

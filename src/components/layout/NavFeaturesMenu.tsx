@@ -2,6 +2,8 @@
 
 import { useEffect, useRef, useState } from "react";
 import Link from "next/link";
+import { useT } from "@/lib/i18n/LocaleProvider";
+import type { StringKey } from "@/lib/i18n/strings";
 
 /**
  * The first three nav items, folded into one.
@@ -14,25 +16,14 @@ import Link from "next/link";
  * They are folded rather than dropped: each still points at a real section,
  * and a link nobody can reach is not a simpler menu, it is a missing one.
  */
-const ITEMS: { href: string; label: string; blurb: string }[] = [
-  {
-    href: "/#fitur-kelola",
-    label: "Fitur Kelola",
-    blurb: "Jadwal, kontrak, dan tagihan dalam satu dashboard",
-  },
-  {
-    href: "/#monetisasi",
-    label: "Cara Monetisasi",
-    blurb: "Dari unit kosong ke listing yang menghasilkan",
-  },
-  {
-    href: "/#workspace-hunian",
-    label: "Workspace & Hunian",
-    blurb: "Satu sistem untuk dua jenis aset",
-  },
+const ITEMS: { href: string; label: StringKey; blurb: StringKey }[] = [
+  { href: "/#fitur-kelola",    label: "nav.feat.manage",   blurb: "nav.feat.manageBlurb" },
+  { href: "/#monetisasi",      label: "nav.feat.monetise", blurb: "nav.feat.monetiseBlurb" },
+  { href: "/#workspace-hunian", label: "nav.feat.assets",  blurb: "nav.feat.assetsBlurb" },
 ];
 
 export function NavFeaturesMenu() {
+  const t = useT();
   const [open, setOpen] = useState(false);
   const wrap = useRef<HTMLDivElement>(null);
 
@@ -59,7 +50,7 @@ export function NavFeaturesMenu() {
         onClick={() => setOpen((v) => !v)}
         className="flex items-center gap-1 text-sm font-medium text-[#3e4944] hover:text-[#1a7a5e] transition-colors"
       >
-        Fitur
+        {t("nav.features")}
         <span
           aria-hidden
           className={`material-symbols-outlined text-[18px] transition-transform ${
@@ -82,10 +73,10 @@ export function NavFeaturesMenu() {
                 className="block px-4 py-3 hover:bg-[#f6f3f2] transition-colors"
               >
                 <span className="block text-sm font-semibold text-[#0d2137]">
-                  {item.label}
+                  {t(item.label)}
                 </span>
                 <span className="block mt-0.5 text-xs text-[#6e7a74] leading-snug">
-                  {item.blurb}
+                  {t(item.blurb)}
                 </span>
               </Link>
             ))}

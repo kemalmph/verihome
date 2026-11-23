@@ -1,12 +1,16 @@
 import Link from "next/link";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
+import { getLocale } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/strings";
 
-export const metadata = {
-  title: "Kontak Kami — Cosystem",
-  description:
-    "Diskusikan kebutuhan pengelolaan ruang kerja atau hunian Anda bersama tim Cosystem.",
-};
+export async function generateMetadata() {
+  const lang = await getLocale();
+  return {
+    title: t("contact.metaTitle", lang),
+    description: t("contact.metaDesc", lang),
+  };
+}
 
 /**
  * The route every CTA on the homepage points at.
@@ -16,7 +20,8 @@ export const metadata = {
  * a button that opens a chat with nobody is worse than no button, because
  * the visitor blames themselves and leaves.
  */
-export default function ContactPage() {
+export default async function ContactPage() {
+  const lang = await getLocale();
   const email = process.env.TEAM_EMAIL ?? null;
 
   // Digits only: wa.me rejects spaces, dashes and a leading +.
@@ -29,15 +34,13 @@ export default function ContactPage() {
       <main className="bg-[#f6f3f2] min-h-[70vh]">
         <div className="max-w-5xl mx-auto px-4 md:px-16 py-16 md:py-24">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1a7a5e]">
-            Kontak Kami
+            {t("nav.contact", lang)}
           </p>
           <h1 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-2xl">
-            Diskusikan Kebutuhan Properti Anda
+            {t("contact.title", lang)}
           </h1>
           <p className="mt-4 text-[#3e4944] text-lg max-w-2xl">
-            Ceritakan jenis aset dan jumlah unit Anda — ruang kerja, kos, rumah
-            kontrakan, atau kombinasinya. Tim kami menyesuaikan konfigurasi
-            sistemnya, termasuk membantu memindahkan data yang sudah ada.
+            {t("contact.sub", lang)}
           </p>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
@@ -46,17 +49,16 @@ export default function ContactPage() {
                 apartment
               </span>
               <h2 className="mt-4 text-xl font-bold text-[#0d2137]">
-                Daftarkan Properti Anda
+                {t("contact.registerTitle", lang)}
               </h2>
               <p className="mt-3 text-[#3e4944] leading-relaxed">
-                Isi detail properti Anda dan tim kami menghubungi balik untuk
-                membahas konfigurasi serta langkah onboarding.
+                {t("contact.registerBody", lang)}
               </p>
               <Link
                 href="/list-your-property"
                 className="mt-6 inline-block px-5 py-3 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
               >
-                Mulai Pendaftaran
+                {t("contact.registerCta", lang)}
               </Link>
             </div>
 
@@ -65,10 +67,10 @@ export default function ContactPage() {
                 support_agent
               </span>
               <h2 className="mt-4 text-xl font-bold text-[#0d2137]">
-                Bicara Langsung
+                {t("contact.talkTitle", lang)}
               </h2>
               <p className="mt-3 text-[#3e4944] leading-relaxed">
-                Punya pertanyaan sebelum mendaftar? Hubungi kami langsung.
+                {t("contact.talkBody", lang)}
               </p>
 
               <div className="mt-6 space-y-3">
@@ -94,8 +96,7 @@ export default function ContactPage() {
                 )}
                 {!wa && !email && (
                   <p className="text-sm text-[#6e7a74]">
-                    Silakan gunakan formulir pendaftaran properti di samping —
-                    tim kami akan menghubungi Anda balik.
+                    {t("contact.noChannels", lang)}
                   </p>
                 )}
               </div>
@@ -104,17 +105,16 @@ export default function ContactPage() {
 
           <div className="mt-12 bg-white border border-[#ddd7d4] rounded-2xl p-8">
             <h2 className="text-lg font-bold text-[#0d2137]">
-              Mencari ruang kerja atau hunian untuk disewa?
+              {t("contact.renterTitle", lang)}
             </h2>
             <p className="mt-2 text-[#3e4944]">
-              Halaman ini untuk pemilik dan pengelola properti. Kalau Anda sedang
-              mencari tempat, jelajahi unit yang tersedia.
+              {t("contact.renterBody", lang)}
             </p>
             <Link
               href="/listings"
               className="mt-5 inline-flex items-center gap-2 text-[#1a7a5e] font-semibold hover:underline"
             >
-              Lihat Listing Tersedia <span aria-hidden>→</span>
+              {t("contact.renterCta", lang)} <span aria-hidden>→</span>
             </Link>
           </div>
         </div>

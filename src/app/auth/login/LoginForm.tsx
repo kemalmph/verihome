@@ -2,6 +2,7 @@
 
 import { useState, useTransition } from "react";
 import { signInWithEmail, signUpWithEmail, signInWithGoogle } from "@/lib/supabase/auth-actions";
+import { useT } from "@/lib/i18n/LocaleProvider";
 
 const input =
   "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white";
@@ -12,6 +13,7 @@ type Mode = "signin" | "signup";
 export function LoginForm({ next, reason, googleEnabled = false }: {
   next: string; reason?: string; googleEnabled?: boolean;
 }) {
+  const t = useT();
   const [mode, setMode] = useState<Mode>("signin");
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
@@ -47,7 +49,7 @@ export function LoginForm({ next, reason, googleEnabled = false }: {
   return (
     <div className="bg-white rounded-2xl border border-[#cccccc] shadow-sm overflow-hidden">
       <div className="flex border-b border-[#e4e2e1]">
-        {([["signin", "Sign in"], ["signup", "Create account"]] as const).map(([value, label]) => (
+        {([["signin", t("login.tabSignIn")], ["signup", t("login.tabSignUp")]] as const).map(([value, label]) => (
           <button
             key={value}
             type="button"
@@ -95,23 +97,23 @@ export function LoginForm({ next, reason, googleEnabled = false }: {
         <form method="post" onSubmit={handleSubmit} className="space-y-4">
           {mode === "signup" && (
             <div>
-              <label className={labelCls} htmlFor="name">Full name</label>
-              <input id="name" name="name" required placeholder="Your name" className={input} />
+              <label className={labelCls} htmlFor="name">{t("login.fullName")}</label>
+              <input id="name" name="name" required placeholder={t("login.fullNamePh")} className={input} />
             </div>
           )}
 
           <div>
-            <label className={labelCls} htmlFor="email">Email</label>
+            <label className={labelCls} htmlFor="email">{t("login.email")}</label>
             <input id="email" name="email" type="email" required autoComplete="email"
               placeholder="you@example.com" className={input} />
           </div>
 
           <div>
-            <label className={labelCls} htmlFor="password">Password</label>
+            <label className={labelCls} htmlFor="password">{t("login.password")}</label>
             <input
               id="password" name="password" type="password" required minLength={8}
               autoComplete={mode === "signin" ? "current-password" : "new-password"}
-              placeholder={mode === "signup" ? "At least 8 characters" : "••••••••"}
+              placeholder={mode === "signup" ? t("login.passwordPh") : "••••••••"}
               className={input}
             />
           </div>
@@ -123,9 +125,9 @@ export function LoginForm({ next, reason, googleEnabled = false }: {
           >
             {isPending ? (
               <><span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
-                {mode === "signin" ? "Signing in…" : "Creating account…"}</>
+                {mode === "signin" ? t("login.signingIn") : t("login.creating")}</>
             ) : (
-              mode === "signin" ? "Sign in" : "Create account"
+              mode === "signin" ? t("login.tabSignIn") : t("login.tabSignUp")
             )}
           </button>
         </form>
@@ -136,7 +138,7 @@ export function LoginForm({ next, reason, googleEnabled = false }: {
           <>
             <div className="flex items-center gap-3 my-5">
               <span className="h-px flex-1 bg-[#e4e2e1]" />
-              <span className="text-xs text-[#6e7a74]">or</span>
+              <span className="text-xs text-[#6e7a74]">{t("login.or")}</span>
               <span className="h-px flex-1 bg-[#e4e2e1]" />
             </div>
 
@@ -145,7 +147,7 @@ export function LoginForm({ next, reason, googleEnabled = false }: {
                 type="submit"
                 className="w-full h-11 border border-[#cccccc] rounded-lg font-semibold text-sm text-[#3e4944] hover:border-[#1a7a5e] transition-colors"
               >
-                Continue with Google
+                {t("login.google")}
               </button>
             </form>
           </>
