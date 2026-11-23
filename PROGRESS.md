@@ -4,7 +4,9 @@ Posisi terakhir pekerjaan, untuk disambung session berikutnya.
 Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
-Terakhir diperbarui: 2026-11-23 · branch `main-g2jjf1` · commit `bf63bff`
+Terakhir diperbarui: 2026-11-23, di akhir session · branch kerja `main-g2jjf1`
+(sudah di-merge ke `main`). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
 
@@ -119,6 +121,35 @@ Urut prioritas:
 - **Entitlement membership disalin dari plan saat pembelian**, bukan dibaca
   lewat referensi — mengedit plan tidak boleh diam-diam mengubah apa yang
   sudah dibeli orang.
+- **Header dirampingkan dua tahap.** Tiga item pertama ("Fitur Kelola", "Cara
+  Monetisasi", "Workspace & Hunian") dilipat ke dropdown **Fitur** — ketiganya
+  menjawab satu pertanyaan yang sama di kepala pengunjung. Lalu "Jelajahi
+  Listing" dan "Kontak Kami" dibuang dari bilah. Keduanya **dilipat, bukan
+  diputus**: masih ada di hero, banner penutup, banner halaman listing, dan
+  footer. Menu yang ringkas karena tautannya dihilangkan bukan menu yang lebih
+  sederhana — itu menu yang kurang.
+- **Menu ponsel mencerminkan header desktop persis**, tidak ada yang
+  diselundupkan masuk hanya karena panelnya tersembunyi. Satu pengecualian:
+  **"Masuk" tinggal di menu**, karena di 390px bilah dengan tombol menu +
+  wordmark + sakelar bahasa + dua kontrol akun meluber dan "Daftar" terpotong.
+  Dicoba dulu di bilah, diukur, lalu dipindah.
+- **Masuk/Daftar jadi tautan ke `/auth/login`, bukan tombol pembuka modal.**
+  Modalnya selalu terbuka dalam mode masuk, jadi menekan "Daftar" memberi form
+  masuk. Halaman login sudah punya kedua tab, sudah `method="post"`, sudah
+  diterjemahkan, sudah menghormati `?next=`. **`LoginModal` tetap dipakai —
+  hanya oleh tombol simpan di kartu listing**, di mana modal memang tepat
+  (pengunjung tidak kehilangan halamannya) dan mode masuk memang yang benar.
+- **Teks hukum dan uang kini satu bahasa, bukan dua bertumpuk.** Ketentuan
+  deposit viewing, catatan alamat di detail listing, halaman tanpa akses, dan
+  halaman undangan pemilik dulu mencetak Indonesia dan Inggris berdampingan —
+  karena tidak ada sakelar untuk memilih. Sekarang ada, jadi pembaca menerima
+  satu.
+- **Tes yang bergantung pada label dikunci bahasanya.** `test-homepage-links`
+  dipaksa ke Indonesia; frasa pemeriksa nav/footer di `test-language-switch`
+  sengaja dipilih yang tidak mungkin muncul di nama atau deskripsi listing —
+  teks itu datang dari kolom berbahasa Indonesia dan tampil apa adanya di
+  kedua bahasa, jadi kata seperti "Penyewa" akan menggagalkan paruh "tidak
+  boleh ada" karena sebab yang tidak ada hubungannya dengan bahasa.
 
 ---
 
@@ -144,6 +175,52 @@ Urut prioritas:
 - **Isi katalog tidak ikut berganti bahasa.** Nama properti, deskripsi listing,
   dan nama area tersimpan di satu kolom berbahasa Indonesia; sakelar hanya
   mengubah antarmuka di sekelilingnya.
+
+---
+
+## Izin kerja yang berlaku
+
+Diberikan owner di session sebelumnya, masih berlaku kecuali dicabut:
+
+- **Migration dan merge ke `main` boleh tanpa bertanya lebih dulu.** Kalimat
+  aslinya: *"At this stage you can always go to migration and pr to main. This
+  is not live yet, ill tell you when."*
+- ⚠ **Premisnya sudah berubah.** Saat itu belum live; sejak 2026-11-23
+  `cosystem.co` melayani trafik sungguhan dan produksi memuat register Co&co
+  beserta buku besarnya. Izinnya belum dicabut, tapi "belum live" tidak lagi
+  benar — konfirmasikan ulang ke owner sebelum mengandalkan izin ini untuk
+  perubahan yang berisiko.
+- `AGENTS.md`: **VeriHome System Reference jangan diubah atau diterbitkan
+  ulang** kecuali owner memintanya di session itu juga. Kalau ada yang pantas
+  masuk ke sana, sebutkan di chat beserta nomor bagiannya dan biarkan.
+- **Register Co&co tidak boleh masuk repo.** Repo ini publik; registernya
+  berisi nama penyewa, nomor ponsel, dan email pribadi.
+
+---
+
+## Ekor kecil yang belum dikerjakan
+
+Bukan pemblokir, tapi sayang kalau hilang:
+
+- **Ganti password admin produksi `kemalmph@yahoo.com`.** Nilainya sempat
+  diketik di percakapan session, jadi ia ada di transkrip. Sudah diberitahukan
+  ke owner; belum ada konfirmasi sudah diganti.
+- **Portal pemilik baru separuh dwibahasa.** `OwnerSidebar` sudah membaca
+  sakelar, isi halamannya belum: 15 berkas di `src/app/owner/` memanggil `t()`
+  tanpa argumen bahasa (±60 panggilan), jadi pemilik yang memilih EN melihat
+  sidebar Inggris di atas halaman Indonesia. Pekerjaannya mekanis —
+  `getLocale()` untuk server component, `useT()` untuk client.
+- **`NEXT_PUBLIC_WHATSAPP` belum diset**, jadi tombol WhatsApp di `/contact`
+  tidak dirender sama sekali. Itu memang disengaja — tombol yang membuka
+  percakapan dengan nomor kosong lebih buruk daripada tidak ada tombol — tapi
+  artinya satu-satunya jalur kontak di sana adalah formulir dan email.
+- **Tile "Sewa terikat" di `/site/[id]/dashboard` dilaporkan teksnya
+  terpotong.** Dicatat di session sebelumnya, belum diperiksa ulang setelah
+  perubahan belakangan.
+- **Di ponsel, `/listings` dan `/contact` tidak ada di header maupun di menu**,
+  karena menu sengaja mencerminkan desktop dan keduanya baru dibuang dari
+  bilah. Masih terjangkau lewat hero dan footer. Kalau terasa kurang, itu
+  perubahan satu baris di `NavMobileMenu`.
 
 ---
 
