@@ -85,7 +85,14 @@ export function LoginForm({ next, reason, googleEnabled = false }: {
           </div>
         )}
 
-        <form onSubmit={handleSubmit} className="space-y-4">
+        {/* method="post" supaya submit sebelum hidrasi tidak menaruh
+        password di query string. Tanpa ini, default HTML adalah GET:
+        klik cepat di koneksi lambat mengirim email dan password ke URL,
+        lalu ke riwayat browser, log server, dan header Referer.
+        Setelah hidrasi, onSubmit mencegah submit asli dan method tidak
+        lagi berperan — ini murni jaring pengaman untuk jendela sebelum
+        JavaScript siap. */}
+        <form method="post" onSubmit={handleSubmit} className="space-y-4">
           {mode === "signup" && (
             <div>
               <label className={labelCls} htmlFor="name">Full name</label>

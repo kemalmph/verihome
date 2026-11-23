@@ -60,7 +60,14 @@ export function LoginModal({ onClose }: LoginModalProps) {
             </div>
           )}
 
-          <form onSubmit={handleEmailSubmit} className="space-y-4">
+          {/* method="post" supaya submit sebelum hidrasi tidak menaruh
+          password di query string. Tanpa ini, default HTML adalah GET:
+          klik cepat di koneksi lambat mengirim email dan password ke URL,
+          lalu ke riwayat browser, log server, dan header Referer.
+          Setelah hidrasi, onSubmit mencegah submit asli dan method tidak
+          lagi berperan — ini murni jaring pengaman untuk jendela sebelum
+          JavaScript siap. */}
+          <form method="post" onSubmit={handleEmailSubmit} className="space-y-4">
             {emailMode === "signup" && (
               <div>
                 <label className="text-xs font-medium text-[#3e4944] block mb-1">Full Name</label>
