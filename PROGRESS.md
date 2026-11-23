@@ -32,6 +32,37 @@ sebagian besar Indonesia.
 
 ---
 
+## Dokumen referensi: VeriHome System Reference
+
+<https://claude.ai/artifact/B9WY3ErwkBzWGoY7WRkmJf>
+
+Referensi arsitektur 20 bagian — topologi, model data, identitas, intake,
+booking, penjaga double-booking, buku besar, pelaporan, portal pemilik, lalu
+§19 jebakan produksi dan §20 risiko terbuka. Nomor bagian yang muncul di
+komentar kode dan pesan commit (§8, §12, §13, §19.7, §19.9, §20) menunjuk ke
+sini. **Baca lebih dulu** kalau menyentuh subsistem yang belum dikenal.
+
+⚠ **Read-only.** `AGENTS.md`: jangan mengubah, menerbitkan ulang, atau
+mengeditnya kecuali owner memintanya **di session itu juga** — termasuk kalau
+catatan handoff bilang "jaga tetap sinkron". Kalau menemukan sesuatu yang
+pantas masuk, **sebutkan di chat beserta nomor bagiannya** dan biarkan
+dokumennya. Owner yang memutuskan.
+
+**Bagian yang sudah tertinggal, per 2026-11-23** — dicek dengan membaca
+dokumennya, bukan dari ingatan:
+
+| Bagian | Yang sudah tidak cocok |
+|---|---|
+| Judul & masthead | Masih "VeriHome" dan "the Jakarta rental marketplace". Produknya kini **Cosystem**, dan separuhnya adalah manajemen site/coworking. Masthead juga masih menulis *Replay from zero: **Fails** · §20.4*, padahal §20.4 sudah ditutup 2026-11-21 dan `check-migration-completeness.js` lulus. |
+| §01 Topologi | Tidak ada audiens `/site`. Fig. 1 masih menulis Server Components **ISR 60s**; sejak root layout membaca cookie bahasa, **semua rute dinamis** dan tidak ada satu pun halaman statis. |
+| §02 Model data | Tidak memuat `sites`, `lettable_units`, `unit_reservations`, `reservation_instalments`, `memberships`, `membership_plans`, `membership_periods`, `events`, `amenities`, `items` — yaitu seluruh sisi coworking. |
+| §13 Buku besar | Daftar akunnya belum memuat `revenue_coworking` dan `revenue_membership`; daftar jenis peristiwa belum memuat enam yang baru (tiga reservasi, tiga membership). Model pengakuan per **bulan keanggotaan** juga belum ada di sana. |
+| §19 Jebakan | Empat jebakan baru dari session 22–23 Nov layak dicatat: kontrol `onClick` yang mati sebelum hidrasi; `REVOKE … FROM PUBLIC` tidak cukup di Supabase karena *default privileges* menambah hibah bernama ke `anon`/`authenticated`; `<details>` tertutup tetap punya kotak tata letak (`content-visibility`), jadi `boundingBox` melaporkan laci terbuka yang sebenarnya tertutup; `curl -L` membuang header Cookie saat redirect lintas host. |
+| §20 Risiko | **Bagi hasil site pihak ketiga** belum tercatat sebagai risiko terbuka, padahal sekarang memblokir reservasi *dan* membership. Kebijakan **pengembalian dana membership** juga belum ada. Sebaliknya, §20.4 sudah bisa ditandai tertutup. |
+| Tidak ada bagiannya | Subsistem **i18n** (locale di cookie, `t(key, lang)`, 529 kunci) dan modul **site/coworking** sama sekali belum punya bagian sendiri. |
+
+---
+
 ## Selesai
 
 - **Modul site/coworking** — `sites`, `lettable_units`, `unit_reservations`
@@ -244,6 +275,32 @@ wrangler.** Yang ada:
 
 **Vercel** — deploy dari branch `main`. `vercel.json` memuat satu cron:
 `/api/cron/daily` tiap tengah malam.
+
+**Memastikan deploy benar-benar mendarat.** Status 200 dan suite yang hijau
+**bukan bukti**: keduanya akan tetap lolos di build lama. Cari penanda yang
+hanya ada pada commit itu, lalu tunggu sampai ia muncul:
+
+```
+curl -s https://www.cosystem.co/ | grep -q '<penanda>'
+```
+
+Penanda yang pernah dipakai: `mode=signup`, `<details`, `name="locale"`.
+Untuk commit yang hanya menyentuh admin, tidak ada penanda publik — periksa
+di dashboard Vercel bahwa commit itu **Ready · Current**.
+
+Dua hal yang sempat menjebak:
+
+- **Selalu uji ke `https://www.cosystem.co`, bukan apex.** `curl -L` dari
+  `cosystem.co` membuang header `Cookie` karena redirect ke host berbeda,
+  jadi pengujian berbasis cookie diam-diam menguji hal yang salah.
+- **Kegagalan build bisa sesaat.** 23 Nov, commit `1f05fd1` — isinya hanya
+  dua file dokumen, nol baris kode — gagal dengan `npm run build exited with
+  1`, lalu commit berikutnya membangun kode yang sama persis dan berhasil.
+  Kode itu sendiri sudah dibuktikan sehat lewat empat cara: build lokal dari
+  nol, clone bersih `npm ci` tanpa env, dengan env Supabase produksi, dan
+  dengan env sengaja dirusak. Kalau pola ini muncul lagi: **Redeploy dengan
+  "Use existing Build Cache" dimatikan** lebih dulu, sebelum mencari cacat
+  di kode.
 
 **Env var / secret — nama saja, jangan pernah tulis nilainya di repo:**
 
