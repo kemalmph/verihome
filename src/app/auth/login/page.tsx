@@ -19,9 +19,9 @@ function reasonFor(next: string): StringKey | undefined {
 export default async function LoginPage({
   searchParams,
 }: {
-  searchParams: Promise<{ next?: string }>;
+  searchParams: Promise<{ next?: string; mode?: string }>;
 }) {
-  const { next: rawNext } = await searchParams;
+  const { next: rawNext, mode } = await searchParams;
   const next = safeNext(rawNext);
   const lang = await getLocale();
 
@@ -47,6 +47,10 @@ export default async function LoginPage({
           <LoginForm
             next={next}
             reason={((k) => (k ? t(k, lang) : undefined))(reasonFor(next))}
+            // "Daftar" in the header points here with ?mode=signup, so the
+            // button's label matches the form that opens. Anything else
+            // falls back to signing in, which is what most arrivals want.
+            initialMode={mode === "signup" ? "signup" : "signin"}
             googleEnabled={process.env.GOOGLE_AUTH_ENABLED === "true"}
           />
 

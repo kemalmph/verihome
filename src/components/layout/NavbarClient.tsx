@@ -3,7 +3,6 @@
 import { useState } from "react";
 import Link from "next/link";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
-import { LoginModal } from "@/components/auth/LoginModal";
 import { signOut } from "@/lib/supabase/auth-actions";
 import { useT } from "@/lib/i18n/LocaleProvider";
 import type { StringKey } from "@/lib/i18n/strings";
@@ -14,7 +13,6 @@ interface NavbarClientProps {
 
 export function NavbarClient({ user }: NavbarClientProps) {
   const t = useT();
-  const [showModal, setShowModal] = useState(false);
   const [showUserMenu, setShowUserMenu] = useState(false);
 
   return (
@@ -76,24 +74,36 @@ export function NavbarClient({ user }: NavbarClientProps) {
             )}
           </div>
         ) : (
+          /* Links, not buttons that open a modal.
+             
+             Both buttons used to open the same modal, and that modal always
+             opened in sign-in mode — so pressing "Daftar" handed a new
+             visitor a sign-in form and a small link at the bottom to find
+             the real one. And being onClick, neither did anything at all
+             until React had hydrated: on a phone the only account control
+             in the header was dead for the first moment of a slow
+             connection.
+             
+             /auth/login already solves both. It carries the same two tabs,
+             posts without JavaScript, is translated, and honours ?next=.
+             Two code paths for one job is what let the mislabelled modal
+             live this long. */
           <>
-            <button
-              onClick={() => setShowModal(true)}
-              className="hidden lg:block px-5 py-2 rounded-lg border border-[#1a7a5e] text-[#1a7a5e] text-sm font-medium hover:bg-[#e8f5f0] transition-colors"
+            <Link
+              href="/auth/login"
+              className="hidden sm:block px-4 sm:px-5 py-2 rounded-lg border border-[#1a7a5e] text-[#1a7a5e] text-sm font-medium hover:bg-[#e8f5f0] transition-colors"
             >
               {t("nav.signIn")}
-            </button>
-            <button
-              onClick={() => setShowModal(true)}
-              className="px-5 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:opacity-90 transition-all shadow-sm"
+            </Link>
+            <Link
+              href="/auth/login?mode=signup"
+              className="px-4 sm:px-5 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:opacity-90 transition-all shadow-sm"
             >
               {t("nav.signUp")}
-            </button>
+            </Link>
           </>
         )}
       </div>
-
-      {showModal && <LoginModal onClose={() => setShowModal(false)} />}
     </>
   );
 }

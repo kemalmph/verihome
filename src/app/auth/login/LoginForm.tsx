@@ -10,11 +10,11 @@ const labelCls = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider 
 
 type Mode = "signin" | "signup";
 
-export function LoginForm({ next, reason, googleEnabled = false }: {
-  next: string; reason?: string; googleEnabled?: boolean;
+export function LoginForm({ next, reason, initialMode = "signin", googleEnabled = false }: {
+  next: string; reason?: string; initialMode?: Mode; googleEnabled?: boolean;
 }) {
   const t = useT();
-  const [mode, setMode] = useState<Mode>("signin");
+  const [mode, setMode] = useState<Mode>(initialMode);
   const [error, setError] = useState("");
   const [notice, setNotice] = useState("");
   const [isPending, startTransition] = useTransition();

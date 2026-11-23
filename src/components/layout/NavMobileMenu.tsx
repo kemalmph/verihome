@@ -26,7 +26,7 @@ const ITEMS: { href: string; label: StringKey; blurb?: StringKey }[] = [
   { href: "/#harga",            label: "nav.pricing" },
 ];
 
-export function NavMobileMenu({ lang }: { lang: Lang }) {
+export function NavMobileMenu({ lang, signedIn }: { lang: Lang; signedIn: boolean }) {
   return (
     <details className="md:hidden relative group">
       <summary
@@ -58,6 +58,20 @@ export function NavMobileMenu({ lang }: { lang: Lang }) {
             )}
           </Link>
         ))}
+
+        {/* "Masuk" lives here on a phone because the bar has no room for it:
+            at 390px a burger, a wordmark, the language switch and two
+            account controls overflow, and "Daftar" was clipped. A returning
+            visitor would otherwise have to guess the URL — or press
+            "Daftar", which is a sign-up label for a sign-in need. */}
+        {!signedIn && (
+          <Link
+            href="/auth/login"
+            className="block px-4 py-3 border-t border-[#e4e2e1] text-sm font-semibold text-[#1a7a5e] hover:bg-[#f6f3f2] transition-colors"
+          >
+            {t("nav.signIn", lang)}
+          </Link>
+        )}
       </div>
     </details>
   );

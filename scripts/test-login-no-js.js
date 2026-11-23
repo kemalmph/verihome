@@ -68,6 +68,62 @@ const SECRET = "kata-sandi-rahasia-jangan-bocor";
     );
   }
 
+  // ── the way in, from the header, with no JavaScript ──────────────────────
+  //
+  // "Masuk" and "Daftar" used to be buttons opening a modal, and the modal
+  // always opened in sign-in mode: pressing "Daftar" handed a new visitor a
+  // sign-in form. Being onClick, neither did anything at all before React
+  // hydrated — on a phone the only account control in the header was dead
+  // for the first moment of a slow connection. They are links now.
+  for (const width of [1280, 390]) {
+    const phone = width === 390;
+    const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width, height: 844 } });
+    const page = await ctx.newPage();
+    await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+
+    // On a phone the bar has no room for both, so "Masuk" moves into the
+    // menu; "Daftar" stays on the bar at every width.
+    const signUp = page.locator('a[href="/auth/login?mode=signup"]');
+    check(await signUp.count() >= 1, `${width}px: "Daftar" adalah tautan, bukan tombol modal`);
+    check(await signUp.first().isVisible(), `${width}px: "Daftar" terlihat di bilah`);
+
+    if (phone) {
+      await page.locator("details > summary").first().click();
+      check(
+        await page.locator('details a[href="/auth/login"]').first().isVisible(),
+        `${width}px: "Masuk" ada di dalam menu`,
+      );
+      check(
+        await page.evaluate(
+          () => document.documentElement.scrollWidth <= window.innerWidth,
+        ),
+        `${width}px: halaman tidak meluber ke samping`,
+      );
+    } else {
+      // :visible — this href exists twice: once on the bar and once in the
+      // phone menu, whose <details> keeps its contents in the DOM while
+      // closed. At this width only the bar one is on screen.
+      check(
+        await page.locator('a[href="/auth/login"]:visible').count() === 1,
+        `${width}px: "Masuk" terlihat di bilah`,
+      );
+    }
+
+    // The label must match the form that opens.
+    await signUp.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    check(
+      new URL(page.url()).search === "?mode=signup",
+      `${width}px: "Daftar" membuka /auth/login?mode=signup (${new URL(page.url()).search})`,
+    );
+    check(
+      await page.locator('input[name="name"]').isVisible(),
+      `${width}px: form pendaftaran yang terbuka, bukan form masuk`,
+    );
+
+    await ctx.close();
+  }
+
   await context.close();
   await browser.close();
 

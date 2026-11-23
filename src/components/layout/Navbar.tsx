@@ -24,7 +24,7 @@ export async function Navbar() {
     <header className="bg-[#fbf9f8] sticky top-0 z-50 border-b border-[#bec9c2] shadow-sm">
       <nav className="flex justify-between items-center w-full px-4 md:px-16 h-20 max-w-7xl mx-auto">
         <div className="flex items-center gap-3 md:gap-8">
-          <NavMobileMenu lang={lang} />
+          <NavMobileMenu lang={lang} signedIn={profile !== null} />
           <Link href="/" className="text-2xl font-bold text-[#006048]">
             Cosystem
           </Link>
