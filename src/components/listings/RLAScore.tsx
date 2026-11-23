@@ -1,18 +1,20 @@
 import type { RLAAssessment } from "@/lib/supabase/queries";
+import { getLocale } from "@/lib/i18n/server";
+import { t, type StringKey } from "@/lib/i18n/strings";
 
 interface RLAScoreProps {
   assessment: RLAAssessment;
 }
 
-const CATEGORIES: { key: keyof RLAAssessment; label: string }[] = [
-  { key: "building_condition",  label: "Building Condition" },
-  { key: "natural_lighting",    label: "Natural Lighting" },
-  { key: "ventilation",         label: "Ventilation" },
-  { key: "noise_level",         label: "Noise Level" },
-  { key: "cleanliness",         label: "Cleanliness" },
-  { key: "security_level",      label: "Security" },
-  { key: "bathroom_condition",  label: "Bathroom" },
-  { key: "furniture_quality",   label: "Furniture Quality" },
+const CATEGORIES: { key: keyof RLAAssessment; label: StringKey }[] = [
+  { key: "building_condition",  label: "rla.building" },
+  { key: "natural_lighting",    label: "rla.lighting" },
+  { key: "ventilation",         label: "rla.ventilation" },
+  { key: "noise_level",         label: "rla.noise" },
+  { key: "cleanliness",         label: "rla.cleanliness" },
+  { key: "security_level",      label: "rla.security" },
+  { key: "bathroom_condition",  label: "rla.bathroom" },
+  { key: "furniture_quality",   label: "rla.furniture" },
 ];
 
 function scoreColor(score: number) {
@@ -22,17 +24,18 @@ function scoreColor(score: number) {
   return "#ef4444";
 }
 
-export function RLAScore({ assessment }: RLAScoreProps) {
+export async function RLAScore({ assessment }: RLAScoreProps) {
+  const lang = await getLocale();
   const total = Number(assessment.rla_score).toFixed(1);
 
   return (
     <section className="bg-[#f6f3f2] p-6 rounded-xl space-y-6 border border-[#bec9c2]">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold text-[#1b1c1c]">RLA Assessment</h2>
+          <h2 className="text-xl font-semibold text-[#1b1c1c]">{t("rla.title", lang)}</h2>
           <span
             className="material-symbols-outlined text-[#6e7a74] text-sm cursor-help"
-            title="Rental Lifestyle Audit — Our independent scoring system"
+            title={t("rla.tooltip", lang)}
           >
             info
           </span>
@@ -58,7 +61,7 @@ export function RLAScore({ assessment }: RLAScoreProps) {
           return (
             <div key={cat.key} className="space-y-1.5">
               <div className="flex justify-between text-sm text-[#3e4944]">
-                <span>{cat.label}</span>
+                <span>{t(cat.label, lang)}</span>
                 <span className="font-bold text-[#1b1c1c]">{score}/10</span>
               </div>
               <div className="w-full bg-[#e4e2e1] h-2 rounded-full overflow-hidden">
@@ -80,7 +83,7 @@ export function RLAScore({ assessment }: RLAScoreProps) {
               &ldquo;{assessment.overall_notes}&rdquo;
               <br />
               <span className="text-[#1b1c1c] font-bold mt-1 inline-block not-italic">
-                — Cosystem Assessment Team
+                {t("rla.team", lang)}
               </span>
             </p>
           </div>

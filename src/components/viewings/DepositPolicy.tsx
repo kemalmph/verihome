@@ -1,4 +1,8 @@
+"use client";
+
 import { viewingPolicyLines } from "@/lib/viewings/policy";
+import { useLocale } from "@/lib/i18n/LocaleProvider";
+import { t, type StringKey } from "@/lib/i18n/strings";
 
 const TONE: Record<string, { dot: string; chip: string }> = {
   credit:  { dot: "bg-[#1a7a5e]", chip: "bg-[#e8f5f0] text-[#12614a]" },
@@ -7,26 +11,33 @@ const TONE: Record<string, { dot: string; chip: string }> = {
   forfeit: { dot: "bg-[#cf2f52]", chip: "bg-red-50 text-red-700" },
 };
 
-const LABEL: Record<string, string> = {
-  credit:  "kredit / credit",
-  cash:    "uang / cash",
-  partial: "50%",
-  forfeit: "hangus / forfeited",
+const LABEL: Record<string, StringKey> = {
+  credit:  "policy.credit",
+  cash:    "policy.cash",
+  partial: "policy.partial",
+  forfeit: "policy.forfeit",
 };
 
 /**
- * The deposit terms, bilingual, rendered identically wherever they appear.
- * Presentation only — the words come from lib/viewings/policy.
+ * The deposit terms, rendered identically wherever they appear.
+ *
+ * These used to print Indonesian and English stacked on every line, because
+ * there was no language switch to choose between them. There is now, so the
+ * reader gets one language — the one they asked for. The words themselves
+ * still come from lib/viewings/policy, which holds both.
+ *
+ * A client component because ViewingFlow — itself client — renders it. An
+ * async server component cannot be rendered from there at all.
  */
 export function DepositPolicy({ deposit }: { deposit: number }) {
+  const lang = useLocale();
   const lines = viewingPolicyLines(deposit);
 
   return (
     <div className="border border-[#cccccc] rounded-lg overflow-hidden">
       <div className="bg-[#f6f3f2] px-4 py-2.5 border-b border-[#e4e2e1]">
         <p className="font-semibold text-sm text-[#0d2137]">
-          Ketentuan deposit viewing
-          <span className="font-normal text-[#6e7a74]"> / Viewing deposit terms</span>
+          {t("policy.title", lang)}
         </p>
       </div>
 
@@ -39,15 +50,15 @@ export function DepositPolicy({ deposit }: { deposit: number }) {
               <div className="min-w-0 flex-1">
                 <div className="flex items-baseline justify-between gap-3 flex-wrap">
                   <p className="font-semibold text-sm text-[#0d2137]">
-                    {l.id}
-                    <span className="font-normal text-[#6e7a74]"> / {l.en}</span>
+                    {lang === "en" ? l.en : l.id}
                   </p>
                   <span className={`px-2 py-0.5 rounded-full text-[10px] font-bold uppercase tracking-wide shrink-0 ${tone.chip}`}>
-                    {LABEL[l.outcome]}
+                    {t(LABEL[l.outcome], lang)}
                   </span>
                 </div>
-                <p className="text-sm text-[#3e4944] mt-0.5">{l.idOutcome}</p>
-                <p className="text-xs text-[#6e7a74] mt-0.5">{l.enOutcome}</p>
+                <p className="text-sm text-[#3e4944] mt-0.5">
+                  {lang === "en" ? l.enOutcome : l.idOutcome}
+                </p>
               </div>
             </li>
           );

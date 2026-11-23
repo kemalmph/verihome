@@ -2,6 +2,7 @@
 
 import { useState } from "react";
 import { toggleSave } from "@/lib/supabase/save-actions";
+import { useT } from "@/lib/i18n/LocaleProvider";
 
 interface SaveButtonProps {
   propertyId: string;
@@ -11,6 +12,7 @@ interface SaveButtonProps {
 }
 
 export function SaveButton({ propertyId, initialSaved, onLoginRequired, size = "md" }: SaveButtonProps) {
+  const t = useT();
   const [saved, setSaved] = useState(initialSaved);
   const [pending, setPending] = useState(false);
 
@@ -42,7 +44,7 @@ export function SaveButton({ propertyId, initialSaved, onLoginRequired, size = "
     <button
       onClick={handleClick}
       disabled={pending}
-      aria-label={saved ? "Unsave listing" : "Save listing"}
+      aria-label={saved ? t("card.unsave") : t("card.save")}
       className={`${btnSize} rounded-full flex items-center justify-center transition-all ${
         saved
           ? "bg-red-50 text-red-500 hover:bg-red-100"

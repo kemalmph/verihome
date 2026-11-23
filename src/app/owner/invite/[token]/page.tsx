@@ -3,6 +3,7 @@ import { createClient } from "@/lib/supabase/server";
 import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { t } from "@/lib/i18n/strings";
+import { getLocale } from "@/lib/i18n/server";
 import { AcceptInvite } from "./AcceptInvite";
 
 export const dynamic = "force-dynamic";
@@ -17,6 +18,7 @@ export default async function OwnerInvitePage({
   params: Promise<{ token: string }>;
 }) {
   const { token } = await params;
+  const lang = await getLocale();
 
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
@@ -30,9 +32,8 @@ export default async function OwnerInvitePage({
     <>
       <Navbar />
       <main className="max-w-lg mx-auto px-4 py-16">
-        <h1 className="text-2xl font-bold text-[#0d2137]">{t("owner.invite.title")}</h1>
-        <p className="text-sm text-[#3e4944] mt-2">{t("owner.invite.intro")}</p>
-        <p className="text-xs text-[#6e7a74] mt-1">{t("owner.invite.intro", "en")}</p>
+        <h1 className="text-2xl font-bold text-[#0d2137]">{t("owner.invite.title", lang)}</h1>
+        <p className="text-sm text-[#3e4944] mt-2">{t("owner.invite.intro", lang)}</p>
 
         <div className="mt-8">
           <AcceptInvite token={token} />

@@ -3,9 +3,11 @@
 import { useState } from "react";
 import { useRouter } from "next/navigation";
 import { acceptOwnerInvite } from "@/lib/actions/owner-invite-actions";
-import { t, type StringKey } from "@/lib/i18n/strings";
+import { type StringKey } from "@/lib/i18n/strings";
+import { useT } from "@/lib/i18n/LocaleProvider";
 
 export function AcceptInvite({ token }: { token: string }) {
+  const t = useT();
   const router = useRouter();
   const [busy, setBusy] = useState(false);
   const [errorKey, setErrorKey] = useState<StringKey | null>(null);
@@ -28,7 +30,6 @@ export function AcceptInvite({ token }: { token: string }) {
       {errorKey && (
         <div className="bg-red-50 border border-red-200 rounded-lg p-4">
           <p className="text-sm text-red-700">{t(errorKey)}</p>
-          <p className="text-xs text-red-600 mt-1">{t(errorKey, "en")}</p>
         </div>
       )}
 
@@ -39,7 +40,6 @@ export function AcceptInvite({ token }: { token: string }) {
       >
         {busy ? t("common.loading") : t("owner.invite.accept")}
       </button>
-      <p className="text-xs text-center text-[#6e7a74]">{t("owner.invite.accept", "en")}</p>
     </div>
   );
 }

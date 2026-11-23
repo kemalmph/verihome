@@ -1,7 +1,10 @@
 "use client";
 
+
 import { useState, useEffect, useCallback } from "react";
 import Image from "next/image";
+import { useT } from "@/lib/i18n/LocaleProvider";
+import type { StringKey } from "@/lib/i18n/strings";
 
 export interface CategorizedPhotos {
   exterior: string[];
@@ -17,11 +20,11 @@ interface PhotoGalleryProps {
   videoUrl?: string | null;
 }
 
-const TAB_LABELS: { key: keyof CategorizedPhotos; label: string; icon: string }[] = [
-  { key: "exterior",   label: "Exterior",    icon: "home" },
-  { key: "commonArea", label: "Common Area", icon: "meeting_room" },
-  { key: "unit",       label: "Unit",        icon: "bed" },
-  { key: "bathroom",   label: "Bathroom",    icon: "bathtub" },
+const TAB_LABELS: { key: keyof CategorizedPhotos; label: StringKey; icon: string }[] = [
+  { key: "exterior",   label: "gallery.exterior",   icon: "home" },
+  { key: "commonArea", label: "gallery.commonArea", icon: "meeting_room" },
+  { key: "unit",       label: "gallery.unit",       icon: "bed" },
+  { key: "bathroom",   label: "gallery.bathroom",   icon: "bathtub" },
 ];
 
 // ── Lightbox ───────────────────────────────────────────────────────────────────
@@ -34,6 +37,7 @@ interface LightboxProps {
 }
 
 function Lightbox({ photos, initialIndex, categoryLabel, onClose }: LightboxProps) {
+  const t = useT();
   const [index, setIndex] = useState(initialIndex);
 
   const prev = useCallback(() => setIndex((i) => (i - 1 + photos.length) % photos.length), [photos.length]);
@@ -58,7 +62,7 @@ function Lightbox({ photos, initialIndex, categoryLabel, onClose }: LightboxProp
       <button
         onClick={onClose}
         className="absolute top-4 right-4 text-white/70 hover:text-white p-2"
-        aria-label="Close"
+        aria-label={t("gallery.close")}
       >
         <span className="material-symbols-outlined text-3xl">close</span>
       </button>
@@ -87,14 +91,14 @@ function Lightbox({ photos, initialIndex, categoryLabel, onClose }: LightboxProp
       <button
         onClick={(e) => { e.stopPropagation(); prev(); }}
         className="absolute left-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2"
-        aria-label="Previous"
+        aria-label={t("gallery.previous")}
       >
         <span className="material-symbols-outlined text-4xl">chevron_left</span>
       </button>
       <button
         onClick={(e) => { e.stopPropagation(); next(); }}
         className="absolute right-4 top-1/2 -translate-y-1/2 text-white/70 hover:text-white p-2"
-        aria-label="Next"
+        aria-label={t("gallery.next")}
       >
         <span className="material-symbols-outlined text-4xl">chevron_right</span>
       </button>
@@ -147,6 +151,7 @@ function VideoModal({ url, onClose }: { url: string; onClose: () => void }) {
 // ── Flat gallery ───────────────────────────────────────────────────────────────
 
 function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: string; videoUrl?: string | null }) {
+  const t = useT();
   const [lightbox, setLightbox] = useState<number | null>(null);
   const [showVideo, setShowVideo] = useState(false);
 
@@ -195,7 +200,7 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
         </div>
       )}
 
-      {lightbox !== null && <Lightbox photos={photos} initialIndex={lightbox} categoryLabel="All" onClose={() => setLightbox(null)} />}
+      {lightbox !== null && <Lightbox photos={photos} initialIndex={lightbox} categoryLabel={t("gallery.all")} onClose={() => setLightbox(null)} />}
       {showVideo && videoUrl && <VideoModal url={videoUrl} onClose={() => setShowVideo(false)} />}
     </div>
   );
@@ -204,6 +209,7 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
 // ── Categorized gallery ────────────────────────────────────────────────────────
 
 function CategorizedGallery({ categorized, title, videoUrl }: { categorized: CategorizedPhotos; title: string; videoUrl?: string | null }) {
+  const t = useT();
   const availableTabs = TAB_LABELS.filter((t) => categorized[t.key].length > 0);
   const [activeTab, setActiveTab] = useState<keyof CategorizedPhotos>(availableTabs[0]?.key ?? "exterior");
   const [activeIndex, setActiveIndex] = useState(0);
@@ -212,7 +218,8 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
 
   const allPhotos = availableTabs.flatMap((t) => categorized[t.key]);
   const currentPhotos = categorized[activeTab] ?? [];
-  const currentLabel = TAB_LABELS.find((t) => t.key === activeTab)?.label ?? "";
+  const currentKey = TAB_LABELS.find((tab) => tab.key === activeTab)?.label;
+  const currentLabel = currentKey ? t(currentKey) : "";
 
   if (availableTabs.length === 0) {
     return (
@@ -240,7 +247,7 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
             }`}
           >
             <span className="material-symbols-outlined text-base">{tab.icon}</span>
-            {tab.label}
+            {t(tab.label)}
             <span className="text-xs opacity-70">({categorized[tab.key].length})</span>
           </button>
         ))}

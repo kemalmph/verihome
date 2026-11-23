@@ -1,6 +1,7 @@
 "use client";
 
 import { useState } from "react";
+import { useT } from "@/lib/i18n/LocaleProvider";
 import type { ShortStayRateRow } from "@/lib/supabase/queries";
 
 interface Props {
@@ -87,21 +88,22 @@ function StepDates({
       if (!res.ok) { setError(data.error); return; }
       setQuote(data.quote);
     } catch {
-      setError("Could not fetch price. Please try again.");
+      setError(t("bf.quoteError"));
     } finally {
       setLoading(false);
     }
   }
 
+  const t = useT();
   const today = new Date().toISOString().slice(0, 10);
 
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137] text-lg">1. Select your dates</h2>
+      <h2 className="font-bold text-[#0d2137] text-lg">{t("bf.s1title")}</h2>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-[#3e4944] mb-1">Check-in</label>
+          <label className="block text-sm text-[#3e4944] mb-1">{t("bf.checkIn")}</label>
           <input
             type="date"
             min={today}
@@ -111,7 +113,7 @@ function StepDates({
           />
         </div>
         <div>
-          <label className="block text-sm text-[#3e4944] mb-1">Check-out</label>
+          <label className="block text-sm text-[#3e4944] mb-1">{t("bf.checkOut")}</label>
           <input
             type="date"
             min={checkIn || today}
@@ -123,7 +125,7 @@ function StepDates({
       </div>
 
       <div>
-        <label className="block text-sm text-[#3e4944] mb-1">Guests</label>
+        <label className="block text-sm text-[#3e4944] mb-1">{t("bf.guests")}</label>
         <input
           type="number"
           min={1}
@@ -135,8 +137,8 @@ function StepDates({
       </div>
 
       <div className="text-xs text-[#6e7a74]">
-        Min {rate.min_nights} night{rate.min_nights > 1 ? "s" : ""}
-        {rate.max_nights ? ` · Max ${rate.max_nights} nights` : ""}
+        {t("bf.min")} {rate.min_nights} {rate.min_nights > 1 ? t("bf.nights") : t("bf.night")}
+        {rate.max_nights ? ` · ${t("bf.max")} ${rate.max_nights} ${t("bf.nights")}` : ""}
       </div>
 
       <button
@@ -144,7 +146,7 @@ function StepDates({
         disabled={!checkIn || !checkOut || loading}
         className="w-full py-2.5 bg-[#0d2137] text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-40"
       >
-        {loading ? "Calculating…" : "Check availability & price"}
+        {loading ? t("bf.calculating") : t("bf.checkPrice")}
       </button>
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -154,7 +156,7 @@ function StepDates({
           {/* Tier-aware price breakdown */}
           {quote.tier === "monthly" && (
             <div className="flex justify-between">
-              <span>IDR {fmt(Math.round(quote.subtotal / (quote.nights / 30)))} × {(quote.nights / 30).toFixed(1)} bulan</span>
+              <span>IDR {fmt(Math.round(quote.subtotal / (quote.nights / 30)))} × {(quote.nights / 30).toFixed(1)} {t("bf.months")}</span>
               <span>IDR {fmt(quote.subtotal)}</span>
             </div>
           )}
@@ -178,22 +180,22 @@ function StepDates({
               </>
             ) : (
               <div className="flex justify-between">
-                <span>IDR {fmt(quote.breakdown[0].price)} × {quote.nights} malam</span>
+                <span>IDR {fmt(quote.breakdown[0].price)} × {quote.nights} {t("bf.nights")}</span>
                 <span>IDR {fmt(quote.subtotal)}</span>
               </div>
             );
           })()}
           {quote.cleaningFee > 0 && (
-            <div className="flex justify-between text-[#6e7a74]"><span>Cleaning fee</span><span>IDR {fmt(quote.cleaningFee)}</span></div>
+            <div className="flex justify-between text-[#6e7a74]"><span>{t("bf.cleaningFee")}</span><span>IDR {fmt(quote.cleaningFee)}</span></div>
           )}
           {quote.securityDeposit > 0 && (
             <div className="flex justify-between text-[#6e7a74]">
-              <span>Security deposit <span className="text-xs">(refundable)</span></span>
+              <span>{t("bf.securityDeposit")} <span className="text-xs">{t("bf.refundable")}</span></span>
               <span>IDR {fmt(quote.securityDeposit)}</span>
             </div>
           )}
           <div className="flex justify-between font-bold border-t border-[#cccccc] pt-2">
-            <span>Total to pay</span>
+            <span>{t("bf.totalToPay")}</span>
             <span className="text-[#1a7a5e]">IDR {fmt(quote.total + quote.securityDeposit)}</span>
           </div>
 
@@ -218,22 +220,23 @@ function StepConfirm({
   checkIn: string; checkOut: string; guests: number; quote: Quote;
   onBack: () => void; onConfirm: () => void; loading: boolean;
 }) {
+  const t = useT();
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137] text-lg">2. Confirm your booking</h2>
+      <h2 className="font-bold text-[#0d2137] text-lg">{t("bf.s2title")}</h2>
 
       <div className="space-y-3 text-sm">
         {[
-          { label: "Check-in",    value: checkIn },
-          { label: "Check-out",   value: checkOut },
-          { label: "Nights",      value: String(quote.nights) },
-          { label: "Guests",      value: String(guests) },
-          { label: "Subtotal",    value: `IDR ${fmt(quote.subtotal)}` },
-          ...(quote.cleaningFee > 0 ? [{ label: "Cleaning fee", value: `IDR ${fmt(quote.cleaningFee)}` }] : []),
+          { label: t("bf.checkIn"),  value: checkIn },
+          { label: t("bf.checkOut"), value: checkOut },
+          { label: t("bf.nightsLabel"), value: String(quote.nights) },
+          { label: t("bf.guests"),   value: String(guests) },
+          { label: t("bf.subtotal"), value: `IDR ${fmt(quote.subtotal)}` },
+          ...(quote.cleaningFee > 0 ? [{ label: t("bf.cleaningFee"), value: `IDR ${fmt(quote.cleaningFee)}` }] : []),
           ...(quote.securityDeposit > 0
-            ? [{ label: "Security deposit (refundable)", value: `IDR ${fmt(quote.securityDeposit)}` }]
+            ? [{ label: t("bf.depositRefundable"), value: `IDR ${fmt(quote.securityDeposit)}` }]
             : []),
-          { label: "Total to transfer", value: `IDR ${fmt(quote.total + quote.securityDeposit)}` },
+          { label: t("bf.totalTransfer"), value: `IDR ${fmt(quote.total + quote.securityDeposit)}` },
         ].map((row) => (
           <div key={row.label} className="flex justify-between border-b border-[#f6f3f2] pb-2 last:border-0 last:font-bold">
             <span className="text-[#3e4944]">{row.label}</span>
@@ -243,19 +246,19 @@ function StepConfirm({
       </div>
 
       <p className="text-xs text-[#6e7a74]">
-        By confirming, you agree to pay via bank transfer. Details will be shown on the next screen.
+        {t("bf.agree")}
       </p>
 
       <div className="flex gap-3">
         <button onClick={onBack} className="flex-1 py-3 border border-[#cccccc] rounded-lg text-sm font-semibold text-[#3e4944] hover:bg-[#f6f3f2]">
-          ← Back
+          ← {t("bf.back")}
         </button>
         <button
           onClick={onConfirm}
           disabled={loading}
           className="flex-1 py-3 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50"
         >
-          {loading ? "Creating booking…" : "Confirm & get payment details"}
+          {loading ? t("bf.creating") : t("bf.confirmGet")}
         </button>
       </div>
     </div>
@@ -269,6 +272,7 @@ function StepPayment({
 }: {
   intent: Intent; bookingCode: string; expiresAt: string | null;
 }) {
+  const t = useT();
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
       <div className="flex items-center gap-3">
@@ -276,19 +280,19 @@ function StepPayment({
           <span className="material-symbols-outlined text-[#1a7a5e]">check_circle</span>
         </div>
         <div>
-          <h2 className="font-bold text-[#0d2137] text-lg">Booking requested!</h2>
-          <p className="text-sm text-[#6e7a74]">Code: <strong>{bookingCode}</strong></p>
+          <h2 className="font-bold text-[#0d2137] text-lg">{t("bf.requested")}</h2>
+          <p className="text-sm text-[#6e7a74]">{t("bf.code")} <strong>{bookingCode}</strong></p>
         </div>
       </div>
 
       <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
-        <p className="font-semibold text-sm text-[#0d2137]">Complete your payment:</p>
+        <p className="font-semibold text-sm text-[#0d2137]">{t("bf.completePayment")}</p>
         <div className="space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-[#6e7a74]">Bank</span><strong>{intent.bankName}</strong></div>
-          <div className="flex justify-between"><span className="text-[#6e7a74]">Account</span><strong>{intent.accountNumber}</strong></div>
-          <div className="flex justify-between"><span className="text-[#6e7a74]">Name</span><strong>{intent.accountHolder}</strong></div>
+          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.bank")}</span><strong>{intent.bankName}</strong></div>
+          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.account")}</span><strong>{intent.accountNumber}</strong></div>
+          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.accountName")}</span><strong>{intent.accountHolder}</strong></div>
           <div className="flex justify-between text-[#1a7a5e] font-bold border-t border-[#cccccc] pt-2 mt-2">
-            <span>Transfer exactly</span>
+            <span>{t("view.transferExactly")}</span>
             <span>IDR {fmt(intent.totalAmount + Number(intent.transferCode))}</span>
           </div>
         </div>
@@ -300,27 +304,24 @@ function StepPayment({
           <span className="material-symbols-outlined text-amber-500 text-base leading-none mt-0.5">schedule</span>
           <div className="text-xs text-amber-900 space-y-1">
             <p className="font-semibold">
-              Transfer before {fmtDeadline(expiresAt)} WIB
+              {t("bf.transferBefore")} {fmtDeadline(expiresAt)} WIB
             </p>
             <p className="text-amber-800">
-              After this time the booking is cancelled automatically and the dates are released to other guests.
-            </p>
-            <p className="text-amber-800">
-              Transfer sebelum waktu tersebut. Lewat batas ini, pemesanan otomatis dibatalkan dan tanggalnya dilepas.
+              {t("bf.expiryNote")}
             </p>
           </div>
         </div>
       )}
 
       <p className="text-xs text-[#6e7a74]">
-        After transferring, upload your payment proof in <strong>My Bookings</strong>. We&apos;ll confirm within 24 hours.
+        {t("bf.afterTransfer")} <strong>{t("bf.myBookings")}</strong>. {t("bf.afterTransfer2")}
       </p>
 
       <a
         href="/dashboard/bookings"
         className="block w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold text-center hover:opacity-90"
       >
-        View my bookings
+        {t("bf.viewBookings")}
       </a>
     </div>
   );
@@ -329,6 +330,7 @@ function StepPayment({
 // ── Main flow ─────────────────────────────────────────────────
 
 export function BookingFlow({ propertyId, rate }: Pick<Props, "propertyId" | "rate">) {
+  const t = useT();
   const [step,    setStep]    = useState<1 | 2 | 3>(1);
   const [checkIn, setCheckIn] = useState("");
   const [checkOut,setCheckOut]= useState("");
@@ -361,7 +363,7 @@ export function BookingFlow({ propertyId, rate }: Pick<Props, "propertyId" | "ra
       setExpiresAt(data.booking.expires_at ?? null);
       setStep(3);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("common.error"));
     } finally {
       setLoading(false);
     }
@@ -371,7 +373,7 @@ export function BookingFlow({ propertyId, rate }: Pick<Props, "propertyId" | "ra
     <div className="space-y-4">
       {/* Progress */}
       <div className="flex items-center gap-2 text-xs text-[#6e7a74] mb-2">
-        {(["Select dates", "Confirm", "Payment"] as const).map((label, i) => (
+        {[t("bf.stepDates"), t("bf.stepConfirm"), t("bf.stepPayment")].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-[#1a7a5e] text-white" : step > i + 1 ? "bg-[#9cf4d1] text-[#0d2137]" : "bg-[#e4e2e1] text-[#6e7a74]"}`}>
               {step > i + 1 ? "✓" : i + 1}

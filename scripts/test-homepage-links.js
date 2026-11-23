@@ -26,7 +26,13 @@ const check = (ok, what) => (ok ? pass : fail).push(what);
 
 (async () => {
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1440, height: 1000 } });
+  // Pinned to Indonesian. This suite asserts on link labels, and since the
+  // EN/ID switch went in those labels depend on the visitor's language —
+  // which, with no cookie, is a guess from Accept-Language. Leaving it to
+  // Playwright's default would make a link test fail over a language change.
+  const context = await browser.newContext({ viewport: { width: 1440, height: 1000 } });
+  await context.addCookies([{ name: "cosystem_locale", value: "id", url: BASE }]);
+  const page = await context.newPage();
   const serverErrors = [];
   page.on("response", (r) => { if (r.status() >= 500) serverErrors.push(`${r.status()} ${r.url()}`); });
 

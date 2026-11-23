@@ -2,13 +2,16 @@ import Link from "next/link";
 import Image from "next/image";
 import type { PropertyRow } from "@/lib/supabase/queries";
 import { ListingCardActions } from "./ListingCardActions";
+import { getLocale } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/strings";
 
 interface ListingCardProps {
   property: PropertyRow;
   savedIds?: string[];
 }
 
-export function ListingCard({ property, savedIds = [] }: ListingCardProps) {
+export async function ListingCard({ property, savedIds = [] }: ListingCardProps) {
+  const lang = await getLocale();
   const price = new Intl.NumberFormat("id-ID").format(property.price_monthly);
   const photos = property.photo_urls ?? [];
   const rla = property.rla_assessments?.[0];
@@ -40,17 +43,17 @@ export function ListingCard({ property, savedIds = [] }: ListingCardProps) {
 
         <span className="absolute top-3 left-3 bg-[#e8f5f0] text-[#1a7a5e] px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-sm">
           <span className="material-symbols-outlined text-[14px]">verified</span>
-          Curated
+          {t("card.curated", lang)}
         </span>
 
         {property.rental_mode === "short_stay" && (
           <span className="absolute top-10 left-3 bg-blue-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm">
-            SHORT STAY
+            {t("card.shortStay", lang)}
           </span>
         )}
         {property.rental_mode === "both" && (
           <span className="absolute top-10 left-3 bg-purple-600 text-white px-2 py-0.5 rounded-full text-[10px] font-bold shadow-sm">
-            SHORT + LONG
+            {t("card.shortLong", lang)}
           </span>
         )}
 
@@ -79,7 +82,7 @@ export function ListingCard({ property, savedIds = [] }: ListingCardProps) {
 
         <div className="text-[#1a7a5e] text-xl font-bold">
           IDR {price}{" "}
-          <span className="text-xs font-normal text-[#6e7a74]">/ month</span>
+          <span className="text-xs font-normal text-[#6e7a74]">{t("card.perMonth", lang)}</span>
         </div>
 
         <div className="flex items-center gap-4 border-y border-[#bec9c2] py-3">
@@ -101,7 +104,7 @@ export function ListingCard({ property, savedIds = [] }: ListingCardProps) {
           href={`/listings/${property.slug}`}
           className="block w-full text-center py-2.5 border-2 border-[#1a7a5e] text-[#1a7a5e] rounded-lg text-sm font-medium hover:bg-[#1a7a5e] hover:text-white transition-colors duration-300"
         >
-          See Details
+          {t("card.seeDetails", lang)}
         </Link>
       </div>
     </article>

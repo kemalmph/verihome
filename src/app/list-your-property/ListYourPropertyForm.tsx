@@ -2,12 +2,14 @@
 
 import { useState, useTransition } from "react";
 import { submitProperty } from "@/lib/actions/submit-property";
+import { useT } from "@/lib/i18n/LocaleProvider";
 
 const CITY_NEIGHBORHOODS: Record<string, string[]> = {
   Jakarta: ["Kemang", "SCBD", "Senayan", "Sudirman", "Kuningan", "Menteng", "Other"],
 };
 
 export function ListYourPropertyForm() {
+  const t = useT();
   const [isPending, startTransition] = useTransition();
   const [result, setResult] = useState<{ success?: boolean; error?: string } | null>(null);
   const [selectedCity, setSelectedCity] = useState("");
@@ -29,15 +31,15 @@ export function ListYourPropertyForm() {
             check_circle
           </span>
         </div>
-        <h2 className="text-2xl font-bold text-[#0d2137]">Submission received!</h2>
+        <h2 className="text-2xl font-bold text-[#0d2137]">{t("lp.received")}</h2>
         <p className="text-[#3e4944] max-w-sm mx-auto">
-          We&apos;ve sent a confirmation to your email. Our team will reach out within <strong>2 business days</strong> to schedule your RLA inspection.
+          {t("lp.receivedBody")}
         </p>
         <button
           onClick={() => setResult(null)}
           className="mt-4 px-6 py-2.5 border border-[#1a7a5e] text-[#1a7a5e] rounded-lg text-sm font-medium hover:bg-[#e8f5f0]"
         >
-          Submit another property
+          {t("lp.another")}
         </button>
       </div>
     );
@@ -53,13 +55,13 @@ export function ListYourPropertyForm() {
 
       <div className="space-y-1">
         <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-          Property Name *
+          {t("lp.propertyName")}
         </label>
         <input
           name="name"
           type="text"
           required
-          placeholder="e.g. Modern 2BR in Senayan"
+          placeholder={t("lp.propertyNamePh")}
           className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
         />
       </div>
@@ -67,7 +69,7 @@ export function ListYourPropertyForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            City *
+            {t("lp.city")}
           </label>
           <select
             name="city"
@@ -76,13 +78,13 @@ export function ListYourPropertyForm() {
             onChange={(e) => setSelectedCity(e.target.value)}
             className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
           >
-            <option value="">Select city</option>
+            <option value="">{t("lp.selectCity")}</option>
             <option value="Jakarta">Jakarta</option>
           </select>
         </div>
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            Neighborhood *
+            {t("lp.neighborhood")}
           </label>
           <select
             name="area"
@@ -90,7 +92,7 @@ export function ListYourPropertyForm() {
             disabled={!selectedCity}
             className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
-            <option value="">Select neighborhood</option>
+            <option value="">{t("lp.selectNeighborhood")}</option>
             {(CITY_NEIGHBORHOODS[selectedCity] ?? []).map((n) => (
               <option key={n} value={n}>{n}</option>
             ))}
@@ -100,20 +102,20 @@ export function ListYourPropertyForm() {
 
       <div className="space-y-1">
         <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-          Address *
+          {t("lp.address")}
         </label>
         <input
           name="address"
           type="text"
           required
-          placeholder="e.g. Jl. Kemang Raya No. 12, Jakarta Selatan"
+          placeholder={t("lp.addressPh")}
           className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
         />
       </div>
 
       <div className="space-y-1">
         <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-          Google Maps Location URL
+          {t("lp.mapsUrl")}
         </label>
         <input
           name="google_maps_url"
@@ -126,29 +128,29 @@ export function ListYourPropertyForm() {
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            Property Type *
+            {t("lp.propertyType")}
           </label>
           <select
             name="property_type"
             required
             className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
           >
-            <option value="">Select type</option>
-            <option value="apartment">Apartment</option>
-            <option value="kost">Kost</option>
-            <option value="house">House</option>
+            <option value="">{t("lp.selectType")}</option>
+            <option value="apartment">{t("lp.apartment")}</option>
+            <option value="kost">{t("lp.kost")}</option>
+            <option value="house">{t("lp.house")}</option>
           </select>
         </div>
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            Bedrooms *
+            {t("lp.bedrooms")}
           </label>
           <select
             name="bedrooms"
             required
             className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
           >
-            <option value="studio">Studio</option>
+            <option value="studio">{t("lp.studio")}</option>
             <option value="1">1</option>
             <option value="2">2</option>
             <option value="3">3</option>
@@ -157,7 +159,7 @@ export function ListYourPropertyForm() {
         </div>
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            Bathrooms *
+            {t("lp.bathrooms")}
           </label>
           <select
             name="bathrooms"
@@ -174,26 +176,26 @@ export function ListYourPropertyForm() {
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            Monthly Rent (IDR) *
+            {t("lp.monthlyRent")}
           </label>
           <input
             name="price_monthly"
             type="number"
             required
             min="500000"
-            placeholder="e.g. 6500000"
+            placeholder={t("lp.rentPh")}
             className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
           />
         </div>
         <div className="space-y-1">
           <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-            Size (m²)
+            {t("lp.size")}
           </label>
           <input
             name="size_sqm"
             type="number"
             min="10"
-            placeholder="e.g. 45"
+            placeholder={t("lp.sizePh")}
             className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
           />
         </div>
@@ -201,34 +203,34 @@ export function ListYourPropertyForm() {
 
       <div className="space-y-1">
         <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-          Description
+          {t("lp.description")}
         </label>
         <textarea
           name="description"
           rows={4}
-          placeholder="Tell us about your property — what makes it special?"
+          placeholder={t("lp.descriptionPh")}
           className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm resize-none"
         />
       </div>
 
       <div className="border-t border-[#bec9c2] pt-6">
-        <p className="text-sm font-semibold text-[#1b1c1c] mb-4">Owner Details</p>
+        <p className="text-sm font-semibold text-[#1b1c1c] mb-4">{t("lp.ownerDetails")}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-1">
             <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-              Full Name *
+              {t("lp.fullName")}
             </label>
             <input
               name="owner_name"
               type="text"
               required
-              placeholder="Your full name"
+              placeholder={t("lp.fullNamePh")}
               className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm"
             />
           </div>
           <div className="space-y-1">
             <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-              Email *
+              {t("lp.emailLabel")}
             </label>
             <input
               name="owner_email"
@@ -240,7 +242,7 @@ export function ListYourPropertyForm() {
           </div>
           <div className="space-y-1">
             <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
-              WhatsApp Number *
+              {t("lp.whatsapp")}
             </label>
             <input
               name="owner_phone"
@@ -261,15 +263,15 @@ export function ListYourPropertyForm() {
         {isPending ? (
           <>
             <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>
-            Submitting…
+            {t("lp.submitting")}
           </>
         ) : (
-          "Submit Property"
+          t("lp.submit")
         )}
       </button>
 
       <p className="text-xs text-center text-[#6e7a74]">
-        Our team will review your submission and contact you within 2 business days.
+        {t("lp.footnote")}
       </p>
     </form>
   );

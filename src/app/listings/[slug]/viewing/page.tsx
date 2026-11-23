@@ -4,6 +4,8 @@ import { Footer } from "@/components/layout/Footer";
 import { getPropertyBySlug } from "@/lib/supabase/queries";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { ViewingFlow } from "./ViewingFlow";
+import { getLocale } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/strings";
 
 export const dynamic = "force-dynamic";
 
@@ -20,6 +22,7 @@ export default async function ViewingPage({ params }: Props) {
     getPropertyBySlug(slug),
     getCurrentUser().catch(() => null),
   ]);
+  const lang = await getLocale();
 
   if (!property) notFound();
   if (!user) redirect(`/auth/login?next=/listings/${slug}/viewing`);
@@ -32,10 +35,9 @@ export default async function ViewingPage({ params }: Props) {
           <div className="text-sm text-[#6e7a74] mb-1">{property.area}</div>
           <h1 className="text-2xl font-bold text-[#0d2137]">{property.name}</h1>
           <p className="text-sm text-[#3e4944] mt-2">
-            Request a physical viewing. A deposit of{" "}
-            <strong>IDR {new Intl.NumberFormat("id-ID").format(DEPOSIT)}</strong> confirms your slot.
-            If you attend it becomes Cosystem credit rather than a cash refund — the
-            full terms are shown before you pay.
+            {t("view.introA", lang)}{" "}
+            <strong>IDR {new Intl.NumberFormat("id-ID").format(DEPOSIT)}</strong>{" "}
+            {t("view.introB", lang)}
           </p>
         </div>
         <ViewingFlow

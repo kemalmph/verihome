@@ -5,6 +5,7 @@ import {
   signInWithEmail,
   signUpWithEmail,
 } from "@/lib/supabase/auth-actions";
+import { useT } from "@/lib/i18n/LocaleProvider";
 
 type EmailMode = "signin" | "signup";
 
@@ -13,6 +14,7 @@ interface LoginModalProps {
 }
 
 export function LoginModal({ onClose }: LoginModalProps) {
+  const t = useT();
   const [emailMode, setEmailMode] = useState<EmailMode>("signin");
   const [message, setMessage] = useState<{ type: "error" | "success"; text: string } | null>(null);
   const [isPending, startTransition] = useTransition();
@@ -37,14 +39,15 @@ export function LoginModal({ onClose }: LoginModalProps) {
         <div className="bg-[#0d2137] px-8 py-6 text-white">
           <button
             onClick={onClose}
+            aria-label={t("modal.close")}
             className="absolute top-4 right-4 text-white/60 hover:text-white"
           >
             <span className="material-symbols-outlined">close</span>
           </button>
           <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
-          <h2 className="text-2xl font-bold mt-1">Sign in to continue</h2>
+          <h2 className="text-2xl font-bold mt-1">{t("modal.title")}</h2>
           <p className="text-white/60 text-sm mt-1">
-            Access saved listings and consultations.
+            {t("modal.sub")}
           </p>
         </div>
 
@@ -70,18 +73,18 @@ export function LoginModal({ onClose }: LoginModalProps) {
           <form method="post" onSubmit={handleEmailSubmit} className="space-y-4">
             {emailMode === "signup" && (
               <div>
-                <label className="text-xs font-medium text-[#3e4944] block mb-1">Full Name</label>
+                <label className="text-xs font-medium text-[#3e4944] block mb-1">{t("login.fullName")}</label>
                 <input
                   name="name"
                   type="text"
                   required
-                  placeholder="Sarah Chen"
+                  placeholder={t("login.fullNamePh")}
                   className="w-full h-11 border border-[#bec9c2] rounded-lg px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
                 />
               </div>
             )}
             <div>
-              <label className="text-xs font-medium text-[#3e4944] block mb-1">Email</label>
+              <label className="text-xs font-medium text-[#3e4944] block mb-1">{t("login.email")}</label>
               <input
                 name="email"
                 type="email"
@@ -91,7 +94,7 @@ export function LoginModal({ onClose }: LoginModalProps) {
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-[#3e4944] block mb-1">Password</label>
+              <label className="text-xs font-medium text-[#3e4944] block mb-1">{t("login.password")}</label>
               <input
                 name="password"
                 type="password"
@@ -106,16 +109,16 @@ export function LoginModal({ onClose }: LoginModalProps) {
               disabled={isPending}
               className="w-full h-11 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
-              {isPending ? "Loading…" : emailMode === "signin" ? "Sign In" : "Create Account"}
+              {isPending ? t("modal.loading") : emailMode === "signin" ? t("login.tabSignIn") : t("login.tabSignUp")}
             </button>
             <p className="text-center text-sm text-[#3e4944]">
-              {emailMode === "signin" ? "Don't have an account? " : "Already have an account? "}
+              {emailMode === "signin" ? t("modal.noAccount") : t("modal.hasAccount")}{" "}
               <button
                 type="button"
                 onClick={() => { setEmailMode(emailMode === "signin" ? "signup" : "signin"); setMessage(null); }}
                 className="text-[#1a7a5e] font-bold hover:underline"
               >
-                {emailMode === "signin" ? "Sign Up" : "Sign In"}
+                {emailMode === "signin" ? t("login.tabSignUp") : t("login.tabSignIn")}
               </button>
             </p>
           </form>

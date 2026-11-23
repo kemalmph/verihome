@@ -23,7 +23,11 @@ export function LanguageToggle() {
   const [isPending, startTransition] = useTransition();
 
   function choose(next: Locale) {
-    if (next === active) return;
+    // No early return when the language is already active. Before a cookie
+    // exists the active language is a guess from Accept-Language, so
+    // clicking the one already showing is a visitor confirming that guess —
+    // and that confirmation is exactly what needs storing, or the next
+    // browser they use silently gets a different site.
     startTransition(async () => {
       await setLocale(next);
       router.refresh();

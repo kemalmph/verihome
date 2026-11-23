@@ -4,6 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { bookConsultation } from "@/lib/actions/book-consultation";
 import type { PaymentAction } from "@/lib/payment";
+import { useT } from "@/lib/i18n/LocaleProvider";
 
 type BankTransfer = Extract<PaymentAction, { kind: "bank_transfer" }>;
 
@@ -24,6 +25,7 @@ interface BookingFormProps {
 }
 
 export function BookingForm({ defaultPackage, savedProperties, availableCredit }: BookingFormProps) {
+  const t = useT();
   const [selectedPackage, setSelectedPackage] = useState<PackageId>(defaultPackage);
   const [error, setError] = useState<string | null>(null);
   const [transfer, setTransfer] = useState<BankTransfer | null>(null);
@@ -82,24 +84,21 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
             check_circle
           </span>
           <div>
-            <h2 className="font-bold text-[#0d2137] text-lg">Lunas dengan kredit</h2>
-            <p className="text-sm text-[#6e7a74]">Paid in full with credit — nothing to transfer.</p>
+            <h2 className="font-bold text-[#0d2137] text-lg">{t("cf.paidWithCredit")}</h2>
+            <p className="text-sm text-[#6e7a74]">{t("cf.paidWithCreditSub")}</p>
           </div>
         </div>
 
         <div className="bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg p-4 text-sm text-[#12614a]">
-          Kredit terpakai: <strong>{rp(covered.creditApplied)}</strong>
-          <span className="block text-xs text-[#3e4944] mt-1">
-            Tim kami menghubungi Anda dalam 24 jam untuk menjadwalkan sesi.
-            <span className="block">Our team contacts you within 24 hours to schedule the session.</span>
-          </span>
+          {t("cf.creditUsed")} <strong>{rp(covered.creditApplied)}</strong>
+          <span className="block text-xs text-[#3e4944] mt-1">{t("cf.contact24")}</span>
         </div>
 
         <button
           onClick={() => router.push("/dashboard/appointments")}
           className="w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold hover:opacity-90"
         >
-          View my appointments
+          {t("cf.viewAppointments")}
         </button>
       </div>
     );
@@ -113,18 +112,18 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
             check_circle
           </span>
           <div>
-            <h2 className="font-bold text-[#0d2137] text-lg">Consultation reserved</h2>
-            <p className="text-sm text-[#6e7a74]">Complete the transfer to confirm your session.</p>
+            <h2 className="font-bold text-[#0d2137] text-lg">{t("cf.reserved")}</h2>
+            <p className="text-sm text-[#6e7a74]">{t("cf.reservedSub")}</p>
           </div>
         </div>
 
         <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
           <div className="space-y-1 text-sm">
-            <div className="flex justify-between"><span className="text-[#6e7a74]">Bank</span><strong>{transfer.bankName}</strong></div>
-            <div className="flex justify-between"><span className="text-[#6e7a74]">Account</span><strong>{transfer.accountNumber}</strong></div>
-            <div className="flex justify-between"><span className="text-[#6e7a74]">Name</span><strong>{transfer.accountHolder}</strong></div>
+            <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.bank")}</span><strong>{transfer.bankName}</strong></div>
+            <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.account")}</span><strong>{transfer.accountNumber}</strong></div>
+            <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.accountName")}</span><strong>{transfer.accountHolder}</strong></div>
             <div className="flex justify-between text-[#1a7a5e] font-bold border-t border-[#cccccc] pt-2 mt-2">
-              <span>Transfer exactly</span>
+              <span>{t("view.transferExactly")}</span>
               <span>IDR {transfer.payableAmount.toLocaleString("id-ID")}</span>
             </div>
           </div>
@@ -132,14 +131,14 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
         </div>
 
         <p className="text-xs text-[#6e7a74]">
-          Our team confirms the transfer and contacts you within 24 hours to schedule the session.
+          {t("cf.confirmNote")}
         </p>
 
         <button
           onClick={() => router.push("/dashboard/appointments")}
           className="w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold hover:opacity-90"
         >
-          View my appointments
+          {t("cf.viewAppointments")}
         </button>
       </div>
     );
@@ -149,7 +148,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Package selector */}
       <div>
-        <p className="text-sm font-semibold text-[#1b1c1c] mb-3">Package</p>
+        <p className="text-sm font-semibold text-[#1b1c1c] mb-3">{t("cf.package")}</p>
         <div className="grid grid-cols-2 gap-4">
           {(Object.entries(PACKAGES) as [PackageId, typeof PACKAGES[PackageId]][]).map(([id, pkg]) => (
             <button
@@ -164,7 +163,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
             >
               <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">{pkg.label}</p>
               <p className="text-xl font-bold text-[#0d2137] mt-1">{rp(pkg.price)}</p>
-              <p className="text-xs text-[#6e7a74] mt-0.5">{pkg.duration} session</p>
+              <p className="text-xs text-[#6e7a74] mt-0.5">{pkg.duration} {t("cf.session")}</p>
             </button>
           ))}
         </div>
@@ -173,13 +172,13 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
       {/* Property selection */}
       <div className="space-y-1">
         <label className="text-sm font-semibold text-[#1b1c1c]">
-          Property to discuss <span className="text-[#6e7a74] font-normal">(optional)</span>
+          {t("cf.propertyToDiscuss")} <span className="text-[#6e7a74] font-normal">{t("cf.optional")}</span>
         </label>
         <select
           name="property_id"
           className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
         >
-          <option value="">General consultation (no specific property)</option>
+          <option value="">{t("cf.generalConsult")}</option>
           {savedProperties.map((p) => (
             <option key={p.id} value={p.id}>
               {p.name} — {p.area}
@@ -191,12 +190,12 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
       {/* Notes */}
       <div className="space-y-1">
         <label className="text-sm font-semibold text-[#1b1c1c]">
-          Questions or notes <span className="text-[#6e7a74] font-normal">(optional)</span>
+          {t("cf.questions")} <span className="text-[#6e7a74] font-normal">{t("cf.optional")}</span>
         </label>
         <textarea
           name="notes"
           rows={3}
-          placeholder="e.g. I'm relocating from Singapore in August, looking for a place near SCBD..."
+          placeholder={t("cf.questionsPh")}
           className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm resize-none"
         />
       </div>
@@ -218,40 +217,37 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
             className="mt-0.5 w-4 h-4 accent-[#1a7a5e] shrink-0"
           />
           <span className="text-sm text-[#12614a]">
-            Pakai kredit Cosystem saya — <strong>{rp(availableCredit)}</strong> tersedia
-            <span className="block text-xs text-[#3e4944] mt-0.5">
-              Use my Cosystem credit. Credit closest to expiring is used first.
-            </span>
+            {t("cf.useCredit")} <strong>{rp(availableCredit)}</strong> {t("cf.available")}
+            <span className="block text-xs text-[#3e4944] mt-0.5">{t("cf.creditOrder")}</span>
           </span>
         </label>
       )}
 
       {/* Order summary */}
       <div className="bg-[#f6f3f2] rounded-xl p-5 space-y-3 border border-[#bec9c2]">
-        <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">Order Summary</p>
+        <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">{t("cf.orderSummary")}</p>
         <div className="flex justify-between items-center">
           <span className="text-sm text-[#1b1c1c]">
-            {PACKAGES[selectedPackage].label} Consultation ({PACKAGES[selectedPackage].duration})
+            {PACKAGES[selectedPackage].label} {t("cf.consultation")} ({PACKAGES[selectedPackage].duration})
           </span>
           <span className="font-bold text-[#1a7a5e]">{rp(price)}</span>
         </div>
 
         {estimatedCredit > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-sm text-[#1b1c1c]">Kredit Cosystem</span>
+            <span className="text-sm text-[#1b1c1c]">{t("cf.cosystemCredit")}</span>
             <span className="font-bold text-[#1a7a5e]">− {rp(estimatedCredit)}</span>
           </div>
         )}
 
         <div className="flex justify-between items-center border-t border-[#bec9c2] pt-3">
-          <span className="text-sm font-semibold text-[#1b1c1c]">Total</span>
+          <span className="text-sm font-semibold text-[#1b1c1c]">{t("cf.total")}</span>
           <span className="text-lg font-bold text-[#0d2137]">{rp(estimatedDue)}</span>
         </div>
 
         {estimatedCredit > 0 && (
           <p className="text-xs text-[#6e7a74]">
-            Jumlah akhir dihitung ulang oleh server saat konfirmasi.
-            <span className="block">The final amount is recomputed by the server on confirmation.</span>
+            {t("cf.recomputed")}
           </p>
         )}
       </div>
@@ -264,17 +260,17 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
         {isPending ? (
           <>
             <span className="material-symbols-outlined animate-spin text-xl">progress_activity</span>
-            Creating payment…
+            {t("cf.creating")}
           </>
         ) : (
           <>
             <span className="material-symbols-outlined">lock</span>
-            Pay & Confirm Booking
+            {t("cf.payConfirm")}
           </>
         )}
       </button>
       <p className="text-xs text-center text-[#6e7a74]">
-        Payment details appear on the next step · Your advisor will contact you within 24 hours after payment.
+        {t("cf.footnote")}
       </p>
     </form>
   );

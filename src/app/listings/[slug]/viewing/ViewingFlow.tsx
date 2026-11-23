@@ -1,6 +1,8 @@
 "use client";
 
+
 import { useState } from "react";
+import { useT } from "@/lib/i18n/LocaleProvider";
 import { DepositPolicy } from "@/components/viewings/DepositPolicy";
 import { VIEWING_POLICY_VERSION } from "@/lib/viewings/policy";
 
@@ -32,6 +34,7 @@ function StepSchedule({
   depositAmount: number;
   onNext: (date: string, time: string, notes: string) => void;
 }) {
+  const t = useT();
   const [date,  setDate]  = useState("");
   const [time,  setTime]  = useState("");
   const [notes, setNotes] = useState("");
@@ -41,10 +44,10 @@ function StepSchedule({
 
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137] text-lg">1. Choose a date &amp; time</h2>
+      <h2 className="font-bold text-[#0d2137] text-lg">{t("view.s1title")}</h2>
 
       <div>
-        <label className="block text-sm text-[#3e4944] mb-1">Preferred date</label>
+        <label className="block text-sm text-[#3e4944] mb-1">{t("view.prefDate")}</label>
         <input
           type="date"
           min={today}
@@ -55,7 +58,7 @@ function StepSchedule({
       </div>
 
       <div>
-        <label className="block text-sm text-[#3e4944] mb-2">Preferred time</label>
+        <label className="block text-sm text-[#3e4944] mb-2">{t("view.prefTime")}</label>
         <div className="flex flex-wrap gap-2">
           {slots.map((s) => (
             <button
@@ -74,27 +77,20 @@ function StepSchedule({
       </div>
 
       <div>
-        <label className="block text-sm text-[#3e4944] mb-1">Notes (optional)</label>
+        <label className="block text-sm text-[#3e4944] mb-1">{t("view.notes")}</label>
         <textarea
           rows={3}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
-          placeholder="Any specific questions or accessibility needs?"
+          placeholder={t("view.notesPh")}
           className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1a7a5e] resize-none"
         />
       </div>
 
       <div className="bg-[#f6f3f2] rounded-lg p-3 text-sm text-[#3e4944]">
-        Deposit required: <strong className="text-[#1a7a5e]">IDR {fmt(depositAmount)}</strong>
+        {t("view.depositRequired")} <strong className="text-[#1a7a5e]">IDR {fmt(depositAmount)}</strong>
         <br />
-        <span className="text-xs text-[#6e7a74]">
-          Jika hadir, deposit menjadi kredit Cosystem — bukan uang kembali.
-          Ketentuan lengkap di langkah berikutnya.
-          <span className="block">
-            If you attend, the deposit becomes Cosystem credit — not a cash refund.
-            Full terms on the next step.
-          </span>
-        </span>
+        <span className="text-xs text-[#6e7a74]">{t("view.depositNote")}</span>
       </div>
 
       <button
@@ -119,15 +115,16 @@ function StepConfirm({
   acknowledged: boolean; onAcknowledge: (v: boolean) => void;
   onBack: () => void; onConfirm: () => void; loading: boolean;
 }) {
+  const t = useT();
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137] text-lg">2. Confirm viewing request</h2>
+      <h2 className="font-bold text-[#0d2137] text-lg">{t("view.s2title")}</h2>
 
       <div className="space-y-2 text-sm">
         {[
-          { label: "Date",    value: date },
-          { label: "Time",    value: time },
-          { label: "Deposit", value: `IDR ${fmt(depositAmount)}` },
+          { label: t("view.date"),    value: date },
+          { label: t("view.time"),    value: time },
+          { label: t("view.deposit"), value: `IDR ${fmt(depositAmount)}` },
         ].map((r) => (
           <div key={r.label} className="flex justify-between border-b border-[#f6f3f2] pb-2">
             <span className="text-[#3e4944]">{r.label}</span>
@@ -136,7 +133,7 @@ function StepConfirm({
         ))}
         {notes && (
           <div>
-            <p className="text-[#6e7a74] text-xs mb-0.5">Notes</p>
+            <p className="text-[#6e7a74] text-xs mb-0.5">{t("view.notesShort")}</p>
             <p className="text-sm">{notes}</p>
           </div>
         )}
@@ -153,24 +150,20 @@ function StepConfirm({
           className="mt-0.5 w-4 h-4 accent-[#1a7a5e] shrink-0"
         />
         <span className="text-sm text-[#3e4944]">
-          Saya mengerti deposit menjadi kredit jika saya hadir, dan menyetujui
-          ketentuan di atas.
-          <span className="block text-xs text-[#6e7a74] mt-0.5">
-            I understand the deposit becomes credit if I attend, and I accept the terms above.
-          </span>
+          {t("view.ack")}
         </span>
       </label>
 
       <div className="flex gap-3">
         <button onClick={onBack} className="flex-1 py-3 border border-[#cccccc] rounded-lg text-sm font-semibold text-[#3e4944] hover:bg-[#f6f3f2]">
-          ← Back
+          ← {t("view.back")}
         </button>
         <button
           onClick={onConfirm}
           disabled={loading || !acknowledged}
           className="flex-1 py-3 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
-          {loading ? "Submitting…" : "Submit & get payment details"}
+          {loading ? t("view.submitting") : t("view.submit")}
         </button>
       </div>
     </div>
@@ -180,6 +173,7 @@ function StepConfirm({
 // ── Step 3: payment ───────────────────────────────────────────
 
 function StepPayment({ intent }: { intent: Intent }) {
+  const t = useT();
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
       <div className="flex items-center gap-3">
@@ -187,19 +181,19 @@ function StepPayment({ intent }: { intent: Intent }) {
           <span className="material-symbols-outlined text-[#1a7a5e]">check_circle</span>
         </div>
         <div>
-          <h2 className="font-bold text-[#0d2137] text-lg">Viewing requested!</h2>
-          <p className="text-sm text-[#6e7a74]">We&apos;ll confirm your slot within 24 hours.</p>
+          <h2 className="font-bold text-[#0d2137] text-lg">{t("view.requested")}</h2>
+          <p className="text-sm text-[#6e7a74]">{t("view.requestedSub")}</p>
         </div>
       </div>
 
       <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
-        <p className="font-semibold text-sm text-[#0d2137]">Pay your deposit now:</p>
+        <p className="font-semibold text-sm text-[#0d2137]">{t("view.payNow")}</p>
         <div className="space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-[#6e7a74]">Bank</span><strong>{intent.bankName}</strong></div>
-          <div className="flex justify-between"><span className="text-[#6e7a74]">Account</span><strong>{intent.accountNumber}</strong></div>
-          <div className="flex justify-between"><span className="text-[#6e7a74]">Name</span><strong>{intent.accountHolder}</strong></div>
+          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.bank")}</span><strong>{intent.bankName}</strong></div>
+          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.account")}</span><strong>{intent.accountNumber}</strong></div>
+          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.accountName")}</span><strong>{intent.accountHolder}</strong></div>
           <div className="flex justify-between text-[#1a7a5e] font-bold border-t border-[#cccccc] pt-2 mt-2">
-            <span>Transfer exactly</span>
+            <span>{t("view.transferExactly")}</span>
             <span>IDR {fmt(intent.totalAmount + Number(intent.transferCode))}</span>
           </div>
         </div>
@@ -210,7 +204,7 @@ function StepPayment({ intent }: { intent: Intent }) {
         href="/dashboard/viewings"
         className="block w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold text-center hover:opacity-90"
       >
-        View my viewings
+        {t("view.myViewings")}
       </a>
     </div>
   );
@@ -219,6 +213,7 @@ function StepPayment({ intent }: { intent: Intent }) {
 // ── Main ──────────────────────────────────────────────────────
 
 export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "propertyId" | "depositAmount">) {
+  const t = useT();
   const [step,   setStep]   = useState<1 | 2 | 3>(1);
   const [date,   setDate]   = useState("");
   const [time,   setTime]   = useState("");
@@ -253,7 +248,7 @@ export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "property
       setIntent(data.intent);
       setStep(3);
     } catch {
-      setError("Something went wrong. Please try again.");
+      setError(t("common.error"));
     } finally {
       setLoading(false);
     }
@@ -263,7 +258,7 @@ export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "property
     <div className="space-y-4">
       {/* Progress */}
       <div className="flex items-center gap-2 text-xs text-[#6e7a74] mb-2">
-        {(["Schedule", "Confirm", "Payment"] as const).map((label, i) => (
+        {[t("view.stepSchedule"), t("view.stepConfirm"), t("view.stepPayment")].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
             <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-[#1a7a5e] text-white" : step > i + 1 ? "bg-[#9cf4d1] text-[#0d2137]" : "bg-[#e4e2e1] text-[#6e7a74]"}`}>
               {step > i + 1 ? "✓" : i + 1}
