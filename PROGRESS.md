@@ -5,7 +5,7 @@ Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
 Terakhir diperbarui: 2026-11-24 · branch kerja `claude/friendly-goldberg-56lycj`
-(belum di-merge ke `main`). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+(sudah di-merge ke `main`). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -132,8 +132,11 @@ Tes: 13 suite, ±434 check, semua hijau di DB lokal bersih.
 
 ## Sedang dikerjakan
 
-Collapse sidebar sudah di-push ke `claude/friendly-goldberg-56lycj`, belum
-di-merge ke `main` dan belum terdeploy.
+Collapse sidebar sudah di-merge ke `main` (fast-forward, 24 Nov) atas
+permintaan owner. Container ini tidak bisa membuka `cosystem.co` (proxy
+menolak) dan repo tidak punya GitHub Actions, jadi status deploy Vercel
+**belum diverifikasi dari sini** — cek di dashboard Vercel bahwa commit itu
+Ready · Current.
 
 Belum disentuh: **`DashboardSidebar` (dashboard penyewa, `/dashboard`)**. Ia
 bentuknya lain — `w-72`, tidak punya laci ponsel sama sekali, dan sebagian
