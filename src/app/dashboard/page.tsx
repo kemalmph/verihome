@@ -23,7 +23,7 @@ export default async function DashboardPage() {
         isActiveClient={user.is_active_client}
       />
 
-      <main className="flex-1 ml-72 p-16 max-w-[1400px]">
+      <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">
           <h2 className="text-3xl font-bold text-[#0d2137] mb-1">
             Welcome back, {firstName}

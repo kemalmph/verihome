@@ -1,7 +1,7 @@
 #!/usr/bin/env node
 /**
- * The desktop sidebar of /admin and /site folds to an icon rail, and stays
- * folded.
+ * The desktop sidebar of /admin, /site and the tenant /dashboard folds to an
+ * icon rail, and stays folded.
  *
  * What has to hold, each checked rather than assumed:
  *
@@ -27,7 +27,6 @@ const PASSWORD = process.env.ADMIN_PASSWORD ?? "LocalAdmin!123";
 
 const DESKTOP = { width: 1280, height: 800 };
 const PHONE = { width: 390, height: 844 };
-const WIDE = 256;
 const RAIL = 72;
 
 const pass = [];
@@ -71,13 +70,17 @@ async function measure(page) {
 const sidebarCookie = async (ctx) =>
   (await ctx.cookies()).find((c) => c.name === "cosystem_sidebar")?.value ?? null;
 
-async function run(browser, cookies, js) {
-  const tag = js ? "JS" : "tanpa JS";
+async function run(browser, cookies, js, { start, other, wide }) {
+  const tag = `${js ? "JS" : "tanpa JS"} ${start}`;
+  const WIDE = wide;
   const ctx = await browser.newContext({ viewport: DESKTOP, javaScriptEnabled: js });
   await ctx.addCookies(cookies);
   const page = await ctx.newPage();
 
-  await page.goto(`${BASE}/admin`, { waitUntil: js ? "networkidle" : "load" });
+  // "load", not "networkidle": /dashboard pulls placeholder images from an
+  // outside host, which never settles where that host is unreachable.
+  await page.goto(`${BASE}${start}`, { waitUntil: "load" });
+  if (js) await page.waitForTimeout(1500); // let React hydrate
   let m = await measure(page);
   check(m.aside === WIDE && m.main === WIDE, `${tag}: awalnya lebar (aside=${m.aside}, main=${m.main})`);
 
@@ -103,9 +106,9 @@ async function run(browser, cookies, js) {
   );
   check(await expand.isVisible(), `${tag}: tombol lebarkan terlihat di rail`);
 
-  await page.goto(`${BASE}/site`, { waitUntil: js ? "networkidle" : "load" });
+  await page.goto(`${BASE}${other}`, { waitUntil: "load" });
   m = await measure(page);
-  check(m.aside === RAIL && m.main === RAIL, `${tag}: tetap ciut di halaman lain (/site: ${m.aside}/${m.main})`);
+  check(m.aside === RAIL && m.main === RAIL, `${tag}: tetap ciut di halaman lain (${other}: ${m.aside}/${m.main})`);
 
   await page.reload({ waitUntil: "load" });
   m = await measure(page);
@@ -120,20 +123,21 @@ async function run(browser, cookies, js) {
   await ctx.close();
 }
 
-async function phone(browser, cookies) {
+async function phone(browser, cookies, path) {
   const ctx = await browser.newContext({ viewport: PHONE });
   await ctx.addCookies([
     ...cookies,
     { name: "cosystem_sidebar", value: "collapsed", url: BASE },
   ]);
   const page = await ctx.newPage();
-  await page.goto(`${BASE}/admin`, { waitUntil: "networkidle" });
+  await page.goto(`${BASE}${path}`, { waitUntil: "load" });
+  await page.waitForTimeout(1500);
   await page.locator("summary").first().click();
   await page.waitForTimeout(300);
   const label = page.locator("aside:visible").getByText("Bookings", { exact: true });
-  check(await label.isVisible(), "ponsel: laci tetap berlabel walau cookie ciut");
+  check(await label.isVisible(), `ponsel ${path}: laci tetap berlabel walau cookie ciut`);
   const m = await page.evaluate(() => Math.round(document.querySelector("main").getBoundingClientRect().left));
-  check(m === 0, `ponsel: konten tidak bergeser (main x=${m})`);
+  check(m === 0, `ponsel ${path}: konten tidak bergeser (main x=${m})`);
   await ctx.close();
 }
 
@@ -141,9 +145,15 @@ async function phone(browser, cookies) {
   const browser = await chromium.launch();
   try {
     const cookies = await signIn(browser);
-    await run(browser, cookies, true);
-    await run(browser, cookies, false);
-    await phone(browser, cookies);
+    const areas = [
+      { start: "/admin", other: "/site", wide: 256 },
+      { start: "/dashboard", other: "/dashboard/bookings", wide: 288 },
+    ];
+    for (const a of areas) {
+      await run(browser, cookies, true, a);
+      await run(browser, cookies, false, a);
+      await phone(browser, cookies, a.start);
+    }
   } finally {
     await browser.close();
   }

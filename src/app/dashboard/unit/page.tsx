@@ -34,7 +34,7 @@ export default async function UnitPage() {
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <DashboardSidebar activeHref="/dashboard/unit" userName={user.name} isActiveClient={user.is_active_client} />
-      <main className="flex-1 ml-0 md:ml-72 p-6 md:p-12 pt-20 md:pt-12 max-w-3xl">
+      <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-3xl">
         <h1 className="text-3xl font-bold text-[#0d2137] mb-8">{t("unit.title")}</h1>
 
         {primary ? (

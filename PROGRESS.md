@@ -84,14 +84,19 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 ## Selesai
 
-- **Sidebar desktop admin, `/site`, dan portal pemilik bisa diciutkan** (24 Nov)
+- **Sidebar desktop admin, `/site`, portal pemilik, dan dashboard penyewa
+  (`/dashboard`) bisa diciutkan** (24 Nov)
   jadi rail ikon 72px. Status di cookie `cosystem_sidebar`, dibaca root layout
   ke `<html data-sidebar>`, jadi HTML pertama dari server sudah selebar yang
   dipilih. Lebar aside dan margin halaman sama-sama dari variabel CSS
   `--sidebar-w` (semua `md:ml-64` → `md:ml-(--sidebar-w)`). Tombolnya `<form>`
   + server action, jadi bekerja tanpa JavaScript; setelah hidrasi, diproses di
   browser tanpa round trip. Laci ponsel tidak ikut menciut. Tes:
-  `scripts/test-sidebar-collapse.js` (27 check, dengan & tanpa JS).
+  `scripts/test-sidebar-collapse.js` (53 check, `/admin` dan `/dashboard`,
+  dengan & tanpa JS). `DashboardSidebar` sekalian dapat laci ponsel — dulu
+  aside 288px selalu tampil dan sebagian halaman memakai `ml-72` tanpa `md:`,
+  jadi di ponsel menu menutupi layar dan konten terdorong keluar. Lebarnya
+  pakai variabel sendiri `--dash-sidebar-w` (18rem), bukan `--sidebar-w`.
 
 - **VeriHome System Reference diperbarui ke versi 20** (23 Nov) atas
   permintaan owner: §21 dan §22 baru, §13 dan §19 diperluas, §20.4 ditutup,
@@ -132,16 +137,15 @@ Tes: 13 suite, ±434 check, semua hijau di DB lokal bersih.
 
 ## Sedang dikerjakan
 
-Collapse sidebar sudah di-merge ke `main` (fast-forward, 24 Nov) atas
+Collapse sidebar (termasuk `/dashboard`) sudah di-merge ke `main` atas
 permintaan owner. Container ini tidak bisa membuka `cosystem.co` (proxy
 menolak) dan repo tidak punya GitHub Actions, jadi status deploy Vercel
-**belum diverifikasi dari sini** — cek di dashboard Vercel bahwa commit itu
-Ready · Current.
+**belum diverifikasi dari sini** — cek di dashboard Vercel bahwa commit
+terbaru Ready · Current.
 
-Belum disentuh: **`DashboardSidebar` (dashboard penyewa, `/dashboard`)**. Ia
-bentuknya lain — `w-72`, tidak punya laci ponsel sama sekali, dan sebagian
-halamannya memakai `ml-72` tanpa `md:` sehingga di ponsel kontennya terdorong
-keluar layar. Itu perlu dibereskan dulu sebelum collapse masuk ke sana.
+Temuan yang belum dibereskan di `/dashboard`: tautan "Profile Settings" menuju
+`/dashboard/settings`, yang tidak ada (404); badge "1" di Appointments dan
+angka di halaman ringkasan masih data placeholder.
 
 ---
 

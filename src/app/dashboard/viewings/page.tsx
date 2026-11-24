@@ -43,7 +43,7 @@ export default async function ViewingsPage() {
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <DashboardSidebar activeHref="/dashboard/viewings" userName={user.name} isActiveClient={user.is_active_client} />
 
-      <main className="flex-1 ml-0 md:ml-72 p-6 md:p-16 max-w-[1400px]">
+      <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">
           <h2 className="text-3xl font-bold text-[#0d2137] mb-1">Viewings</h2>
           <p className="text-[#3e4944]">Track your scheduled property viewings.</p>

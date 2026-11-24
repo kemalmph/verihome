@@ -49,7 +49,7 @@ export default async function SupportPage() {
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <DashboardSidebar activeHref="/dashboard/support" userName={user.name} isActiveClient={user.is_active_client} />
 
-      <main className="flex-1 ml-72 p-16 max-w-[1400px]">
+      <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">
           <h2 className="text-3xl font-bold text-[#0d2137] mb-1">Support & Services</h2>
           <p className="text-[#3e4944]">Additional relocation services to make your move seamless.</p>

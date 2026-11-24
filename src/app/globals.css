@@ -86,6 +86,8 @@
   /* Width of the fixed desktop sidebar, and so the margin every page in
      /admin, /site and /owner leaves for it (md:ml-(--sidebar-w)). */
   --sidebar-w: 16rem;
+  /* The tenant dashboard's sidebar has always been wider (w-72). */
+  --dash-sidebar-w: 18rem;
   --background: #fbf9f8;
   --foreground: #1b1c1c;
   --card: #ffffff;
@@ -167,4 +169,5 @@
 }
 [data-sidebar="collapsed"] {
   --sidebar-w: 4.5rem;
+  --dash-sidebar-w: 4.5rem;
 }
