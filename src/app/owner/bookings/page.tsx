@@ -25,7 +25,7 @@ export default async function OwnerBookingsPage() {
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <OwnerSidebar activeHref="/owner/bookings" ownerName={owner.ownerName} />
-      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
+      <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <h1 className="text-3xl font-bold text-[#0d2137]">{t("owner.bookings.title")}</h1>
         <p className="text-xs text-[#6e7a74] mt-2 mb-6 max-w-2xl">{t("owner.bookings.privacyNote")}</p>
 

@@ -75,7 +75,7 @@ export default async function OwnerPropertyPage({
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <OwnerSidebar activeHref="/owner/properties" ownerName={owner.ownerName} />
-      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-10 pt-20 md:pt-10 max-w-4xl">
+      <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-4xl">
         <Link href="/owner/properties" className="text-sm text-[#1a7a5e] hover:underline">← {t("owner.nav.properties")}</Link>
 
         <header className="mt-3 mb-8">

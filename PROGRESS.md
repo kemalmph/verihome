@@ -4,8 +4,8 @@ Posisi terakhir pekerjaan, untuk disambung session berikutnya.
 Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
-Terakhir diperbarui: 2026-11-23, di akhir session · branch kerja `main-g2jjf1`
-(sudah di-merge ke `main`). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+Terakhir diperbarui: 2026-11-24 · branch kerja `claude/friendly-goldberg-56lycj`
+(belum di-merge ke `main`). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -84,6 +84,15 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 ## Selesai
 
+- **Sidebar desktop admin, `/site`, dan portal pemilik bisa diciutkan** (24 Nov)
+  jadi rail ikon 72px. Status di cookie `cosystem_sidebar`, dibaca root layout
+  ke `<html data-sidebar>`, jadi HTML pertama dari server sudah selebar yang
+  dipilih. Lebar aside dan margin halaman sama-sama dari variabel CSS
+  `--sidebar-w` (semua `md:ml-64` → `md:ml-(--sidebar-w)`). Tombolnya `<form>`
+  + server action, jadi bekerja tanpa JavaScript; setelah hidrasi, diproses di
+  browser tanpa round trip. Laci ponsel tidak ikut menciut. Tes:
+  `scripts/test-sidebar-collapse.js` (27 check, dengan & tanpa JS).
+
 - **VeriHome System Reference diperbarui ke versi 20** (23 Nov) atas
   permintaan owner: §21 dan §22 baru, §13 dan §19 diperluas, §20.4 ditutup,
   §20.6 diverifikasi ulang, dua risiko baru dicatat.
@@ -123,8 +132,13 @@ Tes: 13 suite, ±434 check, semua hijau di DB lokal bersih.
 
 ## Sedang dikerjakan
 
-Tidak ada yang setengah jadi. Working tree bersih, `main-g2jjf1` sama dengan
-`main`, semua sudah terdeploy dan diverifikasi di produksi.
+Collapse sidebar sudah di-push ke `claude/friendly-goldberg-56lycj`, belum
+di-merge ke `main` dan belum terdeploy.
+
+Belum disentuh: **`DashboardSidebar` (dashboard penyewa, `/dashboard`)**. Ia
+bentuknya lain — `w-72`, tidak punya laci ponsel sama sekali, dan sebagian
+halamannya memakai `ml-72` tanpa `md:` sehingga di ponsel kontennya terdorong
+keluar layar. Itu perlu dibereskan dulu sebelum collapse masuk ke sana.
 
 ---
 

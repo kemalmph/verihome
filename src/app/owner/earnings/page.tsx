@@ -16,7 +16,7 @@ export default async function OwnerEarningsPage() {
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <OwnerSidebar activeHref="/owner/earnings" ownerName={owner.ownerName} />
-      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
+      <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <header className="mb-6 flex items-end justify-between gap-3 flex-wrap">
           <h1 className="text-3xl font-bold text-[#0d2137]">{t("owner.earnings.title")}</h1>
           <a href="/owner/earnings/statement"

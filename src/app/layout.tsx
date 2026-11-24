@@ -3,6 +3,8 @@ import { Public_Sans } from "next/font/google";
 import "./globals.css";
 import { getLocale } from "@/lib/i18n/server";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
+import { cookies } from "next/headers";
+import { SIDEBAR_COLLAPSED, SIDEBAR_COOKIE } from "@/lib/sidebar/config";
 
 const publicSans = Public_Sans({
   variable: "--font-sans",
@@ -26,8 +28,18 @@ export default async function RootLayout({
   // page. It now matches what is actually rendered.
   const locale = await getLocale();
 
+  // On <html> so the server's first paint already has the sidebar at the
+  // chosen width — and so the page margin, which lives in 30-odd page files
+  // rather than in the sidebar, follows from one CSS variable.
+  const sidebarCollapsed =
+    (await cookies()).get(SIDEBAR_COOKIE)?.value === SIDEBAR_COLLAPSED;
+
   return (
-    <html lang={locale} className={`${publicSans.variable} h-full antialiased`}>
+    <html
+      lang={locale}
+      data-sidebar={sidebarCollapsed ? SIDEBAR_COLLAPSED : undefined}
+      className={`${publicSans.variable} h-full antialiased`}
+    >
       <head>
         <link
           rel="stylesheet"

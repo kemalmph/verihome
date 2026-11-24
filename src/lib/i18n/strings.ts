@@ -240,6 +240,8 @@ export const STRINGS = {
 
   // ── Navigation ────────────────────────────────────────────────────────────
   "nav.menu":            { id: "Menu",             en: "Menu" },
+  "nav.sidebarCollapse": { id: "Ciutkan sidebar",  en: "Collapse sidebar" },
+  "nav.sidebarExpand":   { id: "Lebarkan sidebar", en: "Expand sidebar" },
   "nav.features":        { id: "Fitur",            en: "Features" },
   "nav.feat.manage":     { id: "Fitur Kelola",     en: "Management Features" },
   "nav.feat.manageBlurb":{ id: "Jadwal, kontrak, dan tagihan dalam satu dashboard", en: "Schedules, contracts and invoices in one dashboard" },

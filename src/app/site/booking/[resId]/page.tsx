@@ -39,7 +39,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AdminSidebar activeHref="/site" />
-      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
+      <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <nav className="text-sm text-[#6e7a74] mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
           <span className="mx-2">/</span>

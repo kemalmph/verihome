@@ -4,6 +4,12 @@
 
 @custom-variant dark (&:is(.dark *));
 
+/* Desktop sidebar folded to an icon rail — see src/lib/sidebar/config.ts.
+   Only markup that exists solely in the desktop sidebar may use this
+   variant: the attribute sits on <html>, so it matches the phone drawer too,
+   and a drawer of bare icons is not a menu. */
+@custom-variant collapsed (&:where([data-sidebar="collapsed"] *));
+
 @theme inline {
   /* Cosystem brand tokens */
   --color-brand-green: #1A7A5E;
@@ -77,6 +83,9 @@
 }
 
 :root {
+  /* Width of the fixed desktop sidebar, and so the margin every page in
+     /admin, /site and /owner leaves for it (md:ml-(--sidebar-w)). */
+  --sidebar-w: 16rem;
   --background: #fbf9f8;
   --foreground: #1b1c1c;
   --card: #ffffff;
@@ -155,4 +164,7 @@
   html {
     @apply font-sans;
   }
+}
+[data-sidebar="collapsed"] {
+  --sidebar-w: 4.5rem;
 }

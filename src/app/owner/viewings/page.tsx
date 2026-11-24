@@ -14,7 +14,7 @@ export default async function OwnerViewingsPage() {
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <OwnerSidebar activeHref="/owner/viewings" ownerName={owner.ownerName} />
-      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
+      <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <h1 className="text-3xl font-bold text-[#0d2137] mb-6">{t("owner.viewings.title")}</h1>
 
         {viewings.length === 0 ? (

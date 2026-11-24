@@ -42,7 +42,7 @@ export default async function OwnerCalendarPage({
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <OwnerSidebar activeHref="/owner/properties" ownerName={owner.ownerName} />
-      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
+      <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <Link href={`/owner/properties/${id}`} className="text-sm text-[#1a7a5e] hover:underline">
           ← {property.name}
         </Link>

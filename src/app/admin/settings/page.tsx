@@ -39,7 +39,7 @@ export default async function AdminSettingsPage() {
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AdminSidebar activeHref="/admin/settings" />
-      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12">
+      <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-10">
           <h1 className="text-3xl font-bold text-[#0d2137]">Pengaturan</h1>
           <p className="text-[#3e4944] mt-1">Konfigurasi platform Cosystem</p>

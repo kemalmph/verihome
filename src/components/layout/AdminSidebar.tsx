@@ -2,6 +2,7 @@
 
 import Link from "next/link";
 import { useRef } from "react";
+import { SidebarCollapseToggle } from "./SidebarCollapseToggle";
 
 interface AdminSidebarProps {
   activeHref: string;
@@ -95,6 +96,10 @@ const groups: {
  * one because a closed <details> hides its contents outright, which is
  * exactly wrong for a sidebar that must always show from 768px up. The
  * links come from one function, so there is no second copy to keep in step.
+ *
+ * On desktop the aside folds to a 72px icon rail (SidebarCollapseToggle),
+ * for the wide tables in Bookings, Listings and the reports. The phone
+ * drawer never folds — it is already out of the way until asked for.
  */
 export function AdminSidebar({ activeHref }: AdminSidebarProps) {
   const drawer = useRef<HTMLDetailsElement>(null);
@@ -108,53 +113,81 @@ export function AdminSidebar({ activeHref }: AdminSidebarProps) {
 
   /* Thirteen items plus four headings outgrow a short laptop screen, so the
      nav scrolls on its own rather than pushing "Back to site" off the
-     bottom. */
-  const nav = (
-    <>
-      <nav className="flex-1 px-4 pb-2 overflow-y-auto">
-        {groups.map((group) => (
-          <div key={group.heading} className="mb-5 last:mb-0">
-            <p className="px-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/35">
-              {group.heading}
-            </p>
-            <div className="space-y-0.5">
-              {group.items.map((link) => {
-                const active =
-                  activeHref === link.href ||
-                  (link.href !== "/admin" && activeHref.startsWith(link.href));
-                return (
-                  <Link
-                    key={link.href}
-                    href={link.href}
-                    onClick={closeDrawer}
-                    className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors ${
-                      active
-                        ? "text-[#80d7b6] bg-white/5"
-                        : "text-white/70 hover:text-white hover:bg-white/5"
-                    }`}
-                  >
-                    <span className="material-symbols-outlined text-lg">{link.icon}</span>
-                    <span className="text-sm font-medium">{link.label}</span>
-                  </Link>
-                );
-              })}
-            </div>
-          </div>
-        ))}
-      </nav>
+     bottom.
 
-      <div className="px-6 py-6 border-t border-white/10">
-        <Link
-          href="/"
-          onClick={closeDrawer}
-          className="flex items-center gap-2 text-white/50 hover:text-white text-xs transition-colors"
-        >
-          <span className="material-symbols-outlined text-sm">arrow_back</span>
-          Back to site
-        </Link>
-      </div>
-    </>
-  );
+     `rail` is true only for the desktop aside. The collapsed: classes key
+     off an attribute on <html>, which the phone drawer sits under too, so
+     they must not reach the drawer's copy: folded on desktop should never
+     mean a drawer of bare icons on the phone. */
+  const renderNav = (rail: boolean) => {
+    const r = (cls: string) => (rail ? cls : "");
+    return (
+      <>
+        <nav className={`flex-1 px-4 pb-2 overflow-y-auto overflow-x-hidden ${r("collapsed:px-2")}`}>
+          {groups.map((group) => (
+            <div key={group.heading} className="mb-5 last:mb-0">
+              <p
+                className={`px-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/35 whitespace-nowrap ${r("collapsed:sr-only")}`}
+              >
+                {group.heading}
+              </p>
+              {/* Headings give way to a rule, so the four groups still read
+                  as four when there is no room for their names. */}
+              {rail && (
+                <div aria-hidden className="hidden collapsed:block mx-2 mb-2 border-t border-white/10" />
+              )}
+              <div className="space-y-0.5">
+                {group.items.map((link) => {
+                  const active =
+                    activeHref === link.href ||
+                    (link.href !== "/admin" && activeHref.startsWith(link.href));
+                  return (
+                    <Link
+                      key={link.href}
+                      href={link.href}
+                      onClick={closeDrawer}
+                      title={rail ? link.label : undefined}
+                      aria-current={active ? "page" : undefined}
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors ${r("collapsed:justify-center collapsed:px-0")} ${
+                        active
+                          ? "text-[#80d7b6] bg-white/5"
+                          : "text-white/70 hover:text-white hover:bg-white/5"
+                      }`}
+                    >
+                      <span aria-hidden className="material-symbols-outlined text-lg">{link.icon}</span>
+                      {/* sr-only rather than hidden: the label is the link's
+                          accessible name, folded or not. */}
+                      <span className={`text-sm font-medium whitespace-nowrap ${r("collapsed:sr-only")}`}>
+                        {link.label}
+                      </span>
+                    </Link>
+                  );
+                })}
+              </div>
+            </div>
+          ))}
+        </nav>
+
+        <div className={`border-t border-white/10 ${rail ? "px-3 py-3 space-y-1" : "px-6 py-6"}`}>
+          {rail && (
+            <SidebarCollapseToggle
+              collapseLabel="Collapse sidebar"
+              expandLabel="Expand sidebar"
+            />
+          )}
+          <Link
+            href="/"
+            onClick={closeDrawer}
+            title={rail ? "Back to site" : undefined}
+            className={`flex items-center text-white/50 hover:text-white text-xs transition-colors ${rail ? "gap-3 px-3 py-2 rounded-md hover:bg-white/5 collapsed:justify-center collapsed:px-0" : "gap-2"}`}
+          >
+            <span aria-hidden className={`material-symbols-outlined ${rail ? "text-lg" : "text-sm"}`}>arrow_back</span>
+            <span className={`whitespace-nowrap ${r("collapsed:sr-only")}`}>Back to site</span>
+          </Link>
+        </div>
+      </>
+    );
+  };
 
   return (
     <>
@@ -177,17 +210,18 @@ export function AdminSidebar({ activeHref }: AdminSidebarProps) {
         />
 
         <aside className="fixed top-14 left-0 bottom-0 w-64 bg-[#0d2137] text-white flex flex-col z-50">
-          {nav}
+          {renderNav(false)}
         </aside>
       </details>
 
-      {/* ── Desktop: always there ─────────────────────────────────────── */}
-      <aside className="hidden md:flex fixed top-0 left-0 h-full w-64 bg-[#0d2137] text-white flex-col z-50">
-        <div className="px-6 py-8">
-          <p className="text-[#9cf4d1] font-bold text-xl">Cosystem</p>
-          <p className="text-white/50 text-xs mt-1">Admin Panel</p>
+      {/* ── Desktop: always there, full or folded to an icon rail ─────── */}
+      <aside className="hidden md:flex fixed top-0 left-0 h-full w-(--sidebar-w) transition-[width] bg-[#0d2137] text-white flex-col z-50 overflow-hidden">
+        <div className="px-6 py-8 collapsed:px-0 collapsed:text-center whitespace-nowrap">
+          <p className="text-[#9cf4d1] font-bold text-xl collapsed:hidden">Cosystem</p>
+          <p aria-hidden className="text-[#9cf4d1] font-bold text-xl hidden collapsed:block">C</p>
+          <p className="text-white/50 text-xs mt-1 collapsed:hidden">Admin Panel</p>
         </div>
-        {nav}
+        {renderNav(true)}
       </aside>
     </>
   );

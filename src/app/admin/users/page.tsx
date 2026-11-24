@@ -53,7 +53,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AdminSidebar activeHref="/admin/users" />
-      <main className="flex-1 ml-0 md:ml-64 p-6 md:p-12 pt-20 md:pt-12">
+      <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
           <div>
