@@ -13,8 +13,8 @@
  *   npm run build && npm run start
  *   node scripts/test-coworking-admin.js
  *
- * The admin account is created by the caller; admin@verihome.id gets superadmin
- * in staff_roles from the set_admin_flag trigger on public.users (§3).
+ * The admin account is seeded by the caller: admin@verihome.id gets superadmin
+ * in staff_roles by scripts/seed-test-admin.js (the email hook was dropped).
  *
  * Exits non-zero on any failure, so it can gate a commit.
  */

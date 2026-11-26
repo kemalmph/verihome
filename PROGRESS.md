@@ -4,8 +4,8 @@ Posisi terakhir pekerjaan, untuk disambung session berikutnya.
 Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
-Terakhir diperbarui: 2026-11-26 · branch kerja `claude/beautiful-clarke-24zrhl`
-(Fase 1 peran staf — migration diterapkan ke produksi 2026-11-26, PR #1 di-merge). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+Terakhir diperbarui: 2026-11-26 · branch kerja `claude/bold-cerf-luyq4o`
+(tugas kecil pra-Fase 2: createUser fail-closed + hapus hook email; Fase 1 sudah di produksi). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -83,6 +83,26 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 ---
 
 ## Selesai
+
+- **Tugas kecil sebelum Fase 2** (26 Nov, branch `claude/bold-cerf-luyq4o`,
+  belum di-merge).
+  - `createAdminUser` fail-closed: peran staf hanya diberikan kalau form
+    mengirim `role` secara eksplisit dan valid; tanpa field / field kosong =
+    user biasa, tanpa baris `staff_roles`. Tidak ada default "superadmin" dan
+    field lama `is_admin` tidak dibaca lagi. `CreateUserForm` tidak pernah
+    mengirim role; `CreateAdminForm` kini wajib memilih peran (default "Choose a
+    role…", bukan Superadmin).
+  - Migration `20261126180000_drop_admin_email_hook.sql`: hapus
+    `trg_set_admin_flag` + `set_admin_flag()`. Baris `staff_roles` yang ada tidak
+    disentuh. **Belum diterapkan ke produksi** (menunggu owner).
+  - Akibat: suite UI yang login sebagai `admin@verihome.id` tidak lagi dapat
+    superadmin otomatis. Pakai `node scripts/seed-test-admin.js` (lokal saja,
+    menolak URL non-lokal) setelah `db reset`.
+  - `test-staff-permissions` 809 check (+ kasus fail-closed, + hook sudah
+    hilang dan mendaftar sebagai `admin@verihome.id` tak memberi peran). Semua
+    16 suite hijau di DB lokal bersih. `test-booking-concurrency` butuh
+    `DATABASE_URL` dan user dengan UUID produksi yang di-hardcode di skrip
+    (`208b897e-…`) — di DB lokal buat dulu user dengan id itu.
 
 - **Fase 1 peran & izin staf** (26 Nov, branch `claude/beautiful-clarke-24zrhl`).
   `users.is_admin` / `is_surveyor` diganti peran berbasis izin. **Migration
@@ -191,6 +211,8 @@ angka di halaman ringkasan masih data placeholder.
 
 Urut prioritas:
 
+0a. **Setujui/terapkan migration `20261126180000_drop_admin_email_hook.sql`
+   ke produksi** (via MCP `apply_migration`, setelah PR ini di-merge).
 0. **Fase 1 peran staf: pastikan deploy Vercel Ready dan `kemalmph@yahoo.com`
    bisa masuk `/admin`.** Lalu Fase 2 (dashboard per peran)
    dan Fase 3 (`site_staff`). Migration terpisah nanti: hapus kolom
@@ -273,13 +295,12 @@ Urut prioritas:
 
 ## Masalah terbuka
 
-- 🟠 **Hook `set_admin_flag()` masih memberi superadmin ke siapa pun yang
-  mendaftar dengan email `admin@verihome.id`.** Perilaku lama dipertahankan
-  sesuai instruksi. Baris itu sudah ada di produksi, jadi hook tidak bisa
-  menjadi pintu masuk baru selama emailnya tidak bisa didaftarkan ulang — tapi
-  kalau barisnya pernah dihapus, siapa pun bisa mendaftar sebagai superadmin.
-  Rekomendasi: hapus hook setelah Fase 1 diterapkan (tes lokal membuat admin
-  lewat `staff_roles` langsung).
+- 🟠 **Hook `set_admin_flag()` sudah dihapus di repo, belum di produksi.**
+  Migration `20261126180000_drop_admin_email_hook.sql` menjatuhkan trigger dan
+  fungsinya; sudah diuji lokal, **menunggu persetujuan owner untuk
+  `apply_migration` ke produksi**. Selama belum diterapkan, produksi masih
+  memberi superadmin ke siapa pun yang mendaftar dengan `admin@verihome.id`
+  kalau barisnya pernah dihapus (baris itu sekarang masih ada).
 - **Sidebar admin belum difilter per izin**: tautan yang tidak boleh diakses
   tetap tampil dan mengarah ke redirect ke `/admin`. Pekerjaan Fase 2.
 
@@ -372,9 +393,9 @@ Bukan pemblokir, tapi sayang kalau hilang:
 
 **Supabase** — org `nzqxxsuurhvtygpyxdvb`, project `verihome`
 (`hxktoewssuahtkrksbpx`, ap-northeast-1, Postgres 17).
-Migration di `supabase/migrations/` (12 file; yang lama di
+Migration di `supabase/migrations/` (14 file; yang lama di
 `supabase/migrations-archive/`).
-Terakhir: `20261123120000_membership_ledger.sql`.
+Terakhir di produksi: `20261126120000_staff_roles.sql`; `20261126180000_drop_admin_email_hook.sql` menunggu persetujuan.
 Isi produksi saat ini: 1 site · 14 unit · 2 reservasi · 3 cicilan · 10 entri
 buku besar · 7 properti (6 tayang) · 3 pemilik · 30 pengguna · 24 amenity ·
 0 membership plan.
