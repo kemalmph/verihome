@@ -1,6 +1,6 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { resolvePeriod, PERIOD_OPTIONS } from "@/lib/reports/period";
 import { getSalesReport, REVENUE_STREAMS } from "@/lib/reports/sales";
 import { StreamBars, TrendLines, Legend } from "./Charts";
@@ -35,7 +35,7 @@ export default async function SalesReportPage({
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/reports/sales" />
+      <AppSidebar activeHref="/admin/reports/sales" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <header className="mb-6">
           <h1 className="text-3xl font-bold text-[#0d2137]">Laporan penjualan</h1>

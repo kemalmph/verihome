@@ -1,6 +1,6 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { listSites, listOwnerOptions } from "@/lib/actions/coworking-actions";
 import { siteStatusLabel, siteTypeLabel } from "@/lib/coworking/taxonomy";
 import { NewSiteForm } from "./NewSiteForm";
@@ -18,7 +18,7 @@ export default async function CoworkingSitesPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/site" />
+      <AppSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-[#0d2137]">Site</h1>

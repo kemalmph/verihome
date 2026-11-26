@@ -1,4 +1,5 @@
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { redirect } from "next/navigation";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { isStaffRole, type StaffRole } from "@/lib/auth/permissions";
@@ -26,6 +27,10 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
   const viewer = await requirePermissionOrRedirect(["users.manage", "staff.manage"]);
   const canEditRoles = viewer.permissions.includes("staff.manage");
   const { tab } = await searchParams;
+  // The "Staff roles" view is the menu entry for staff.manage. Without it the
+  // link is not shown, and typing the URL goes back to the plain list rather
+  // than relying on the missing link.
+  if (tab === "admins" && !canEditRoles) redirect("/admin/users");
   const activeTab: TabValue = (TABS.find((t) => t.value === tab)?.value ?? "all");
 
   const admin = createAdminClient();
@@ -63,7 +68,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/users" />
+      <AppSidebar activeHref={activeTab === "admins" ? "/admin/users?tab=admins" : "/admin/users"} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         {/* Header */}
         <div className="flex justify-between items-start mb-8">
@@ -79,7 +84,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
 
         {/* Tabs */}
         <div className="flex gap-2 mb-6">
-          {TABS.map((t) => (
+          {TABS.filter((t) => t.value !== "admins" || canEditRoles).map((t) => (
             <a
               key={t.value}
               href={t.value === "all" ? "/admin/users" : `/admin/users?tab=${t.value}`}

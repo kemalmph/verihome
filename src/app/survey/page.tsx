@@ -1,6 +1,7 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +9,7 @@ export const dynamic = "force-dynamic";
 const OPEN_STATUSES = ["new_lead", "draft"];
 
 export default async function SurveyIndexPage() {
-  const viewer = await requirePermissionOrRedirect(["surveys.input"]);
+  await requirePermissionOrRedirect(["surveys.input"]);
   const admin  = createAdminClient();
 
   const { data: properties } = await admin
@@ -27,23 +28,8 @@ export default async function SurveyIndexPage() {
 
   return (
     <div className="min-h-screen bg-[#f6f3f2]">
-      <header className="bg-[#0d2137] text-white">
-        <div className="max-w-3xl mx-auto px-6 py-6 flex items-center justify-between gap-4">
-          <div>
-            <p className="text-[#9cf4d1] font-bold text-lg leading-none">Cosystem</p>
-            <p className="text-white/60 text-sm mt-1">Surveyor</p>
-          </div>
-          <div className="text-right">
-            <p className="text-sm text-white/80">{viewer?.email ?? ""}</p>
-            {viewer?.permissions.includes("surveys.review") && (
-              <Link href="/admin" className="text-xs text-[#9cf4d1] hover:underline">
-                Admin console
-              </Link>
-            )}
-          </div>
-        </div>
-      </header>
-
+      <AppSidebar activeHref="/survey" />
+      <div data-sidebar-offset className="md:ml-(--sidebar-w) md:transition-[margin] pt-14 md:pt-0">
       <main className="max-w-3xl mx-auto px-6 py-8">
         <h1 className="text-2xl font-bold text-[#0d2137] mb-1">Properties to survey</h1>
         <p className="text-sm text-[#6e7a74] mb-7">
@@ -82,6 +68,7 @@ export default async function SurveyIndexPage() {
           </>
         )}
       </main>
+      </div>
     </div>
   );
 }

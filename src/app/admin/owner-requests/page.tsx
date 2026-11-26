@@ -1,5 +1,5 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { listPendingOwnerRequests, maskAccount } from "@/lib/actions/owner-request-actions";
 import { t } from "@/lib/i18n/strings";
 import { RequestActions } from "./RequestActions";
@@ -23,7 +23,7 @@ export default async function AdminOwnerRequestsPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/owner-requests" />
+      <AppSidebar activeHref="/admin/owner-requests" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-4xl">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-[#0d2137]">{t("admin.requests.title")}</h1>

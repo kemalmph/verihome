@@ -1,7 +1,7 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { updatePropertyDetails, deleteProperty } from "@/lib/actions/admin-actions";
 import { listSiteOptions } from "@/lib/actions/coworking-actions";
@@ -96,7 +96,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/listings" />
+      <AppSidebar activeHref="/admin/listings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1200px]">
         <div className="flex items-center justify-between mb-8">
           <div>

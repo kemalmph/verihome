@@ -1,8 +1,10 @@
 import Link from "next/link";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requirePermissionOrRedirect } from "@/lib/auth/guards";
-import { PERMISSIONS, type Permission } from "@/lib/auth/permissions";
+import { redirect } from "next/navigation";
+import { getViewer } from "@/lib/auth/guards";
+import { type Permission } from "@/lib/auth/permissions";
+import { defaultLanding } from "@/lib/nav/server";
 import { runIntegrityChecks } from "@/lib/ledger/integrity";
 import { listPendingCreditRefunds } from "@/lib/actions/credit-actions";
 import { countPendingOwnerRequests } from "@/lib/actions/owner-request-actions";
@@ -10,26 +12,51 @@ import { PendingCreditRefunds } from "./PendingCreditRefunds";
 
 export default async function AdminDashboardPage() {
   const admin = createAdminClient();
-  // Run on every dashboard load: a books mismatch should be impossible to miss.
-  // Staff only, and the ledger check only for those who may see the books.
-  const viewer = await requirePermissionOrRedirect([...PERMISSIONS]);
-  const sees = (p: Permission) => viewer.permissions.includes(p);
-  const integrity = sees("finance.view")
+  // The dashboard is a set of widgets, each with its own permission. Holding
+  // some staff role is not enough to see any of them: a surveyor used to see
+  // listing prices, commissions, consultations and reviews here.
+  const viewer = await getViewer();
+  if (!viewer) redirect("/admin-login");
+  const sees = (...ps: Permission[]) => ps.some((p) => viewer.permissions.includes(p));
+  const canListingData = sees("listings.manage", "bookings.operate"); // listings, consultations, reviews
+  const canBooks = sees("finance.view");                              // ledger integrity
+  const canMoney = sees("finance.view", "finance.operate");           // credit refunds
+  const canOwnerRequests = sees("listings.manage", "owners.payout_verify");
+  const canCommission = sees("listings.manage", "finance.view");
+  // Entitled to no widget at all: send them where they do have a page rather
+  // than render an empty dashboard. (defaultLanding never returns /admin for
+  // such a viewer: the menu offers the Dashboard only if a widget qualifies.)
+  if (!canListingData && !canMoney && !canOwnerRequests && !canCommission) {
+    redirect(await defaultLanding());
+  }
+
+  const integrity = canBooks
     ? await runIntegrityChecks(admin)
     : { allPassed: true, failedCount: 0, checks: [] } as Awaited<ReturnType<typeof runIntegrityChecks>>;
-  const pendingCreditRefunds = await listPendingCreditRefunds();
-  const pendingOwnerRequests = await countPendingOwnerRequests();
+  const pendingCreditRefunds = canMoney ? await listPendingCreditRefunds() : [];
+  const pendingOwnerRequests = canOwnerRequests ? await countPendingOwnerRequests() : 0;
 
+  // Properties feed the commission warning too; consultations and reviews are
+  // listing-side data and are not even read for anyone else.
+  const needProperties = canListingData || canCommission;
   const [
     { data: properties },
     { data: consultations },
     { count: pendingReviews },
     { data: settings },
   ] = await Promise.all([
-    admin.from("properties").select("id, name, area, property_type, status, price_monthly, created_at, rental_mode, platform_commission_pct").order("created_at", { ascending: false }),
-    admin.from("consultations").select("id, status, package_type, created_at").order("created_at", { ascending: false }).limit(50),
-    admin.from("reviews").select("id", { count: "exact", head: true }).eq("moderation_status", "pending"),
-    admin.from("platform_settings").select("default_commission_pct").eq("id", 1).maybeSingle(),
+    needProperties
+      ? admin.from("properties").select("id, name, area, property_type, status, price_monthly, created_at, rental_mode, platform_commission_pct").order("created_at", { ascending: false })
+      : Promise.resolve({ data: null }),
+    canListingData
+      ? admin.from("consultations").select("id, status, package_type, created_at").order("created_at", { ascending: false }).limit(50)
+      : Promise.resolve({ data: null }),
+    canListingData
+      ? admin.from("reviews").select("id", { count: "exact", head: true }).eq("moderation_status", "pending")
+      : Promise.resolve({ count: 0 }),
+    canCommission
+      ? admin.from("platform_settings").select("default_commission_pct").eq("id", 1).maybeSingle()
+      : Promise.resolve({ data: null }),
   ]);
 
   const defaultCommission =
@@ -56,7 +83,7 @@ export default async function AdminDashboardPage() {
   // A property with no rate of its own now inherits the platform default, so
   // this only fires when there is no default either — otherwise it would warn
   // about every property that is working exactly as intended.
-  const missingCommission = defaultCommission !== null ? [] : (properties ?? []).filter(
+  const missingCommission = !canCommission || defaultCommission !== null ? [] : (properties ?? []).filter(
     (p) =>
       ["short_stay", "both"].includes((p as { rental_mode?: string }).rental_mode ?? "") &&
       (p as { platform_commission_pct?: number | null }).platform_commission_pct == null
@@ -64,7 +91,7 @@ export default async function AdminDashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin" />
+      <AppSidebar activeHref="/admin" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-10">
           <h1 className="text-3xl font-bold text-[#0d2137]">Admin Dashboard</h1>
@@ -174,6 +201,7 @@ export default async function AdminDashboardPage() {
           </div>
         )}
 
+        {canListingData && (<>
         {/* Listing counts by status */}
         <div className="grid grid-cols-2 md:grid-cols-4 gap-6 mb-10">
           {Object.entries(byStatus).map(([status, count]) => (
@@ -243,6 +271,7 @@ export default async function AdminDashboardPage() {
             </div>
           )}
         </section>
+        </>)}
       </main>
     </div>
   );

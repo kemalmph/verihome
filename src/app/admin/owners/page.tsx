@@ -1,6 +1,6 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { OwnerPortalControls } from "./OwnerPortalControls";
 
@@ -28,7 +28,7 @@ export default async function AdminOwnersPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/owners" />
+      <AppSidebar activeHref="/admin/owners" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-[#0d2137]">Pemilik</h1>

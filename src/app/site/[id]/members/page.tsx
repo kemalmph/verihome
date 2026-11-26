@@ -1,7 +1,7 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { listMemberships, listPlans, type MembershipRow } from "@/lib/actions/membership-actions";
 import { NewMembershipForm, NewPlanForm, MembershipControls } from "./MemberForms";
@@ -33,7 +33,7 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/site" />
+      <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-[#6e7a74] mb-4">
           <Link href="/site" className="hover:underline">Site</Link>

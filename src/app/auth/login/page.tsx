@@ -4,6 +4,7 @@ import { Navbar } from "@/components/layout/Navbar";
 import { Footer } from "@/components/layout/Footer";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { safeNext } from "@/lib/auth/safe-next";
+import { defaultLanding } from "@/lib/nav/server";
 import { LoginForm } from "./LoginForm";
 import { getLocale } from "@/lib/i18n/server";
 import { t, type StringKey } from "@/lib/i18n/strings";
@@ -22,13 +23,15 @@ export default async function LoginPage({
   searchParams: Promise<{ next?: string; mode?: string }>;
 }) {
   const { next: rawNext, mode } = await searchParams;
-  const next = safeNext(rawNext);
+  // Empty when the visitor came with no destination: after sign-in they go
+  // to the first page they have (see defaultLanding), not blindly /dashboard.
+  const next = safeNext(rawNext, "");
   const lang = await getLocale();
 
   // Already signed in — honour the original destination instead of showing a
   // login form to someone who does not need one.
   const user = await getCurrentUser().catch(() => null);
-  if (user) redirect(next);
+  if (user) redirect(next || (await defaultLanding()));
 
   return (
     <>

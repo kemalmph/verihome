@@ -2,6 +2,7 @@ import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { SurveyForm } from "./SurveyForm";
 
 export const dynamic = "force-dynamic";
@@ -33,6 +34,8 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
 
   return (
     <div className="min-h-screen bg-[#f6f3f2]">
+      <AppSidebar activeHref={`/survey/${id}`} />
+      <div data-sidebar-offset className="md:ml-(--sidebar-w) md:transition-[margin] pt-14 md:pt-0">
       <header className="bg-[#0d2137] text-white">
         <div className="max-w-3xl mx-auto px-6 py-5">
           <Link href="/survey" className="text-sm text-[#9cf4d1] hover:underline flex items-center gap-1">
@@ -96,6 +99,7 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
           </>
         )}
       </main>
+      </div>
     </div>
   );
 }

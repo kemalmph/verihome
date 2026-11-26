@@ -1,6 +1,6 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { notFound } from "next/navigation";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { linkPendingImport } from "@/lib/actions/survey-actions";
 import { BuildListingPageClient } from "./BuildListingPageClient";
@@ -110,7 +110,7 @@ export default async function BuildListingPage({ params }: BuildListingPageProps
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/listings" />
+      <AppSidebar activeHref="/admin/listings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <BuildListingPageClient
           property={{
