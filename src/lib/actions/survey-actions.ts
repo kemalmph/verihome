@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdmin, requireSurveyAccess } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import {
   parseTallyFields,
   writeSurvey,
@@ -25,14 +25,14 @@ function text(formData: FormData, key: string): string {
 export async function submitSurvey(propertyId: string, formData: FormData) {
   let viewer;
   try {
-    viewer = await requireSurveyAccess();
+    viewer = await requirePermission("surveys.input");
   } catch (err) {
     return { error: (err as Error).message };
   }
 
   // Surveyors may only record visits against properties still being worked up.
   // A live listing's assessment is an admin concern.
-  if (viewer.role === "surveyor") {
+  if (!viewer.permissions.includes("surveys.review")) {
     const admin = createAdminClient();
     const { data: prop } = await admin
       .from("properties").select("status").eq("id", propertyId).single();
@@ -102,7 +102,7 @@ export async function submitSurvey(propertyId: string, formData: FormData) {
 // ── Tally pending-import queue ───────────────────────────────────────────────
 
 export async function linkPendingImport(pendingId: string, propertyId: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("surveys.review"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
 
@@ -138,7 +138,7 @@ export async function linkPendingImport(pendingId: string, propertyId: string) {
 }
 
 export async function rejectPendingImport(pendingId: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("surveys.review"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
   await admin

@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -13,6 +14,7 @@ export default async function PositionPage({
 }: {
   searchParams: Promise<{ as_of?: string }>;
 }) {
+  await requirePermissionOrRedirect(["finance.view"]);
   const sp = await searchParams;
 
   const today = new Date().toISOString().slice(0, 10);

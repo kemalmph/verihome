@@ -1,13 +1,13 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission, requireAnyPermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * Memberships and the plans they are sold from.
  *
- * Every function calls requireAdmin() itself — these are separately
+ * Every function calls requirePermission("sites.operate_all") itself — these are separately
  * addressable POST endpoints, not pages behind a layout (§19.6).
  */
 
@@ -64,7 +64,7 @@ const num = (fd: FormData, k: string, dflt = 0) => {
 const bool = (fd: FormData, k: string) => fd.get(k) === "on" || fd.get(k) === "true";
 
 export async function listPlans(siteId: string): Promise<PlanRow[]> {
-  await requireAdmin();
+  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
   const admin = createAdminClient();
   // Plans for this site, plus the ones sold everywhere.
   const { data } = await admin
@@ -82,7 +82,7 @@ export async function listPlans(siteId: string): Promise<PlanRow[]> {
 }
 
 export async function listMemberships(siteId: string): Promise<MembershipRow[]> {
-  await requireAdmin();
+  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
   const admin = createAdminClient();
 
   const { data } = await admin
@@ -138,7 +138,7 @@ export async function listMemberships(siteId: string): Promise<MembershipRow[]> 
 }
 
 export async function createPlan(siteId: string, fd: FormData) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
 
   const name = txt(fd, "name");
@@ -170,7 +170,7 @@ export async function createPlan(siteId: string, fd: FormData) {
 }
 
 export async function createMembership(siteId: string, fd: FormData) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
 
   const member_name = txt(fd, "member_name");
@@ -260,7 +260,7 @@ export async function createMembership(siteId: string, fd: FormData) {
 }
 
 export async function setMembershipStatus(siteId: string, membershipId: string, status: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   if (!["pending", "active", "expired", "cancelled"].includes(status)) {
     return { error: "Status tidak dikenal." };
   }
@@ -272,7 +272,7 @@ export async function setMembershipStatus(siteId: string, membershipId: string, 
 }
 
 export async function setMembershipPayment(siteId: string, membershipId: string, payment_status: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.finance_all"); } catch (e) { return { error: (e as Error).message }; }
   if (!["unpaid", "pending_verification", "paid", "refunded"].includes(payment_status)) {
     return { error: "Status pembayaran tidak dikenal." };
   }

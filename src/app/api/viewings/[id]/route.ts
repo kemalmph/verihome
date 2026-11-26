@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getViewer } from "@/lib/auth/guards";
+import type { Permission } from "@/lib/auth/permissions";
 
 type AdminAction =
   | { action: "confirm";         scheduled_at: string }
@@ -21,15 +23,27 @@ export async function PATCH(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("users")
-    .select("is_admin")
-    .eq("id", user.id)
-    .single();
-
-  if (!profile?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  const viewer = await getViewer();
+  if (!viewer) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
 
   const body = await req.json() as AdminAction;
+
+  // Each action needs the permission for what it does to money:
+  //   confirm         verifies the deposit proof and receives the deposit
+  //   attend/no_show  operate the viewing (the credit/ledger posting is part
+  //                   of marking attendance, which the operator owns)
+  //   request_refund  / confirm_refund  move money back to the customer
+  const needed: Record<AdminAction["action"], Permission> = {
+    confirm: "payments.settle",
+    attend: "bookings.operate",
+    no_show: "bookings.operate",
+    request_refund: "finance.operate",
+    confirm_refund: "finance.operate",
+  };
+  const perm = needed[body.action];
+  if (!perm || !viewer.permissions.includes(perm)) {
+    return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  }
 
   // Every branch below changes a row AND posts ledger entries. Each settle_*
   // function does both in one transaction, so a failed post leaves the viewing
@@ -129,8 +143,9 @@ export async function GET(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("users").select("is_admin").eq("id", user.id).single();
+  const viewer = await getViewer();
+  const staffRead = !!viewer && ["bookings.operate", "payments.settle", "finance.view"]
+    .some((p) => viewer.permissions.includes(p as Permission));
 
   const { data, error } = await admin
     .from("viewings")
@@ -139,7 +154,7 @@ export async function GET(
     .single();
 
   if (error || !data) return NextResponse.json({ error: "Not found" }, { status: 404 });
-  if (!profile?.is_admin && data.user_id !== user.id) {
+  if (!staffRead && data.user_id !== user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
 

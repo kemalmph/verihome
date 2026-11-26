@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { notFound } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -11,6 +12,7 @@ interface BuildListingPageProps {
 export const dynamic = "force-dynamic";
 
 export default async function BuildListingPage({ params }: BuildListingPageProps) {
+  await requirePermissionOrRedirect(["listings.manage"]);
   const { id } = await params;
   const admin = createAdminClient();
 

@@ -1,7 +1,8 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
-import { createAdminClient } from "@/lib/supabase/admin";
+import { getViewer } from "@/lib/auth/guards";
+import type { Permission } from "@/lib/auth/permissions";
 import { getReceipt } from "@/lib/reports/receipt";
 import { PrintButton } from "@/components/print/PrintButton";
 import { PRINT_CSS } from "@/components/print/print.css";
@@ -20,12 +21,12 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
   if (!receipt) notFound();
 
   // A receipt names a customer and states what they paid — it belongs to them
-  // and to an admin, nobody else.
-  const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("users").select("is_admin").eq("id", user.id).single();
+  // and to staff who handle bookings or finance, nobody else.
+  const viewer = await getViewer();
+  const staffRead = !!viewer && ["bookings.operate", "payments.settle", "finance.view"]
+    .some((p) => viewer.permissions.includes(p as Permission));
 
-  if (receipt.userId !== user.id && !profile?.is_admin) {
+  if (receipt.userId !== user.id && !staffRead) {
     notFound();
   }
 

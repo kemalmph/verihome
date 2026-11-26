@@ -1,7 +1,7 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { getReservationDetail, listItems } from "@/lib/actions/reservation-detail-actions";
 import { unitTypeLabel, paymentStatusLabel, reservationStatusLabel } from "@/lib/coworking/taxonomy";
 import { BookingItems, UtilitiesToggle } from "./BookingItems";
@@ -26,7 +26,7 @@ const waktu = (iso: string) =>
   }).format(new Date(iso));
 
 export default async function BookingDetailPage({ params }: { params: Promise<{ resId: string }> }) {
-  await requireAdmin();
+  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
   const { resId: param } = await params;
   const resId = await resolveReservationId(param);
   if (!resId) notFound();

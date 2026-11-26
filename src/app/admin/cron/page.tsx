@@ -1,5 +1,5 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { listCronRuns } from "@/lib/actions/cron-actions";
 import { RunNowButton } from "./RunNowButton";
 
@@ -19,7 +19,7 @@ function wib(iso: string) {
 }
 
 export default async function AdminCronPage() {
-  await requireAdmin();
+  await requirePermissionOrRedirect(["platform.settings"]);
   const runs = await listCronRuns();
 
   // Group by run: every step of one dispatch shares a start minute.

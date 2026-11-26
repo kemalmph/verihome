@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -35,7 +35,7 @@ const txt = (fd: FormData, k: string) => {
 };
 
 export async function createEvent(siteId: string, fd: FormData) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
 
   const title = txt(fd, "title");
@@ -103,7 +103,7 @@ export async function bookRoomForEvent(
   endsAt: string,
   setupMinutes = 0,
 ) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
 
   const { data: unit } = await admin
@@ -152,7 +152,7 @@ export async function bookRoomForEvent(
 }
 
 export async function setEventStatus(siteId: string, eventId: string, status: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   if (!["draft", "confirmed", "cancelled", "done"].includes(status)) {
     return { error: "Status tidak dikenal." };
   }

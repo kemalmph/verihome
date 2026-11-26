@@ -1,7 +1,7 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { getSite, listOwnerOptions } from "@/lib/actions/coworking-actions";
 import { SiteDetailForm } from "./SiteDetailForm";
 import { UnitManager } from "./UnitManager";
@@ -16,7 +16,7 @@ interface Props {
 }
 
 export default async function CoworkingSitePage({ params }: Props) {
-  await requireAdmin();
+  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
   const { id: param } = await params;
   const id = await resolveSiteId(param);
   if (!id) notFound();

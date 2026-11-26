@@ -4,8 +4,8 @@ Posisi terakhir pekerjaan, untuk disambung session berikutnya.
 Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
-Terakhir diperbarui: 2026-11-24 · branch kerja `claude/friendly-goldberg-56lycj`
-(sudah di-merge ke `main`). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+Terakhir diperbarui: 2026-11-26 · branch kerja `claude/beautiful-clarke-24zrhl`
+(Fase 1 peran staf — migration diterapkan ke produksi 2026-11-26, PR #1 di-merge). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -84,6 +84,44 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 ## Selesai
 
+- **Fase 1 peran & izin staf** (26 Nov, branch `claude/beautiful-clarke-24zrhl`).
+  `users.is_admin` / `is_surveyor` diganti peran berbasis izin. **Migration
+  `20261126120000_staff_roles.sql` sudah diterapkan ke produksi** (26 Nov, atas
+  persetujuan owner, lewat MCP `apply_migration`). Terverifikasi: 2 admin
+  produksi kini superadmin, RLS aktif, anon tanpa EXECUTE. Login dengan kode
+  baru belum dicek — cek `/admin` setelah deploy Vercel.
+  - Tabel `staff_roles` (superadmin, admin_general, admin_listings,
+    admin_finance, surveyor) dan `site_staff` (dipakai Fase 3); RLS aktif tanpa
+    policy, hanya service_role. Backfill: is_admin → superadmin,
+    is_surveyor → surveyor. Kolom lama **tidak dihapus** dan sekarang beku:
+    tidak ada kode/policy yang membacanya, jadi mengubahnya tidak berefek.
+  - Fungsi `has_staff_role`, `has_staff_permission`, `has_any_staff_permission`
+    (SECURITY DEFINER, search_path tetap, EXECUTE dicabut dari PUBLIC/anon) +
+    `staff_role_permissions(role)`. Enam policy RLS yang membaca `is_admin`
+    dipindah ke fungsi itu dan jadi `TO authenticated` (bukan `TO public`,
+    supaya anon tidak kena "permission denied" saat policy dievaluasi).
+  - `set_admin_flag()` (hook email `admin@verihome.id`) kini trigger AFTER
+    INSERT yang menulis `staff_roles` superadmin, bukan `is_admin`.
+  - Kode: `src/lib/auth/permissions.ts` (satu peta peran → izin, 13 izin),
+    `guards.ts` (`getViewer` → peran + izin; `requirePermission`,
+    `requireAnyPermission`, `requirePermissionOrRedirect`; `requireAdmin` jadi
+    alias superadmin-saja, tak ada pemanggil lagi). Setiap action, route, dan
+    **halaman** `/admin`, `/site`, `/survey` memeriksa izinnya sendiri.
+  - Aksi di user yang punya peran staf butuh `staff.manage` (bukan hanya
+    `users.manage`) — kalau tidak, admin_general bisa ganti email lalu reset
+    password superadmin. Tidak bisa mencabut superadmin sendiri / yang terakhir.
+  - Halaman Users: dua kolom toggle diganti satu kolom chip peran
+    (hanya superadmin yang bisa mengubah).
+  - Tes baru `scripts/test-staff-permissions.js` (800 check): peta peran
+    (spec = permissions.ts = SQL), 57 action × 6 peran, 19 route × 7 pemanggil,
+    26 halaman × 6 peran, skenario eskalasi, RLS, grant. Semua suite lama
+    hijau di DB lokal bersih.
+  - Celah yang ditemukan dan ditutup di jalan: `listCronRuns` tanpa guard sama
+    sekali (callable siapa pun yang login); halaman `/survey` terbuka untuk
+    staf tanpa `surveys.input`; `PATCH /api/bookings/[id]` jalur non-admin tidak
+    memeriksa kepemilikan booking; `/api/admin/reports/export?type=my_statement`
+    (ekspor milik tamu) selalu 401 karena `getViewer` null untuk non-staf.
+
 - **Sidebar desktop admin, `/site`, portal pemilik, dan dashboard penyewa
   (`/dashboard`) bisa diciutkan** (24 Nov)
   jadi rail ikon 72px. Status di cookie `cosystem_sidebar`, dibaca root layout
@@ -152,6 +190,11 @@ angka di halaman ringkasan masih data placeholder.
 ## Berikutnya
 
 Urut prioritas:
+
+0. **Fase 1 peran staf: pastikan deploy Vercel Ready dan `kemalmph@yahoo.com`
+   bisa masuk `/admin`.** Lalu Fase 2 (dashboard per peran)
+   dan Fase 3 (`site_staff`). Migration terpisah nanti: hapus kolom
+   `is_admin`/`is_surveyor`.
 
 1. **Putuskan pengembalian dana membership.** Jenis peristiwa
    `membership_refund_issued` sudah ada di daftar, fungsinya belum —
@@ -229,6 +272,16 @@ Urut prioritas:
 ---
 
 ## Masalah terbuka
+
+- 🟠 **Hook `set_admin_flag()` masih memberi superadmin ke siapa pun yang
+  mendaftar dengan email `admin@verihome.id`.** Perilaku lama dipertahankan
+  sesuai instruksi. Baris itu sudah ada di produksi, jadi hook tidak bisa
+  menjadi pintu masuk baru selama emailnya tidak bisa didaftarkan ulang — tapi
+  kalau barisnya pernah dihapus, siapa pun bisa mendaftar sebagai superadmin.
+  Rekomendasi: hapus hook setelah Fase 1 diterapkan (tes lokal membuat admin
+  lewat `staff_roles` langsung).
+- **Sidebar admin belum difilter per izin**: tautan yang tidak boleh diakses
+  tetap tampil dan mengarah ke redirect ke `/admin`. Pekerjaan Fase 2.
 
 - 🔴 **Service-role key produksi masih terpublikasi dan belum dirotasi
   (§20.6).** File `env copy.txt` pernah di-commit ke repo publik

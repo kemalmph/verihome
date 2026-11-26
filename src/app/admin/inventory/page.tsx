@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -18,6 +19,7 @@ function modeColor(m: RentalMode) {
 }
 
 export default async function AdminInventoryPage() {
+  await requirePermissionOrRedirect(["listings.manage"]);
   const admin = createAdminClient();
   const today = new Date().toISOString().slice(0, 10);
 

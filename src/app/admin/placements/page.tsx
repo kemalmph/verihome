@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PlacementForm, PlacementRow } from "./PlacementClient";
@@ -7,6 +8,7 @@ export const dynamic = "force-dynamic";
 const fmt = (n: number) => new Intl.NumberFormat("id-ID").format(n);
 
 export default async function PlacementsPage() {
+  await requirePermissionOrRedirect(["finance.view", "finance.operate"]);
   const admin = createAdminClient();
 
   const [{ data: placements }, { data: properties }] = await Promise.all([

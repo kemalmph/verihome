@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 export interface PlatformSettings {
@@ -15,6 +15,7 @@ export interface PlatformSettings {
  * row is somehow missing, so the page renders and says so.
  */
 export async function getPlatformSettings(): Promise<PlatformSettings> {
+  await requirePermission("platform.settings");
   const admin = createAdminClient();
   const { data } = await admin
     .from("platform_settings")
@@ -46,6 +47,7 @@ export async function getPlatformSettings(): Promise<PlatformSettings> {
  * change what I already sold?" is the first thing anyone asks.
  */
 export async function countBookingsUnaffected(): Promise<number> {
+  await requirePermission("platform.settings");
   const admin = createAdminClient();
   const { count } = await admin
     .from("bookings")
@@ -57,7 +59,7 @@ export async function countBookingsUnaffected(): Promise<number> {
 
 export async function saveDefaultCommission(formData: FormData) {
   let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { caller = await requirePermission("platform.settings"); } catch (e) { return { error: (e as Error).message }; }
 
   const raw = String(formData.get("default_commission_pct") ?? "").trim();
 

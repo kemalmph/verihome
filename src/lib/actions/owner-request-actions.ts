@@ -1,7 +1,8 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requireAnyPermission, type Viewer } from "@/lib/auth/guards";
+import { hasPermission, type Permission } from "@/lib/auth/permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { maskAccount } from "@/lib/owner/queries";
 
@@ -19,11 +20,32 @@ export interface PendingRequest {
   ageDays: number;
 }
 
+// rate_change rewrites short_stay_rates (a listing matter); payout_account
+// redirects where owner money goes, which is the finance team's call.
+const REQUEST_PERMISSIONS: Permission[] = ["listings.manage", "owners.payout_verify"];
+function permissionForKind(kind: string): Permission {
+  return kind === "payout_account" ? "owners.payout_verify" : "listings.manage";
+}
+
+/** Loads the pending request's kind and requires the permission for that kind. */
+async function authorizeRequest(requestId: string): Promise<{ caller: Viewer } | { error: string }> {
+  let caller: Viewer;
+  try { caller = await requireAnyPermission(REQUEST_PERMISSIONS); } catch (e) { return { error: (e as Error).message }; }
+  const { data } = await createAdminClient()
+    .from("owner_change_requests").select("kind").eq("id", requestId).maybeSingle();
+  if (!data) return { error: "Permintaan tidak ditemukan." };
+  if (!hasPermission(caller.permissions, permissionForKind(data.kind as string))) {
+    return { error: "You do not have permission to do this." };
+  }
+  return { caller };
+}
+
 export async function listPendingOwnerRequests(): Promise<PendingRequest[]> {
-  try { await requireAdmin(); } catch { return []; }
+  let viewer: Viewer;
+  try { viewer = await requireAnyPermission(REQUEST_PERMISSIONS); } catch { return []; }
 
   const admin = createAdminClient();
-  const { data } = await admin
+  const { data: rows } = await admin
     .from("owner_change_requests")
     .select(`id, kind, owner_id, property_id, proposed, previous, created_at,
              owner:owners ( name, phone_whatsapp ),
@@ -31,7 +53,10 @@ export async function listPendingOwnerRequests(): Promise<PendingRequest[]> {
     .eq("status", "pending")
     .order("created_at", { ascending: true });
 
-  return (data ?? []).map((r) => {
+  // Each kind needs its own permission; show only the kinds this viewer may act on.
+  const data = (rows ?? []).filter((r) => hasPermission(viewer.permissions, permissionForKind(r.kind as string)));
+
+  return data.map((r) => {
     const o = r.owner as unknown as { name?: string; phone_whatsapp?: string } | null;
     const p = r.property as unknown as { name?: string } | null;
     return {
@@ -68,8 +93,9 @@ export async function listPendingOwnerRequests(): Promise<PendingRequest[]> {
  *                   a redirected payment.
  */
 export async function approveOwnerRequest(requestId: string, note?: string) {
-  let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  const auth = await authorizeRequest(requestId);
+  if ("error" in auth) return { error: auth.error };
+  const caller = auth.caller;
 
   const admin = createAdminClient();
 
@@ -137,8 +163,9 @@ export async function approveOwnerRequest(requestId: string, note?: string) {
 }
 
 export async function rejectOwnerRequest(requestId: string, note?: string) {
-  let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  const auth = await authorizeRequest(requestId);
+  if ("error" in auth) return { error: auth.error };
+  const caller = auth.caller;
 
   const admin = createAdminClient();
   const { data, error } = await admin
@@ -163,6 +190,7 @@ export async function rejectOwnerRequest(requestId: string, note?: string) {
 
 /** Count for the admin needs-attention list. */
 export async function countPendingOwnerRequests(): Promise<number> {
+  try { await requireAnyPermission(REQUEST_PERMISSIONS); } catch { return 0; }
   const admin = createAdminClient();
   const { count } = await admin
     .from("owner_change_requests")

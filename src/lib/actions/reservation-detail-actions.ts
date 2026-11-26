@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission, requireAnyPermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -70,7 +70,7 @@ export interface ReservationDetail {
 }
 
 export async function getReservationDetail(reservationId: string): Promise<ReservationDetail | null> {
-  await requireAdmin();
+  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
   const admin = createAdminClient();
 
   const { data: r } = await admin
@@ -152,7 +152,7 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
 }
 
 export async function listItems(siteId: string) {
-  await requireAdmin();
+  await requirePermission("sites.operate_all");
   const admin = createAdminClient();
   const { data } = await admin
     .from("items")
@@ -166,7 +166,7 @@ export async function listItems(siteId: string) {
 }
 
 export async function createItem(siteId: string, fd: FormData) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
 
   const name = ((fd.get("name") as string) ?? "").trim();
@@ -191,7 +191,7 @@ export async function createItem(siteId: string, fd: FormData) {
 }
 
 export async function addReservationItem(reservationId: string, fd: FormData) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
 
   const qty = Number(((fd.get("qty") as string) ?? "1").replace(/[^\d.]/g, "")) || 0;
@@ -233,7 +233,7 @@ export async function addReservationItem(reservationId: string, fd: FormData) {
 }
 
 export async function removeReservationItem(reservationId: string, itemRowId: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
   const { error } = await admin
     .from("reservation_items").delete().eq("id", itemRowId).eq("reservation_id", reservationId);
@@ -243,7 +243,7 @@ export async function removeReservationItem(reservationId: string, itemRowId: st
 }
 
 export async function setReservationUtilities(reservationId: string, included: boolean) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
   const { error } = await admin
     .from("unit_reservations").update({ utilities_included: included }).eq("id", reservationId);
@@ -261,7 +261,7 @@ export async function setReservationUtilities(reservationId: string, included: b
  * When a real retention policy exists, it sweeps by key.
  */
 export async function removeDocument(reservationId: string, documentId: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
   const { error } = await admin
     .from("coworking_documents").delete().eq("id", documentId).eq("reservation_id", reservationId);

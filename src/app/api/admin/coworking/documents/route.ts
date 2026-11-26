@@ -1,5 +1,5 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { uploadPrivate, presignedGetUrl } from "@/lib/r2/private";
 import { sanitizeFilename } from "@/lib/r2/upload";
@@ -39,7 +39,7 @@ const KINDS = new Set([
 
 export async function POST(req: NextRequest) {
   let caller;
-  try { caller = await requireAdmin(); } catch (e) {
+  try { caller = await requirePermission("sites.operate_all"); } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 403 });
   }
 
@@ -119,7 +119,7 @@ export async function POST(req: NextRequest) {
 
 /** A fifteen-minute link to one document. */
 export async function GET(req: NextRequest) {
-  try { await requireAdmin(); } catch (e) {
+  try { await requirePermission("sites.operate_all"); } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 403 });
   }
 

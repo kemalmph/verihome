@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
@@ -15,6 +16,7 @@ export default async function OwnerStatementPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ months?: string }>;
 }) {
+  await requirePermissionOrRedirect(["finance.view"]);
   const { id } = await params;
   const sp = await searchParams;
   const months = [3, 6, 12].includes(Number(sp.months)) ? Number(sp.months) : 6;

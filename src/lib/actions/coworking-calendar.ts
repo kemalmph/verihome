@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -94,7 +94,7 @@ export interface SiteCalendar {
 }
 
 export async function getSiteCalendar(siteId: string, weekParam?: string): Promise<SiteCalendar | null> {
-  await requireAdmin();
+  await requirePermission("sites.operate_all");
   const admin = createAdminClient();
 
   const todayYmd = await jakartaDay(new Date());

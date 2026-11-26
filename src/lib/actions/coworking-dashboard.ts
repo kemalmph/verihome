@@ -1,6 +1,6 @@
 "use server";
 
-import { requireAdmin } from "@/lib/auth/guards";
+import { requireAnyPermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -123,7 +123,7 @@ const daysFromNow = (when: string | Date) => {
 };
 
 export async function getSiteDashboard(siteId: string): Promise<SiteDashboard | null> {
-  await requireAdmin();
+  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
   const admin = createAdminClient();
   const nowIso = new Date().toISOString();
 

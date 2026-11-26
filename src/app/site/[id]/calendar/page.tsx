@@ -1,7 +1,7 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { getSiteCalendar, type CalBooking } from "@/lib/actions/coworking-calendar";
 import { unitTypeLabel } from "@/lib/coworking/taxonomy";
 import { NewEventForm, EventControls } from "./EventForm";
@@ -23,7 +23,7 @@ export default async function SiteCalendarPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ week?: string }>;
 }) {
-  await requireAdmin();
+  await requirePermissionOrRedirect(["sites.operate_all"]);
   const { id: param } = await params;
   const id = await resolveSiteId(param);
   if (!id) notFound();

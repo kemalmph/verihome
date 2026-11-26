@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 
 const num = (v: FormDataEntryValue | null) => {
   const n = Number(String(v ?? "").replace(/[^\d.]/g, ""));
@@ -18,7 +18,7 @@ const num = (v: FormDataEntryValue | null) => {
  */
 export async function recordPlacement(formData: FormData) {
   let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { caller = await requirePermission("finance.operate"); } catch (e) { return { error: (e as Error).message }; }
 
   const propertyId  = (formData.get("property_id") as string) || null;
   const userId      = (formData.get("user_id") as string) || null;
@@ -75,7 +75,7 @@ export async function recordPlacement(formData: FormData) {
 /** Owner has paid the commission: the receivable becomes cash. */
 export async function markPlacementPaid(placementId: string) {
   let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { caller = await requirePermission("finance.operate"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
 
@@ -105,7 +105,7 @@ export async function markPlacementPaid(placementId: string) {
 
 /** Status changes that move no money — invoiced, disputed, written off. */
 export async function updatePlacementStatus(placementId: string, status: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("finance.operate"); } catch (e) { return { error: (e as Error).message }; }
 
   if (status === "paid") {
     return { error: "Gunakan markPlacementPaid agar pembayaran tercatat di buku besar." };

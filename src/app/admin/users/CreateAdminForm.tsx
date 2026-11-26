@@ -57,6 +57,16 @@ export function CreateAdminForm() {
       )}
 
       <form onSubmit={handleSubmit} className="space-y-4">
+        <div>
+          <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1">Role</label>
+          <select name="role" defaultValue="superadmin" className="w-full md:w-64 h-11 px-3 rounded-lg border border-[#cccccc] text-sm bg-white">
+            <option value="superadmin">Superadmin</option>
+            <option value="admin_general">Admin — general</option>
+            <option value="admin_listings">Admin — listings</option>
+            <option value="admin_finance">Admin — finance</option>
+            <option value="surveyor">Surveyor</option>
+          </select>
+        </div>
         <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
           <div>
             <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1">Full Name *</label>

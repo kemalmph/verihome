@@ -1,5 +1,10 @@
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { redirect } from "next/navigation";
+import {
+  hasAnyPermission, hasPermission, isStaffRole, permissionsForRoles,
+  type Permission, type StaffRole,
+} from "@/lib/auth/permissions";
 
 // Authorization guards for server actions and server components.
 //
@@ -8,57 +13,118 @@ import { createAdminClient } from "@/lib/supabase/admin";
 // RPC endpoints that any signed-in client can invoke directly, whatever page
 // they are on. Every privileged action has to check for itself.
 
-export type AccessRole = "admin" | "surveyor";
-
 export interface Viewer {
   id: string;
   email: string | null;
   name: string | null;
-  role: AccessRole;
+  /** Every staff role the user holds (empty array is never returned: that is "not staff", i.e. null). */
+  roles: StaffRole[];
+  /** Union of the permissions those roles grant. */
+  permissions: Permission[];
 }
 
-async function currentProfile() {
+/**
+ * Resolves the signed-in staff member, or null when they hold no staff role.
+ * Roles are re-read from staff_roles on every call, so a revoked role stops
+ * working on the very next request.
+ */
+export async function getViewer(): Promise<Viewer | null> {
   const supabase = await createClient();
   const { data: { user } } = await supabase.auth.getUser();
   if (!user) return null;
 
   const admin = createAdminClient();
-  const { data: profile } = await admin
-    .from("users")
-    .select("id, email, name, is_admin, is_surveyor")
-    .eq("id", user.id)
-    .single();
-
+  const [{ data: profile }, { data: rows }] = await Promise.all([
+    admin.from("users").select("id, email, name").eq("id", user.id).single(),
+    admin.from("staff_roles").select("role").eq("user_id", user.id),
+  ]);
   if (!profile) return null;
-  return profile as {
-    id: string; email: string | null; name: string | null;
-    is_admin: boolean | null; is_surveyor: boolean | null;
+
+  const roles = (rows ?? []).map((r) => r.role).filter(isStaffRole);
+  if (roles.length === 0) return null;
+
+  return {
+    id: profile.id as string,
+    email: (profile.email as string) ?? null,
+    name: (profile.name as string) ?? null,
+    roles,
+    permissions: permissionsForRoles(roles),
   };
 }
 
-/** Resolves the viewer's role, or null when they have neither. Admin outranks surveyor. */
-export async function getViewer(): Promise<Viewer | null> {
-  const p = await currentProfile();
-  if (!p) return null;
-  const base = { id: p.id, email: p.email, name: p.name };
-  if (p.is_admin)    return { ...base, role: "admin" };
-  if (p.is_surveyor) return { ...base, role: "surveyor" };
-  return null;
+/** Throws unless the caller holds the permission. Call at the top of every action and route. */
+export async function requirePermission(perm: Permission): Promise<Viewer> {
+  const viewer = await getViewer();
+  if (!viewer) throw new Error("You need to be signed in as staff.");
+  if (!hasPermission(viewer.permissions, perm)) {
+    throw new Error("You do not have permission to do this.");
+  }
+  return viewer;
 }
 
-/** Throws unless the caller is an admin. Use at the top of every admin server action. */
+/** Throws unless the caller holds at least one of the permissions. */
+export async function requireAnyPermission(perms: readonly Permission[]): Promise<Viewer> {
+  const viewer = await getViewer();
+  if (!viewer) throw new Error("You need to be signed in as staff.");
+  if (!hasAnyPermission(viewer.permissions, perms)) {
+    throw new Error("You do not have permission to do this.");
+  }
+  return viewer;
+}
+
+/**
+ * Page-level variant: redirects instead of throwing. Staff without the
+ * permission go to /admin (their landing page); everyone else to the staff
+ * login. Server actions and routes must still check for themselves.
+ */
+export async function requirePermissionOrRedirect(
+  perms: Permission | readonly Permission[],
+): Promise<Viewer> {
+  const list = typeof perms === "string" ? [perms] : perms;
+  const viewer = await getViewer();
+  if (!viewer) redirect("/admin-login");
+  if (!hasAnyPermission(viewer.permissions, list)) {
+    redirect(viewer.permissions.includes("surveys.input") && viewer.roles.length === 1 ? "/survey" : "/admin");
+  }
+  return viewer;
+}
+
+/**
+ * Soft check for UI that only chooses what to show (a link, a column). Never
+ * a substitute for requirePermission in the code that does the work.
+ */
+export async function viewerCan(...perms: Permission[]): Promise<boolean> {
+  const viewer = await getViewer();
+  return !!viewer && hasAnyPermission(viewer.permissions, perms);
+}
+
+/** Server-action friendly wrapper: returns {error} instead of throwing. */
+export async function guard(perms: Permission | readonly Permission[]):
+  Promise<{ viewer: Viewer; error?: undefined } | { viewer?: undefined; error: string }> {
+  try {
+    const viewer = typeof perms === "string"
+      ? await requirePermission(perms)
+      : await requireAnyPermission(perms);
+    return { viewer };
+  } catch (e) {
+    return { error: (e as Error).message };
+  }
+}
+
+/**
+ * DEPRECATED, kept only so a caller we missed fails closed: superadmin only.
+ * Every caller should use requirePermission with the permission it needs.
+ */
 export async function requireAdmin(): Promise<Viewer> {
   const viewer = await getViewer();
-  if (!viewer)                 throw new Error("You need to be signed in.");
-  if (viewer.role !== "admin") throw new Error("Admin access required.");
+  if (!viewer) throw new Error("You need to be signed in.");
+  if (!viewer.roles.includes("superadmin")) throw new Error("Admin access required.");
   return viewer;
 }
 
-/** Throws unless the caller can record surveys — surveyors, and admins by inheritance. */
+/** Can record surveys. Alias for requirePermission("surveys.input"). */
 export async function requireSurveyAccess(): Promise<Viewer> {
-  const viewer = await getViewer();
-  if (!viewer) throw new Error("You need to be signed in as a surveyor.");
-  return viewer;
+  return requirePermission("surveys.input");
 }
 
 // ── Owner portal ────────────────────────────────────────────────────────────

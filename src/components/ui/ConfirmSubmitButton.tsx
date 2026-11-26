@@ -13,7 +13,7 @@
  * needs a client boundary; this is it, in one place rather than two.
  *
  * The confirm is a courtesy to the operator and nothing more. Every action
- * passed in here calls requireAdmin() itself, because a dialog a browser owns
+ * passed in here calls requirePermission() itself, because a dialog a browser owns
  * is not a rule a server enforces (§19.6).
  */
 export function ConfirmSubmitButton({

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getViewer } from "@/lib/auth/guards";
 
 
 // PATCH /api/bookings/[id] — upload payment proof (user) or update status (admin)
@@ -14,17 +15,23 @@ export async function PATCH(
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const admin = createAdminClient();
-  const { data: profile } = await admin.from("users").select("is_admin").eq("id", user.id).single();
+  const viewer = await getViewer();
+  const can = (perm: Parameters<NonNullable<typeof viewer>["permissions"]["includes"]>[0]) =>
+    !!viewer && viewer.permissions.includes(perm);
 
   const body = await req.json() as Record<string, unknown>;
-  const isAdmin = profile?.is_admin === true;
 
   // ── Financial transitions go through settlement functions ──────────────────
   // Marking a booking paid, or cancelling a paid one, changes the row AND the
   // ledger. Those used to be two round trips, so a failed post left a booking
   // marked paid with nothing behind it. Each RPC now does both in one
   // transaction and is idempotent on replay.
-  if (isAdmin && (body.payment_status === "paid" || body.status === "cancelled")) {
+  if (viewer && (body.payment_status === "paid" || body.status === "cancelled")) {
+    // Verifying a payment or cancelling a paid booking moves money: finance's
+    // permission, not the operator's.
+    if (!can("payments.settle")) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     try {
       if (body.status === "cancelled") {
         const { data, error } = await admin.rpc("settle_booking_cancellation", {
@@ -54,12 +61,17 @@ export async function PATCH(
   // ── Everything else is a plain field update with no money attached ─────────
   const update: Record<string, unknown> = {};
 
-  if (isAdmin) {
+  if (can("bookings.operate")) {
     if (body.status)      update.status      = body.status;
     if (body.admin_notes) update.admin_notes = body.admin_notes;
     if (body.status === "confirmed") update.confirmed_at = new Date().toISOString();
   } else {
-    // Users can only upload payment proof (via dedicated route)
+    // Users can only upload payment proof (via dedicated route) — and only on
+    // their own booking.
+    const { data: own } = await admin.from("bookings").select("user_id").eq("id", id).maybeSingle();
+    if (!own || own.user_id !== user.id) {
+      return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+    }
     if (body.payment_proof_url) {
       update.payment_proof_url = body.payment_proof_url;
       update.payment_status    = "pending_verification";

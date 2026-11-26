@@ -2,7 +2,7 @@
 
 import { createAdminClient } from "@/lib/supabase/admin";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 
 
 /** The checklist items, and what to call each one when it is missing. */
@@ -57,7 +57,7 @@ async function publishRefusal(
 }
 
 export async function updatePropertyStatus(propertyId: string, status: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("listings.manage"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
 
@@ -81,7 +81,7 @@ export async function updatePropertyStatus(propertyId: string, status: string) {
 }
 
 export async function updatePropertyDetails(propertyId: string, formData: FormData) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("listings.manage"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
 
@@ -133,7 +133,7 @@ export async function updatePropertyDetails(propertyId: string, formData: FormDa
 }
 
 export async function deleteProperty(propertyId: string) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("listings.manage"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
   const { error } = await admin.from("properties").delete().eq("id", propertyId);
@@ -144,7 +144,7 @@ export async function deleteProperty(propertyId: string) {
 
 export async function updateConsultationStatus(consultationId: string, status: string) {
   let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { caller = await requirePermission("bookings.operate"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
 

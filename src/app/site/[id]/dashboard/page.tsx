@@ -1,7 +1,7 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { getSiteDashboard, type DashboardUnit, type DashboardInstalment } from "@/lib/actions/coworking-dashboard";
 import { unitTypeLabel, paymentStatusLabel, pricePeriodLabel } from "@/lib/coworking/taxonomy";
 import { resolveSiteId } from "@/lib/coworking/resolve";
@@ -25,7 +25,7 @@ const tanggal = (iso: string) =>
   });
 
 export default async function SiteDashboardPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
   const { id: param } = await params;
   const id = await resolveSiteId(param);
   if (!id) notFound();

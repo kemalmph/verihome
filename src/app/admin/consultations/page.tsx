@@ -1,8 +1,10 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { ConsultationStatusSelect } from "./ConsultationStatusSelect";
 
 export default async function AdminConsultationsPage() {
+  await requirePermissionOrRedirect(["bookings.operate"]);
   const admin = createAdminClient();
 
   const { data: consultations } = await admin

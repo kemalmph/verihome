@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getLedgerBalances, balanceOf } from "@/lib/ledger/post";
@@ -8,6 +9,7 @@ export const dynamic = "force-dynamic";
 const fmt = (n: number) => new Intl.NumberFormat("id-ID").format(Math.round(n));
 
 export default async function ExpensesPage() {
+  await requirePermissionOrRedirect(["finance.view", "finance.operate"]);
   const admin = createAdminClient();
 
   const [{ data: entries }, balances] = await Promise.all([

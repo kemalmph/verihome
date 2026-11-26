@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { postOperatingExpense, postEquityDrawing } from "@/lib/ledger/events";
 
 /**
@@ -13,7 +13,7 @@ import { postOperatingExpense, postEquityDrawing } from "@/lib/ledger/events";
  */
 export async function recordSpend(formData: FormData) {
   let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { caller = await requirePermission("finance.operate"); } catch (e) { return { error: (e as Error).message }; }
 
   const kind = String(formData.get("kind") ?? "operating");
   const amount = Math.round(Number(String(formData.get("amount") ?? "").replace(/\D/g, "")));
