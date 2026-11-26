@@ -1,7 +1,7 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { getSite, listOwnerOptions } from "@/lib/actions/coworking-actions";
 import { SiteDetailForm } from "./SiteDetailForm";
 import { UnitManager } from "./UnitManager";
@@ -16,14 +16,18 @@ interface Props {
 }
 
 export default async function CoworkingSitePage({ params }: Props) {
-  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
+  const viewer = await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
+  // Amenity assignments are an operate_all read (and write). A finance-only
+  // viewer used to reach this page and get a 500 from that guard; they now get
+  // the page without the amenity editor.
+  const canOperate = viewer.permissions.includes("sites.operate_all");
   const { id: param } = await params;
   const id = await resolveSiteId(param);
   if (!id) notFound();
 
 
   const [result, owners, amenities] = await Promise.all([
-    getSite(id), listOwnerOptions(), getAmenityAssignments(id),
+    getSite(id), listOwnerOptions(), canOperate ? getAmenityAssignments(id) : Promise.resolve(null),
   ]);
   if (!result) notFound();
 
@@ -34,7 +38,7 @@ export default async function CoworkingSitePage({ params }: Props) {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/site" />
+      <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-[#6e7a74] mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
@@ -75,7 +79,7 @@ export default async function CoworkingSitePage({ params }: Props) {
 
         <UnitManager siteId={site.id} units={units} />
 
-        <AmenityManager siteId={site.id} units={units} assignments={amenities} />
+        {amenities && <AmenityManager siteId={site.id} units={units} assignments={amenities} />}
       </main>
     </div>
   );

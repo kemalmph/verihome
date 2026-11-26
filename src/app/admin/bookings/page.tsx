@@ -1,5 +1,5 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { BookingStatusActions } from "./BookingStatusActions";
 import type { BookingStatus, PaymentStatus } from "@/types/booking";
@@ -49,7 +49,7 @@ export default async function AdminBookingsPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/bookings" />
+      <AppSidebar activeHref="/admin/bookings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="mb-8">
           <h1 className="text-2xl font-bold text-[#0d2137]">Bookings</h1>

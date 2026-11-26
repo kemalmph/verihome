@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { OwnerSidebar } from "@/components/layout/OwnerSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { requireOwner } from "@/lib/auth/guards";
 import { ownerProperties } from "@/lib/owner/queries";
 import { t } from "@/lib/i18n/strings";
@@ -14,7 +14,7 @@ export default async function OwnerPropertiesPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <OwnerSidebar activeHref="/owner/properties" ownerName={owner.ownerName} />
+      <AppSidebar activeHref="/owner/properties" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <h1 className="text-3xl font-bold text-[#0d2137] mb-8">{t("owner.nav.properties")}</h1>
 

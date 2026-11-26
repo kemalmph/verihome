@@ -12,7 +12,7 @@ export default function AdminLoginPage() {
     const formData = new FormData(e.currentTarget);
     setError(null);
     startTransition(async () => {
-      const result = await signInWithEmail(formData, "/admin");
+      const result = await signInWithEmail(formData);
       if (result?.error) setError(result.error);
     });
   }

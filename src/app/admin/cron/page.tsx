@@ -1,5 +1,5 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { listCronRuns } from "@/lib/actions/cron-actions";
 import { RunNowButton } from "./RunNowButton";
 
@@ -31,7 +31,7 @@ export default async function AdminCronPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/cron" />
+      <AppSidebar activeHref="/admin/cron" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-[#0d2137]">Tugas harian</h1>

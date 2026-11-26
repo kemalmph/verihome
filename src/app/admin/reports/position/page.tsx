@@ -1,6 +1,6 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getLedgerBalances, balanceOf } from "@/lib/ledger/post";
 import { Reconcile } from "./Reconcile";
@@ -46,7 +46,7 @@ export default async function PositionPage({
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/reports/position" />
+      <AppSidebar activeHref="/admin/reports/position" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[900px]">
         <header className="mb-6">
           <h1 className="text-3xl font-bold text-[#0d2137]">Posisi keuangan</h1>

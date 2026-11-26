@@ -2,6 +2,7 @@
 
 import { redirect } from "next/navigation";
 import { createClient } from "./server";
+import { defaultLanding } from "@/lib/nav/server";
 
 export async function signInWithGoogle(redirectTo = "/dashboard") {
   const supabase = await createClient();
@@ -20,7 +21,13 @@ export async function signInWithGoogle(redirectTo = "/dashboard") {
   if (data.url) redirect(data.url);
 }
 
-export async function signInWithEmail(formData: FormData, redirectTo = "/dashboard") {
+/**
+ * `redirectTo` empty means the caller has no destination of its own, so the
+ * person goes to the first page they actually have: staff to the first item of
+ * their menu, an active property owner to /owner, anyone else to /dashboard.
+ * An explicit destination (a booking they were in the middle of) always wins.
+ */
+export async function signInWithEmail(formData: FormData, redirectTo = "") {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const supabase = await createClient();
@@ -28,7 +35,7 @@ export async function signInWithEmail(formData: FormData, redirectTo = "/dashboa
   const { error } = await supabase.auth.signInWithPassword({ email, password });
   if (error) return { error: error.message };
 
-  redirect(redirectTo);
+  redirect(redirectTo || (await defaultLanding()));
 }
 
 export async function signUpWithEmail(formData: FormData, redirectTo = "/dashboard") {

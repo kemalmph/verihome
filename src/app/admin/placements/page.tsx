@@ -1,5 +1,5 @@
 import { requirePermissionOrRedirect } from "@/lib/auth/guards";
-import { AdminSidebar } from "@/components/layout/AdminSidebar";
+import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { PlacementForm, PlacementRow } from "./PlacementClient";
 
@@ -33,7 +33,7 @@ export default async function PlacementsPage() {
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
-      <AdminSidebar activeHref="/admin/placements" />
+      <AppSidebar activeHref="/admin/placements" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <div className="mb-8">
           <h1 className="text-3xl font-bold text-[#0d2137]">Penempatan jangka panjang</h1>

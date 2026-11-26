@@ -1,146 +1,395 @@
 #!/usr/bin/env node
 /**
- * The admin sidebar, checked against the app it claims to navigate.
+ * The one shared sidebar (/admin, /site, /survey, /owner), checked against the
+ * app it claims to navigate and against the permission model.
  *
- * Two failures this catches, and both had already happened:
+ * What has to hold, each checked rather than assumed:
  *
- *   A LINK THAT GOES NOWHERE. Easy to introduce by renaming a route and
- *   missing the nav, and invisible until someone clicks it.
+ *   SHOWN == ALLOWED. For every role (superadmin, admin_general,
+ *   admin_listings, admin_finance, surveyor), for a property owner, and for an
+ *   owner who is also staff, the links in the sidebar are EXACTLY the set the
+ *   hand-written matrix below says. The matrix is written out here, not read
+ *   from src/lib/nav/menu.ts, so the test fails when the menu drifts.
  *
- *   A PAGE WITH NO LINK. Harder to notice, because nothing is broken —
- *   /admin/expenses, /admin/placements and both report pages existed, worked,
- *   and could only be reached by typing the URL. Found by comparing the nav
- *   against every activeHref the app passes in, which is what this does.
+ *   HIDDEN == REFUSED. Every nav URL a viewer is not shown is requested
+ *   directly with their real session cookie and must be refused (redirected).
+ *   Hiding a link is a courtesy; the page's own guard is the control, and
+ *   this is the check that it exists on every one of them. Every URL a viewer
+ *   IS shown must open (200).
  *
- * The second check is the reason this file exists. A nav test that only
- * follows its own links can never find a page that is missing from it.
+ *   Sections with nothing in them are not drawn (a surveyor sees one section,
+ *   not three headings over nothing).
+ *
+ *   It works with JavaScript off, and the phone drawer opens without it.
+ *
+ *   The default page after sign-in: staff -> the first item they have, a
+ *   property owner who is not staff -> /owner, a guest -> /dashboard.
+ *
+ *   The two older checks stay: no link goes nowhere (superadmin walks the
+ *   whole menu, no 5xx), and no page is missing from the menu (every literal
+ *   activeHref a page passes has a nav entry).
+ *
+ *   npm run build && npm run start   (local Supabase env)
+ *   NODE_PATH=/opt/node-tools/node_modules node scripts/test-admin-nav.js
+ *
+ * Env: SUPABASE_ANON_KEY (or NEXT_PUBLIC_SUPABASE_ANON_KEY),
+ * SUPABASE_SERVICE_ROLE_KEY, DATABASE_URL; optional SUPABASE_URL, BASE_URL.
+ * Local only. Nothing is written to a file.
  */
-const { chromium } = require("playwright");
 const fs = require("fs");
 const path = require("path");
+const { chromium } = require("playwright");
+const { Client } = require("pg");
+const { createClient } = require("@supabase/supabase-js");
+const { createServerClient } = require("@supabase/ssr");
 const { execFileSync } = require("child_process");
 
 const BASE = process.env.BASE_URL ?? "http://127.0.0.1:3000";
-const EMAIL = process.env.ADMIN_EMAIL ?? "admin@verihome.id";
-const PASSWORD = process.env.ADMIN_PASSWORD ?? "LocalAdmin!123";
+const SUPA = process.env.SUPABASE_URL ?? "http://127.0.0.1:54321";
+const ANON = process.env.SUPABASE_ANON_KEY ?? process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY;
+const SERVICE = process.env.SUPABASE_SERVICE_ROLE_KEY;
+const DB = process.env.DATABASE_URL ?? "postgresql://postgres:postgres@127.0.0.1:54322/postgres";
+const PASSWORD = "NavTest!12345";
+const RUN = Date.now().toString(36);
+
+if (!/127\.0\.0\.1|localhost/.test(SUPA)) { console.error("Refusing: SUPABASE_URL is not local."); process.exit(1); }
+if (!ANON || !SERVICE) { console.error("Set SUPABASE_ANON_KEY and SUPABASE_SERVICE_ROLE_KEY."); process.exit(1); }
 
 const pass = [];
 const fail = [];
-const check = (ok, what) => (ok ? pass : fail).push(what);
+const check = (ok, what) => { (ok ? pass : fail).push(what); if (!ok) console.log(`  FAIL ${what}`); };
+const same = (a, b) => a.length === b.length && [...a].sort().join("|") === [...b].sort().join("|");
+const fmt = (a) => `[${[...a].sort().join(", ")}]`;
 
-/** The hrefs the sidebar offers, read from its source. */
-function navHrefs() {
-  const src = fs.readFileSync(
-    path.join(__dirname, "..", "src", "components", "layout", "AdminSidebar.tsx"),
-    "utf8",
-  );
-  return [...src.matchAll(/href:\s*"([^"]+)"/g)].map((m) => m[1]);
+// ── The matrix, by hand ─────────────────────────────────────────────────────
+const OWNER_ITEMS = [
+  "/owner", "/owner/properties", "/owner/bookings", "/owner/viewings",
+  "/owner/earnings", "/owner/placements", "/owner/profile",
+];
+// Every staff-facing nav URL that exists; each row says who may open it.
+// (An item is shown iff its page accepts the viewer — see menu.ts.)
+const SITE_SLUG = `navtest-${RUN}`;
+const STAFF_URLS = {
+  "/admin": ["superadmin", "admin_general", "admin_listings", "admin_finance"],
+  "/admin/users": ["superadmin", "admin_general"],
+  "/admin/users?tab=admins": ["superadmin"],
+  "/admin/reports/position": ["superadmin", "admin_finance"],
+  "/admin/reports/sales": ["superadmin", "admin_finance"],
+  "/admin/expenses": ["superadmin", "admin_finance"],
+  "/admin/placements": ["superadmin", "admin_finance"],
+  "/admin/cron": ["superadmin"],
+  "/admin/settings": ["superadmin"],
+  "/site": ["superadmin", "admin_general", "admin_finance"],
+  [`/site/${SITE_SLUG}`]: ["superadmin", "admin_general", "admin_finance"],
+  "/admin/listings": ["superadmin", "admin_general", "admin_listings"],
+  "/admin/inventory": ["superadmin", "admin_general", "admin_listings"],
+  "/admin/bookings": ["superadmin", "admin_general", "admin_listings", "admin_finance"],
+  "/admin/viewings": ["superadmin", "admin_general", "admin_listings", "admin_finance"],
+  "/admin/consultations": ["superadmin", "admin_general", "admin_listings"],
+  "/admin/owners": ["superadmin", "admin_general", "admin_listings", "admin_finance"],
+  "/admin/owner-requests": ["superadmin", "admin_general", "admin_listings", "admin_finance"],
+  "/survey": ["superadmin", "admin_general", "admin_listings", "surveyor"],
+  "/admin/surveys/pending": ["superadmin", "admin_general", "admin_listings"],
+};
+const ROLES = ["superadmin", "admin_general", "admin_listings", "admin_finance", "surveyor"];
+const SECTIONS_OF = (href) =>
+  href.startsWith("/owner") ? "marketplace"
+  : href.startsWith("/site") ? "site"
+  : ["/admin/listings", "/admin/inventory", "/admin/bookings", "/admin/viewings", "/admin/consultations",
+     "/admin/owners", "/admin/owner-requests", "/survey", "/admin/surveys/pending"].includes(href) ? "marketplace"
+  : "admin";
+
+/** Who -> {roles, owner}; the expected set follows from the table above. */
+const PEOPLE = {
+  superadmin:     { roles: ["superadmin"], owner: false },
+  admin_general:  { roles: ["admin_general"], owner: false },
+  admin_listings: { roles: ["admin_listings"], owner: false },
+  admin_finance:  { roles: ["admin_finance"], owner: false },
+  surveyor:       { roles: ["surveyor"], owner: false },
+  owner:          { roles: [], owner: true },
+  owner_finance:  { roles: ["admin_finance"], owner: true },
+  guest:          { roles: [], owner: false },
+  invited_owner:  { roles: [], owner: false, invited: true },
+};
+const LANDING = {
+  superadmin: "/admin", admin_general: "/admin", admin_listings: "/admin", admin_finance: "/admin",
+  surveyor: "/survey", owner: "/owner", owner_finance: "/admin", guest: "/dashboard", invited_owner: "/dashboard",
+};
+function expectedFor(who) {
+  const p = PEOPLE[who];
+  const staff = Object.entries(STAFF_URLS)
+    .filter(([, allowed]) => p.roles.some((r) => allowed.includes(r)))
+    .map(([h]) => h);
+  // /site/<slug> exists only because the fixture site does.
+  return [...staff, ...(p.owner ? OWNER_ITEMS : [])];
 }
 
-/**
- * Every activeHref an admin page passes to the sidebar.
- *
- * This is the app's own statement of "I am this nav entry", so a value with
- * no matching link is a page nobody can reach from the menu.
- */
+/** Menu catalog, read from the source, for the "no page without a link" check. */
+function catalogHrefs() {
+  const src = fs.readFileSync(path.join(__dirname, "..", "src", "lib", "nav", "menu.ts"), "utf8");
+  return [...src.matchAll(/href:\s*"([^"]+)"/g)].map((m) => m[1]);
+}
+/** Literal activeHref values the pages pass to the sidebar. */
 function claimedHrefs() {
-  const out = execFileSync(
-    "grep",
-    ["-rhoE", 'activeHref="[^"]+"', path.join(__dirname, "..", "src", "app", "admin"),
-     path.join(__dirname, "..", "src", "app", "site")],
-    { encoding: "utf8" },
-  );
+  const root = path.join(__dirname, "..", "src", "app");
+  let out = "";
+  try {
+    // /dashboard is the tenant area and keeps its own sidebar: not in the menu.
+    out = execFileSync("grep", ["-rhoE", "--exclude-dir=dashboard", 'activeHref="[^"]+"', root], { encoding: "utf8" });
+  } catch { /* none */ }
   return [...new Set(out.split("\n").filter(Boolean).map((l) => l.replace(/activeHref="|"/g, "")))];
 }
 
 (async () => {
-  const hrefs = navHrefs();
-  const claimed = claimedHrefs();
+  const db = new Client({ connectionString: DB });
+  await db.connect();
+  const q = async (sql, args = []) => (await db.query(sql, args)).rows;
+  const svc = createClient(SUPA, SERVICE, { auth: { persistSession: false } });
 
-  check(hrefs.length > 0, `the sidebar offers ${hrefs.length} links`);
+  // ── fixtures ──────────────────────────────────────────────────────────────
+  const users = {};
+  const made = { owners: [], sites: [] };
+  for (const who of Object.keys(PEOPLE)) {
+    const email = `nav-${who}-${RUN}@test.invalid`;
+    const { data, error } = await svc.auth.admin.createUser({
+      email, password: PASSWORD, email_confirm: true, user_metadata: { full_name: `Nav ${who}` },
+    });
+    if (error) throw new Error(`createUser ${who}: ${error.message}`);
+    await svc.from("users").upsert({ id: data.user.id, name: `Nav ${who}`, email }, { onConflict: "id" });
+    users[who] = { id: data.user.id, email };
+    for (const role of PEOPLE[who].roles) {
+      await q("insert into staff_roles(user_id, role) values ($1,$2)", [data.user.id, role]);
+    }
+    if (PEOPLE[who].owner || PEOPLE[who].invited) {
+      const { data: o, error: oe } = await svc.from("owners").insert({
+        name: `Nav Owner ${who}`, email: `owner-${who}-${RUN}@test.invalid`, phone_whatsapp: "628000000000",
+        user_id: data.user.id, portal_access: PEOPLE[who].owner ? "active" : "invited",
+      }).select("id").single();
+      if (oe) throw new Error(`owner ${who}: ${oe.message}`);
+      made.owners.push(o.id);
+    }
+  }
+  // Other suites leave sites behind: every one of them is a menu entry too.
+  for (const s of await q("select slug from sites")) {
+    STAFF_URLS[`/site/${s.slug}`] = ["superadmin", "admin_general", "admin_finance"];
+  }
+  {
+    const { data: s, error } = await svc.from("sites").insert({ name: `Nav Test Site ${RUN}`, slug: SITE_SLUG }).select("id").single();
+    if (error) throw new Error(`site: ${error.message}`);
+    made.sites.push(s.id);
+  }
 
-  // ── no page without a door ────────────────────────────────────────────────
-  //
-  // A page is covered when the nav has a link that is a prefix of its
-  // activeHref: /admin/surveys/pending covers /admin/surveys, and the nav's
-  // /admin/surveys/pending covers the page that claims /admin/surveys.
-  const orphans = claimed.filter(
-    (c) => !hrefs.some((h) => h === c || c.startsWith(h) || h.startsWith(c)),
-  );
-  check(
-    orphans.length === 0,
-    `every admin page is reachable from the nav${orphans.length ? ` — orphaned: ${orphans.join(", ")}` : ""}`,
-  );
+  async function sessionFor(u) {
+    const jar = new Map();
+    const sb = createServerClient(SUPA, ANON, {
+      cookies: { getAll: () => [...jar].map(([name, value]) => ({ name, value })), setAll: (c) => c.forEach(({ name, value }) => jar.set(name, value)) },
+    });
+    const { error } = await sb.auth.signInWithPassword({ email: u.email, password: PASSWORD });
+    if (error) throw new Error(`sign-in ${u.email}: ${error.message}`);
+    return [...jar].map(([name, value]) => ({ name, value }));
+  }
+  const sessions = {};
+  for (const who of Object.keys(PEOPLE)) sessions[who] = await sessionFor(users[who]);
+  const header = (who) => sessions[who].map((c) => `${c.name}=${c.value}`).join("; ");
 
   const browser = await chromium.launch();
-  const page = await browser.newPage({ viewport: { width: 1400, height: 1000 } });
-  const errors = [];
-  page.on("response", (r) => { if (r.status() >= 500) errors.push(`${r.status()} ${r.url()}`); });
+  const errors5xx = [];
 
-  await page.goto(`${BASE}/auth/login`, { waitUntil: "domcontentloaded" });
-  await page.fill('input[name="email"]', EMAIL);
-  await page.fill('input[name="password"]', PASSWORD);
-  // Scoped to the login form. Since the EN/ID switch became a <form> in the
-  // navbar, every page carries two submit buttons before this one, and an
-  // unscoped selector presses the language toggle instead — which logs
-  // nobody in and fails several steps later, far from the cause.
-  await page
-    .locator("form")
-    .filter({ has: page.locator('input[name="password"]') })
-    .first()
-    .locator('button[type="submit"]')
-    .click();
-  await page.waitForTimeout(2500);
-
-  // ── no door without a room ────────────────────────────────────────────────
-  for (const href of hrefs) {
-    const res = await page.goto(`${BASE}${href}`, { waitUntil: "domcontentloaded" });
-    const landed = new URL(page.url()).pathname;
-    check(
-      res?.status() === 200 && landed !== "/admin-login",
-      `${href} → ${res?.status()}${landed !== href ? ` (landed ${landed})` : ""}`,
-    );
+  /** hrefs in the sidebar's <nav>, from the DOM (visible or not: a hidden link is still a leaked one). */
+  async function navFrom(who, urlPath, { js = true, viewport = { width: 1280, height: 800 } } = {}) {
+    const ctx = await browser.newContext({ viewport, javaScriptEnabled: js });
+    await ctx.addCookies(sessions[who].map((c) => ({ ...c, url: BASE })));
+    const page = await ctx.newPage();
+    page.on("response", (r) => { if (r.status() >= 500) errors5xx.push(`${r.status()} ${r.url()}`); });
+    await page.goto(BASE + urlPath, { waitUntil: "load" });
+    if (js) await page.waitForTimeout(800);
+    const out = await page.evaluate(() => {
+      // The desktop aside and the phone drawer carry the same links; take the
+      // desktop one for the set and count the drawer separately.
+      const desktop = document.querySelector("aside[data-app-sidebar] nav");
+      const drawer = document.querySelector("details.md\\:hidden aside nav");
+      const hrefs = (n) => (n ? [...n.querySelectorAll("a[href]")].map((a) => a.getAttribute("href")) : []);
+      const sections = (n) => (n ? [...n.querySelectorAll("[data-nav-section]")].map((s) => s.getAttribute("data-nav-section")) : []);
+      const current = desktop ? [...desktop.querySelectorAll('a[aria-current="page"]')].map((a) => a.getAttribute("href")) : [];
+      return { url: location.pathname, desktop: hrefs(desktop), drawer: hrefs(drawer), sections: sections(desktop), drawerSections: sections(drawer), current };
+    });
+    await ctx.close();
+    return out;
   }
 
-  // ── the groups are visible, and each link sits under one ──────────────────
-  await page.goto(`${BASE}/admin`, { waitUntil: "domcontentloaded" });
-  // innerText returns what is rendered, and these headings carry
-  // text-transform: uppercase — so the DOM says "General" and the screen says
-  // "GENERAL". Comparing case-insensitively tests the words, which is what
-  // the assertion is about; the casing is a style decision, not a fact.
-  // :visible — the sidebar is rendered twice now: a phone drawer inside
-  // <details> and a static desktop aside. Only one is on screen at a time,
-  // and an unqualified "aside nav" matches both and fails strict mode.
-  const navText = (await page.locator("aside:visible nav").innerText()).toUpperCase();
-  for (const heading of ["General", "Marketplace", "Site management", "Finance"]) {
-    check(navText.includes(heading.toUpperCase()), `the nav shows the "${heading}" group`);
+  const fetchAs = async (who, p) => {
+    const res = await fetch(BASE + p, { redirect: "manual", headers: who ? { Cookie: header(who) } : {} });
+    return { status: res.status, location: res.headers.get("location") ?? "" };
+  };
+  const opens = (r) => r.status === 200;
+  const refused = (r) => r.status >= 300 && r.status < 400;
+
+  // ── 1. the matrix: shown == allowed, hidden == refused ───────────────────
+  const landingPage = { surveyor: "/survey", owner: "/owner", owner_finance: "/admin" };
+  for (const who of Object.keys(PEOPLE)) {
+    const expected = expectedFor(who);
+    if (who === "guest" || who === "invited_owner") {
+      // Neither staff nor an active owner: no staff page and no owner page opens.
+      for (const p of [...Object.keys(STAFF_URLS), ...OWNER_ITEMS]) {
+        const r = await fetchAs(who, p);
+        check(refused(r), `${who}: ${p} is refused when opened directly (${r.status})`);
+      }
+      continue;
+    }
+    const start = landingPage[who] ?? "/admin";
+    const got = await navFrom(who, start);
+    check(got.url === start, `${who}: ${start} opens (landed on ${got.url})`);
+    check(same(got.desktop, expected), `${who}: sidebar shows exactly the matrix\n      expected ${fmt(expected)}\n      got      ${fmt(got.desktop)}`);
+    check(same(got.drawer, expected), `${who}: phone drawer has the same links as the desktop rail`);
+
+    const wantSections = [...new Set(expected.map(SECTIONS_OF))];
+    check(same(got.sections, wantSections), `${who}: sections drawn are exactly ${fmt(wantSections)} (got ${fmt(got.sections)})`);
+    check(got.sections.length === new Set(got.sections).size, `${who}: no section is drawn twice`);
+
+    // Same answer with JavaScript off: the menu is server-rendered.
+    const noJs = await navFrom(who, start, { js: false });
+    check(same(noJs.desktop, expected), `${who}: same sidebar with JavaScript off`);
+
+    // Hidden URLs are refused; shown ones open.
+    const everything = [...Object.keys(STAFF_URLS), ...OWNER_ITEMS];
+    for (const p of everything) {
+      const r = await fetchAs(who, p);
+      if (expected.includes(p)) check(opens(r), `${who}: shown ${p} opens (${r.status})`);
+      else check(refused(r), `${who}: hidden ${p} is refused when opened directly (${r.status} ${r.location})`);
+    }
   }
 
-  const headingCount = await page.locator("aside:visible nav p").count();
-  const linkCount = await page.locator("aside:visible nav a").count();
-  check(
-    linkCount === hrefs.length,
-    `every link in the source renders (${linkCount} of ${hrefs.length})`,
-  );
-  check(headingCount === 4, `four group headings render (${headingCount})`);
+  // ── 2. signed-out visitors ────────────────────────────────────────────────
+  for (const p of ["/admin", "/site", "/survey", "/owner"]) {
+    const r = await fetchAs(null, p);
+    check(refused(r), `signed out: ${p} redirects (${r.status} ${r.location})`);
+  }
 
-  // The active item must be highlighted, or grouping just moved the problem.
-  await page.goto(`${BASE}/site`, { waitUntil: "domcontentloaded" });
-  const activeText = await page.locator('aside:visible nav a[class*="80d7b6"]').first().innerText();
-  check(/Site/.test(activeText), `the current page is highlighted (${activeText.trim()})`);
+  // ── 3. one person, several relations: union, no role picker ──────────────
+  {
+    const f = expectedFor("admin_finance");
+    const both = expectedFor("owner_finance");
+    check(same(both, [...new Set([...f, ...OWNER_ITEMS])]), "matrix: owner+finance is the union of both");
+    const got = await navFrom("owner_finance", "/admin");
+    check(got.sections.includes("admin") && got.sections.includes("marketplace"), "owner+finance: sees the admin and marketplace sections together");
+    const picker = await (async () => {
+      const ctx = await browser.newContext();
+      await ctx.addCookies(sessions.owner_finance.map((c) => ({ ...c, url: BASE })));
+      const page = await ctx.newPage();
+      await page.goto(BASE + "/admin", { waitUntil: "load" });
+      const n = await page.locator('select, [role="combobox"], [data-role-picker]').count();
+      await ctx.close();
+      return n;
+    })();
+    check(picker === 0, "owner+finance: there is no role picker");
+  }
 
-  check(errors.length === 0, `no 5xx while walking the nav (${errors.slice(0, 3).join(" | ") || "none"})`);
+  // ── 4. exactly one active item, and it is the right one ──────────────────
+  {
+    const cases = [
+      ["superadmin", "/admin", "/admin"],
+      ["superadmin", "/admin/users", "/admin/users"],
+      ["superadmin", "/admin/users?tab=admins", "/admin/users?tab=admins"],
+      ["superadmin", "/admin/reports/sales", "/admin/reports/sales"],
+      ["superadmin", `/site/${SITE_SLUG}`, `/site/${SITE_SLUG}`],
+      ["superadmin", "/site", "/site"],
+      ["surveyor", "/survey", "/survey"],
+      ["owner", "/owner/earnings", "/owner/earnings"],
+      ["owner", "/owner", "/owner"],
+    ];
+    for (const [who, p, want] of cases) {
+      const got = await navFrom(who, p);
+      check(got.current.length === 1 && got.current[0] === want, `${who}: ${p} highlights exactly ${want} (got ${fmt(got.current)})`);
+    }
+    // A survey record is under "Surveys".
+    const prop = (await q("select id from properties limit 1"))[0];
+    if (prop) {
+      const got = await navFrom("surveyor", `/survey/${prop.id}`);
+      check(got.current.length === 1 && got.current[0] === "/survey", "surveyor: a survey form highlights Surveys");
+    }
+  }
 
+  // ── 5. no link goes nowhere; no page is missing from the menu ────────────
+  {
+    for (const p of expectedFor("superadmin")) {
+      const r = await fetchAs("superadmin", p);
+      check(opens(r), `superadmin walks the menu: ${p} -> ${r.status}`);
+    }
+    const catalog = catalogHrefs().map((h) => h.split("?")[0]);
+    for (const claimed of claimedHrefs()) {
+      const ok = catalog.some((c) => c === claimed || (c !== "/admin" && c !== "/owner" && claimed.startsWith(c + "/")));
+      check(ok, `a page claims activeHref="${claimed}" and the menu has an entry for it`);
+    }
+  }
+
+  // ── 6. phone drawer opens (with and without JS) and has the links ────────
+  for (const js of [true, false]) {
+    const ctx = await browser.newContext({ viewport: { width: 390, height: 844 }, javaScriptEnabled: js });
+    await ctx.addCookies(sessions.admin_finance.map((c) => ({ ...c, url: BASE })));
+    const page = await ctx.newPage();
+    await page.goto(BASE + "/admin", { waitUntil: "load" });
+    if (js) await page.waitForTimeout(800);
+    const link = page.locator('details.md\\:hidden aside nav a[href="/admin/expenses"]');
+    check(!(await link.isVisible()), `phone ${js ? "JS" : "no JS"}: drawer starts closed`);
+    await page.locator("details.md\\:hidden summary").first().click();
+    await page.waitForTimeout(300);
+    check(await link.isVisible(), `phone ${js ? "JS" : "no JS"}: tapping the bar opens the drawer`);
+    const hidden = await page.locator('details.md\\:hidden aside nav a[href="/admin/cron"]').count();
+    check(hidden === 0, `phone ${js ? "JS" : "no JS"}: admin_finance's drawer has no Daily Jobs link`);
+    await ctx.close();
+  }
+
+  // ── 7. where you land after signing in ───────────────────────────────────
+  for (const who of Object.keys(PEOPLE)) {
+    const staffLogin = PEOPLE[who].roles.length > 0;
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    const page = await ctx.newPage();
+    await page.goto(BASE + (staffLogin ? "/admin-login" : "/auth/login"), { waitUntil: "networkidle" });
+    const form = page.locator("form").filter({ has: page.locator('input[name="password"]') }).first();
+    await form.locator('input[name="email"]').fill(users[who].email);
+    await form.locator('input[name="password"]').fill(PASSWORD);
+    await form.locator('button[type="submit"]').click();
+    await page.waitForURL((u) => u.pathname === LANDING[who], { timeout: 15000 }).catch(() => {});
+    check(new URL(page.url()).pathname === LANDING[who], `${who}: lands on ${LANDING[who]} after signing in (at ${new URL(page.url()).pathname})`);
+    await ctx.close();
+  }
+  {
+    // An explicit destination still wins over the default.
+    const ctx = await browser.newContext();
+    const page = await ctx.newPage();
+    await page.goto(BASE + "/auth/login?next=/listings", { waitUntil: "networkidle" });
+    const form = page.locator("form").filter({ has: page.locator('input[name="password"]') }).first();
+    await form.locator('input[name="email"]').fill(users.owner.email);
+    await form.locator('input[name="password"]').fill(PASSWORD);
+    await form.locator('button[type="submit"]').click();
+    await page.waitForURL((u) => u.pathname === "/listings", { timeout: 15000 }).catch(() => {});
+    check(new URL(page.url()).pathname === "/listings", "an explicit ?next= beats the default landing");
+    await ctx.close();
+  }
+
+  // ── 8. the tenant dashboard keeps its own sidebar ────────────────────────
+  {
+    const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
+    await ctx.addCookies(sessions.guest.map((c) => ({ ...c, url: BASE })));
+    const page = await ctx.newPage();
+    await page.goto(BASE + "/dashboard", { waitUntil: "load" });
+    check((await page.locator("aside[data-app-sidebar]").count()) === 0, "/dashboard does not use the shared sidebar");
+    check((await page.locator("aside").count()) >= 1, "/dashboard still has its own sidebar");
+    await ctx.close();
+  }
+
+  check(errors5xx.length === 0, `no 5xx while walking the nav (${errors5xx.slice(0, 3).join(" | ") || "none"})`);
   await browser.close();
 
-  console.log(`\nPASS ${pass.length}`);
-  for (const p of pass) console.log(`  ok   ${p}`);
-  if (fail.length) {
-    console.log(`\nFAIL ${fail.length}`);
-    for (const f of fail) console.log(`  FAIL ${f}`);
+  // ── cleanup ───────────────────────────────────────────────────────────────
+  for (const id of made.sites) await svc.from("sites").delete().eq("id", id);
+  for (const id of made.owners) await svc.from("owners").delete().eq("id", id);
+  for (const u of Object.values(users)) {
+    await db.query("delete from staff_roles where user_id=$1", [u.id]).catch(() => {});
+    await svc.auth.admin.deleteUser(u.id).catch(() => {});
   }
-  process.exit(fail.length ? 1 : 0);
-})().catch((e) => {
-  console.error("ERROR:", e.message);
-  process.exit(2);
-});
+  await db.end();
+
+  console.log(`\n${pass.length} passed, ${fail.length} failed`);
+  if (fail.length) { for (const f of fail) console.log("  ✗ " + f); process.exit(1); }
+})().catch((e) => { console.error(e); process.exit(2); });

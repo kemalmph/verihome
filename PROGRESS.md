@@ -4,8 +4,9 @@ Posisi terakhir pekerjaan, untuk disambung session berikutnya.
 Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
-Terakhir diperbarui: 2026-11-26 · branch kerja `claude/bold-cerf-luyq4o`
-(tugas kecil pra-Fase 2: createUser fail-closed + hapus hook email; Fase 1 sudah di produksi). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+Terakhir diperbarui: 2026-11-26 · branch kerja `claude/magical-noether-o20z08`
+(Fase 2: satu sidebar bersama untuk /admin, /site, /survey, /owner; Fase 1 dan
+PR #2–#3 sudah di produksi). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -83,6 +84,54 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 ---
 
 ## Selesai
+
+- **Fase 2 — satu shell dan satu sidebar** (26 Nov, branch
+  `claude/magical-noether-o20z08`, PR menunggu persetujuan owner; **tanpa
+  migration**). URL tidak berubah; gate tidak digabung.
+  - `src/lib/nav/menu.ts` (murni, tanpa import server): katalog menu + `buildMenu`,
+    `landingPath`, `activeItemHref`. Aturan: daftar `requires` sebuah item =
+    daftar yang sama yang dipakai halamannya di `requirePermissionOrRedirect`.
+    Tiga bagian — **Admin Management**, **Site Management**, **Marketplace**;
+    item, grup, dan bagian kosong tidak digambar (surveyor hanya melihat
+    "Surveys" di bawah Marketplace). Pemilik properti aktif melihat 7 item
+    `/owner` di Marketplace (grup "Portal Pemilik"). Orang dengan beberapa
+    relasi melihat gabungannya; tidak ada pemilih peran.
+  - `src/lib/nav/server.ts` (`getNavContext`, `defaultLanding`) dan
+    `src/lib/sites/accessible.ts` (`accessibleSites(viewer)`: sekarang hanya
+    cabang global `sites.operate_all`/`sites.finance_all`; Fase 3 menambah
+    site milik/tempat ia staf di file yang sama).
+  - `AppSidebar` (server) + `SidebarShell` (client) menggantikan `AdminSidebar`
+    dan `OwnerSidebar` (dihapus). `DashboardSidebar` (/dashboard) tidak disentuh.
+    Perilaku dipertahankan: ciut ke rail 72px (cookie `cosystem_sidebar`,
+    `data-sidebar`, `--sidebar-w`), laci ponsel `<details>`, jalan tanpa JS.
+    Halaman `/survey` dan `/survey/[id]` kini memakai sidebar yang sama
+    (dulu header gelap tanpa sidebar).
+  - Gate tetap terpisah: `/admin`,`/site`,`/survey` = gate staf; `/owner` =
+    `requireOwner`. Shell hanya menampilkan.
+  - Halaman bawaan setelah login (`signInWithEmail`, `/auth/login`,
+    `/auth/callback`, `/admin-login`) tanpa tujuan eksplisit: staf → item
+    pertama menunya (surveyor → `/survey`, lainnya → `/admin`), pemilik
+    non-staf → `/owner`, lainnya → `/dashboard`. `?next=` eksplisit tetap menang.
+  - Dua celah penegakan ditutup: (1) `/site/[id]` menerima `sites.finance_all`
+    tapi `getAmenityAssignments` menuntut `sites.operate_all` → **500** untuk
+    admin_finance (bug lama, baru terlihat setelah tautannya tampil; kini
+    pembacaan menerima keduanya, penulisan tetap operate_all); (2)
+    `/admin/users?tab=admins` terbuka untuk `users.manage` meski item menunya
+    hanya untuk `staff.manage` → kini dialihkan ke `/admin/users`, dan tab-nya
+    disembunyikan. Catatan: tab "All Users" masih memuat baris staf beserta
+    chip perannya untuk `users.manage` (perilaku Fase 1, tidak diubah).
+  - Label chrome sidebar (tombol ciutkan, "kembali") berbahasa Inggris untuk
+    staf (admin memang tidak diterjemahkan), mengikuti sakelar bahasa untuk
+    pemilik non-staf. Label item `/owner` selalu mengikuti sakelar.
+  - Tes: `test-admin-nav` ditulis ulang (364 check: matriks tulisan tangan
+    untuk 5 peran + pemilik + pemilik-staf + tamu + pemilik undangan; tiap URL
+    tersembunyi ditolak, tiap URL tampil terbuka; dengan/tanpa JS; laci ponsel;
+    landing; satu item aktif; tak ada halaman tanpa tautan).
+    `test-sidebar-collapse` kini 157 check untuk superadmin, admin_finance,
+    surveyor, pemilik, pemilik+staf, dan /dashboard.
+  - Ledger/buku besar dan "refund" **tidak punya halaman sendiri** — refund kredit
+    ada di dashboard `/admin` (`PendingCreditRefunds`), integritas buku besar
+    juga di sana. Menu hanya menautkan halaman yang ada; tidak ada halaman baru.
 
 - **Tugas kecil sebelum Fase 2** (26 Nov, branch `claude/bold-cerf-luyq4o`,
   PR #2 di-merge, migration diterapkan ke produksi).
@@ -211,9 +260,9 @@ angka di halaman ringkasan masih data placeholder.
 
 Urut prioritas:
 
-0. **Fase 1 peran staf: pastikan deploy Vercel Ready dan `kemalmph@yahoo.com`
-   bisa masuk `/admin`.** Lalu Fase 2 (dashboard per peran)
-   dan Fase 3 (`site_staff`). Migration terpisah nanti: hapus kolom
+0. **Fase 2: merge PR setelah owner setuju, lalu pastikan deploy Vercel Ready.**
+   Lalu Fase 3 (`site_staff`: `accessibleSites` ditambah site milik/tempat staf)
+   dan dashboard per peran. Migration terpisah nanti: hapus kolom
    `is_admin`/`is_surveyor`.
 
 1. **Putuskan pengembalian dana membership.** Jenis peristiwa
@@ -292,9 +341,6 @@ Urut prioritas:
 ---
 
 ## Masalah terbuka
-
-- **Sidebar admin belum difilter per izin**: tautan yang tidak boleh diakses
-  tetap tampil dan mengarah ke redirect ke `/admin`. Pekerjaan Fase 2.
 
 - 🔴 **Service-role key produksi masih terpublikasi dan belum dirotasi
   (§20.6).** File `env copy.txt` pernah di-commit ke repo publik
