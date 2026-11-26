@@ -5,7 +5,7 @@ Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
 Terakhir diperbarui: 2026-11-26 · branch kerja `claude/beautiful-clarke-24zrhl`
-(Fase 1 peran staf — PR terbuka, **migration belum diterapkan ke produksi**). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+(Fase 1 peran staf — migration diterapkan ke produksi 2026-11-26, PR #1 di-merge). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -86,9 +86,10 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 - **Fase 1 peran & izin staf** (26 Nov, branch `claude/beautiful-clarke-24zrhl`).
   `users.is_admin` / `is_surveyor` diganti peran berbasis izin. **Migration
-  `20261126120000_staff_roles.sql` BELUM diterapkan ke produksi** — menunggu
-  persetujuan owner; kode di branch ini mengandalkannya, jadi **jangan merge
-  sebelum migration diterapkan** (kalau tidak, semua admin terkunci).
+  `20261126120000_staff_roles.sql` sudah diterapkan ke produksi** (26 Nov, atas
+  persetujuan owner, lewat MCP `apply_migration`). Terverifikasi: 2 admin
+  produksi kini superadmin, RLS aktif, anon tanpa EXECUTE. Login dengan kode
+  baru belum dicek — cek `/admin` setelah deploy Vercel.
   - Tabel `staff_roles` (superadmin, admin_general, admin_listings,
     admin_finance, surveyor) dan `site_staff` (dipakai Fase 3); RLS aktif tanpa
     policy, hanya service_role. Backfill: is_admin → superadmin,
@@ -190,9 +191,8 @@ angka di halaman ringkasan masih data placeholder.
 
 Urut prioritas:
 
-0. **Fase 1 peran staf: terapkan migration ke produksi** setelah owner setuju,
-   verifikasi 2 admin produksi (`admin@verihome.id`, `kemalmph@yahoo.com`) kini
-   superadmin dan bisa masuk, baru merge PR. Lalu Fase 2 (dashboard per peran)
+0. **Fase 1 peran staf: pastikan deploy Vercel Ready dan `kemalmph@yahoo.com`
+   bisa masuk `/admin`.** Lalu Fase 2 (dashboard per peran)
    dan Fase 3 (`site_staff`). Migration terpisah nanti: hapus kolom
    `is_admin`/`is_surveyor`.
 
