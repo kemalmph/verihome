@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -28,7 +28,7 @@ export interface AmenityAssignments {
 }
 
 export async function getAmenityAssignments(siteId: string): Promise<AmenityAssignments> {
-  await requireAdmin();
+  await requirePermission("sites.operate_all");
   const admin = createAdminClient();
 
   const [{ data: all }, { data: siteRows }, { data: unitRows }] = await Promise.all([
@@ -60,7 +60,7 @@ export async function getAmenityAssignments(siteId: string): Promise<AmenityAssi
  * the operator can see is idempotent: submitting twice leaves the same rows.
  */
 export async function setSiteAmenities(siteId: string, amenityIds: string[]) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
 
   const { error: delErr } = await admin.from("site_amenities").delete().eq("site_id", siteId);
@@ -77,7 +77,7 @@ export async function setSiteAmenities(siteId: string, amenityIds: string[]) {
 }
 
 export async function setUnitAmenities(siteId: string, unitId: string, amenityIds: string[]) {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
   const admin = createAdminClient();
 
   // The unit must belong to this site. Without this check the action is a

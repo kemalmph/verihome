@@ -1,5 +1,5 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { listPendingOwnerRequests, maskAccount } from "@/lib/actions/owner-request-actions";
 import { t } from "@/lib/i18n/strings";
 import { RequestActions } from "./RequestActions";
@@ -18,7 +18,7 @@ const RATE_FIELDS: [string, string][] = [
 ];
 
 export default async function AdminOwnerRequestsPage() {
-  await requireAdmin();
+  await requirePermissionOrRedirect(["listings.manage", "owners.payout_verify"]);
   const requests = await listPendingOwnerRequests();
 
   return (

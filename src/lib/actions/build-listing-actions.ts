@@ -2,7 +2,7 @@
 
 import { revalidatePath } from "next/cache";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 
 function parseLines(raw: string): string[] {
   return raw
@@ -18,7 +18,7 @@ function num(v: FormDataEntryValue | null): number | null {
 }
 
 export async function saveBuildListing(propertyId: string, formData: FormData) {
-  await requireAdmin();
+  await requirePermission("listings.manage");
 
   const admin = createAdminClient();
 

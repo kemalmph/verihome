@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getViewer } from "@/lib/auth/guards";
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 
 export const dynamic = "force-dynamic";
 
@@ -8,7 +8,7 @@ export const dynamic = "force-dynamic";
 const OPEN_STATUSES = ["new_lead", "draft"];
 
 export default async function SurveyIndexPage() {
-  const viewer = await getViewer();
+  const viewer = await requirePermissionOrRedirect(["surveys.input"]);
   const admin  = createAdminClient();
 
   const { data: properties } = await admin
@@ -35,7 +35,7 @@ export default async function SurveyIndexPage() {
           </div>
           <div className="text-right">
             <p className="text-sm text-white/80">{viewer?.email ?? ""}</p>
-            {viewer?.role === "admin" && (
+            {viewer?.permissions.includes("surveys.review") && (
               <Link href="/admin" className="text-xs text-[#9cf4d1] hover:underline">
                 Admin console
               </Link>

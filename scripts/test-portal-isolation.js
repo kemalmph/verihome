@@ -37,7 +37,7 @@ const SUPA = process.env.NEXT_PUBLIC_SUPABASE_URL;
 const ANON =
   process.env.NEXT_PUBLIC_SUPABASE_ANON_KEY ||
   process.env.NEXT_PUBLIC_SUPABASE_PUBLISHABLE_KEY;
-const REF = SUPA.match(/https:\/\/([^.]+)\./)[1];
+const REF = SUPA.match(/https?:\/\/([^.:/]+)/)[1]; // "127" for the local stack
 const PASSWORD = "IsolationTest!2468";
 
 const admin = createClient(SUPA, process.env.SUPABASE_SERVICE_ROLE_KEY, {

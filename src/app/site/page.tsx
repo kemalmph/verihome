@@ -1,6 +1,6 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { listSites, listOwnerOptions } from "@/lib/actions/coworking-actions";
 import { siteStatusLabel, siteTypeLabel } from "@/lib/coworking/taxonomy";
 import { NewSiteForm } from "./NewSiteForm";
@@ -8,8 +8,8 @@ import { NewSiteForm } from "./NewSiteForm";
 export const dynamic = "force-dynamic";
 
 export default async function CoworkingSitesPage() {
+  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
   // The layout gates rendering, not data. This page reads sites, so it checks.
-  await requireAdmin();
 
   const [sites, owners] = await Promise.all([listSites(), listOwnerOptions()]);
 

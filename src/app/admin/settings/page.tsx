@@ -1,16 +1,16 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { getPlatformSettings, countBookingsUnaffected } from "@/lib/actions/settings-actions";
-import { requireAdmin } from "@/lib/auth/guards";
 import { CommissionSettingsForm } from "./CommissionSettingsForm";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminSettingsPage() {
+  await requirePermissionOrRedirect(["platform.settings"]);
   // A route-group layout gates rendering, not data. This page reads platform
   // configuration, so it checks for itself.
-  await requireAdmin();
 
   const admin = createAdminClient();
   const [settings, unaffected, { data: properties }] = await Promise.all([

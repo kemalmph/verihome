@@ -1,13 +1,13 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { OwnerPortalControls } from "./OwnerPortalControls";
 
 export const dynamic = "force-dynamic";
 
 export default async function AdminOwnersPage() {
-  await requireAdmin();
+  await requirePermissionOrRedirect(["listings.manage", "owners.payout_verify"]);
 
   const admin = createAdminClient();
   const [{ data: owners }, { data: properties }] = await Promise.all([

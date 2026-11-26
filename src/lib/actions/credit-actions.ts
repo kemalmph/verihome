@@ -3,7 +3,7 @@
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission, requireAnyPermission } from "@/lib/auth/guards";
 import { CREDIT_CASHBACK_DAYS } from "@/lib/viewings/policy";
 
 export interface RefundableCredit {
@@ -93,7 +93,7 @@ export async function requestCreditRefund(creditId: string) {
 /** Stage 2 — an admin confirms the transfer actually went out. */
 export async function confirmCreditRefund(creditId: string) {
   let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { caller = await requirePermission("finance.operate"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
   const { error } = await admin.rpc("confirm_credit_refund", {
@@ -110,6 +110,9 @@ export async function confirmCreditRefund(creditId: string) {
 
 /** Pending credit refunds, for the admin needs-attention list. */
 export async function listPendingCreditRefunds() {
+  // Was unguarded: a server action is callable by anyone, and this returns
+  // customer names and emails. Staff with finance access only.
+  try { await requireAnyPermission(["finance.view", "finance.operate"]); } catch { return []; }
   const admin = createAdminClient();
   const { data } = await admin
     .from("user_credits")

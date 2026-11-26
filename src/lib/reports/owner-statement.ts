@@ -6,7 +6,7 @@ import { createAdminClient } from "@/lib/supabase/admin";
  *
  * This function takes an ownerId and trusts it. That is deliberate and it is
  * why it is not exported to any route directly: the two callers each establish
- * the id their own way — the admin page from the URL behind requireAdmin(), the
+ * the id their own way — the admin page from the URL behind requirePermission(), the
  * owner page from requireOwner(), which ignores the URL entirely. Putting the
  * authorization inside here would force one of them to lie about who is asking.
  *

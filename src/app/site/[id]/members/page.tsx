@@ -1,7 +1,7 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
-import { requireAdmin } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { listMemberships, listPlans, type MembershipRow } from "@/lib/actions/membership-actions";
 import { NewMembershipForm, NewPlanForm, MembershipControls } from "./MemberForms";
@@ -15,7 +15,7 @@ const tgl = (ymd: string) =>
     .format(new Date(`${ymd}T00:00:00+07:00`));
 
 export default async function MembersPage({ params }: { params: Promise<{ id: string }> }) {
-  await requireAdmin();
+  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
   const { id: param } = await params;
   const id = await resolveSiteId(param);
   if (!id) notFound();

@@ -2,70 +2,56 @@
 
 import { useTransition, useState } from "react";
 import { useRouter } from "next/navigation";
-import { toggleUserAdmin, toggleUserSurveyor, toggleActiveClient, deleteUser } from "@/lib/actions/user-actions";
+import { grantStaffRole, revokeStaffRole, toggleActiveClient, deleteUser } from "@/lib/actions/user-actions";
+import { STAFF_ROLES, type StaffRole } from "@/lib/auth/permissions";
 
-// ── Admin toggle pill ──────────────────────────────────────────────────────
+// ── Staff role chips ───────────────────────────────────────────────────────
 
-export function AdminToggle({ userId, isAdmin }: { userId: string; isAdmin: boolean }) {
+const ROLE_LABEL: Record<StaffRole, string> = {
+  superadmin: "Superadmin",
+  admin_general: "General",
+  admin_listings: "Listings",
+  admin_finance: "Finance",
+  surveyor: "Surveyor",
+};
+
+/** Read-only unless canEdit (staff.manage). The server enforces it either way. */
+export function RoleToggles({ userId, roles, canEdit }: { userId: string; roles: StaffRole[]; canEdit: boolean }) {
   const [pending, start] = useTransition();
-  const [current, setCurrent] = useState(isAdmin);
-
-  return (
-    <button
-      disabled={pending}
-      onClick={() =>
-        start(async () => {
-          const next = !current;
-          const res = await toggleUserAdmin(userId, next);
-          if (!res.error) setCurrent(next);
-        })
-      }
-      title={current ? "Revoke admin access" : "Grant admin access"}
-      className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 ${
-        current ? "bg-[#1a7a5e]" : "bg-[#bec9c2]"
-      }`}
-    >
-      <span
-        className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
-          current ? "translate-x-6" : "translate-x-1"
-        }`}
-      />
-    </button>
-  );
-}
-
-// ── Surveyor toggle pill ───────────────────────────────────────────────────
-
-export function SurveyorToggle({ userId, isSurveyor }: { userId: string; isSurveyor: boolean }) {
-  const [pending, start] = useTransition();
-  const [current, setCurrent] = useState(isSurveyor);
+  const [current, setCurrent] = useState<StaffRole[]>(roles);
   const [error, setError] = useState("");
 
   return (
-    <div className="inline-flex flex-col items-start gap-0.5">
-      <button
-        disabled={pending}
-        onClick={() =>
-          start(async () => {
-            const next = !current;
-            const res = await toggleUserSurveyor(userId, next);
-            if (res.error) { setError(res.error); return; }
-            setError("");
-            setCurrent(next);
-          })
-        }
-        title={current ? "Revoke survey access" : "Allow this person to record surveys"}
-        className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 ${
-          current ? "bg-[#1a7a5e]" : "bg-[#bec9c2]"
-        }`}
-      >
-        <span
-          className={`inline-block h-4 w-4 rounded-full bg-white shadow transition-transform ${
-            current ? "translate-x-6" : "translate-x-1"
-          }`}
-        />
-      </button>
-      {error && <span className="text-[10px] text-red-600 max-w-[120px] leading-tight">{error}</span>}
+    <div className="inline-flex flex-col items-start gap-1">
+      <div className="flex flex-wrap gap-1 justify-center max-w-[220px]">
+        {STAFF_ROLES.map((role) => {
+          const on = current.includes(role);
+          if (!canEdit && !on) return null;
+          return (
+            <button
+              key={role}
+              type="button"
+              disabled={pending || !canEdit}
+              onClick={() =>
+                start(async () => {
+                  const res = on ? await revokeStaffRole(userId, role) : await grantStaffRole(userId, role);
+                  if (res.error) { setError(res.error); return; }
+                  setError("");
+                  setCurrent(on ? current.filter((r) => r !== role) : [...current, role]);
+                })
+              }
+              title={canEdit ? (on ? `Revoke ${ROLE_LABEL[role]}` : `Grant ${ROLE_LABEL[role]}`) : ROLE_LABEL[role]}
+              className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border disabled:opacity-60 ${
+                on ? "bg-[#1a7a5e] text-white border-[#1a7a5e]" : "bg-white text-[#6e7a74] border-[#bec9c2]"
+              }`}
+            >
+              {ROLE_LABEL[role]}
+            </button>
+          );
+        })}
+        {!canEdit && current.length === 0 && <span className="text-xs text-[#6e7a74]">—</span>}
+      </div>
+      {error && <span className="text-[10px] text-red-600 max-w-[200px] leading-tight">{error}</span>}
     </div>
   );
 }

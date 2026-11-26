@@ -1,10 +1,10 @@
 import { NextResponse } from "next/server";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { runIntegrityChecks } from "@/lib/ledger/integrity";
 
 export async function GET() {
   try {
-    await requireAdmin();
+    await requirePermission("finance.view");
   } catch (e) {
     return NextResponse.json({ error: (e as Error).message }, { status: 403 });
   }

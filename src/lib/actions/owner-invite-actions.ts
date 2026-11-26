@@ -2,7 +2,7 @@
 
 import { createHash, randomBytes } from "crypto";
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
 
@@ -37,7 +37,7 @@ export interface InviteResult {
  */
 export async function createOwnerInvite(ownerId: string) {
   let caller;
-  try { caller = await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { caller = await requirePermission("listings.manage"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
   const { data: owner } = await admin
@@ -89,7 +89,7 @@ export async function createOwnerInvite(ownerId: string) {
 
 /** Switches an owner's portal access off. Takes effect on their next request. */
 export async function setOwnerPortalAccess(ownerId: string, access: "active" | "revoked") {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("listings.manage"); } catch (e) { return { error: (e as Error).message }; }
 
   const admin = createAdminClient();
 
@@ -161,7 +161,7 @@ export async function acceptOwnerInvite(token: string) {
 
 /** Invite history for the admin owner page. Never returns a token. */
 export async function listOwnerInvites(ownerId: string) {
-  try { await requireAdmin(); } catch { return []; }
+  try { await requirePermission("listings.manage"); } catch { return []; }
 
   const admin = createAdminClient();
   const { data } = await admin

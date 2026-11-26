@@ -1,6 +1,8 @@
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
+import { PERMISSIONS, type Permission } from "@/lib/auth/permissions";
 import { runIntegrityChecks } from "@/lib/ledger/integrity";
 import { listPendingCreditRefunds } from "@/lib/actions/credit-actions";
 import { countPendingOwnerRequests } from "@/lib/actions/owner-request-actions";
@@ -9,7 +11,12 @@ import { PendingCreditRefunds } from "./PendingCreditRefunds";
 export default async function AdminDashboardPage() {
   const admin = createAdminClient();
   // Run on every dashboard load: a books mismatch should be impossible to miss.
-  const integrity = await runIntegrityChecks(admin);
+  // Staff only, and the ledger check only for those who may see the books.
+  const viewer = await requirePermissionOrRedirect([...PERMISSIONS]);
+  const sees = (p: Permission) => viewer.permissions.includes(p);
+  const integrity = sees("finance.view")
+    ? await runIntegrityChecks(admin)
+    : { allPassed: true, failedCount: 0, checks: [] } as Awaited<ReturnType<typeof runIntegrityChecks>>;
   const pendingCreditRefunds = await listPendingCreditRefunds();
   const pendingOwnerRequests = await countPendingOwnerRequests();
 

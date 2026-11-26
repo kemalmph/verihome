@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission, requireAnyPermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   isLettingMode, isSiteStatus, isSiteType, isUnitStatus, isUnitType,
@@ -10,7 +10,7 @@ import {
 /**
  * Coworking: sites and the lettable units inside them.
  *
- * Every function here calls requireAdmin() itself. Not because the /admin
+ * Every function here calls requirePermission("sites.operate_all") itself. Not because the /admin
  * layout is missing, but because a layout gates *rendering a page* and these
  * are separately addressable POST endpoints that any signed-in client can
  * invoke from anywhere (§19.6, and the Next.js docs say the same thing in
@@ -77,7 +77,7 @@ function optionalNumber(fd: FormData, key: string): number | null | "invalid" {
 // ─── Reads ──────────────────────────────────────────────────────────────────
 
 export async function listSites(): Promise<SiteRow[]> {
-  await requireAdmin();
+  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
   const admin = createAdminClient();
 
   const { data: sites } = await admin
@@ -115,7 +115,7 @@ export async function listSites(): Promise<SiteRow[]> {
 }
 
 export async function getSite(siteId: string) {
-  await requireAdmin();
+  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
   const admin = createAdminClient();
 
   const { data: site } = await admin
@@ -137,7 +137,7 @@ export async function getSite(siteId: string) {
 }
 
 export async function listOwnerOptions() {
-  await requireAdmin();
+  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
   const admin = createAdminClient();
   const { data } = await admin.from("owners").select("id, name").order("name");
   return (data ?? []) as { id: string; name: string }[];
@@ -148,7 +148,7 @@ export async function listOwnerOptions() {
 export async function createSite(
   fd: FormData,
 ): Promise<{ error?: string; id?: string; slug?: string }> {
-  await requireAdmin();
+  await requirePermission("sites.operate_all");
 
   const name = text(fd, "name");
   if (!name) return { error: "Nama site wajib diisi." };
@@ -196,7 +196,7 @@ export async function createSite(
 }
 
 export async function updateSite(fd: FormData): Promise<{ error?: string }> {
-  await requireAdmin();
+  await requirePermission("sites.operate_all");
 
   const id = text(fd, "id");
   if (!id) return { error: "Site tidak dikenali." };
@@ -243,7 +243,7 @@ export async function updateSite(fd: FormData): Promise<{ error?: string }> {
 // ─── Units ──────────────────────────────────────────────────────────────────
 
 export async function createUnit(fd: FormData): Promise<{ error?: string }> {
-  await requireAdmin();
+  await requirePermission("sites.operate_all");
 
   const siteId = text(fd, "site_id");
   const name   = text(fd, "name");
@@ -293,7 +293,7 @@ export async function createUnit(fd: FormData): Promise<{ error?: string }> {
 }
 
 export async function updateUnit(fd: FormData): Promise<{ error?: string }> {
-  await requireAdmin();
+  await requirePermission("sites.operate_all");
 
   const id     = text(fd, "id");
   const siteId = text(fd, "site_id");
@@ -357,7 +357,7 @@ export async function updateUnit(fd: FormData): Promise<{ error?: string }> {
  * leaving everything that refers to it intact.
  */
 export async function retireUnit(fd: FormData): Promise<{ error?: string }> {
-  await requireAdmin();
+  await requirePermission("sites.operate_all");
 
   const id     = text(fd, "id");
   const siteId = text(fd, "site_id");
@@ -379,7 +379,7 @@ export async function retireUnit(fd: FormData): Promise<{ error?: string }> {
 
 /** Sites a property can be linked to. Used by the listing edit form. */
 export async function listSiteOptions() {
-  await requireAdmin();
+  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
   const admin = createAdminClient();
   const { data } = await admin.from("sites").select("id, name, site_type").order("name");
   return (data ?? []) as { id: string; name: string; site_type: string }[];

@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { resolvePeriod, PERIOD_OPTIONS } from "@/lib/reports/period";
@@ -14,6 +15,7 @@ export default async function SalesReportPage({
 }: {
   searchParams: Promise<{ period?: string; from?: string; to?: string }>;
 }) {
+  await requirePermissionOrRedirect(["finance.view"]);
   const sp = await searchParams;
   const period = resolvePeriod(sp.period, sp.from, sp.to);
   const r = await getSalesReport(period);

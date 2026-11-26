@@ -1,7 +1,7 @@
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { getViewer } from "@/lib/auth/guards";
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { SurveyForm } from "./SurveyForm";
 
 export const dynamic = "force-dynamic";
@@ -10,7 +10,7 @@ const OPEN_STATUSES = ["new_lead", "draft"];
 
 export default async function SurveyPage({ params }: { params: Promise<{ id: string }> }) {
   const { id } = await params;
-  const viewer = await getViewer();
+  const viewer = await requirePermissionOrRedirect(["surveys.input"]);
   const admin  = createAdminClient();
 
   const [{ data: property }, { data: priorSurveys }] = await Promise.all([
@@ -27,7 +27,7 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
   // Mirrors the check in submitSurvey — a surveyor must not reach the form for a
   // live listing, or they would fill it in and only be refused on submit.
   const closedToSurveyor =
-    viewer?.role === "surveyor" && !OPEN_STATUSES.includes(property.status ?? "");
+    viewer && !viewer.permissions.includes("surveys.review") && !OPEN_STATUSES.includes(property.status ?? "");
 
   const prior = priorSurveys ?? [];
 

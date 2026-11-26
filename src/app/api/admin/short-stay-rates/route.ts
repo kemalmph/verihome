@@ -1,3 +1,4 @@
+import { requirePermission } from "@/lib/auth/guards";
 import { NextRequest, NextResponse } from "next/server";
 import { revalidatePath } from "next/cache";
 import { createClient } from "@/lib/supabase/server";
@@ -9,8 +10,7 @@ export async function POST(req: NextRequest) {
   if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const admin = createAdminClient();
-  const { data: profile } = await admin.from("users").select("is_admin").eq("id", user.id).single();
-  if (!profile?.is_admin) return NextResponse.json({ error: "Forbidden" }, { status: 403 });
+  try { await requirePermission("listings.manage"); } catch { return NextResponse.json({ error: "Forbidden" }, { status: 403 }); }
 
   const body = await req.json() as {
     propertyId:              string;

@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requireAdmin } from "@/lib/auth/guards";
+import { requirePermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { runDailyJobs } from "@/lib/cron/dispatcher";
 
@@ -17,6 +17,9 @@ export interface CronRunRow {
 }
 
 export async function listCronRuns(limit = 40): Promise<CronRunRow[]> {
+  // Had no guard at all: any signed-in user could call it and read the job
+  // history, including error text. Found by test-staff-permissions.
+  await requirePermission("platform.settings");
   const admin = createAdminClient();
   const { data } = await admin
     .from("cron_runs")
@@ -29,12 +32,12 @@ export async function listCronRuns(limit = 40): Promise<CronRunRow[]> {
 /**
  * "Jalankan sekarang" — runs the dispatcher on demand.
  *
- * Behind requireAdmin() rather than CRON_SECRET: this is a person clicking a
+ * Behind requirePermission("platform.settings") rather than CRON_SECRET: this is a person clicking a
  * button, not the scheduler. The secret stays the scheduler's credential and is
  * never put in front of a browser.
  */
 export async function runDailyJobsNow() {
-  try { await requireAdmin(); } catch (e) { return { error: (e as Error).message }; }
+  try { await requirePermission("platform.settings"); } catch (e) { return { error: (e as Error).message }; }
 
   try {
     const result = await runDailyJobs();

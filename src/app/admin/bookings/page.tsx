@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { BookingStatusActions } from "./BookingStatusActions";
@@ -32,6 +33,7 @@ function fmt(n: number) {
 }
 
 export default async function AdminBookingsPage() {
+  await requirePermissionOrRedirect(["bookings.operate", "payments.settle", "finance.view"]);
   const admin = createAdminClient();
 
   const { data: bookings } = await admin

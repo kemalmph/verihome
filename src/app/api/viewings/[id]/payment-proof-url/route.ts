@@ -1,6 +1,8 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createClient } from "@/lib/supabase/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { getViewer } from "@/lib/auth/guards";
+import type { Permission } from "@/lib/auth/permissions";
 import { presignedGetUrl } from "@/lib/r2/private";
 
 // GET /api/viewings/[id]/payment-proof-url
@@ -17,13 +19,15 @@ export async function GET(
 
   const admin = createAdminClient();
 
-  const [{ data: viewing }, { data: profile }] = await Promise.all([
+  const [{ data: viewing }, viewer] = await Promise.all([
     admin.from("viewings").select("user_id, payment_proof_url").eq("id", id).single(),
-    admin.from("users").select("is_admin").eq("id", user.id).single(),
+    getViewer(),
   ]);
 
   if (!viewing) return NextResponse.json({ error: "Viewing not found" }, { status: 404 });
-  if (!profile?.is_admin && viewing.user_id !== user.id) {
+  const staffRead = !!viewer && ["bookings.operate", "payments.settle", "finance.view"]
+    .some((p) => viewer.permissions.includes(p as Permission));
+  if (!staffRead && viewing.user_id !== user.id) {
     return NextResponse.json({ error: "Forbidden" }, { status: 403 });
   }
   if (!viewing.payment_proof_url) {

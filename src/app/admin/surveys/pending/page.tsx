@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { linkPendingImport, rejectPendingImport } from "@/lib/actions/survey-actions";
@@ -7,6 +8,7 @@ import Link from "next/link";
 export const dynamic = "force-dynamic";
 
 export default async function PendingSurveysPage() {
+  await requirePermissionOrRedirect(["surveys.review"]);
   const admin = createAdminClient();
 
   const [{ data: pending }, { data: properties }] = await Promise.all([

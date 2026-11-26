@@ -1,3 +1,4 @@
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import { notFound, redirect } from "next/navigation";
 import Link from "next/link";
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
@@ -14,6 +15,7 @@ interface EditListingPageProps {
 }
 
 export default async function EditListingPage({ params }: EditListingPageProps) {
+  await requirePermissionOrRedirect(["listings.manage"]);
   const { id } = await params;
   const admin = createAdminClient();
 

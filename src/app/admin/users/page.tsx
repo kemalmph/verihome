@@ -1,6 +1,8 @@
 import { AdminSidebar } from "@/components/layout/AdminSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
-import { AdminToggle, SurveyorToggle, ActiveClientToggle, DeleteUserButton } from "./UserRowActions";
+import { requirePermissionOrRedirect } from "@/lib/auth/guards";
+import { isStaffRole, type StaffRole } from "@/lib/auth/permissions";
+import { RoleToggles, ActiveClientToggle, DeleteUserButton } from "./UserRowActions";
 import { CreateAdminForm } from "./CreateAdminForm";
 import { CreateUserForm } from "./CreateUserForm";
 import { EditUserButton } from "./EditUserModal";
@@ -21,6 +23,8 @@ const TABS = [
 type TabValue = (typeof TABS)[number]["value"];
 
 export default async function AdminUsersPage({ searchParams }: AdminUsersPageProps) {
+  const viewer = await requirePermissionOrRedirect(["users.manage", "staff.manage"]);
+  const canEditRoles = viewer.permissions.includes("staff.manage");
   const { tab } = await searchParams;
   const activeTab: TabValue = (TABS.find((t) => t.value === tab)?.value ?? "all");
 
@@ -28,12 +32,19 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
 
   const { data: users } = await admin
     .from("users")
-    .select("id, name, email, phone_whatsapp, user_type, preferred_area, budget_min, budget_max, is_admin, is_surveyor, is_active_client, created_at")
+    .select("id, name, email, phone_whatsapp, user_type, preferred_area, budget_min, budget_max, is_active_client, created_at")
     .order("created_at", { ascending: false });
 
+  const { data: roleRows } = await admin.from("staff_roles").select("user_id, role");
+  const rolesByUser = new Map<string, StaffRole[]>();
+  for (const r of roleRows ?? []) {
+    if (!isStaffRole(r.role)) continue;
+    rolesByUser.set(r.user_id as string, [...(rolesByUser.get(r.user_id as string) ?? []), r.role]);
+  }
+
   const all = users ?? [];
-  const admins   = all.filter((u) => u.is_admin);
-  const clients  = all.filter((u) => !u.is_admin);
+  const admins   = all.filter((u) => rolesByUser.has(u.id));
+  const clients  = all.filter((u) => !rolesByUser.has(u.id));
   const active   = all.filter((u) => u.is_active_client);
 
   const counts: Record<TabValue, number> = {
@@ -62,7 +73,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
               {all.length} total · {admins.length} admins · {active.length} active clients
             </p>
           </div>
-          {activeTab === "admins"  && <CreateAdminForm />}
+          {activeTab === "admins"  && canEditRoles && <CreateAdminForm />}
           {activeTab === "clients" && <CreateUserForm />}
         </div>
 
@@ -94,8 +105,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                 <th className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">User</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Contact</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Type</th>
-                <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Admin</th>
-                <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Surveyor</th>
+                <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Staff roles</th>
                 {showActiveClientCol && (
                   <th className="text-center px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">Active Client</th>
                 )}
@@ -122,12 +132,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                     </td>
                     <td className="px-6 py-4 text-center">
                       <div className="flex justify-center">
-                        <AdminToggle userId={u.id} isAdmin={u.is_admin ?? false} />
-                      </div>
-                    </td>
-                    <td className="px-6 py-4 text-center">
-                      <div className="flex justify-center">
-                        <SurveyorToggle userId={u.id} isSurveyor={u.is_surveyor ?? false} />
+                        <RoleToggles userId={u.id} roles={rolesByUser.get(u.id) ?? []} canEdit={canEditRoles} />
                       </div>
                     </td>
                     {showActiveClientCol && (

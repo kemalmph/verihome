@@ -1,5 +1,6 @@
 import { NextRequest, NextResponse } from "next/server";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { createClient } from "@/lib/supabase/server";
 import { getViewer } from "@/lib/auth/guards";
 
 // CSV exports for an accountant. Headers in Indonesian; amounts as plain
@@ -29,8 +30,11 @@ function download(body: string, filename: string) {
 }
 
 export async function GET(req: NextRequest) {
-  const viewer = await getViewer();
-  if (!viewer) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
+  // Signed in at all? A guest exporting their own statement is not staff, so
+  // this cannot go through getViewer() (which is null for anyone without a role).
+  const supabase = await createClient();
+  const { data: { user } } = await supabase.auth.getUser();
+  if (!user) return NextResponse.json({ error: "Unauthorized" }, { status: 401 });
 
   const { searchParams } = new URL(req.url);
   const type = searchParams.get("type") ?? "ledger";
@@ -49,7 +53,7 @@ export async function GET(req: NextRequest) {
     const { data } = await admin
       .from("ledger_entries")
       .select("entry_date, event_type, account, direction, amount")
-      .eq("user_id", viewer.id)
+      .eq("user_id", user.id)
       .gte("entry_date", since.toISOString())
       .order("entry_date", { ascending: false });
 
@@ -64,8 +68,9 @@ export async function GET(req: NextRequest) {
     );
   }
 
-  if (viewer.role !== "admin") {
-    return NextResponse.json({ error: "Admin access required" }, { status: 403 });
+  const staff = await getViewer();
+  if (!staff || !staff.permissions.includes("finance.view")) {
+    return NextResponse.json({ error: "Finance access required" }, { status: 403 });
   }
 
   switch (type) {
