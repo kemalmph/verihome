@@ -37,7 +37,9 @@
     hanya zone `cosystem.co` dan bucket R2-nya.
   - **Kode: independen.** Tidak ada kode, paket, atau tipe yang dibagi antara
     kedua project.
-- Cloud environment: session berjalan di environment `verihome`
-  (`env_019h1qiey4NpoNWKsHFsY7So`), bukan Default — Default dikonfigurasi untuk
-  Pasarin. Session yang sudah jalan tidak bisa pindah; pilih di menu
-  environment sebelum memulai.
+- Cloud environment: environment **Default** sudah siap untuk project ini
+  (per 2026-11-26, konfirmasi owner), jadi tidak perlu memilih environment
+  khusus. Environment `verihome` (`env_019h1qiey4NpoNWKsHFsY7So`) masih ada
+  tapi opsional. Kalau ada yang kurang di session (dependensi, Supabase CLI,
+  Docker, akses jaringan ke host Supabase), pasang atau laporkan — jangan
+  berasumsi. Session yang sudah jalan tidak bisa pindah environment.

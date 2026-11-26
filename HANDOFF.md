@@ -87,11 +87,15 @@ carries the same warning and the evidence behind it.
 
 ## Environment
 
-Sessions have run on the **Default** cloud environment, which is configured for
-a different project (Pasarin) and has nothing for this one. An environment
-named `verihome` exists (`env_019h1qiey4NpoNWKsHFsY7So`): it allows the Supabase
-host and its setup script installs dependencies, the Supabase CLI and starts
-Docker. Pick it in the environment menu — a running session cannot switch to it.
+Sessions can run on the **Default** cloud environment. As of 2026-11-26 the
+owner confirms Default is ready for this project (Verihome / Cosystem) too, not
+only for Pasarin, so there is no need to pick a special environment. An
+environment named `verihome` (`env_019h1qiey4NpoNWKsHFsY7So`) also exists — it
+allows the Supabase host and its setup script installs dependencies, the
+Supabase CLI and starts Docker — but it is optional. A running session cannot
+switch environments. If something this project needs is missing in the session
+(dependencies, Supabase CLI, Docker, network access to the Supabase host),
+install it or report what is missing instead of assuming.
 
 **Supabase connector**: resolved 2026-11-21, and no longer something you have
 to work around. The `verihome` project was transferred from `malgrown dev` into `maldev`, so
