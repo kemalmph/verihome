@@ -178,8 +178,8 @@ config line, and it is still open.
 ## Tests
 
 Both need the local stack, a built app, and an admin account the caller
-creates (`admin@verihome.id` is granted `superadmin` in `staff_roles` by the
-`set_admin_flag` trigger — Phase 1, 2026-11-26; `users.is_admin` is no longer read):
+creates (`admin@verihome.id` is granted `superadmin` in `staff_roles` by running
+`node scripts/seed-test-admin.js` — the email trigger was dropped; `users.is_admin` is no longer read):
 
     dockerd &                       # dies most sessions; restart it
     npx supabase start && npx supabase db reset

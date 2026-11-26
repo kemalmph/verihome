@@ -122,7 +122,7 @@ const ACTIONS = [
   ["updateUser", [Z, F()], ["users.manage"]],
   ["deleteUser", [Z], ["users.manage"]],
   ["toggleActiveClient", [Z, true], ["users.manage"]],
-  ["createAdminUser", [F({ is_admin: "false" })], ["users.manage"]],
+  ["createAdminUser", [F()], ["users.manage"]],
   ["grantStaffRole", [Z, "surveyor"], ["staff.manage"]],
   ["revokeStaffRole", [Z, "surveyor"], ["staff.manage"]],
 ];
@@ -387,12 +387,31 @@ const DENY_RE = /do not have permission|signed in as staff|Only a superadmin|Adm
 
   // creating a staff account is granting a role
   const newEmail = `created-${RUN}@test.invalid`;
-  r = await callAction("createAdminUser", [F({ name: "X", email: newEmail, password: "Abcdefgh1" })], cookies.admin_general);
-  check(DENY_RE.test(r.text) && (await q("select 1 from users where email=$1", [newEmail])).length === 0, "admin_general cannot create a staff account (is_admin default)");
+  r = await callAction("createAdminUser", [F({ name: "X", email: newEmail, password: "Abcdefgh1", role: "admin_listings" })], cookies.admin_general);
+  check(DENY_RE.test(r.text) && (await q("select 1 from users where email=$1", [newEmail])).length === 0, "admin_general cannot create a staff account (explicit role)");
+  r = await callAction("createAdminUser", [F({ name: "X", email: newEmail, password: "Abcdefgh1", role: "nonsense" })], cookies.superadmin);
+  check((await q("select 1 from users where email=$1", [newEmail])).length === 0, "superadmin: an unknown role creates nothing");
   r = await callAction("createAdminUser", [F({ name: "X", email: newEmail, password: "Abcdefgh1", role: "admin_listings" })], cookies.superadmin);
   const created = await q("select u.id, array_agg(sr.role) as roles from users u left join staff_roles sr on sr.user_id=u.id where u.email=$1 group by u.id", [newEmail]);
   check(created.length === 1 && created[0].roles.includes("admin_listings"), "superadmin can create a staff account with a chosen role");
   if (created[0]) await svc.auth.admin.deleteUser(created[0].id);
+
+  // fail-closed: no role / is_admin field => ordinary user, nothing in staff_roles
+  for (const [label, extra, who] of [
+    ["no role/is_admin field (superadmin)", {}, "superadmin"],
+    ["empty role field (superadmin)", { role: "" }, "superadmin"],
+    ["legacy is_admin=true, no role (superadmin)", { is_admin: "true" }, "superadmin"],
+    ["no role field (admin_general)", {}, "admin_general"],
+  ]) {
+    const em = `failclosed-${RUN}-${Math.random().toString(36).slice(2, 8)}@test.invalid`;
+    await callAction("createAdminUser", [F({ name: "Plain", email: em, password: "Abcdefgh1", ...extra })], cookies[who]);
+    const row = (await q("select id from users where email=$1", [em]))[0];
+    check(!!row, `fail-closed: ${label} still creates the account`);
+    if (row) {
+      check((await rolesOf(row.id)).length === 0, `fail-closed: ${label} -> no row in staff_roles`);
+      await svc.auth.admin.deleteUser(row.id);
+    }
+  }
 
   // ── 8. database level ─────────────────────────────────────────────────────
   // has_staff_permission against SPEC, as each user (auth.uid() from the claim)
@@ -450,20 +469,19 @@ const DENY_RE = /do not have permission|signed in as staff|Only a superadmin|Adm
   check((await seen("admin_listings")) === 0, "RLS: admin_listings cannot read other users' credits");
   check((await seen("surveyor")) === 0, "RLS: surveyor cannot read other users' credits");
 
-  // bootstrap hook
+  // bootstrap hook is gone: the admin@verihome.id email grants nothing
+  check((await q("select 1 from pg_trigger where tgname='trg_set_admin_flag'")).length === 0, "trg_set_admin_flag is dropped");
+  check((await q("select 1 from pg_proc where proname='set_admin_flag'")).length === 0, "set_admin_flag() is dropped");
   const hookEmail = "admin@verihome.id";
   let hookUser = (await q("select id from users where email=$1", [hookEmail]))[0];
-  let createdHook = false;
   if (!hookUser) {
     const { data, error } = await svc.auth.admin.createUser({ email: hookEmail, password: PASSWORD, email_confirm: true });
     if (error) throw new Error(error.message);
-    hookUser = { id: data.user.id }; createdHook = true;
+    hookUser = { id: data.user.id };
     await q("insert into users(id, email, name) values ($1,$2,'Admin') on conflict (id) do nothing", [hookUser.id, hookEmail]);
+    check((await rolesOf(hookUser.id)).length === 0, "signing up as admin@verihome.id grants no staff role (no takeover path)");
+    await svc.auth.admin.deleteUser(hookUser.id);
   }
-  check((await rolesOf(hookUser.id)).includes("superadmin"), "bootstrap hook: admin@verihome.id gets superadmin in staff_roles");
-  const legacy = (await q("select is_admin from users where id=$1", [hookUser.id]))[0];
-  check(legacy && legacy.is_admin !== true || !createdHook, "bootstrap hook no longer writes the legacy is_admin column");
-  if (createdHook) await svc.auth.admin.deleteUser(hookUser.id);
 
   // legacy flag is not authoritative any more
   const legacyUser = await mkUser("legacy_flag");

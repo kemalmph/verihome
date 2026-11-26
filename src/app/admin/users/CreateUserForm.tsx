@@ -12,8 +12,9 @@ export function CreateUserForm() {
     e.preventDefault();
     setResult(null);
     const formData = new FormData(e.currentTarget);
-    // Force is_admin = false for regular users
-    formData.set("is_admin", "false");
+    // An ordinary user: never send a role. The server grants staff access only
+    // when a role is sent explicitly, so this form cannot create staff.
+    formData.delete("role");
     start(async () => {
       const res = await createAdminUser(formData);
       setResult(res);

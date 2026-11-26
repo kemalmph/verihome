@@ -144,9 +144,13 @@ export async function createAdminUser(formData: FormData) {
   const name     = (formData.get("name") as string)?.trim();
   const email    = (formData.get("email") as string)?.trim();
   const password = (formData.get("password") as string)?.trim();
-  // Creating a staff account is granting a role: staff.manage, not users.manage.
-  const wantsStaff = formData.get("is_admin") !== "false";
-  const role = String(formData.get("role") ?? "superadmin");
+  // Fail-closed: a staff role is granted only when the form sends a `role`
+  // field explicitly. No field (or an empty one) means an ordinary account with
+  // no row in staff_roles. There is no default role, and the legacy `is_admin`
+  // field is not read at all. Granting a role is staff.manage, not users.manage.
+  const roleField = formData.get("role");
+  const role = typeof roleField === "string" ? roleField.trim() : "";
+  const wantsStaff = role !== "";
   if (wantsStaff) {
     if (!caller.permissions.includes("staff.manage")) {
       return { error: "Only a superadmin can create a staff account." };
