@@ -129,6 +129,14 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
     landing; satu item aktif; tak ada halaman tanpa tautan).
     `test-sidebar-collapse` kini 157 check untuk superadmin, admin_finance,
     surveyor, pemilik, pemilik+staf, dan /dashboard.
+  - Review owner atas PR #4: `/admin` kini menggating tiap widget (data
+    listing/konsultasi/review hanya untuk `listings.manage`/`bookings.operate`;
+    integritas buku besar `finance.view`; refund `finance.view|operate`; permintaan
+    pemilik; peringatan komisi `listings.manage|finance.view`). Viewer tanpa widget
+    → `defaultLanding()`; item Dashboard hanya untuk pemegang izin widget
+    (`DASHBOARD_PERMISSIONS`). `safeNext` menolak backslash, karakter kontrol,
+    dan bentuk ter-decode (`scripts/test-safe-next.js`). Tes nav dibuktikan bisa
+    merah dengan merusak satu aturan menu dan satu guard halaman (tidak dikomit).
   - Ledger/buku besar dan "refund" **tidak punya halaman sendiri** — refund kredit
     ada di dashboard `/admin` (`PendingCreditRefunds`), integritas buku besar
     juga di sana. Menu hanya menautkan halaman yang ada; tidak ada halaman baru.
