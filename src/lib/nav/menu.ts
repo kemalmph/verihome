@@ -11,7 +11,7 @@
 // requirePermissionOrRedirect. If the page accepts the viewer, the link is
 // shown; if it would bounce them, the link is not. Change both together.
 
-import { PERMISSIONS, hasAnyPermission, type Permission } from "@/lib/auth/permissions";
+import { hasAnyPermission, type Permission } from "@/lib/auth/permissions";
 import type { StringKey } from "@/lib/i18n/strings";
 
 export type SectionId = "admin" | "site" | "marketplace";
@@ -43,8 +43,14 @@ export interface NavSection {
   groups: NavGroup[];
 }
 
-/** Everything a staff member can hold except the survey-only permission. */
-const NOT_SURVEY_ONLY = PERMISSIONS.filter((p) => p !== "surveys.input");
+/**
+ * Who has any widget on /admin. src/app/admin/page.tsx gates each widget by
+ * these; a viewer with none is sent to defaultLanding() (a survey-only
+ * account lands on /survey), so the Dashboard is offered to exactly these.
+ */
+export const DASHBOARD_PERMISSIONS: readonly Permission[] = [
+  "listings.manage", "bookings.operate", "finance.view", "finance.operate", "owners.payout_verify",
+];
 
 const MONEY_PAGES = ["bookings.operate", "payments.settle", "finance.view"] as const;
 
@@ -59,9 +65,7 @@ export const ADMIN_SECTION: NavSection = {
     {
       label: "Overview",
       items: [
-        // /admin accepts every permission, but a survey-only account is sent
-        // on to /survey by the layout — so for them it is not a destination.
-        { href: "/admin", icon: "dashboard", label: "Dashboard", requires: NOT_SURVEY_ONLY },
+        { href: "/admin", icon: "dashboard", label: "Dashboard", requires: DASHBOARD_PERMISSIONS },
       ],
     },
     {

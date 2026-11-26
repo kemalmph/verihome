@@ -265,6 +265,39 @@ function claimedHrefs() {
     check(refused(r), `signed out: ${p} redirects (${r.status} ${r.location})`);
   }
 
+  // ── 2b. /admin shows listing data only to those entitled to it ──────────
+  {
+    const marker = `NAVMARK-${RUN}`;
+    const { data: prop, error: pe } = await svc.from("properties").insert({
+      name: marker, slug: `navmark-${RUN}`, area: "Navarea", property_type: "apartment",
+      price_monthly: 7654321, bedrooms: 1, bathrooms: 1, status: "draft", rental_mode: "short_stay",
+    }).select("id").single();
+    if (pe) throw new Error(`property: ${pe.message}`);
+    made.properties = [prop.id];
+    const body = async (who) => {
+      const res = await fetch(BASE + "/admin", { redirect: "manual", headers: { Cookie: header(who) } });
+      return { status: res.status, location: res.headers.get("location") ?? "", text: res.status === 200 ? await res.text() : "" };
+    };
+    // Property NAMES may legitimately appear for finance.view inside the
+    // commission warning (owner decision); prices and the listing widgets may not.
+    const leaks = (t) => t.includes("7.654.321") || /Pending Reviews|Today.s Consultations|Recent Owner Submissions/.test(t);
+    const sv = await body("surveyor");
+    check(refused(sv) && !leaks(sv.text), `surveyor opens /admin: redirected, no listing data (${sv.status} ${sv.location})`);
+    const lst = await body("admin_listings");
+    check(lst.status === 200 && lst.text.includes(marker), "admin_listings sees listing data on /admin");
+    const gen = await body("admin_general");
+    check(gen.status === 200 && gen.text.includes(marker), "admin_general sees listing data on /admin");
+    const fin = await body("admin_finance");
+    check(fin.status === 200 && !leaks(fin.text), "admin_finance opens /admin and sees no listing, consultation or review widgets");
+    const ownerFin = await body("owner_finance");
+    check(ownerFin.status === 200 && !leaks(ownerFin.text), "owner+finance sees no listing widgets on /admin");
+    // Commission warning (no platform default set locally): listings.manage and finance.view see it.
+    const warn = (t) => /belum punya komisi platform/.test(t);
+    await q("update platform_settings set default_commission_pct = null where id = 1");
+    const w = { listings: warn((await body("admin_listings")).text), finance: warn((await body("admin_finance")).text) };
+    check(w.listings && w.finance, `commission warning shows for listings.manage and finance.view (${JSON.stringify(w)})`);
+  }
+
   // ── 3. one person, several relations: union, no role picker ──────────────
   {
     const f = expectedFor("admin_finance");
@@ -382,6 +415,7 @@ function claimedHrefs() {
   await browser.close();
 
   // ── cleanup ───────────────────────────────────────────────────────────────
+  for (const id of made.properties ?? []) await svc.from("properties").delete().eq("id", id);
   for (const id of made.sites) await svc.from("sites").delete().eq("id", id);
   for (const id of made.owners) await svc.from("owners").delete().eq("id", id);
   for (const u of Object.values(users)) {
