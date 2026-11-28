@@ -128,6 +128,10 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
     `test-sidebar-collapse` menyesuaikan path. 19 suite hijau di DB bersih.
   - Catatan: proxy mengirim pengunjung belum masuk ke `/?login=1` tanpa
     membawa path asalnya (perilaku lama, tidak diubah di PR rename ini).
+  - System Reference **versi 29** (atas permintaan owner): §16 jadi
+    *Customer account (`/account`)* + catatan redirect 308, rute di §15,
+    aturan landing & catatan sidebar di §3, rail, Fig. 1, §22, footer. Footer
+    menyebut bahwa versi ini mendahului merge PR #10.
 
 - **Fase 3 — Site Management per pemilik site & staf site** (28 Nov, branch
   `claude/site-management-phase-3-inventory-uyamoo`, PR #9 di-merge atas
