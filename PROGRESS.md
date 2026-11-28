@@ -100,9 +100,14 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 ## Selesai
 
 - **Undangan pemilik terikat ke email yang dikonfirmasi** (28 Nov, branch
-  `claude/owner-invite-email`, PR menunggu persetujuan owner). **Migration
-  `20261128150000_owner_invite_email.sql` belum diterapkan ke produksi —
-  menunggu persetujuan owner.**
+  `claude/owner-invite-email`, PR #11 di-merge atas persetujuan owner).
+  **Migration `20261128150000_owner_invite_email.sql` diterapkan ke produksi
+  28 Nov lewat MCP `apply_migration`** (tercatat sebagai `20261128122405`).
+  Terverifikasi: kolom `email` + CHECK ada; satu versi fungsi, SECURITY
+  DEFINER, `search_path=public, pg_temp`, ACL `postgres` + `service_role`
+  saja; anon/authenticated tidak bisa EXECUTE; grant tabel `owner_invites`
+  ke anon/authenticated/PUBLIC nol; RLS aktif; data tidak berubah (1
+  undangan, 3 pemilik).
   - `owner_invites.email` (huruf kecil, disalin dari `owners.email` saat
     undangan dibuat — salinan, bukan join). `redeem_owner_invite` kini menolak
     `invite_email_missing` (undangan lama tanpa alamat), `invite_email_mismatch`,
@@ -480,9 +485,9 @@ placeholder.
 
 Urut prioritas:
 
-0. **Undangan pemilik: setujui & terapkan migration
-   `20261128150000_owner_invite_email.sql`, lalu merge PR-nya.** Sesudahnya:
-   dashboard per peran; migration hapus kolom `is_admin`/`is_surveyor`;
+0. **Cek deploy Vercel untuk merge PR #11.** Undangan pemilik lama tanpa
+   alamat harus diterbitkan ulang. Cek setelan konfirmasi email di Auth
+   Supabase produksi (owner). Berikutnya: dashboard per peran; migration hapus kolom `is_admin`/`is_surveyor`;
    proxy membawa path asal ke login (`/?login=1` sekarang membuangnya).
 
 1. **Putuskan pengembalian dana membership.** Jenis peristiwa
@@ -658,11 +663,9 @@ Bukan pemblokir, tapi sayang kalau hilang:
 (`hxktoewssuahtkrksbpx`, ap-northeast-1, Postgres 17).
 Migration di `supabase/migrations/` (16 file; yang lama di
 `supabase/migrations-archive/`).
-Terakhir di produksi: `20261128120000_site_staff_invites.sql` (tercatat di
-produksi sebagai versi `20261128115051` karena MCP memberi timestamp sendiri —
-lihat HANDOFF Phase B).
-**Belum di produksi:** `20261128150000_owner_invite_email.sql` (menunggu
-persetujuan owner).
+Terakhir: `20261128150000_owner_invite_email.sql` (produksi sudah sama;
+tercatat di produksi sebagai versi `20261128122405` karena MCP memberi
+timestamp sendiri — lihat HANDOFF Phase B).
 Isi produksi saat ini: 1 site · 14 unit · 2 reservasi · 3 cicilan · 10 entri
 buku besar · 7 properti (6 tayang) · 3 pemilik · 30 pengguna · 24 amenity ·
 0 membership plan.
