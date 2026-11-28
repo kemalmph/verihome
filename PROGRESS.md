@@ -53,6 +53,16 @@ catatan handoff bilang "jaga tetap sinkron". Kalau menemukan sesuatu yang
 pantas masuk, **sebutkan di chat beserta nomor bagiannya** dan biarkan
 dokumennya. Owner yang memutuskan.
 
+**Diperbarui 2026-11-28 (versi 27), atas permintaan owner — Fase 3:** §21
+*Access per site* (peta izin, aturan record anak, undangan, sidebar per site,
+membership lunas tetap lunas), §02 (`site_staff`, `site_staff_invites`, baris
+RLS), §19.21 baru (service_role tidak bisa membaca `auth.users`), §20.7
+(pendapatan site disembunyikan dari peran site). **Masih tidak akurat dan
+belum diubah** (di luar cakupan yang diminta): §3 masih menyebut `site_staff`
+"kosong, belum dibaca" dan `accessibleSites` hanya global; §18 menyebut
+item Portal Pemilik tampil untuk setiap pemilik aktif; §20.9 butir "Phase 3"
+masih terbuka; kotak fakta di masthead "14 files · latest 26 Nov".
+
 **Diperbarui 2026-11-23 (versi 20), atas permintaan owner.** Yang masuk:
 
 - **Masthead** — produknya kini Cosystem di `cosystem.co`; nama lama bertahan
@@ -408,7 +418,8 @@ placeholder.
 
 Urut prioritas:
 
-0. **Fase 3b: PR `/account`** (instruksi owner menyusul), yang juga
+0. **Fase 3b: PR `/account`** (branch `claude/account-phase-3b`, dibuat dari
+   `main` setelah merge PR #9; instruksi owner menyusul), yang juga
    memperbaiki `test-login-no-js` (selector navbar V7). Sesudahnya: email
    binding + konfirmasi untuk undangan pemilik; dashboard per peran; migration
    hapus kolom `is_admin`/`is_surveyor`.
