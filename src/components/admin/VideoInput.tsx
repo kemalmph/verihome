@@ -74,7 +74,7 @@ export function VideoInput({ propertyId, existingUrl, onUpdate }: VideoInputProp
   return (
     <div className="space-y-4">
       <div className="space-y-2">
-        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider block">
+        <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider block">
           YouTube Video URL
         </label>
         <div className="flex gap-2">
@@ -83,12 +83,12 @@ export function VideoInput({ propertyId, existingUrl, onUpdate }: VideoInputProp
             value={value}
             onChange={(e) => { setValue(e.target.value); setError(null); }}
             placeholder="https://youtube.com/watch?v=..."
-            className="flex-1 h-11 px-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm"
+            className="flex-1 h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
           />
           <button
             onClick={save}
             disabled={pending}
-            className="px-4 py-2 bg-[#1a7a5e] text-white text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50"
+            className="px-4 py-2 bg-brand text-white text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-50"
           >
             {pending ? "Saving…" : "Save"}
           </button>
@@ -102,13 +102,13 @@ export function VideoInput({ propertyId, existingUrl, onUpdate }: VideoInputProp
           )}
         </div>
         {error && <p className="text-xs text-red-600">{error}</p>}
-        <p className="text-xs text-[#6e7a74]">
+        <p className="text-xs text-ink-3">
           Upload video ke YouTube sebagai Unlisted, lalu paste link-nya di sini.
         </p>
       </div>
 
       {videoId && (
-        <div className="rounded-xl overflow-hidden aspect-video bg-[#0d2137]">
+        <div className="rounded-xl overflow-hidden aspect-video bg-ink">
           <iframe
             src={`https://www.youtube.com/embed/${videoId}`}
             className="w-full h-full"

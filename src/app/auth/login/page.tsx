@@ -36,11 +36,11 @@ export default async function LoginPage({
   return (
     <>
       <Navbar />
-      <main className="min-h-[70vh] bg-[#f6f3f2] px-4 py-14">
+      <main className="min-h-[70vh] bg-canvas px-4 py-14">
         <div className="max-w-sm mx-auto">
           <div className="mb-6 text-center">
-            <h1 className="text-2xl font-bold text-[#0d2137]">{t("login.title", lang)}</h1>
-            <p className="text-sm text-[#6e7a74] mt-1">
+            <h1 className="text-2xl font-bold text-ink">{t("login.title", lang)}</h1>
+            <p className="text-sm text-ink-3 mt-1">
               {t("login.sub", lang)}
             </p>
           </div>
@@ -57,9 +57,9 @@ export default async function LoginPage({
             googleEnabled={process.env.GOOGLE_AUTH_ENABLED === "true"}
           />
 
-          <p className="text-xs text-[#6e7a74] text-center mt-6">
+          <p className="text-xs text-ink-3 text-center mt-6">
             {t("login.listInstead", lang)}{" "}
-            <Link href="/list-your-property" className="text-[#1a7a5e] font-semibold hover:underline">
+            <Link href="/list-your-property" className="text-brand-ink font-semibold hover:underline">
               {t("login.submitHere", lang)}
             </Link>
           </p>

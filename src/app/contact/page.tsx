@@ -31,45 +31,45 @@ export default async function ContactPage() {
   return (
     <>
       <Navbar />
-      <main className="bg-[#f6f3f2] min-h-[70vh]">
+      <main className="bg-canvas min-h-[70vh]">
         <div className="max-w-5xl mx-auto px-4 md:px-16 py-16 md:py-24">
-          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-[#1a7a5e]">
+          <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-ink">
             {t("nav.contact", lang)}
           </p>
-          <h1 className="mt-3 text-3xl md:text-4xl font-bold text-[#0d2137] max-w-2xl">
+          <h1 className="mt-3 text-3xl md:text-4xl font-bold text-ink max-w-2xl">
             {t("contact.title", lang)}
           </h1>
-          <p className="mt-4 text-[#3e4944] text-lg max-w-2xl">
+          <p className="mt-4 text-ink-2 text-lg max-w-2xl">
             {t("contact.sub", lang)}
           </p>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white border border-[#ddd7d4] rounded-2xl p-8">
-              <span className="material-symbols-outlined text-[#1a7a5e] text-3xl">
+            <div className="bg-white border border-line-strong rounded-2xl p-8">
+              <span className="material-symbols-outlined text-brand-ink text-3xl">
                 apartment
               </span>
-              <h2 className="mt-4 text-xl font-bold text-[#0d2137]">
+              <h2 className="mt-4 text-xl font-bold text-ink">
                 {t("contact.registerTitle", lang)}
               </h2>
-              <p className="mt-3 text-[#3e4944] leading-relaxed">
+              <p className="mt-3 text-ink-2 leading-relaxed">
                 {t("contact.registerBody", lang)}
               </p>
               <Link
                 href="/list-your-property"
-                className="mt-6 inline-block px-5 py-3 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
+                className="mt-6 inline-block px-5 py-3 rounded-lg bg-brand text-white font-semibold hover:bg-brand-strong transition-colors"
               >
                 {t("contact.registerCta", lang)}
               </Link>
             </div>
 
-            <div className="bg-white border border-[#ddd7d4] rounded-2xl p-8">
-              <span className="material-symbols-outlined text-[#1a7a5e] text-3xl">
+            <div className="bg-white border border-line-strong rounded-2xl p-8">
+              <span className="material-symbols-outlined text-brand-ink text-3xl">
                 support_agent
               </span>
-              <h2 className="mt-4 text-xl font-bold text-[#0d2137]">
+              <h2 className="mt-4 text-xl font-bold text-ink">
                 {t("contact.talkTitle", lang)}
               </h2>
-              <p className="mt-3 text-[#3e4944] leading-relaxed">
+              <p className="mt-3 text-ink-2 leading-relaxed">
                 {t("contact.talkBody", lang)}
               </p>
 
@@ -79,7 +79,7 @@ export default async function ContactPage() {
                     href={`https://wa.me/${wa}`}
                     target="_blank"
                     rel="noopener noreferrer"
-                    className="flex items-center gap-3 text-[#1a7a5e] font-semibold hover:underline"
+                    className="flex items-center gap-3 text-brand-ink font-semibold hover:underline"
                   >
                     <span className="material-symbols-outlined">chat</span>
                     WhatsApp
@@ -88,14 +88,14 @@ export default async function ContactPage() {
                 {email && (
                   <a
                     href={`mailto:${email}`}
-                    className="flex items-center gap-3 text-[#1a7a5e] font-semibold hover:underline"
+                    className="flex items-center gap-3 text-brand-ink font-semibold hover:underline"
                   >
                     <span className="material-symbols-outlined">mail</span>
                     {email}
                   </a>
                 )}
                 {!wa && !email && (
-                  <p className="text-sm text-[#6e7a74]">
+                  <p className="text-sm text-ink-3">
                     {t("contact.noChannels", lang)}
                   </p>
                 )}
@@ -103,16 +103,16 @@ export default async function ContactPage() {
             </div>
           </div>
 
-          <div className="mt-12 bg-white border border-[#ddd7d4] rounded-2xl p-8">
-            <h2 className="text-lg font-bold text-[#0d2137]">
+          <div className="mt-12 bg-white border border-line-strong rounded-2xl p-8">
+            <h2 className="text-lg font-bold text-ink">
               {t("contact.renterTitle", lang)}
             </h2>
-            <p className="mt-2 text-[#3e4944]">
+            <p className="mt-2 text-ink-2">
               {t("contact.renterBody", lang)}
             </p>
             <Link
               href="/listings"
-              className="mt-5 inline-flex items-center gap-2 text-[#1a7a5e] font-semibold hover:underline"
+              className="mt-5 inline-flex items-center gap-2 text-brand-ink font-semibold hover:underline"
             >
               {t("contact.renterCta", lang)} <span aria-hidden>→</span>
             </Link>

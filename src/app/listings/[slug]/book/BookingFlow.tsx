@@ -98,45 +98,45 @@ function StepDates({
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137] text-lg">{t("bf.s1title")}</h2>
+    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
+      <h2 className="font-bold text-ink text-lg">{t("bf.s1title")}</h2>
 
       <div className="grid grid-cols-2 gap-4">
         <div>
-          <label className="block text-sm text-[#3e4944] mb-1">{t("bf.checkIn")}</label>
+          <label className="block text-sm text-ink-2 mb-1">{t("bf.checkIn")}</label>
           <input
             type="date"
             min={today}
             value={checkIn}
             onChange={(e) => { setCheckIn(e.target.value); setQuote(null); }}
-            className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1a7a5e]"
+            className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
           />
         </div>
         <div>
-          <label className="block text-sm text-[#3e4944] mb-1">{t("bf.checkOut")}</label>
+          <label className="block text-sm text-ink-2 mb-1">{t("bf.checkOut")}</label>
           <input
             type="date"
             min={checkIn || today}
             value={checkOut}
             onChange={(e) => { setCheckOut(e.target.value); setQuote(null); }}
-            className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1a7a5e]"
+            className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
           />
         </div>
       </div>
 
       <div>
-        <label className="block text-sm text-[#3e4944] mb-1">{t("bf.guests")}</label>
+        <label className="block text-sm text-ink-2 mb-1">{t("bf.guests")}</label>
         <input
           type="number"
           min={1}
           max={20}
           value={guests}
           onChange={(e) => setGuests(Number(e.target.value))}
-          className="w-32 border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1a7a5e]"
+          className="w-32 border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
         />
       </div>
 
-      <div className="text-xs text-[#6e7a74]">
+      <div className="text-xs text-ink-3">
         {t("bf.min")} {rate.min_nights} {rate.min_nights > 1 ? t("bf.nights") : t("bf.night")}
         {rate.max_nights ? ` · ${t("bf.max")} ${rate.max_nights} ${t("bf.nights")}` : ""}
       </div>
@@ -144,7 +144,7 @@ function StepDates({
       <button
         onClick={fetchQuote}
         disabled={!checkIn || !checkOut || loading}
-        className="w-full py-2.5 bg-[#0d2137] text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-40"
+        className="w-full py-2.5 bg-ink text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-40"
       >
         {loading ? t("bf.calculating") : t("bf.checkPrice")}
       </button>
@@ -152,7 +152,7 @@ function StepDates({
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {quote && (
-        <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-2 text-sm">
+        <div className="bg-canvas rounded-lg p-4 space-y-2 text-sm">
           {/* Tier-aware price breakdown */}
           {quote.tier === "monthly" && (
             <div className="flex justify-between">
@@ -173,7 +173,7 @@ function StepDates({
             return hasWeekend ? (
               <>
                 {quote.breakdown.map((b) => (
-                  <div key={b.date} className="flex justify-between text-[#3e4944]">
+                  <div key={b.date} className="flex justify-between text-ink-2">
                     <span>{b.date}</span><span>IDR {fmt(b.price)}</span>
                   </div>
                 ))}
@@ -186,22 +186,22 @@ function StepDates({
             );
           })()}
           {quote.cleaningFee > 0 && (
-            <div className="flex justify-between text-[#6e7a74]"><span>{t("bf.cleaningFee")}</span><span>IDR {fmt(quote.cleaningFee)}</span></div>
+            <div className="flex justify-between text-ink-3"><span>{t("bf.cleaningFee")}</span><span>IDR {fmt(quote.cleaningFee)}</span></div>
           )}
           {quote.securityDeposit > 0 && (
-            <div className="flex justify-between text-[#6e7a74]">
+            <div className="flex justify-between text-ink-3">
               <span>{t("bf.securityDeposit")} <span className="text-xs">{t("bf.refundable")}</span></span>
               <span>IDR {fmt(quote.securityDeposit)}</span>
             </div>
           )}
-          <div className="flex justify-between font-bold border-t border-[#cccccc] pt-2">
+          <div className="flex justify-between font-bold border-t border-line-strong pt-2">
             <span>{t("bf.totalToPay")}</span>
-            <span className="text-[#1a7a5e]">IDR {fmt(quote.total + quote.securityDeposit)}</span>
+            <span className="text-brand-ink">IDR {fmt(quote.total + quote.securityDeposit)}</span>
           </div>
 
           <button
             onClick={() => onNext(checkIn, checkOut, guests, quote)}
-            className="w-full mt-2 py-3 bg-[#1a7a5e] text-white rounded-lg font-semibold hover:opacity-90"
+            className="w-full mt-2 py-3 bg-brand text-white rounded-lg font-semibold hover:opacity-90"
           >
             Continue →
           </button>
@@ -222,8 +222,8 @@ function StepConfirm({
 }) {
   const t = useT();
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137] text-lg">{t("bf.s2title")}</h2>
+    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
+      <h2 className="font-bold text-ink text-lg">{t("bf.s2title")}</h2>
 
       <div className="space-y-3 text-sm">
         {[
@@ -238,25 +238,25 @@ function StepConfirm({
             : []),
           { label: t("bf.totalTransfer"), value: `IDR ${fmt(quote.total + quote.securityDeposit)}` },
         ].map((row) => (
-          <div key={row.label} className="flex justify-between border-b border-[#f6f3f2] pb-2 last:border-0 last:font-bold">
-            <span className="text-[#3e4944]">{row.label}</span>
-            <span className="text-[#1b1c1c]">{row.value}</span>
+          <div key={row.label} className="flex justify-between border-b border-canvas pb-2 last:border-0 last:font-bold">
+            <span className="text-ink-2">{row.label}</span>
+            <span className="text-ink">{row.value}</span>
           </div>
         ))}
       </div>
 
-      <p className="text-xs text-[#6e7a74]">
+      <p className="text-xs text-ink-3">
         {t("bf.agree")}
       </p>
 
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 py-3 border border-[#cccccc] rounded-lg text-sm font-semibold text-[#3e4944] hover:bg-[#f6f3f2]">
+        <button onClick={onBack} className="flex-1 py-3 border border-line-strong rounded-lg text-sm font-semibold text-ink-2 hover:bg-canvas">
           ← {t("bf.back")}
         </button>
         <button
           onClick={onConfirm}
           disabled={loading}
-          className="flex-1 py-3 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50"
+          className="flex-1 py-3 bg-brand text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-50"
         >
           {loading ? t("bf.creating") : t("bf.confirmGet")}
         </button>
@@ -274,29 +274,29 @@ function StepPayment({
 }) {
   const t = useT();
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-[#1a7a5e]/10 flex items-center justify-center">
-          <span className="material-symbols-outlined text-[#1a7a5e]">check_circle</span>
+        <div className="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center">
+          <span className="material-symbols-outlined text-brand-ink">check_circle</span>
         </div>
         <div>
-          <h2 className="font-bold text-[#0d2137] text-lg">{t("bf.requested")}</h2>
-          <p className="text-sm text-[#6e7a74]">{t("bf.code")} <strong>{bookingCode}</strong></p>
+          <h2 className="font-bold text-ink text-lg">{t("bf.requested")}</h2>
+          <p className="text-sm text-ink-3">{t("bf.code")} <strong>{bookingCode}</strong></p>
         </div>
       </div>
 
-      <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
-        <p className="font-semibold text-sm text-[#0d2137]">{t("bf.completePayment")}</p>
+      <div className="bg-canvas rounded-lg p-4 space-y-3">
+        <p className="font-semibold text-sm text-ink">{t("bf.completePayment")}</p>
         <div className="space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.bank")}</span><strong>{intent.bankName}</strong></div>
-          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.account")}</span><strong>{intent.accountNumber}</strong></div>
-          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.accountName")}</span><strong>{intent.accountHolder}</strong></div>
-          <div className="flex justify-between text-[#1a7a5e] font-bold border-t border-[#cccccc] pt-2 mt-2">
+          <div className="flex justify-between"><span className="text-ink-3">{t("view.bank")}</span><strong>{intent.bankName}</strong></div>
+          <div className="flex justify-between"><span className="text-ink-3">{t("view.account")}</span><strong>{intent.accountNumber}</strong></div>
+          <div className="flex justify-between"><span className="text-ink-3">{t("view.accountName")}</span><strong>{intent.accountHolder}</strong></div>
+          <div className="flex justify-between text-brand-ink font-bold border-t border-line-strong pt-2 mt-2">
             <span>{t("view.transferExactly")}</span>
             <span>IDR {fmt(intent.totalAmount + Number(intent.transferCode))}</span>
           </div>
         </div>
-        <p className="text-xs text-[#6e7a74]">{intent.instructions}</p>
+        <p className="text-xs text-ink-3">{intent.instructions}</p>
       </div>
 
       {expiresAt && (
@@ -313,13 +313,13 @@ function StepPayment({
         </div>
       )}
 
-      <p className="text-xs text-[#6e7a74]">
+      <p className="text-xs text-ink-3">
         {t("bf.afterTransfer")} <strong>{t("bf.myBookings")}</strong>. {t("bf.afterTransfer2")}
       </p>
 
       <a
         href="/dashboard/bookings"
-        className="block w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold text-center hover:opacity-90"
+        className="block w-full py-3 bg-ink text-white rounded-lg text-sm font-semibold text-center hover:opacity-90"
       >
         {t("bf.viewBookings")}
       </a>
@@ -372,13 +372,13 @@ export function BookingFlow({ propertyId, rate }: Pick<Props, "propertyId" | "ra
   return (
     <div className="space-y-4">
       {/* Progress */}
-      <div className="flex items-center gap-2 text-xs text-[#6e7a74] mb-2">
+      <div className="flex items-center gap-2 text-xs text-ink-3 mb-2">
         {[t("bf.stepDates"), t("bf.stepConfirm"), t("bf.stepPayment")].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
-            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-[#1a7a5e] text-white" : step > i + 1 ? "bg-[#9cf4d1] text-[#0d2137]" : "bg-[#e4e2e1] text-[#6e7a74]"}`}>
+            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-brand text-white" : step > i + 1 ? "bg-brand-light text-ink" : "bg-line text-ink-3"}`}>
               {step > i + 1 ? "✓" : i + 1}
             </span>
-            <span className={step === i + 1 ? "font-semibold text-[#0d2137]" : ""}>{label}</span>
+            <span className={step === i + 1 ? "font-semibold text-ink" : ""}>{label}</span>
             {i < 2 && <span className="text-[#cccccc]">›</span>}
           </div>
         ))}

@@ -5,16 +5,16 @@ import { useRouter } from "next/navigation";
 import { createEvent, setEventStatus, bookRoomForEvent } from "@/lib/actions/event-actions";
 
 const inputCls =
-  "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-[#0d2137] focus:outline-none focus:ring-2 focus:ring-[#1a7a5e]/30 focus:border-[#1a7a5e]";
+  "w-full border border-line-strong rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 function Field({
   label, hint, className = "", children,
 }: { label: string; hint?: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={`block ${className}`}>
-      <span className="block text-sm font-medium text-[#0d2137] mb-1">{label}</span>
+      <span className="block text-sm font-medium text-ink mb-1">{label}</span>
       {children}
-      {hint && <span className="block text-xs text-[#6e7a74] mt-1">{hint}</span>}
+      {hint && <span className="block text-xs text-ink-3 mt-1">{hint}</span>}
     </label>
   );
 }
@@ -52,7 +52,7 @@ export function NewEventForm({
         )}
         <button
           onClick={() => setOpen(true)}
-          className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
+          className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong"
         >
           Tambah event
         </button>
@@ -61,9 +61,9 @@ export function NewEventForm({
   }
 
   return (
-    <form onSubmit={onSubmit} className="bg-white border border-[#ddd7d4] rounded-lg p-6 max-w-3xl">
-      <h2 className="text-lg font-semibold text-[#0d2137] mb-1">Event baru</h2>
-      <p className="text-sm text-[#6e7a74] mb-5">
+    <form onSubmit={onSubmit} className="bg-white border border-line rounded-2xl p-6 max-w-3xl shadow-card">
+      <h2 className="text-lg font-semibold text-ink mb-1">Event baru</h2>
+      <p className="text-sm text-ink-3 mb-5">
         Jam event adalah jam acaranya. Ruangan dipesan terpisah, biasanya lebih
         lebar untuk persiapan dan beres-beres.
       </p>
@@ -144,14 +144,14 @@ export function NewEventForm({
         <button
           type="submit"
           disabled={isPending}
-          className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750] disabled:opacity-60"
+          className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
         >
           {isPending ? "Menyimpan…" : "Simpan event"}
         </button>
         <button
           type="button"
           onClick={() => { setOpen(false); setError(""); }}
-          className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-[#f6f3f2]"
+          className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
         >
           Batal
         </button>
@@ -207,7 +207,7 @@ export function EventControls({
           <button
             onClick={() => change("confirmed")}
             disabled={busy}
-            className="text-xs px-2 py-1 rounded border border-[#a9dcc8] bg-[#e8f5f0] text-[#12614a] hover:bg-[#d9eee5] disabled:opacity-60"
+            className="text-xs px-2 py-1 rounded border border-success-line bg-success-soft text-success-ink hover:bg-[#d9eee5] disabled:opacity-60"
           >
             Konfirmasi
           </button>
@@ -227,7 +227,7 @@ export function EventControls({
           <button
             onClick={() => { setBooking(true); setMsg(""); }}
             disabled={busy}
-            className="text-xs px-2 py-1 rounded border border-[#ddd7d4] bg-white text-[#3e4944] hover:bg-[#f6f3f2]"
+            className="text-xs px-2 py-1 rounded border border-line-strong bg-white text-ink-2 hover:bg-canvas"
           >
             Pesan ruangan
           </button>
@@ -236,23 +236,23 @@ export function EventControls({
 
       {booking && (
         <form onSubmit={book} className="mt-2 flex flex-wrap items-end gap-2">
-          <select name="unit_id" defaultValue="" className="text-xs border border-[#ddd7d4] rounded px-2 py-1.5 bg-white">
+          <select name="unit_id" defaultValue="" className="text-xs border border-line-strong rounded px-2 py-1.5 bg-white">
             <option value="">— ruangan —</option>
             {units.map((u) => <option key={u.id} value={u.id}>{u.name}</option>)}
           </select>
-          <input type="datetime-local" name="starts_at" className="text-xs border border-[#ddd7d4] rounded px-2 py-1.5" />
-          <input type="datetime-local" name="ends_at" className="text-xs border border-[#ddd7d4] rounded px-2 py-1.5" />
+          <input type="datetime-local" name="starts_at" className="text-xs border border-line-strong rounded px-2 py-1.5" />
+          <input type="datetime-local" name="ends_at" className="text-xs border border-line-strong rounded px-2 py-1.5" />
           <button
             type="submit"
             disabled={busy}
-            className="text-xs px-2 py-1.5 rounded bg-[#1a7a5e] text-white hover:bg-[#166750] disabled:opacity-60"
+            className="text-xs px-2 py-1.5 rounded bg-brand text-white hover:bg-brand-strong disabled:opacity-60"
           >
             Pesan
           </button>
           <button
             type="button"
             onClick={() => { setBooking(false); setMsg(""); }}
-            className="text-xs px-2 py-1.5 rounded border border-[#ddd7d4] text-[#3e4944]"
+            className="text-xs px-2 py-1.5 rounded border border-line-strong text-ink-2"
           >
             Batal
           </button>

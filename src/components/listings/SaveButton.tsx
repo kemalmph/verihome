@@ -48,7 +48,7 @@ export function SaveButton({ propertyId, initialSaved, onLoginRequired, size = "
       className={`${btnSize} rounded-full flex items-center justify-center transition-all ${
         saved
           ? "bg-red-50 text-red-500 hover:bg-red-100"
-          : "bg-white/90 text-[#6e7a74] hover:text-red-400 hover:bg-white"
+          : "bg-white/90 text-ink-3 hover:text-red-400 hover:bg-white"
       } shadow-sm border border-white/50 disabled:opacity-60`}
     >
       <span

@@ -29,13 +29,13 @@ export function CreditCashbackCard({ credits }: { credits: RefundableCredit[] })
   }
 
   return (
-    <section className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
-      <div className="px-5 py-3 border-b border-[#e4e2e1]">
-        <p className="font-semibold text-sm text-[#0d2137]">
+    <section className="bg-white rounded-xl border border-line-strong shadow-sm overflow-hidden">
+      <div className="px-5 py-3 border-b border-line">
+        <p className="font-semibold text-sm text-ink">
           Tukar kredit jadi uang
-          <span className="font-normal text-[#6e7a74]"> / Exchange credit for cash</span>
+          <span className="font-normal text-ink-3"> / Exchange credit for cash</span>
         </p>
-        <p className="text-xs text-[#6e7a74] mt-0.5">
+        <p className="text-xs text-ink-3 mt-0.5">
           Kredit dari titipan viewing yang belum terpakai.
         </p>
       </div>
@@ -52,8 +52,8 @@ export function CreditCashbackCard({ credits }: { credits: RefundableCredit[] })
           return (
             <li key={c.id} className="px-5 py-4 flex items-center justify-between gap-4 flex-wrap">
               <div className="min-w-0">
-                <p className="font-semibold text-[#0d2137] tabular-nums">{rp(c.amount)}</p>
-                <p className="text-xs text-[#6e7a74] mt-0.5">
+                <p className="font-semibold text-ink tabular-nums">{rp(c.amount)}</p>
+                <p className="text-xs text-ink-3 mt-0.5">
                   {pending ? (
                     "Menunggu transfer dari Cosystem / Awaiting transfer"
                   ) : c.daysLeft > 0 ? (
@@ -72,7 +72,7 @@ export function CreditCashbackCard({ credits }: { credits: RefundableCredit[] })
                 <button
                   onClick={() => onRequest(c.id)}
                   disabled={busyId === c.id || c.daysLeft === 0}
-                  className="px-3 py-1.5 border border-[#1a7a5e] text-[#1a7a5e] text-xs font-semibold rounded-lg hover:bg-[#e8f5f0] disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
+                  className="px-3 py-1.5 border border-brand text-brand-ink text-xs font-semibold rounded-lg hover:bg-brand-soft disabled:opacity-40 disabled:cursor-not-allowed shrink-0"
                 >
                   {busyId === c.id ? "Mengirim…" : "Tukar jadi uang"}
                 </button>

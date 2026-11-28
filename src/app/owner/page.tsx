@@ -18,7 +18,7 @@ const PIPELINE: Record<string, { label: string; cls: string }> = {
   survey_completed: { label: "Survei selesai",   cls: "bg-amber-100 text-amber-800" },
   draft:            { label: "Draf",             cls: "bg-amber-100 text-amber-800" },
   approved:         { label: "Siap tayang",      cls: "bg-blue-50 text-blue-800" },
-  live:             { label: "Tayang",           cls: "bg-[#e8f5f0] text-[#12614a]" },
+  live:             { label: "Tayang",           cls: "bg-success-soft text-success-ink" },
   closed:           { label: "Ditutup",          cls: "bg-gray-200 text-gray-600" },
   archived:         { label: "Diarsipkan",       cls: "bg-gray-200 text-gray-600" },
 };
@@ -71,21 +71,21 @@ export default async function OwnerOverviewPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">{t("owner.overview.title")}</h1>
-          <p className="text-[#3e4944] mt-1">{t("owner.overview.subtitle")}</p>
+          <h1 className="text-3xl font-bold text-ink">{t("owner.overview.title")}</h1>
+          <p className="text-ink-2 mt-1">{t("owner.overview.subtitle")}</p>
         </header>
 
         {properties.length === 0 ? (
-          <p className="text-[#3e4944]">{t("owner.overview.noProperties")}</p>
+          <p className="text-ink-2">{t("owner.overview.noProperties")}</p>
         ) : (
           <>
             {/* This month */}
             <section className="mb-8">
-              <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+              <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
                 {t("owner.overview.thisMonth")}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
@@ -94,43 +94,43 @@ export default async function OwnerOverviewPage() {
                   { label: t("owner.overview.occupancy"),    value: `${occupancy}%` },
                   { label: t("owner.overview.earnings"),     value: rp(monthEarnings) },
                 ].map((s) => (
-                  <div key={s.label} className="bg-white rounded-xl border border-[#cccccc] p-5">
-                    <p className="text-xs text-[#6e7a74]">{s.label}</p>
-                    <p className="text-2xl font-bold text-[#0d2137] mt-1 tabular-nums">{s.value}</p>
+                  <div key={s.label} className="bg-white rounded-2xl border border-line shadow-card p-5">
+                    <p className="text-xs text-ink-3">{s.label}</p>
+                    <p className="text-2xl font-bold text-ink mt-1 tabular-nums">{s.value}</p>
                   </div>
                 ))}
               </div>
             </section>
 
             {/* Balance */}
-            <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
-              <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+            <section className="mb-8 bg-white rounded-2xl border border-line shadow-card p-5">
+              <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
                 {t("owner.balance.title")}
               </h2>
               <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
                 <div>
-                  <p className="text-xs text-[#6e7a74]">{t("owner.balance.earned")}</p>
-                  <p className="text-lg font-semibold text-[#0d2137] tabular-nums">{rp(earnings.earned)}</p>
+                  <p className="text-xs text-ink-3">{t("owner.balance.earned")}</p>
+                  <p className="text-lg font-semibold text-ink tabular-nums">{rp(earnings.earned)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#6e7a74]">{t("owner.balance.paid")}</p>
-                  <p className="text-lg font-semibold text-[#0d2137] tabular-nums">{rp(earnings.paid)}</p>
+                  <p className="text-xs text-ink-3">{t("owner.balance.paid")}</p>
+                  <p className="text-lg font-semibold text-ink tabular-nums">{rp(earnings.paid)}</p>
                 </div>
                 <div>
-                  <p className="text-xs text-[#6e7a74]">{t("owner.balance.outstanding")}</p>
-                  <p className="text-lg font-bold text-[#1a7a5e] tabular-nums">{rp(earnings.outstanding)}</p>
+                  <p className="text-xs text-ink-3">{t("owner.balance.outstanding")}</p>
+                  <p className="text-lg font-bold text-brand-ink tabular-nums">{rp(earnings.outstanding)}</p>
                 </div>
               </div>
-              <p className="text-[11px] text-[#6e7a74] mt-3">{t("owner.balance.fromLedger")}</p>
+              <p className="text-[11px] text-ink-3 mt-3">{t("owner.balance.fromLedger")}</p>
             </section>
 
             {/* Needs action */}
             <section className="mb-8">
-              <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+              <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
                 {t("owner.overview.needsAction")}
               </h2>
               {actions.length === 0 ? (
-                <p className="text-sm text-[#3e4944] bg-white rounded-xl border border-[#cccccc] p-5">
+                <p className="text-sm text-ink-2 bg-white rounded-2xl border border-line shadow-card p-5">
                   {t("owner.overview.allClear")}
                 </p>
               ) : (
@@ -148,27 +148,27 @@ export default async function OwnerOverviewPage() {
 
             {/* Upcoming */}
             <section className="mb-8">
-              <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+              <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
                 {t("owner.overview.upcoming")}
               </h2>
               {upcoming.length === 0 ? (
-                <p className="text-sm text-[#3e4944] bg-white rounded-xl border border-[#cccccc] p-5">
+                <p className="text-sm text-ink-2 bg-white rounded-2xl border border-line shadow-card p-5">
                   {t("owner.overview.noUpcoming")}
                 </p>
               ) : (
-                <ul className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+                <ul className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
                   {upcoming.map((e, i) => (
                     <li key={`${e.b.id}-${e.kind}-${i}`} className="p-4 flex items-center justify-between gap-3 flex-wrap">
                       <div>
-                        <p className="text-sm font-semibold text-[#0d2137]">
+                        <p className="text-sm font-semibold text-ink">
                           {e.kind === "in" ? "Check-in" : "Check-out"} · {day(e.date)}
                         </p>
-                        <p className="text-xs text-[#6e7a74]">
+                        <p className="text-xs text-ink-3">
                           {e.b.propertyName} · {e.b.guestFirstName} · {e.b.guests} tamu
                         </p>
                       </div>
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
-                        e.kind === "in" ? "bg-[#e8f5f0] text-[#12614a]" : "bg-blue-50 text-blue-800"
+                        e.kind === "in" ? "bg-success-soft text-success-ink" : "bg-blue-50 text-blue-800"
                       }`}>
                         {e.kind === "in" ? "masuk" : "keluar"}
                       </span>
@@ -180,21 +180,21 @@ export default async function OwnerOverviewPage() {
 
             {/* Properties */}
             <section>
-              <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+              <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
                 {t("owner.nav.properties")}
               </h2>
-              <div className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+              <div className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
                 {properties.map((p) => {
                   const s = PIPELINE[p.status as string] ?? { label: String(p.status), cls: "bg-gray-100 text-gray-600" };
                   return (
                     <Link
                       key={p.id as string}
                       href={`/owner/properties/${p.id}`}
-                      className="p-4 flex items-center justify-between gap-3 hover:bg-[#f6f3f2] flex-wrap"
+                      className="p-4 flex items-center justify-between gap-3 hover:bg-canvas flex-wrap"
                     >
                       <div className="min-w-0">
-                        <p className="font-semibold text-[#0d2137]">{p.name as string}</p>
-                        <p className="text-xs text-[#6e7a74]">{(p.area as string) ?? ""}</p>
+                        <p className="font-semibold text-ink">{p.name as string}</p>
+                        <p className="text-xs text-ink-3">{(p.area as string) ?? ""}</p>
                       </div>
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold shrink-0 ${s.cls}`}>
                         {s.label}

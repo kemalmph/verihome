@@ -68,20 +68,20 @@ const check = (ok, what) => (ok ? pass : fail).push(what);
   // on the page, so both scrolled nowhere and looked like a dead button.
   await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
 
-  // Three of these anchors live inside the "Fitur" dropdown and are not in
+  // Some of these anchors live inside the "Produk" dropdown and are not in
   // the DOM until it opens. Collecting without opening it would silently
   // stop checking them — a menu that folds links away must not also fold
   // away the test that proves they land somewhere.
-  const fitur = page.locator('button:has-text("Fitur")').first();
-  check(await fitur.count() > 0, 'tombol "Fitur" ada di nav');
+  const fitur = page.locator('button:has-text("Produk")').first();
+  check(await fitur.count() > 0, 'tombol "Produk" ada di nav');
   await fitur.click();
   // :visible and .first(): this link now exists twice — once in the desktop
-  // "Fitur" dropdown and once in the phone menu, whose <details> keeps its
+  // "Produk" dropdown and once in the phone menu, whose <details> keeps its
   // contents in the DOM while closed. At this viewport only the desktop one
   // is on screen, and an unqualified locator matches both and fails strict
   // mode.
   await page
-    .locator('a[href="/#monetisasi"]:visible')
+    .locator('a[href="/#platform"]:visible')
     .first()
     .waitFor({ state: "visible", timeout: 5000 });
 
@@ -98,10 +98,15 @@ const check = (ok, what) => (ok ? pass : fail).push(what);
 
   // The two busiest buttons, by name, go where the brief says.
   await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
-  const kontak = await page.locator('a:has-text("Kontak Kami")').first().getAttribute("href");
-  const listing = await page.locator('a:has-text("Lihat Listing Tersedia")').first().getAttribute("href");
-  check(kontak === "/contact", `"Kontak Kami" → ${kontak}`);
-  check(listing === "/listings", `"Lihat Listing Tersedia" → ${listing} (bukan /listing)`);
+  // V7: no self-serve trial and no pricing page yet, so both go to the team.
+  const trial = await page.locator('main a:has-text("Coba Gratis")').first().getAttribute("href");
+  const talk = await page.locator('a:has-text("Hubungi Kami")').first().getAttribute("href");
+  const listing = await page.locator('a:has-text("Marketplace")').first().getAttribute("href");
+  check(trial === "/contact", `"Coba Gratis" → ${trial}`);
+  check(talk === "/contact", `"Hubungi Kami" → ${talk}`);
+  // The marketplace left the homepage body; it must stay reachable from the
+  // header (Sumber Daya → Marketplace).
+  check(listing === "/listings", `"Marketplace" → ${listing} (bukan /listing)`);
 
   check(serverErrors.length === 0, `tidak ada 5xx (${serverErrors.slice(0, 3).join(" | ") || "none"})`);
 

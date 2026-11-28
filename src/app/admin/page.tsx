@@ -90,12 +90,12 @@ export default async function AdminDashboardPage() {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-10">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Admin Dashboard</h1>
-          <p className="text-[#3e4944] mt-1">Cosystem internal management panel</p>
+          <h1 className="text-3xl font-bold text-ink">Admin Dashboard</h1>
+          <p className="text-ink-2 mt-1">Cosystem internal management panel</p>
         </header>
 
         {!integrity.allPassed && (
@@ -208,13 +208,13 @@ export default async function AdminDashboardPage() {
             <Link
               key={status}
               href={`/admin/listings?status=${status}`}
-              className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm hover:border-[#1a7a5e] transition-colors group"
+              className="bg-white rounded-2xl border border-line shadow-card p-6 hover:border-brand transition-colors group"
             >
-              <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-1 capitalize group-hover:text-[#1a7a5e]">
+              <p className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-1 capitalize group-hover:text-brand-ink">
                 {status}
               </p>
-              <p className="text-3xl font-bold text-[#0d2137]">{count}</p>
-              <p className="text-xs text-[#6e7a74] mt-1">Listings</p>
+              <p className="text-3xl font-bold text-ink">{count}</p>
+              <p className="text-xs text-ink-3 mt-1">Listings</p>
             </Link>
           ))}
         </div>
@@ -225,43 +225,43 @@ export default async function AdminDashboardPage() {
             { icon: "rate_review", label: "Pending Reviews", value: pendingReviews ?? 0, href: "/admin" },
             { icon: "inbox", label: "New Submissions", value: byStatus.unverified, href: "/admin/listings?status=unverified" },
           ].map((stat) => (
-            <Link key={stat.label} href={stat.href} className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm flex items-center gap-4 hover:border-[#1a7a5e] transition-colors">
-              <div className="w-12 h-12 bg-[#e8f5f0] rounded-full flex items-center justify-center">
-                <span className="material-symbols-outlined text-[#1a7a5e]">{stat.icon}</span>
+            <Link key={stat.label} href={stat.href} className="bg-white rounded-2xl border border-line shadow-card p-6 flex items-center gap-4 hover:border-brand transition-colors">
+              <div className="w-12 h-12 bg-brand-soft rounded-full flex items-center justify-center">
+                <span className="material-symbols-outlined text-brand-ink">{stat.icon}</span>
               </div>
               <div>
-                <p className="text-xs text-[#3e4944]">{stat.label}</p>
-                <p className="text-2xl font-bold text-[#0d2137]">{stat.value}</p>
+                <p className="text-xs text-ink-2">{stat.label}</p>
+                <p className="text-2xl font-bold text-ink">{stat.value}</p>
               </div>
             </Link>
           ))}
         </div>
 
         {/* Recent unverified submissions */}
-        <section className="bg-white rounded-xl border border-[#cccccc] shadow-sm">
-          <div className="p-6 border-b border-[#bec9c2] flex justify-between items-center">
-            <h3 className="text-lg font-semibold text-[#0d2137]">Recent Owner Submissions</h3>
-            <Link href="/admin/listings?status=unverified" className="text-[#1a7a5e] text-sm font-medium hover:underline">
+        <section className="bg-white rounded-2xl border border-line shadow-card">
+          <div className="p-6 border-b border-line-strong flex justify-between items-center">
+            <h3 className="text-lg font-semibold text-ink">Recent Owner Submissions</h3>
+            <Link href="/admin/listings?status=unverified" className="text-brand-ink text-sm font-medium hover:underline">
               View All →
             </Link>
           </div>
           {recentSubmissions.length === 0 ? (
-            <p className="p-6 text-sm text-[#6e7a74]">No pending submissions.</p>
+            <p className="p-6 text-sm text-ink-3">No pending submissions.</p>
           ) : (
-            <div className="divide-y divide-[#bec9c2]">
+            <div className="divide-y divide-line-strong">
               {recentSubmissions.map((p) => {
                 const price = new Intl.NumberFormat("id-ID").format(p.price_monthly);
                 return (
                   <div key={p.id} className="p-6 flex items-center justify-between">
                     <div>
-                      <p className="font-semibold text-[#0d2137]">{p.name}</p>
-                      <p className="text-sm text-[#3e4944]">{p.area} · {p.property_type} · IDR {price}/mo</p>
+                      <p className="font-semibold text-ink">{p.name}</p>
+                      <p className="text-sm text-ink-2">{p.area} · {p.property_type} · IDR {price}/mo</p>
                     </div>
                     <div className="flex items-center gap-3">
                       <span className="px-3 py-1 rounded-full text-xs font-bold bg-yellow-100 text-yellow-800">
                         unverified
                       </span>
-                      <Link href={`/admin/listings/${p.id}`} className="text-[#1a7a5e] text-sm font-medium hover:underline">
+                      <Link href={`/admin/listings/${p.id}`} className="text-brand-ink text-sm font-medium hover:underline">
                         Edit
                       </Link>
                     </div>

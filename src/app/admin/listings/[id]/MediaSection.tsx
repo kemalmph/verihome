@@ -73,16 +73,16 @@ export function MediaSection({ propertyId, initialMedia }: MediaSectionProps) {
   const activeConfig = TABS.find((t) => t.category === activeTab)!;
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-line shadow-card overflow-hidden">
       {/* Section header */}
       <div className="px-6 py-5 border-b border-[#e8e8e8] flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#1a7a5e]">photo_library</span>
-          <h2 className="font-semibold text-[#0d2137]">Media</h2>
+          <span className="material-symbols-outlined text-brand-ink">photo_library</span>
+          <h2 className="font-semibold text-ink">Media</h2>
         </div>
-        <span className={`text-sm font-bold ${meetsMinimum ? "text-[#1a7a5e]" : "text-amber-600"}`}>
+        <span className={`text-sm font-bold ${meetsMinimum ? "text-brand-ink" : "text-amber-600"}`}>
           Total: {total} / 25 foto
-          {!meetsMinimum && <span className="font-normal text-[#6e7a74] ml-1">(min 15)</span>}
+          {!meetsMinimum && <span className="font-normal text-ink-3 ml-1">(min 15)</span>}
         </span>
       </div>
 
@@ -97,13 +97,13 @@ export function MediaSection({ propertyId, initialMedia }: MediaSectionProps) {
               onClick={() => setActiveTab(tab.category)}
               className={`flex items-center gap-2 px-5 py-3 text-sm font-medium whitespace-nowrap border-b-2 transition-colors ${
                 active
-                  ? "border-[#1a7a5e] text-[#1a7a5e] bg-[#f0faf5]"
-                  : "border-transparent text-[#6e7a74] hover:text-[#1b1c1c]"
+                  ? "border-brand text-brand-ink bg-[#f0faf5]"
+                  : "border-transparent text-ink-3 hover:text-ink"
               }`}
             >
               {tab.label}
               <span className={`px-1.5 py-0.5 rounded-full text-xs font-bold ${
-                count >= tab.min ? "bg-[#e8f5f0] text-[#1a7a5e]" : "bg-[#f6f3f2] text-[#6e7a74]"
+                count >= tab.min ? "bg-brand-soft text-brand-ink" : "bg-canvas text-ink-3"
               }`}>
                 {count}
               </span>
@@ -115,8 +115,8 @@ export function MediaSection({ propertyId, initialMedia }: MediaSectionProps) {
       {/* Active category */}
       <div className="p-6 space-y-4">
         <div>
-          <h3 className="font-semibold text-[#0d2137] text-sm">{activeConfig.labelId}</h3>
-          <p className="text-xs text-[#6e7a74] mt-0.5">{activeConfig.description}</p>
+          <h3 className="font-semibold text-ink text-sm">{activeConfig.labelId}</h3>
+          <p className="text-xs text-ink-3 mt-0.5">{activeConfig.description}</p>
         </div>
         <PhotoUpload
           propertyId={propertyId}
@@ -131,8 +131,8 @@ export function MediaSection({ propertyId, initialMedia }: MediaSectionProps) {
       {/* Video URL */}
       <div className="px-6 pb-6 pt-2 border-t border-[#e8e8e8] mt-2">
         <div className="mb-3 flex items-center gap-2">
-          <span className="material-symbols-outlined text-[#1a7a5e] text-base">videocam</span>
-          <h3 className="font-semibold text-[#0d2137] text-sm">Video Walkthrough</h3>
+          <span className="material-symbols-outlined text-brand-ink text-base">videocam</span>
+          <h3 className="font-semibold text-ink text-sm">Video Walkthrough</h3>
         </div>
         <VideoInput
           propertyId={propertyId}

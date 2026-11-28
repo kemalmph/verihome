@@ -9,24 +9,24 @@ import {
 import { RESERVATION_STATUSES, PAYMENT_STATUSES } from "@/lib/coworking/taxonomy";
 
 const inputCls =
-  "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-[#0d2137] focus:outline-none focus:ring-2 focus:ring-[#1a7a5e]/30 focus:border-[#1a7a5e]";
+  "w-full border border-line-strong rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 function Field({
   label, hint, className = "", children,
 }: { label: string; hint?: string; className?: string; children: React.ReactNode }) {
   return (
     <label className={`block ${className}`}>
-      <span className="block text-sm font-medium text-[#0d2137] mb-1">{label}</span>
+      <span className="block text-sm font-medium text-ink mb-1">{label}</span>
       {children}
-      {hint && <span className="block text-xs text-[#6e7a74] mt-1">{hint}</span>}
+      {hint && <span className="block text-xs text-ink-3 mt-1">{hint}</span>}
     </label>
   );
 }
 
 function Check({ name, label }: { name: string; label: string }) {
   return (
-    <label className="flex items-center gap-2 text-sm text-[#3e4944]">
-      <input type="checkbox" name={name} className="rounded border-[#ddd7d4]" />
+    <label className="flex items-center gap-2 text-sm text-ink-2">
+      <input type="checkbox" name={name} className="rounded border-line-strong" />
       {label}
     </label>
   );
@@ -64,7 +64,7 @@ export function NewMembershipForm({ siteId, plans }: { siteId: string; plans: Pl
         )}
         <button
           onClick={() => setOpen(true)}
-          className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
+          className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong"
         >
           Tambah member
         </button>
@@ -73,9 +73,9 @@ export function NewMembershipForm({ siteId, plans }: { siteId: string; plans: Pl
   }
 
   return (
-    <form onSubmit={onSubmit} className="bg-white border border-[#ddd7d4] rounded-lg p-6 max-w-3xl">
-      <h2 className="text-lg font-semibold text-[#0d2137] mb-1">Member baru</h2>
-      <p className="text-sm text-[#6e7a74] mb-5">
+    <form onSubmit={onSubmit} className="bg-white border border-line rounded-2xl p-6 max-w-3xl shadow-card">
+      <h2 className="text-lg font-semibold text-ink mb-1">Member baru</h2>
+      <p className="text-sm text-ink-3 mb-5">
         Member adalah orang. Kalau yang membayar perusahaan, isi nama orangnya di
         atas dan nama perusahaan di kolom penagihan.
       </p>
@@ -149,14 +149,14 @@ export function NewMembershipForm({ siteId, plans }: { siteId: string; plans: Pl
         <button
           type="submit"
           disabled={isPending}
-          className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750] disabled:opacity-60"
+          className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
         >
           {isPending ? "Menyimpan…" : "Simpan member"}
         </button>
         <button
           type="button"
           onClick={() => { setOpen(false); setError(""); }}
-          className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-[#f6f3f2]"
+          className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
         >
           Batal
         </button>
@@ -184,7 +184,7 @@ export function NewPlanForm({ siteId }: { siteId: string }) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="px-3 py-1.5 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] bg-white hover:bg-[#f6f3f2]"
+        className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 bg-white hover:bg-canvas"
       >
         Tambah paket
       </button>
@@ -192,8 +192,8 @@ export function NewPlanForm({ siteId }: { siteId: string }) {
   }
 
   return (
-    <form onSubmit={onSubmit} className="bg-white border border-[#ddd7d4] rounded-lg p-6 max-w-3xl mt-4">
-      <h3 className="text-base font-semibold text-[#0d2137] mb-4">Paket baru</h3>
+    <form onSubmit={onSubmit} className="bg-white border border-line rounded-2xl p-6 max-w-3xl mt-4 shadow-card">
+      <h3 className="text-base font-semibold text-ink mb-4">Paket baru</h3>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
         <Field label="Nama paket" className="sm:col-span-2">
@@ -242,14 +242,14 @@ export function NewPlanForm({ siteId }: { siteId: string }) {
         <button
           type="submit"
           disabled={isPending}
-          className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750] disabled:opacity-60"
+          className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
         >
           {isPending ? "Menyimpan…" : "Simpan paket"}
         </button>
         <button
           type="button"
           onClick={() => { setOpen(false); setError(""); }}
-          className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-[#f6f3f2]"
+          className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
         >
           Batal
         </button>
@@ -281,7 +281,7 @@ export function MembershipControls({
         value={status}
         disabled={busy}
         onChange={(e) => change(() => setMembershipStatus(siteId, membershipId, e.target.value))}
-        className="text-xs border border-[#ddd7d4] rounded px-1.5 py-1 bg-white"
+        className="text-xs border border-line-strong rounded px-1.5 py-1 bg-white"
       >
         <option value="pending">Menunggu</option>
         <option value="active">Aktif</option>
@@ -292,7 +292,7 @@ export function MembershipControls({
         value={paymentStatus}
         disabled={busy}
         onChange={(e) => change(() => setMembershipPayment(siteId, membershipId, e.target.value))}
-        className="text-xs border border-[#ddd7d4] rounded px-1.5 py-1 bg-white"
+        className="text-xs border border-line-strong rounded px-1.5 py-1 bg-white"
       >
         {PAYMENT_STATUSES.map((s) => (
           <option key={s.value} value={s.value}>{s.label}</option>

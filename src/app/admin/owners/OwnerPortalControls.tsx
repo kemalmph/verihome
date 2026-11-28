@@ -15,7 +15,7 @@ interface Props {
 const BADGE: Record<string, { label: string; cls: string }> = {
   none:    { label: "belum diundang", cls: "bg-gray-100 text-gray-600" },
   invited: { label: "diundang",       cls: "bg-amber-100 text-amber-800" },
-  active:  { label: "aktif",          cls: "bg-[#e8f5f0] text-[#12614a]" },
+  active:  { label: "aktif",          cls: "bg-success-soft text-success-ink" },
   revoked: { label: "dicabut",        cls: "bg-red-100 text-red-700" },
 };
 
@@ -57,7 +57,7 @@ export function OwnerPortalControls({ ownerId, ownerName, portalAccess, hasWhats
           <button
             onClick={invitee}
             disabled={busy}
-            className="px-3 py-1.5 border border-[#1a7a5e] text-[#1a7a5e] text-xs font-semibold rounded-lg hover:bg-[#e8f5f0] disabled:opacity-50"
+            className="px-3 py-1.5 border border-brand text-brand-ink text-xs font-semibold rounded-lg hover:bg-brand-soft disabled:opacity-50"
           >
             {portalAccess === "none" ? t("admin.owner.invite") : t("admin.owner.reinvite")}
           </button>
@@ -77,7 +77,7 @@ export function OwnerPortalControls({ ownerId, ownerName, portalAccess, hasWhats
           <button
             onClick={() => setAccess("active")}
             disabled={busy}
-            className="px-3 py-1.5 border border-[#1a7a5e] text-[#1a7a5e] text-xs font-semibold rounded-lg hover:bg-[#e8f5f0] disabled:opacity-50"
+            className="px-3 py-1.5 border border-brand text-brand-ink text-xs font-semibold rounded-lg hover:bg-brand-soft disabled:opacity-50"
           >
             Pulihkan akses
           </button>
@@ -87,16 +87,16 @@ export function OwnerPortalControls({ ownerId, ownerName, portalAccess, hasWhats
       {error && <p className="text-xs text-red-600">{error}</p>}
 
       {invite && (
-        <div className="bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg p-3 space-y-2">
-          <p className="text-xs font-semibold text-[#12614a]">{t("admin.owner.inviteCreated")}</p>
+        <div className="bg-brand-soft border border-brand-light rounded-lg p-3 space-y-2">
+          <p className="text-xs font-semibold text-success-ink">{t("admin.owner.inviteCreated")}</p>
 
           <div className="flex items-center gap-2">
-            <code className="flex-1 text-[11px] bg-white rounded px-2 py-1.5 break-all text-[#0d2137]">
+            <code className="flex-1 text-[11px] bg-white rounded px-2 py-1.5 break-all text-ink">
               {invite.url}
             </code>
             <button
               onClick={() => { navigator.clipboard?.writeText(invite.url); setCopied(true); }}
-              className="px-2 py-1.5 bg-white border border-[#cccccc] rounded text-xs font-semibold shrink-0"
+              className="px-2 py-1.5 bg-white border border-line-strong rounded text-xs font-semibold shrink-0"
             >
               {copied ? "Tersalin" : "Salin"}
             </button>
@@ -118,7 +118,7 @@ export function OwnerPortalControls({ ownerId, ownerName, portalAccess, hasWhats
             </p>
           )}
 
-          <p className="text-[11px] text-[#3e4944]">
+          <p className="text-[11px] text-ink-2">
             Sekali pakai, berlaku sampai{" "}
             {new Date(invite.expiresAt).toLocaleDateString("id-ID", {
               day: "numeric", month: "long", year: "numeric",
@@ -129,7 +129,7 @@ export function OwnerPortalControls({ ownerId, ownerName, portalAccess, hasWhats
       )}
 
       {!invite && !hasWhatsApp && portalAccess === "none" && (
-        <p className="text-[11px] text-[#6e7a74]">Tanpa nomor WhatsApp, tautan harus dikirim manual.</p>
+        <p className="text-[11px] text-ink-3">Tanpa nomor WhatsApp, tautan harus dikirim manual.</p>
       )}
     </div>
   );

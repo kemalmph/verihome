@@ -37,23 +37,23 @@ export function PayoutAccount({ current, pending }: Props) {
   }
 
   return (
-    <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
-      <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+    <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
+      <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
         {t("owner.profile.payout")}
       </h2>
 
       <dl className="space-y-2 text-sm">
         <div className="flex justify-between gap-3">
-          <dt className="text-[#6e7a74]">{t("owner.profile.bank")}</dt>
-          <dd className="text-[#0d2137]">{current.bank ?? "—"}</dd>
+          <dt className="text-ink-3">{t("owner.profile.bank")}</dt>
+          <dd className="text-ink">{current.bank ?? "—"}</dd>
         </div>
         <div className="flex justify-between gap-3">
-          <dt className="text-[#6e7a74]">{t("owner.profile.accountNumber")}</dt>
-          <dd className="text-[#0d2137] tabular-nums font-mono">{current.accountMasked}</dd>
+          <dt className="text-ink-3">{t("owner.profile.accountNumber")}</dt>
+          <dd className="text-ink tabular-nums font-mono">{current.accountMasked}</dd>
         </div>
         <div className="flex justify-between gap-3">
-          <dt className="text-[#6e7a74]">{t("owner.profile.accountHolder")}</dt>
-          <dd className="text-[#0d2137]">{current.holder ?? "—"}</dd>
+          <dt className="text-ink-3">{t("owner.profile.accountHolder")}</dt>
+          <dd className="text-ink">{current.holder ?? "—"}</dd>
         </div>
       </dl>
 
@@ -86,27 +86,27 @@ export function PayoutAccount({ current, pending }: Props) {
 
       {!pending && !open && (
         <button onClick={() => setOpen(true)}
-                className="mt-4 px-4 py-2 border border-[#1a7a5e] text-[#1a7a5e] text-sm font-semibold rounded-lg hover:bg-[#e8f5f0]">
+                className="mt-4 px-4 py-2 border border-brand text-brand-ink text-sm font-semibold rounded-lg hover:bg-brand-soft">
           Ubah rekening
         </button>
       )}
 
       {open && (
         <form onSubmit={submit} className="mt-4 space-y-3">
-          <p className="text-xs text-[#6e7a74]">{t("owner.profile.payoutPending")}</p>
+          <p className="text-xs text-ink-3">{t("owner.profile.payoutPending")}</p>
           <input name="bank" required placeholder={t("owner.profile.bank")}
-                 className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-[#1a7a5e]" />
+                 className="w-full h-10 px-3 rounded-lg border border-line-strong text-sm focus:outline-none focus:border-brand" />
           <input name="account_number" required inputMode="numeric" placeholder={t("owner.profile.accountNumber")}
-                 className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-[#1a7a5e]" />
+                 className="w-full h-10 px-3 rounded-lg border border-line-strong text-sm focus:outline-none focus:border-brand" />
           <input name="account_holder" required placeholder={t("owner.profile.accountHolder")}
-                 className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-[#1a7a5e]" />
+                 className="w-full h-10 px-3 rounded-lg border border-line-strong text-sm focus:outline-none focus:border-brand" />
           <div className="flex gap-2">
             <button type="submit" disabled={busy}
-                    className="px-4 py-2 bg-[#1a7a5e] text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-50">
+                    className="px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-50">
               {busy ? t("common.loading") : t("common.submit")}
             </button>
             <button type="button" onClick={() => setOpen(false)}
-                    className="px-4 py-2 border border-[#cccccc] text-sm font-semibold text-[#3e4944] rounded-lg hover:bg-[#f6f3f2]">
+                    className="px-4 py-2 border border-line-strong text-sm font-semibold text-ink-2 rounded-lg hover:bg-canvas">
               {t("common.cancel")}
             </button>
           </div>

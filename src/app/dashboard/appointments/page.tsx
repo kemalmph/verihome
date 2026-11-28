@@ -21,13 +21,13 @@ export default async function AppointmentsPage() {
   const user = await getCurrentUser();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/appointments" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">
-          <h2 className="text-3xl font-bold text-[#0d2137] mb-1">Appointments</h2>
-          <p className="text-[#3e4944]">{PLACEHOLDER_APPOINTMENTS.length} upcoming appointment</p>
+          <h2 className="text-3xl font-bold text-ink mb-1">Appointments</h2>
+          <p className="text-ink-2">{PLACEHOLDER_APPOINTMENTS.length} upcoming appointment</p>
         </header>
 
         <div className="space-y-6">
@@ -44,21 +44,21 @@ export default async function AppointmentsPage() {
               confirmed: "bg-green-100 text-green-800",
               pending: "bg-yellow-100 text-yellow-800",
               cancelled: "bg-red-100 text-red-800",
-              completed: "bg-[#f6f3f2] text-[#3e4944]",
+              completed: "bg-canvas text-ink-2",
             };
 
             return (
-              <div key={apt.id} className="bg-white rounded-xl border border-[#cccccc] p-8 shadow-sm">
+              <div key={apt.id} className="bg-white rounded-2xl border border-line shadow-card p-8">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
                   <div className="flex items-center gap-3">
-                    <div className="w-12 h-12 bg-[#e8f5f0] rounded-full flex items-center justify-center">
-                      <span className="material-symbols-outlined text-[#1a7a5e]">
+                    <div className="w-12 h-12 bg-brand-soft rounded-full flex items-center justify-center">
+                      <span className="material-symbols-outlined text-brand-ink">
                         {apt.appointment_type === "consultation" ? "videocam" : "location_on"}
                       </span>
                     </div>
                     <div>
-                      <h3 className="text-xl font-semibold text-[#0d2137] capitalize">{apt.appointment_type}</h3>
-                      <p className="text-sm text-[#3e4944]">{dateStr} at {timeStr}</p>
+                      <h3 className="text-xl font-semibold text-ink capitalize">{apt.appointment_type}</h3>
+                      <p className="text-sm text-ink-2">{dateStr} at {timeStr}</p>
                     </div>
                   </div>
                   <span className={`px-3 py-1 rounded-full text-xs font-bold capitalize ${statusColors[apt.status]}`}>
@@ -69,30 +69,30 @@ export default async function AppointmentsPage() {
                 <div className="grid grid-cols-1 md:grid-cols-2 gap-6 mb-6">
                   {apt.advisor_name && (
                     <div className="flex items-start gap-3">
-                      <span className="material-symbols-outlined text-[#6e7a74]">person</span>
+                      <span className="material-symbols-outlined text-ink-3">person</span>
                       <div>
-                        <p className="text-xs text-[#3e4944]">Advisor</p>
-                        <p className="font-semibold text-[#0d2137]">{apt.advisor_name}</p>
+                        <p className="text-xs text-ink-2">Advisor</p>
+                        <p className="font-semibold text-ink">{apt.advisor_name}</p>
                       </div>
                     </div>
                   )}
                   {apt.notes && (
                     <div className="flex items-start gap-3">
-                      <span className="material-symbols-outlined text-[#6e7a74]">notes</span>
+                      <span className="material-symbols-outlined text-ink-3">notes</span>
                       <div>
-                        <p className="text-xs text-[#3e4944]">Notes</p>
-                        <p className="text-sm text-[#1b1c1c]">{apt.notes}</p>
+                        <p className="text-xs text-ink-2">Notes</p>
+                        <p className="text-sm text-ink">{apt.notes}</p>
                       </div>
                     </div>
                   )}
                 </div>
 
-                <div className="flex flex-wrap gap-3 pt-4 border-t border-[#bec9c2]/30">
-                  <button className="bg-[#1a7a5e] text-white px-6 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:opacity-90">
+                <div className="flex flex-wrap gap-3 pt-4 border-t border-line-strong/30">
+                  <button className="bg-brand text-white px-6 py-2.5 rounded-lg text-sm font-medium flex items-center gap-2 hover:opacity-90">
                     <span className="material-symbols-outlined text-lg">video_call</span>
                     Join Meeting
                   </button>
-                  <button className="border border-[#6e7a74] text-[#0d2137] px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#f6f3f2]">
+                  <button className="border border-ink-3 text-ink px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-canvas">
                     Reschedule
                   </button>
                   <button className="text-red-600 px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-red-50">
@@ -105,9 +105,9 @@ export default async function AppointmentsPage() {
 
           {PLACEHOLDER_APPOINTMENTS.length === 0 && (
             <div className="text-center py-20">
-              <span className="material-symbols-outlined text-5xl text-[#bec9c2] block mb-4">calendar_today</span>
-              <h3 className="text-xl font-semibold text-[#1b1c1c] mb-2">No appointments yet</h3>
-              <p className="text-[#3e4944]">Book a consultation to get started.</p>
+              <span className="material-symbols-outlined text-5xl text-line-strong block mb-4">calendar_today</span>
+              <h3 className="text-xl font-semibold text-ink mb-2">No appointments yet</h3>
+              <p className="text-ink-2">Book a consultation to get started.</p>
             </div>
           )}
         </div>

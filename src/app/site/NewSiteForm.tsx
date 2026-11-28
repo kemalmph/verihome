@@ -37,7 +37,7 @@ export function NewSiteForm({ owners }: Props) {
     return (
       <button
         onClick={() => setOpen(true)}
-        className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
+        className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong"
       >
         Tambah site
       </button>
@@ -47,10 +47,10 @@ export function NewSiteForm({ owners }: Props) {
   return (
     <form
       onSubmit={onSubmit}
-      className="bg-white border border-[#ddd7d4] rounded-lg p-6 max-w-2xl"
+      className="bg-white border border-line rounded-2xl p-6 max-w-2xl shadow-card"
     >
-      <h2 className="text-lg font-semibold text-[#0d2137] mb-1">Site baru</h2>
-      <p className="text-sm text-[#6e7a74] mb-5">
+      <h2 className="text-lg font-semibold text-ink mb-1">Site baru</h2>
+      <p className="text-sm text-ink-3 mb-5">
         Gedungnya saja. Unit yang disewakan ditambahkan setelah ini.
       </p>
 
@@ -119,14 +119,14 @@ export function NewSiteForm({ owners }: Props) {
         <button
           type="submit"
           disabled={isPending}
-          className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750] disabled:opacity-60"
+          className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
         >
           {isPending ? "Menyimpan…" : "Simpan site"}
         </button>
         <button
           type="button"
           onClick={() => { setOpen(false); setError(""); }}
-          className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-[#f6f3f2]"
+          className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
         >
           Batal
         </button>
@@ -136,7 +136,7 @@ export function NewSiteForm({ owners }: Props) {
 }
 
 const inputCls =
-  "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-[#0d2137] focus:outline-none focus:ring-2 focus:ring-[#1a7a5e]/30 focus:border-[#1a7a5e]";
+  "w-full border border-line-strong rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 function Field({
   label, hint, className = "", children,
@@ -145,9 +145,9 @@ function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="block text-sm font-medium text-[#0d2137] mb-1">{label}</span>
+      <span className="block text-sm font-medium text-ink mb-1">{label}</span>
       {children}
-      {hint && <span className="block text-xs text-[#6e7a74] mt-1">{hint}</span>}
+      {hint && <span className="block text-xs text-ink-3 mt-1">{hint}</span>}
     </label>
   );
 }

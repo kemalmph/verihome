@@ -41,8 +41,8 @@ const check = (ok, what) => (ok ? pass : fail).push(what);
 const PAGES = [
   {
     path: "/",
-    id: { present: "Kelola Operasional", absent: "Run and Monetise" },
-    en: { present: "Run and Monetise", absent: "Kelola Operasional" },
+    id: { present: "Kelola dan Kembangkan Workspace", absent: "Run and Grow Your Workspace" },
+    en: { present: "Run and Grow Your Workspace", absent: "Kelola dan Kembangkan Workspace" },
   },
   {
     path: "/listings",
@@ -88,8 +88,8 @@ const PAGES = [
 // appear verbatim in both languages, which would fail the "absent" half of
 // each check for a reason that has nothing to do with the switch.
 const CHROME = {
-  id: ["Harga", "Kontak Kami", "Perusahaan", "Produk"],
-  en: ["Pricing", "Contact Us", "Company", "Product"],
+  id: ["Harga", "Solusi", "Sumber Daya", "Produk"],
+  en: ["Pricing", "Solutions", "Resources", "Product"],
 };
 
 (async () => {
@@ -154,7 +154,7 @@ const CHROME = {
       `tanpa cookie, Accept-Language en-US → lang="${firstLang}"`,
     );
 
-    const idButton = page.locator('button[lang="id"]');
+    const idButton = page.locator('header button[lang="id"]:visible').first();
     check(await idButton.count() === 1, "tombol ID ada di nav");
     await Promise.all([
       page.waitForLoadState("domcontentloaded"),
@@ -170,7 +170,7 @@ const CHROME = {
       "klik ID mengubah halaman ke bahasa Indonesia",
     );
     check(
-      (await page.content()).includes("Kelola Operasional"),
+      (await page.content()).includes("Kelola dan Kembangkan Workspace"),
       "isi halaman ikut berganti, bukan hanya atribut lang",
     );
 
@@ -215,28 +215,28 @@ const CHROME = {
     check(await burger.count() === 1, `ponsel ${label}: tombol menu terlihat`);
     check(await burger.isVisible(), `ponsel ${label}: tombol menu tidak tersembunyi`);
 
-    const fitur = page.locator('a[href="/#fitur-kelola"]');
-    const harga = page.locator('a[href="/#harga"]');
+    const fitur = page.locator('details a[href="/#features"]');
+    const harga = page.locator('details a:has-text("Harga")');
     check(!(await fitur.first().isVisible().catch(() => false)),
       `ponsel ${label}: menu tertutup saat halaman dibuka`);
 
     await burger.click();
-    check(await fitur.first().isVisible(), `ponsel ${label}: "Fitur Kelola" muncul setelah menu dibuka`);
+    check(await fitur.first().isVisible(), `ponsel ${label}: "Fitur" muncul setelah menu dibuka`);
     check(await harga.first().isVisible(), `ponsel ${label}: "Harga" muncul setelah menu dibuka`);
 
     // A menu whose links do not navigate is decoration.
-    await harga.first().click();
+    await fitur.first().click();
     // With JavaScript the router navigates asynchronously, so the URL is not
     // updated by the time click() resolves; without it the click is a full
     // page load and already has. Waiting covers both.
     await page.waitForFunction(
-      () => location.hash === "#harga",
+      () => location.hash === "#features",
       null,
       { timeout: 5000 },
     ).catch(() => {});
     check(
-      new URL(page.url()).hash === "#harga",
-      `ponsel ${label}: menekan Harga membawa ke bagiannya (${page.url().slice(-12)})`,
+      new URL(page.url()).hash === "#features",
+      `ponsel ${label}: menekan Fitur membawa ke bagiannya (${page.url().slice(-12)})`,
     );
 
     await ctx.close();
@@ -257,7 +257,7 @@ const CHROME = {
       "tanpa JS: halaman terbuka dalam bahasa Inggris",
     );
 
-    await page.locator('button[lang="id"]').click().catch(() => {});
+    await page.locator('header button[lang="id"]:visible').first().click().catch(() => {});
     await page.waitForLoadState("domcontentloaded").catch(() => {});
 
     check(
@@ -265,7 +265,7 @@ const CHROME = {
       "tanpa JS: klik ID tetap mengganti bahasa",
     );
     check(
-      (await page.content()).includes("Kelola Operasional"),
+      (await page.content()).includes("Kelola dan Kembangkan Workspace"),
       "tanpa JS: isi halaman ikut berganti",
     );
     await ctx.close();

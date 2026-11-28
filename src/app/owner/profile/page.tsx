@@ -14,30 +14,30 @@ export default async function OwnerProfilePage() {
   const p = await ownerProfile();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/profile" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-2xl">
-        <h1 className="text-3xl font-bold text-[#0d2137] mb-6">{t("owner.profile.title")}</h1>
+        <h1 className="text-3xl font-bold text-ink mb-6">{t("owner.profile.title")}</h1>
 
-        <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
-          <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
+          <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
             {t("owner.profile.contact")}
           </h2>
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between gap-3">
-              <dt className="text-[#6e7a74]">Nama</dt>
-              <dd className="text-[#0d2137] font-medium">{p.owner.name}</dd>
+              <dt className="text-ink-3">Nama</dt>
+              <dd className="text-ink font-medium">{p.owner.name}</dd>
             </div>
             <div className="flex justify-between gap-3">
-              <dt className="text-[#6e7a74]">Email</dt>
-              <dd className="text-[#0d2137]">{p.owner.email ?? "—"}</dd>
+              <dt className="text-ink-3">Email</dt>
+              <dd className="text-ink">{p.owner.email ?? "—"}</dd>
             </div>
             <div className="flex justify-between gap-3">
-              <dt className="text-[#6e7a74]">WhatsApp</dt>
-              <dd className="text-[#0d2137]">{p.owner.phone ?? "—"}</dd>
+              <dt className="text-ink-3">WhatsApp</dt>
+              <dd className="text-ink">{p.owner.phone ?? "—"}</dd>
             </div>
           </dl>
-          <p className="text-[11px] text-[#6e7a74] mt-3">
+          <p className="text-[11px] text-ink-3 mt-3">
             Untuk mengubah data kontak, hubungi tim Cosystem.
           </p>
         </section>

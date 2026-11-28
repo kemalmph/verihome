@@ -28,7 +28,7 @@ export function StatusSelect({ propertyId, currentStatus }: { propertyId: string
       className={`px-3 py-1 rounded-full text-xs font-bold border-0 cursor-pointer disabled:opacity-60 ${statusColor(currentStatus)}`}
     >
       {PIPELINE_STAGES.map((s) => (
-        <option key={s.value} value={s.value} className="bg-white text-[#1b1c1c]">{s.label}</option>
+        <option key={s.value} value={s.value} className="bg-white text-ink">{s.label}</option>
       ))}
     </select>
   );

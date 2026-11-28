@@ -105,18 +105,18 @@ export default async function OwnerStatementPage({
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
-      <main className="min-h-screen bg-[#f6f3f2] px-4 py-10">
+      <main className="min-h-screen bg-canvas px-4 py-10">
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5 no-print">
-            <Link href="/admin/listings" className="text-sm text-[#1a7a5e] font-semibold hover:underline inline-flex items-center gap-1">
+            <Link href="/admin/listings" className="text-sm text-brand-ink font-semibold hover:underline inline-flex items-center gap-1">
               <span className="material-symbols-outlined text-base">arrow_back</span> Admin
             </Link>
             <div className="flex gap-2">
               {[3, 6, 12].map((m) => (
                 <Link key={m} href={`/admin/owners/${id}/statement?months=${m}`}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
-                    months === m ? "bg-white border-[#1a7a5e] text-[#1a7a5e]"
-                                 : "bg-white border-[#cccccc] text-[#3e4944] hover:border-[#1a7a5e]"}`}>
+                    months === m ? "bg-white border-brand text-brand-ink"
+                                 : "bg-white border-line-strong text-ink-2 hover:border-brand"}`}>
                   {m} bln
                 </Link>
               ))}
@@ -124,14 +124,14 @@ export default async function OwnerStatementPage({
             </div>
           </div>
 
-          <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
-            <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-[#0d2137]">
+          <article className="print-sheet bg-white rounded-2xl border border-line shadow-card p-8 md:p-10">
+            <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-ink">
               <div>
-                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">Cosystem</p>
-                <p className="text-xs text-[#6e7a74] mt-1">Laporan pemilik properti / Owner statement</p>
+                <p className="text-2xl font-extrabold text-ink tracking-tight">Cosystem</p>
+                <p className="text-xs text-ink-3 mt-1">Laporan pemilik properti / Owner statement</p>
               </div>
-              <div className="text-right text-xs text-[#6e7a74]">
-                <p className="font-semibold text-[#0d2137]">{owner.name}</p>
+              <div className="text-right text-xs text-ink-3">
+                <p className="font-semibold text-ink">{owner.name}</p>
                 {owner.email && <p>{owner.email}</p>}
                 {owner.phone_whatsapp && <p>{owner.phone_whatsapp}</p>}
                 <p className="mt-1">{from.toISOString().slice(0, 10)} – {to.toISOString().slice(0, 10)}</p>
@@ -139,8 +139,8 @@ export default async function OwnerStatementPage({
             </div>
 
             {/* Period summary */}
-            <section className="py-6 border-b border-[#e4e2e1]">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[#3e4944] mb-3">
+            <section className="py-6 border-b border-line">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-ink-2 mb-3">
                 Ringkasan periode
               </h2>
               <Row label="Pemesanan pada properti Anda" value={String(detail.length)} plain />
@@ -149,21 +149,21 @@ export default async function OwnerStatementPage({
               {depositClaims > 0 && (
                 <Row label="Ditambah klaim jaminan kerusakan" value={`+ ${fmt(depositClaims)}`} />
               )}
-              <div className="flex justify-between gap-4 pt-3 mt-2 border-t border-[#cccccc] font-bold">
-                <span className="text-[#0d2137]">HAK BERSIH PEMILIK</span>
-                <span className="tabular-nums text-[#0d2137]">IDR {fmt(earned)}</span>
+              <div className="flex justify-between gap-4 pt-3 mt-2 border-t border-line-strong font-bold">
+                <span className="text-ink">HAK BERSIH PEMILIK</span>
+                <span className="tabular-nums text-ink">IDR {fmt(earned)}</span>
               </div>
             </section>
 
             {/* Booking detail */}
-            <section className="py-6 border-b border-[#e4e2e1]">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[#3e4944] mb-3">
+            <section className="py-6 border-b border-line">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-ink-2 mb-3">
                 Rincian pemesanan
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm" style={{ minWidth: 560 }}>
                   <thead>
-                    <tr className="text-xs uppercase tracking-wider text-[#6e7a74] border-b border-[#e4e2e1]">
+                    <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                       <th className="text-left py-2 font-medium">Tamu</th>
                       <th className="text-left py-2 font-medium">Tanggal</th>
                       <th className="text-right py-2 font-medium">Malam</th>
@@ -174,18 +174,18 @@ export default async function OwnerStatementPage({
                   </thead>
                   <tbody>
                     {detail.map((d) => (
-                      <tr key={d.code} className="border-b border-[#f6f3f2]">
+                      <tr key={d.code} className="border-b border-canvas">
                         <td className="py-2.5">
-                          <span className="text-[#0d2137]">{d.guest}</span>
-                          <span className="block text-xs text-[#6e7a74]">{d.property}</span>
+                          <span className="text-ink">{d.guest}</span>
+                          <span className="block text-xs text-ink-3">{d.property}</span>
                         </td>
-                        <td className="py-2.5 text-xs text-[#6e7a74] whitespace-nowrap">
+                        <td className="py-2.5 text-xs text-ink-3 whitespace-nowrap">
                           {d.checkIn} → {d.checkOut}
                         </td>
                         <td className="py-2.5 text-right tabular-nums">{d.nights}</td>
-                        <td className="py-2.5 text-right tabular-nums text-[#6e7a74]">{fmt(d.gross)}</td>
-                        <td className="py-2.5 text-right tabular-nums text-[#6e7a74]">− {fmt(d.commission)}</td>
-                        <td className="py-2.5 text-right tabular-nums font-semibold text-[#0d2137]">
+                        <td className="py-2.5 text-right tabular-nums text-ink-3">{fmt(d.gross)}</td>
+                        <td className="py-2.5 text-right tabular-nums text-ink-3">− {fmt(d.commission)}</td>
+                        <td className="py-2.5 text-right tabular-nums font-semibold text-ink">
                           {fmt(d.ownerShare)}
                           {!d.settled && (
                             <span className="block text-[10px] font-normal text-amber-700">belum selesai</span>
@@ -194,7 +194,7 @@ export default async function OwnerStatementPage({
                       </tr>
                     ))}
                     {detail.length === 0 && (
-                      <tr><td colSpan={6} className="py-8 text-center text-[#6e7a74]">
+                      <tr><td colSpan={6} className="py-8 text-center text-ink-3">
                         Belum ada pemesanan pada periode ini.
                       </td></tr>
                     )}
@@ -204,20 +204,20 @@ export default async function OwnerStatementPage({
             </section>
 
             {/* Payout history */}
-            <section className="py-6 border-b border-[#e4e2e1]">
-              <h2 className="text-xs font-bold uppercase tracking-wider text-[#3e4944] mb-3">
+            <section className="py-6 border-b border-line">
+              <h2 className="text-xs font-bold uppercase tracking-wider text-ink-2 mb-3">
                 Riwayat pembayaran
               </h2>
               {(payouts ?? []).length === 0 ? (
-                <p className="text-sm text-[#6e7a74]">Belum ada pembayaran.</p>
+                <p className="text-sm text-ink-3">Belum ada pembayaran.</p>
               ) : (
                 <table className="w-full text-sm">
                   <tbody>
                     {(payouts ?? []).map((p, i) => (
-                      <tr key={i} className="border-b border-[#f6f3f2]">
-                        <td className="py-2 text-[#6e7a74] whitespace-nowrap">{String(p.entry_date).slice(0, 10)}</td>
-                        <td className="py-2 text-[#3e4944]">{p.description ?? "Pembayaran"}</td>
-                        <td className="py-2 text-right tabular-nums font-semibold text-[#0d2137]">
+                      <tr key={i} className="border-b border-canvas">
+                        <td className="py-2 text-ink-3 whitespace-nowrap">{String(p.entry_date).slice(0, 10)}</td>
+                        <td className="py-2 text-ink-2">{p.description ?? "Pembayaran"}</td>
+                        <td className="py-2 text-right tabular-nums font-semibold text-ink">
                           {fmt(n(p.amount))}
                         </td>
                       </tr>
@@ -230,13 +230,13 @@ export default async function OwnerStatementPage({
             <div className={`flex justify-between items-baseline gap-4 py-5 ${
               outstanding > 0 ? "" : "opacity-80"}`}>
               <div>
-                <p className="font-bold text-[#0d2137]">SISA YANG TERHUTANG</p>
-                <p className="text-xs text-[#6e7a74]">Outstanding balance due</p>
+                <p className="font-bold text-ink">SISA YANG TERHUTANG</p>
+                <p className="text-xs text-ink-3">Outstanding balance due</p>
               </div>
-              <p className="text-2xl font-bold tabular-nums text-[#0d2137]">IDR {fmt(outstanding)}</p>
+              <p className="text-2xl font-bold tabular-nums text-ink">IDR {fmt(outstanding)}</p>
             </div>
 
-            <p className="text-xs text-[#6e7a74] mt-4 pt-4 border-t border-[#e4e2e1]">
+            <p className="text-xs text-ink-3 mt-4 pt-4 border-t border-line">
               Dokumen ini adalah <strong>laporan</strong>, bukan faktur pajak.
               <span className="block">This is a statement, not a tax invoice.</span>
             </p>
@@ -250,8 +250,8 @@ export default async function OwnerStatementPage({
 function Row({ label, value, plain }: { label: string; value: string; plain?: boolean }) {
   return (
     <div className="flex justify-between gap-4 py-1.5 text-sm">
-      <span className="text-[#3e4944]">{label}</span>
-      <span className={`tabular-nums text-[#0d2137] ${plain ? "" : "font-medium"}`}>
+      <span className="text-ink-2">{label}</span>
+      <span className={`tabular-nums text-ink ${plain ? "" : "font-medium"}`}>
         {plain ? value : `IDR ${value}`}
       </span>
     </div>

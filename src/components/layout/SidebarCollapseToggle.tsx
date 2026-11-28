@@ -47,7 +47,7 @@ export function SidebarCollapseToggle({
   };
 
   const button =
-    "w-full flex items-center gap-3 px-3 py-2 rounded-md text-white/50 hover:text-white hover:bg-white/5 text-xs transition-colors collapsed:justify-center collapsed:px-0";
+    "w-full flex items-center gap-3 px-3 py-2 rounded-xl text-white/50 hover:text-white hover:bg-white/[.06] text-xs transition-colors collapsed:justify-center collapsed:px-0";
 
   return (
     <form action={setSidebar} onSubmit={onSubmit}>

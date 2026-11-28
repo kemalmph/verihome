@@ -11,7 +11,7 @@ export function PrintButton({ label = "Unduh PDF" }: { label?: string }) {
     <button
       type="button"
       onClick={() => window.print()}
-      className="no-print px-5 py-2.5 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 inline-flex items-center gap-2"
+      className="no-print px-5 py-2.5 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 inline-flex items-center gap-2"
     >
       <span className="material-symbols-outlined text-base">download</span>
       {label}

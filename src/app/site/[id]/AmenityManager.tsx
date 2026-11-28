@@ -50,10 +50,10 @@ export function AmenityManager({
     Array.from(form.querySelectorAll<HTMLInputElement>('input[name="amenity"]:checked')).map((i) => i.value);
 
   return (
-    <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden mt-8">
+    <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden mt-8">
       <div className="p-6 pb-4">
-        <h2 className="text-lg font-semibold text-[#0d2137]">Fasilitas</h2>
-        <p className="text-sm text-[#6e7a74] mt-0.5">
+        <h2 className="text-lg font-semibold text-ink">Fasilitas</h2>
+        <p className="text-sm text-ink-3 mt-0.5">
           Apa yang melekat pada gedung dan pada tiap ruangan. Bukan barang
           sekali pakai seperti air mineral — itu dicatat per booking.
         </p>
@@ -69,17 +69,17 @@ export function AmenityManager({
       <div className="px-6 pb-5 border-b border-[#e8e3e0]">
         <div className="flex items-start justify-between gap-4">
           <div className="min-w-0">
-            <h3 className="text-sm font-semibold text-[#0d2137] mb-1">Seluruh gedung</h3>
-            <p className="text-sm text-[#3e4944]">
+            <h3 className="text-sm font-semibold text-ink mb-1">Seluruh gedung</h3>
+            <p className="text-sm text-ink-2">
               {assignments.site.length
                 ? assignments.site.map(labelOf).join(" · ")
-                : <span className="text-[#6e7a74]">Belum ada</span>}
+                : <span className="text-ink-3">Belum ada</span>}
             </p>
           </div>
           {!siteOpen && (
             <button
               onClick={() => { setSiteOpen(true); setOpenUnit(null); }}
-              className="px-3 py-1.5 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-[#f6f3f2] whitespace-nowrap"
+              className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas whitespace-nowrap"
             >
               Ubah
             </button>
@@ -103,7 +103,7 @@ export function AmenityManager({
 
       {/* ── per unit ───────────────────────────────────────────────── */}
       {units.length === 0 ? (
-        <p className="p-8 text-center text-[#6e7a74] text-sm">Belum ada unit.</p>
+        <p className="p-8 text-center text-ink-3 text-sm">Belum ada unit.</p>
       ) : (
         <ul className="divide-y divide-[#f0ecea]">
           {units.map((u) => {
@@ -113,22 +113,22 @@ export function AmenityManager({
               <li key={u.id} className="px-6 py-4">
                 <div className="flex items-start justify-between gap-4">
                   <div className="min-w-0">
-                    <div className="font-medium text-[#0d2137]">
+                    <div className="font-medium text-ink">
                       {u.name}
-                      <span className="text-xs text-[#6e7a74] font-normal ml-2">
+                      <span className="text-xs text-ink-3 font-normal ml-2">
                         {unitTypeLabel(u.unit_type)}
                       </span>
                     </div>
-                    <p className="text-sm text-[#3e4944] mt-0.5">
+                    <p className="text-sm text-ink-2 mt-0.5">
                       {mine.length
                         ? mine.map(labelOf).join(" · ")
-                        : <span className="text-[#6e7a74]">Belum ada fasilitas</span>}
+                        : <span className="text-ink-3">Belum ada fasilitas</span>}
                     </p>
                   </div>
                   {!isOpen && (
                     <button
                       onClick={() => { setOpenUnit(u.id); setSiteOpen(false); setError(""); }}
-                      className="px-3 py-1.5 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-[#f6f3f2] whitespace-nowrap"
+                      className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas whitespace-nowrap"
                     >
                       Ubah
                     </button>
@@ -167,18 +167,18 @@ function Picker({
     <div className="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-x-6 gap-y-4">
       {Object.entries(byCategory).map(([cat, list]) => (
         <div key={cat}>
-          <div className="text-xs font-semibold uppercase tracking-wide text-[#6e7a74] mb-2">
+          <div className="text-xs font-semibold uppercase tracking-wide text-ink-3 mb-2">
             {CATEGORY_LABEL[cat] ?? cat}
           </div>
           <div className="space-y-1.5">
             {list.map((a) => (
-              <label key={a.id} className="flex items-center gap-2 text-sm text-[#3e4944]">
+              <label key={a.id} className="flex items-center gap-2 text-sm text-ink-2">
                 <input
                   type="checkbox"
                   name="amenity"
                   value={a.id}
                   defaultChecked={checked.includes(a.id)}
-                  className="rounded border-[#ddd7d4]"
+                  className="rounded border-line-strong"
                 />
                 {a.label}
               </label>
@@ -196,14 +196,14 @@ function Buttons({ busy, onCancel }: { busy: boolean; onCancel: () => void }) {
       <button
         type="submit"
         disabled={busy}
-        className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750] disabled:opacity-60"
+        className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
       >
         {busy ? "Menyimpan…" : "Simpan fasilitas"}
       </button>
       <button
         type="button"
         onClick={onCancel}
-        className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-[#f6f3f2]"
+        className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
       >
         Batal
       </button>

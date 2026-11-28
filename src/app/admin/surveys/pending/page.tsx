@@ -27,21 +27,21 @@ export default async function PendingSurveysPage() {
   const pendingList  = pending   ?? [];
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/surveys/pending" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#0d2137]">Pending Survey Imports</h1>
-          <p className="text-sm text-[#6e7a74] mt-1">
+          <h1 className="text-2xl font-bold text-ink">Pending Survey Imports</h1>
+          <p className="text-sm text-ink-3 mt-1">
             Tally submissions where the property name didn&apos;t match automatically.
             Link each submission to the correct property to complete the import.
           </p>
         </div>
 
         {pendingList.length === 0 ? (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-12 text-center">
-            <span className="material-symbols-outlined text-[#1a7a5e] text-5xl">check_circle</span>
-            <p className="mt-3 text-[#3e4944]">No pending imports. All survey submissions have been processed.</p>
+          <div className="bg-white rounded-2xl border border-line shadow-card p-12 text-center">
+            <span className="material-symbols-outlined text-brand-ink text-5xl">check_circle</span>
+            <p className="mt-3 text-ink-2">No pending imports. All survey submissions have been processed.</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -66,22 +66,22 @@ export default async function PendingSurveysPage() {
               }
 
               return (
-                <div key={item.id} className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
-                  <div className="px-6 py-4 bg-[#f6f3f2] border-b border-[#bec9c2] flex items-center justify-between">
+                <div key={item.id} className="bg-white rounded-2xl border border-line shadow-card overflow-hidden">
+                  <div className="px-6 py-4 bg-canvas border-b border-line-strong flex items-center justify-between">
                     <div>
-                      <p className="text-xs text-[#6e7a74]">Submission {item.tally_submission_id}</p>
-                      <p className="text-sm font-semibold text-[#0d2137] mt-0.5">
+                      <p className="text-xs text-ink-3">Submission {item.tally_submission_id}</p>
+                      <p className="text-sm font-semibold text-ink mt-0.5">
                         Property typed: &ldquo;{item.property_name_text}&rdquo;
                       </p>
                     </div>
-                    <span className="text-xs text-[#6e7a74]">
+                    <span className="text-xs text-ink-3">
                       {new Date(item.created_at).toLocaleDateString("id-ID", {
                         day: "numeric", month: "short", year: "numeric", hour: "2-digit", minute: "2-digit",
                       })}
                     </span>
                   </div>
 
-                  <div className="px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm border-b border-[#e4e2e1]">
+                  <div className="px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm border-b border-line">
                     {[
                       { label: "Surveyor", val: String(fieldMap["Nama Surveyor"] ?? fieldMap["Surveyor"] ?? "—") },
                       { label: "PIC",      val: String(fieldMap["Nama PIC"]      ?? fieldMap["PIC"]      ?? "—") },
@@ -89,8 +89,8 @@ export default async function PendingSurveysPage() {
                       { label: "Duration", val: fieldMap["Durasi (menit)"] ? `${fieldMap["Durasi (menit)"]} min` : "—" },
                     ].map(({ label, val }) => (
                       <div key={label}>
-                        <p className="text-xs text-[#6e7a74] mb-0.5">{label}</p>
-                        <p className="font-medium text-[#1b1c1c]">{val}</p>
+                        <p className="text-xs text-ink-3 mb-0.5">{label}</p>
+                        <p className="font-medium text-ink">{val}</p>
                       </div>
                     ))}
                   </div>
@@ -98,13 +98,13 @@ export default async function PendingSurveysPage() {
                   <div className="px-6 py-5 flex flex-col md:flex-row gap-4 items-start md:items-end">
                     <form action={handleLink} className="flex gap-3 flex-1 items-end">
                       <div className="flex-1">
-                        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1">
+                        <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1">
                           Link to property
                         </label>
                         <select
                           name="property_id"
                           required
-                          className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
+                          className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white"
                         >
                           <option value="">Search and select…</option>
                           {propertyList.map((p) => (
@@ -116,7 +116,7 @@ export default async function PendingSurveysPage() {
                       </div>
                       <button
                         type="submit"
-                        className="h-11 px-5 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 whitespace-nowrap"
+                        className="h-11 px-5 bg-brand text-white rounded-lg text-sm font-semibold hover:opacity-90 whitespace-nowrap"
                       >
                         Link &amp; Import
                       </button>
@@ -131,7 +131,7 @@ export default async function PendingSurveysPage() {
 
                     <Link
                       href={`/admin/surveys/pending/${item.id}`}
-                      className="h-11 px-4 border border-[#cccccc] text-[#3e4944] rounded-lg text-sm hover:bg-[#f6f3f2] flex items-center whitespace-nowrap"
+                      className="h-11 px-4 border border-line-strong text-ink-2 rounded-lg text-sm hover:bg-canvas flex items-center whitespace-nowrap"
                     >
                       View raw →
                     </Link>

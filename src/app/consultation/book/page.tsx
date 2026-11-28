@@ -39,24 +39,24 @@ export default async function BookConsultationPage({ searchParams }: BookPagePro
       <Navbar />
       <main className="max-w-2xl mx-auto px-4 md:px-8 py-16">
         {/* Breadcrumb stepper */}
-        <div className="flex items-center gap-2 mb-8 text-sm text-[#3e4944]">
-          <Link href="/consultation" className="text-[#1a7a5e] font-semibold hover:underline">
+        <div className="flex items-center gap-2 mb-8 text-sm text-ink-2">
+          <Link href="/consultation" className="text-brand-ink font-semibold hover:underline">
             Step 1: Choose Package
           </Link>
-          <span className="material-symbols-outlined text-sm text-[#bec9c2]">chevron_right</span>
-          <span className="font-bold text-[#1b1c1c]">Step 2: Confirm & Pay</span>
-          <span className="material-symbols-outlined text-sm text-[#bec9c2]">chevron_right</span>
-          <span className="text-[#bec9c2]">Step 3: Confirmation</span>
+          <span className="material-symbols-outlined text-sm text-line-strong">chevron_right</span>
+          <span className="font-bold text-ink">Step 2: Confirm & Pay</span>
+          <span className="material-symbols-outlined text-sm text-line-strong">chevron_right</span>
+          <span className="text-line-strong">Step 3: Confirmation</span>
         </div>
 
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137] mb-2">Confirm your booking</h1>
-          <p className="text-[#3e4944]">
+          <h1 className="text-3xl font-bold text-ink mb-2">Confirm your booking</h1>
+          <p className="text-ink-2">
             You&apos;ll be redirected to Xendit to complete payment securely.
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-8">
+        <div className="bg-white rounded-xl border border-line-strong shadow-sm p-8">
           <BookingForm
             defaultPackage={packageId}
             savedProperties={savedProperties}

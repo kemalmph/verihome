@@ -29,11 +29,11 @@ export function RunNowButton() {
       <button
         onClick={run}
         disabled={running}
-        className="px-4 py-2 bg-[#1a7a5e] text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
+        className="px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
       >
         {running ? "Menjalankan…" : "Jalankan sekarang"}
       </button>
-      {msg && <span className="text-sm text-[#1a7a5e] font-medium">{msg}</span>}
+      {msg && <span className="text-sm text-brand-ink font-medium">{msg}</span>}
       {error && <span className="text-sm text-red-600">{error}</span>}
     </div>
   );

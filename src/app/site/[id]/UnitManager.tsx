@@ -46,18 +46,18 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
     .filter((g) => g.rows.length > 0);
 
   return (
-    <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
+    <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden">
       <div className="flex items-center justify-between p-6 pb-4">
         <div>
-          <h2 className="text-lg font-semibold text-[#0d2137]">Unit</h2>
-          <p className="text-sm text-[#6e7a74] mt-0.5">
+          <h2 className="text-lg font-semibold text-ink">Unit</h2>
+          <p className="text-sm text-ink-3 mt-0.5">
             Apa pun di site ini yang menghasilkan uang dari ruang
           </p>
         </div>
         {!adding && (
           <button
             onClick={() => { setAdding(true); setEditingId(null); setError(""); }}
-            className="px-3 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
+            className="px-3 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong"
           >
             Tambah unit
           </button>
@@ -82,8 +82,8 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
 
       {units.length === 0 && !adding ? (
         <div className="px-6 pb-10 pt-4 text-center">
-          <p className="text-[#0d2137] font-semibold">Belum ada unit</p>
-          <p className="text-[#6e7a74] text-sm mt-1 max-w-md mx-auto">
+          <p className="text-ink font-semibold">Belum ada unit</p>
+          <p className="text-ink-3 text-sm mt-1 max-w-md mx-auto">
             Meja, ruang rapat, lot ritel, atau area kafe. Tipe menyebut wujudnya;
             cara sewa menyebut bagaimana ia disewakan.
           </p>
@@ -92,7 +92,7 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
         <div className="border-t border-[#e8e3e0]">
           {grouped.map((g) => (
             <div key={g.type}>
-              <div className="px-6 py-2 bg-[#f6f3f2] text-xs font-semibold uppercase tracking-wide text-[#6e7a74]">
+              <div className="px-6 py-2 bg-canvas text-xs font-semibold uppercase tracking-wide text-ink-3">
                 {g.label} · {g.rows.length}
               </div>
               {g.rows.map((u) =>
@@ -114,20 +114,20 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
                     className="px-6 py-3 border-t border-[#e8e3e0] flex items-center gap-4 hover:bg-[#faf9f8]"
                   >
                     <div className="flex-1 min-w-0">
-                      <div className="font-medium text-[#0d2137]">
+                      <div className="font-medium text-ink">
                         {u.name}
-                        {u.floor && <span className="text-[#6e7a74] font-normal"> · {u.floor}</span>}
+                        {u.floor && <span className="text-ink-3 font-normal"> · {u.floor}</span>}
                       </div>
-                      <div className="text-xs text-[#6e7a74] mt-0.5">
+                      <div className="text-xs text-ink-3 mt-0.5">
                         {lettingModeLabel(u.letting_mode)} · kapasitas {u.capacity}
                         {u.size_sqm ? ` · ${u.size_sqm} m²` : ""}
                       </div>
                     </div>
 
-                    <div className="text-sm tabular-nums text-[#3e4944] whitespace-nowrap">
+                    <div className="text-sm tabular-nums text-ink-2 whitespace-nowrap">
                       {u.price === null
-                        ? <span className="text-[#6e7a74]">belum ada harga</span>
-                        : <>IDR {idr(Number(u.price))}<span className="text-[#6e7a74]">{pricePeriodLabel(u.letting_mode)}</span></>}
+                        ? <span className="text-ink-3">belum ada harga</span>
+                        : <>IDR {idr(Number(u.price))}<span className="text-ink-3">{pricePeriodLabel(u.letting_mode)}</span></>}
                     </div>
 
                     <UnitStatusPill status={u.status} />
@@ -135,7 +135,7 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
                     <div className="flex gap-2">
                       <button
                         onClick={() => { setEditingId(u.id); setAdding(false); setError(""); }}
-                        className="text-sm text-[#1a7a5e] hover:underline"
+                        className="text-sm text-brand-ink hover:underline"
                       >
                         Ubah
                       </button>
@@ -161,9 +161,9 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
 
 function UnitStatusPill({ status }: { status: string }) {
   const tone =
-    status === "available" ? "bg-[#e8f5f0] text-[#12614a] border-[#a9dcc8]"
+    status === "available" ? "bg-success-soft text-success-ink border-success-line"
     : status === "maintenance" ? "bg-[#fdf4e3] text-[#7a5518] border-[#e4c894]"
-    : "bg-[#efeae8] text-[#6e7a74] border-[#ddd7d4]";
+    : "bg-[#efeae8] text-ink-3 border-line-strong";
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full border whitespace-nowrap ${tone}`}>
       {unitStatusLabel(status)}
@@ -189,7 +189,7 @@ function UnitForm({
         await onSubmit(new FormData(e.currentTarget));
         setBusy(false);
       }}
-      className="border border-[#ddd7d4] rounded-lg p-4 bg-white"
+      className="border border-line rounded-2xl p-4 bg-white shadow-card"
     >
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <L label="Nama" className="col-span-2">
@@ -233,14 +233,14 @@ function UnitForm({
         <button
           type="submit"
           disabled={busy}
-          className="px-3 py-1.5 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750] disabled:opacity-60"
+          className="px-3 py-1.5 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
         >
           {busy ? "Menyimpan…" : mode === "create" ? "Tambah" : "Simpan"}
         </button>
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-[#f6f3f2]"
+          className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
         >
           Batal
         </button>
@@ -250,7 +250,7 @@ function UnitForm({
 }
 
 const i =
-  "w-full border border-[#ddd7d4] rounded-lg px-2.5 py-1.5 text-sm text-[#0d2137] focus:outline-none focus:ring-2 focus:ring-[#1a7a5e]/30 focus:border-[#1a7a5e]";
+  "w-full border border-line-strong rounded-lg px-2.5 py-1.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 function L({
   label, hint, className = "", children,
@@ -259,9 +259,9 @@ function L({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="block text-xs font-medium text-[#0d2137] mb-1">{label}</span>
+      <span className="block text-xs font-medium text-ink mb-1">{label}</span>
       {children}
-      {hint && <span className="block text-[11px] text-[#6e7a74] mt-0.5">{hint}</span>}
+      {hint && <span className="block text-[11px] text-ink-3 mt-0.5">{hint}</span>}
     </label>
   );
 }

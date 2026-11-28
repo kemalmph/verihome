@@ -30,36 +30,36 @@ export default async function StatementPage({
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
-      <main className="min-h-screen bg-[#f6f3f2] px-4 py-10">
+      <main className="min-h-screen bg-canvas px-4 py-10">
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5 no-print">
             <div className="flex gap-2">
               {[3, 6, 12, 24].map((m) => (
                 <Link key={m} href={`/dashboard/statement?months=${m}`}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
-                    months === m ? "bg-white border-[#1a7a5e] text-[#1a7a5e]"
-                                 : "bg-white border-[#cccccc] text-[#3e4944] hover:border-[#1a7a5e]"}`}>
+                    months === m ? "bg-white border-brand text-brand-ink"
+                                 : "bg-white border-line-strong text-ink-2 hover:border-brand"}`}>
                   {m} bulan
                 </Link>
               ))}
             </div>
             <div className="flex gap-2">
               <a href={`/api/admin/reports/export?type=my_statement&months=${months}`}
-                 className="px-4 py-2.5 border border-[#cccccc] bg-white rounded-lg font-semibold text-sm text-[#3e4944] hover:border-[#1a7a5e] inline-flex items-center gap-2">
+                 className="px-4 py-2.5 border border-line-strong bg-white rounded-lg font-semibold text-sm text-ink-2 hover:border-brand inline-flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">table_view</span> CSV
               </a>
               <PrintButton />
             </div>
           </div>
 
-          <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
-            <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-[#0d2137]">
+          <article className="print-sheet bg-white rounded-2xl border border-line shadow-card p-8 md:p-10">
+            <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-ink">
               <div>
-                <p className="text-2xl font-extrabold text-[#0d2137] tracking-tight">Cosystem</p>
-                <p className="text-xs text-[#6e7a74] mt-1">Rekening koran / Account statement</p>
+                <p className="text-2xl font-extrabold text-ink tracking-tight">Cosystem</p>
+                <p className="text-xs text-ink-3 mt-1">Rekening koran / Account statement</p>
               </div>
-              <div className="text-right text-xs text-[#6e7a74]">
-                <p className="font-semibold text-[#0d2137]">{user.name ?? user.email}</p>
+              <div className="text-right text-xs text-ink-3">
+                <p className="font-semibold text-ink">{user.name ?? user.email}</p>
                 <p>{user.email}</p>
                 <p className="mt-1">
                   {from.toISOString().slice(0, 10)} – {to.toISOString().slice(0, 10)}
@@ -68,7 +68,7 @@ export default async function StatementPage({
             </div>
 
             {/* Summary — deposits and credits read as the guest's money, not ours */}
-            <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6 border-b border-[#e4e2e1]">
+            <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6 border-b border-line">
               <Summary label="Total dibayar" labelEn="Total spent" value={s.totalSpent} />
               <Summary label="Jaminan ditahan Cosystem" labelEn="Deposits held — refundable"
                        value={s.depositsHeld} tone="held" />
@@ -93,13 +93,13 @@ export default async function StatementPage({
             )}
 
             {(s.depositsHeld > 0 || s.creditBalance > 0) && (
-              <p className="mt-5 text-xs text-[#3e4944] bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg px-4 py-3">
+              <p className="mt-5 text-xs text-ink-2 bg-brand-soft border border-brand-light rounded-lg px-4 py-3">
                 Jaminan dan kredit di atas adalah <strong>milik Anda</strong>. Cosystem hanya
                 menyimpannya — jaminan booking dikembalikan sebagai uang sesuai ketentuan,
                 dan kredit dapat dipakai untuk konsultasi atau pemesanan. Kredit dari
                 titipan viewing dapat ditukar kembali menjadi uang dalam 14 hari sejak
                 diterbitkan, selama belum terpakai.
-                <span className="block mt-1 text-[#6e7a74]">
+                <span className="block mt-1 text-ink-3">
                   Deposits and credit shown above belong to you. Cosystem only holds them.
                   Credit issued from a viewing deposit can be exchanged back for cash within
                   14 days of issue, while it is still unused.
@@ -115,13 +115,13 @@ export default async function StatementPage({
 
             {/* History */}
             <section className="mt-8">
-              <h2 className="font-bold text-[#0d2137] mb-3">
-                Riwayat transaksi <span className="font-normal text-sm text-[#6e7a74]">/ Transaction history</span>
+              <h2 className="font-bold text-ink mb-3">
+                Riwayat transaksi <span className="font-normal text-sm text-ink-3">/ Transaction history</span>
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm" style={{ minWidth: 520 }}>
                   <thead>
-                    <tr className="text-xs uppercase tracking-wider text-[#6e7a74] border-b border-[#e4e2e1]">
+                    <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                       <th className="text-left py-2 font-medium">Tanggal</th>
                       <th className="text-left py-2 font-medium">Keterangan</th>
                       <th className="text-left py-2 font-medium">Jenis</th>
@@ -131,22 +131,22 @@ export default async function StatementPage({
                   </thead>
                   <tbody>
                     {s.lines.map((l, i) => (
-                      <tr key={i} className="border-b border-[#f6f3f2]">
-                        <td className="py-2.5 text-[#6e7a74] whitespace-nowrap">{l.date}</td>
-                        <td className="py-2.5 text-[#0d2137]">{l.description}</td>
+                      <tr key={i} className="border-b border-canvas">
+                        <td className="py-2.5 text-ink-3 whitespace-nowrap">{l.date}</td>
+                        <td className="py-2.5 text-ink">{l.description}</td>
                         <td className="py-2.5">
-                          <span className="px-2 py-0.5 rounded-full bg-[#f6f3f2] text-[#3e4944] text-xs font-medium">
+                          <span className="px-2 py-0.5 rounded-full bg-canvas text-ink-2 text-xs font-medium">
                             {l.type}
                           </span>
                         </td>
                         <td className={`py-2.5 text-right tabular-nums font-semibold ${
-                          l.outgoing ? "text-[#0d2137]" : "text-[#0d8f66]"}`}>
+                          l.outgoing ? "text-ink" : "text-success"}`}>
                           {l.outgoing ? "" : "+ "}{fmt(l.amount)}
                         </td>
                         <td className="py-2.5 text-right no-print">
                           {l.receiptId && (
                             <Link href={`/dashboard/receipts/${l.receiptId}`}
-                                  className="text-xs text-[#1a7a5e] font-semibold hover:underline">
+                                  className="text-xs text-brand-ink font-semibold hover:underline">
                               Kuitansi
                             </Link>
                           )}
@@ -154,7 +154,7 @@ export default async function StatementPage({
                       </tr>
                     ))}
                     {s.lines.length === 0 && (
-                      <tr><td colSpan={5} className="py-10 text-center text-[#6e7a74]">
+                      <tr><td colSpan={5} className="py-10 text-center text-ink-3">
                         Belum ada transaksi pada periode ini.
                       </td></tr>
                     )}
@@ -163,7 +163,7 @@ export default async function StatementPage({
               </div>
             </section>
 
-            <p className="text-xs text-[#6e7a74] mt-8 pt-4 border-t border-[#e4e2e1]">
+            <p className="text-xs text-ink-3 mt-8 pt-4 border-t border-line">
               Dokumen ini dibuat otomatis dari catatan keuangan Cosystem.
               <span className="block">Generated from Cosystem&apos;s financial records.</span>
             </p>
@@ -179,12 +179,12 @@ function Summary({ label, labelEn, value, tone }: {
 }) {
   return (
     <div className={`rounded-lg p-4 ${
-      tone === "held" ? "bg-[#f6f3f2]" : tone === "credit" ? "bg-[#e8f5f0]" : "bg-[#f6f3f2]"
+      tone === "held" ? "bg-canvas" : tone === "credit" ? "bg-brand-soft" : "bg-canvas"
     }`}>
-      <p className="text-xs font-bold uppercase tracking-wider text-[#3e4944]">{label}</p>
-      <p className="text-[10px] text-[#6e7a74] mb-1">{labelEn}</p>
+      <p className="text-xs font-bold uppercase tracking-wider text-ink-2">{label}</p>
+      <p className="text-[10px] text-ink-3 mb-1">{labelEn}</p>
       <p className={`text-xl font-bold tabular-nums ${
-        tone === "credit" ? "text-[#0d8f66]" : "text-[#0d2137]"}`}>
+        tone === "credit" ? "text-success" : "text-ink"}`}>
         IDR {fmt(value)}
       </p>
     </div>

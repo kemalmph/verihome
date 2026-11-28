@@ -157,8 +157,8 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
 
   if (!photos.length) {
     return (
-      <div className="aspect-video bg-[#e4e2e1] rounded-xl flex items-center justify-center">
-        <span className="material-symbols-outlined text-[#6e7a74] text-6xl">image</span>
+      <div className="aspect-video bg-line rounded-xl flex items-center justify-center">
+        <span className="material-symbols-outlined text-ink-3 text-6xl">image</span>
       </div>
     );
   }
@@ -169,7 +169,7 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
       <div className="relative rounded-xl overflow-hidden aspect-video group shadow-sm bg-[#eae8e7] cursor-pointer" onClick={() => setLightbox(0)}>
         <Image src={photos[0]} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
         <div className="absolute top-4 left-4">
-          <span className="bg-[#e8f5f0] text-[#1a7a5e] px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+          <span className="bg-brand-soft text-brand-ink px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
             <span className="material-symbols-outlined text-sm">verified</span>Curated
           </span>
         </div>
@@ -188,7 +188,7 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
       {photos.length > 1 && (
         <div className="grid grid-cols-4 gap-3">
           {photos.slice(1, 5).map((url, i) => (
-            <button key={i} onClick={() => setLightbox(i + 1)} className="relative rounded-lg overflow-hidden aspect-video border-2 border-transparent hover:border-[#1a7a5e] transition-colors">
+            <button key={i} onClick={() => setLightbox(i + 1)} className="relative rounded-lg overflow-hidden aspect-video border-2 border-transparent hover:border-brand transition-colors">
               <Image src={url} alt={`${title} ${i + 2}`} fill className="object-cover" />
               {i === 3 && photos.length > 5 && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-bold">
@@ -223,8 +223,8 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
 
   if (availableTabs.length === 0) {
     return (
-      <div className="aspect-video bg-[#e4e2e1] rounded-xl flex items-center justify-center">
-        <span className="material-symbols-outlined text-[#6e7a74] text-6xl">image</span>
+      <div className="aspect-video bg-line rounded-xl flex items-center justify-center">
+        <span className="material-symbols-outlined text-ink-3 text-6xl">image</span>
       </div>
     );
   }
@@ -243,7 +243,7 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
             key={tab.key}
             onClick={() => handleTabChange(tab.key)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              activeTab === tab.key ? "bg-[#1a7a5e] text-white" : "bg-[#e4e2e1] text-[#3e4944] hover:bg-[#bec9c2]"
+              activeTab === tab.key ? "bg-brand text-white" : "bg-line text-ink-2 hover:bg-line-strong"
             }`}
           >
             <span className="material-symbols-outlined text-base">{tab.icon}</span>
@@ -262,7 +262,7 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
           <Image src={currentPhotos[activeIndex]} alt={`${title} — ${activeTab} ${activeIndex + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority={activeIndex === 0} />
         )}
         <div className="absolute top-4 left-4">
-          <span className="bg-[#e8f5f0] text-[#1a7a5e] px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
+          <span className="bg-brand-soft text-brand-ink px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
             <span className="material-symbols-outlined text-sm">verified</span>Curated
           </span>
         </div>
@@ -290,7 +290,7 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
               key={i}
               onClick={() => setActiveIndex(i)}
               className={`relative rounded-lg overflow-hidden aspect-video border-2 transition-colors ${
-                i === activeIndex ? "border-[#1a7a5e]" : "border-transparent hover:border-[#80d7b6]"
+                i === activeIndex ? "border-brand" : "border-transparent hover:border-[#80d7b6]"
               }`}
             >
               <Image src={url} alt={`${title} ${activeTab} thumbnail ${i + 1}`} fill className="object-cover" />

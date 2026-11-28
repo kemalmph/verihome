@@ -41,8 +41,8 @@ interface Props {
   defaultCommissionPct: number | null;
 }
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white disabled:bg-[#f6f3f2] disabled:text-[#aaa] disabled:cursor-not-allowed";
-const labelCls = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1";
+const input = "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white disabled:bg-canvas disabled:text-[#aaa] disabled:cursor-not-allowed";
+const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 
 function isShortStayMode(mode: string) {
   return mode === "short_stay" || mode === "both";
@@ -85,13 +85,13 @@ function PricingPreview({ rate }: { rate: ShortStayRateData }) {
   if (!rate.price_per_night) return null;
 
   return (
-    <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm">
-      <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+    <div className="border border-line rounded-lg overflow-hidden text-sm">
+      <div className="bg-canvas px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
         Live pricing preview
       </div>
       <table className="w-full">
         <thead>
-          <tr className="text-xs text-[#6e7a74] border-b border-[#e4e2e1]">
+          <tr className="text-xs text-ink-3 border-b border-line">
             <th className="text-left px-4 py-2 font-medium">Scenario</th>
             <th className="text-left px-4 py-2 font-medium">Tier</th>
             <th className="text-right px-4 py-2 font-medium">Total (incl. cleaning)</th>
@@ -99,20 +99,20 @@ function PricingPreview({ rate }: { rate: ShortStayRateData }) {
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.label} className="border-b border-[#f6f3f2] last:border-0">
-              <td className="px-4 py-2.5 text-[#3e4944]">{row.label}</td>
+            <tr key={row.label} className="border-b border-canvas last:border-0">
+              <td className="px-4 py-2.5 text-ink-2">{row.label}</td>
               <td className="px-4 py-2.5">
                 {row.result ? (
                   <span className={`text-xs px-2 py-0.5 rounded-full font-medium ${
                     row.result.tier === "monthly" ? "bg-purple-100 text-purple-700" :
                     row.result.tier === "weekly"  ? "bg-blue-100 text-blue-700" :
-                    "bg-[#e8f5f0] text-[#1a7a5e]"
+                    "bg-brand-soft text-brand-ink"
                   }`}>
                     {tierLabel[row.result.tier]}
                   </span>
                 ) : "—"}
               </td>
-              <td className="px-4 py-2.5 text-right font-semibold text-[#0d2137]">
+              <td className="px-4 py-2.5 text-right font-semibold text-ink">
                 {row.result ? `IDR ${fmt(Math.round(row.result.total))}` : "—"}
               </td>
             </tr>
@@ -194,11 +194,11 @@ function CommissionPreview({ rate, commission, defaultPct }: {
   const guestPays = rent + cleaning + deposit;
 
   return (
-    <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm">
-      <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-[#3e4944] uppercase tracking-wider flex justify-between gap-2">
+    <div className="border border-line rounded-lg overflow-hidden text-sm">
+      <div className="bg-canvas px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider flex justify-between gap-2">
         <span>Contoh pembagian — menginap 5 malam</span>
         {inherited && (
-          <span className="font-medium normal-case tracking-normal text-[#6e7a74]">
+          <span className="font-medium normal-case tracking-normal text-ink-3">
             komisi bawaan {pct}%
           </span>
         )}
@@ -215,42 +215,42 @@ function CommissionPreview({ rate, commission, defaultPct }: {
       ) : (
         <table className="w-full">
           <tbody>
-            <tr className="border-b border-[#f6f3f2]">
-              <td className="px-4 py-2.5 text-[#3e4944]">
+            <tr className="border-b border-canvas">
+              <td className="px-4 py-2.5 text-ink-2">
                 Tamu membayar
-                <span className="block text-xs text-[#6e7a74]">
+                <span className="block text-xs text-ink-3">
                   {nights} malam + kebersihan{deposit > 0 ? " + jaminan" : ""}
                 </span>
               </td>
-              <td className="px-4 py-2.5 text-right font-semibold text-[#0d2137] tabular-nums">
+              <td className="px-4 py-2.5 text-right font-semibold text-ink tabular-nums">
                 IDR {fmt(guestPays)}
               </td>
             </tr>
-            <tr className="border-b border-[#f6f3f2]">
-              <td className="px-4 py-2.5 text-[#3e4944]">
+            <tr className="border-b border-canvas">
+              <td className="px-4 py-2.5 text-ink-2">
                 Cosystem menerima
-                <span className="block text-xs text-[#6e7a74]">
+                <span className="block text-xs text-ink-3">
                   {pct}% dari sewa{cleaningToOwner ? "" : " + biaya kebersihan"}
                 </span>
               </td>
-              <td className="px-4 py-2.5 text-right font-semibold text-[#1a7a5e] tabular-nums">
+              <td className="px-4 py-2.5 text-right font-semibold text-brand-ink tabular-nums">
                 IDR {fmt(cosystem)}
               </td>
             </tr>
-            <tr className="border-b border-[#f6f3f2]">
-              <td className="px-4 py-2.5 text-[#3e4944]">
+            <tr className="border-b border-canvas">
+              <td className="px-4 py-2.5 text-ink-2">
                 Pemilik menerima
-                <span className="block text-xs text-[#6e7a74]">
+                <span className="block text-xs text-ink-3">
                   {100 - (pct as number)}% dari sewa{cleaningToOwner ? " + biaya kebersihan" : ""}
                 </span>
               </td>
-              <td className="px-4 py-2.5 text-right font-semibold text-[#0d2137] tabular-nums">
+              <td className="px-4 py-2.5 text-right font-semibold text-ink tabular-nums">
                 IDR {fmt(owner)}
               </td>
             </tr>
             {deposit > 0 && (
               <tr>
-                <td className="px-4 py-2.5 text-[#6e7a74] text-xs">
+                <td className="px-4 py-2.5 text-ink-3 text-xs">
                   Jaminan IDR {fmt(deposit)} dikembalikan ke tamu — bukan pendapatan
                 </td>
                 <td />
@@ -323,13 +323,13 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-6 space-y-5">
+    <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-5">
       {/* Header */}
-      <div className="flex items-start gap-3 pb-2 border-b border-[#e4e2e1]">
-        <span className="material-symbols-outlined text-[#1a7a5e] text-xl mt-0.5">nights_stay</span>
+      <div className="flex items-start gap-3 pb-2 border-b border-line">
+        <span className="material-symbols-outlined text-brand-ink text-xl mt-0.5">nights_stay</span>
         <div className="flex-1">
-          <h3 className="font-semibold text-[#0d2137]">Short-stay Rates</h3>
-          <p className="text-xs text-[#6e7a74] mt-0.5">Nightly pricing and stay rules</p>
+          <h3 className="font-semibold text-ink">Short-stay Rates</h3>
+          <p className="text-xs text-ink-3 mt-0.5">Nightly pricing and stay rules</p>
         </div>
 
         {isEditable && (
@@ -342,13 +342,13 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
                 ? "Deactivating stops new bookings. Confirmed future bookings are not affected."
                 : "Activate to allow new short-stay bookings"}
             >
-              <span className="text-[#3e4944]">Active</span>
-              <div className={`w-10 h-5 rounded-full relative transition-colors ${rate.active ? "bg-[#1a7a5e]" : "bg-[#cccccc]"}`}>
+              <span className="text-ink-2">Active</span>
+              <div className={`w-10 h-5 rounded-full relative transition-colors ${rate.active ? "bg-brand" : "bg-line-strong"}`}>
                 <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${rate.active ? "translate-x-5" : ""}`} />
               </div>
             </button>
             {!rate.active && initialRate?.active && (
-              <p className="text-[10px] text-[#6e7a74] text-right max-w-[180px]">
+              <p className="text-[10px] text-ink-3 text-right max-w-[180px]">
                 Stops new bookings only. Confirmed future bookings are unaffected.
               </p>
             )}
@@ -484,10 +484,10 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
 
       {/* Commission — a property-level setting, edited here because it is a
           pricing decision and because a rate without it cannot be split. */}
-      <div className={`border-t border-[#e4e2e1] pt-5 space-y-4 ${!isEditable ? "opacity-50 pointer-events-none select-none" : ""}`}>
+      <div className={`border-t border-line pt-5 space-y-4 ${!isEditable ? "opacity-50 pointer-events-none select-none" : ""}`}>
         <div>
-          <h4 className="font-semibold text-[#0d2137] text-sm">Pembagian pendapatan</h4>
-          <p className="text-xs text-[#6e7a74] mt-0.5">
+          <h4 className="font-semibold text-ink text-sm">Pembagian pendapatan</h4>
+          <p className="text-xs text-ink-3 mt-0.5">
             Komisi platform (%) — bagian Cosystem dari harga sewa. Sisanya menjadi hak pemilik.
           </p>
         </div>
@@ -514,9 +514,9 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
             />
             {commission.platform_commission_pct === null && (
               defaultCommissionPct !== null ? (
-                <p className="text-xs text-[#6e7a74] mt-1.5">
+                <p className="text-xs text-ink-3 mt-1.5">
                   Kosong berarti mengikuti komisi bawaan platform,{" "}
-                  <strong className="text-[#0d2137]">{defaultCommissionPct}%</strong>. Isi
+                  <strong className="text-ink">{defaultCommissionPct}%</strong>. Isi
                   hanya jika properti ini berbeda.
                 </p>
               ) : (
@@ -558,7 +558,7 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {saved && (
-        <div className="flex items-center gap-2 text-sm text-[#1a7a5e] font-medium">
+        <div className="flex items-center gap-2 text-sm text-brand-ink font-medium">
           <span className="material-symbols-outlined text-sm" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
           Rate saved. Checklist updated.
         </div>
@@ -568,7 +568,7 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
         type="button"
         disabled={!isEditable || isPending}
         onClick={handleSave}
-        className="px-6 py-2.5 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-40 flex items-center gap-2"
+        className="px-6 py-2.5 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-40 flex items-center gap-2"
       >
         {isPending ? (
           <><span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> Saving…</>

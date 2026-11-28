@@ -27,20 +27,20 @@ export default async function SurveyIndexPage() {
   const resurveyed = rows.filter((r) => r.surveyCount > 0);
 
   return (
-    <div className="min-h-screen bg-[#f6f3f2]">
+    <div className="min-h-screen bg-canvas">
       <AppSidebar activeHref="/survey" />
       <div data-sidebar-offset className="md:ml-(--sidebar-w) md:transition-[margin] pt-14 md:pt-0">
       <main className="max-w-3xl mx-auto px-6 py-8">
-        <h1 className="text-2xl font-bold text-[#0d2137] mb-1">Properties to survey</h1>
-        <p className="text-sm text-[#6e7a74] mb-7">
+        <h1 className="text-2xl font-bold text-ink mb-1">Properties to survey</h1>
+        <p className="text-sm text-ink-3 mb-7">
           Record what you observed on site. Scores and notes feed straight into the listing.
         </p>
 
         {rows.length === 0 && (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-10 text-center">
-            <span className="material-symbols-outlined text-[#bec9c2] text-4xl">task_alt</span>
-            <p className="text-[#3e4944] font-medium mt-2">Nothing waiting</p>
-            <p className="text-sm text-[#6e7a74] mt-1">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-10 text-center">
+            <span className="material-symbols-outlined text-line-strong text-4xl">task_alt</span>
+            <p className="text-ink-2 font-medium mt-2">Nothing waiting</p>
+            <p className="text-sm text-ink-3 mt-1">
               Every property has been surveyed. New ones appear here automatically.
             </p>
           </div>
@@ -48,7 +48,7 @@ export default async function SurveyIndexPage() {
 
         {unsurveyed.length > 0 && (
           <>
-            <h2 className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider mb-3">
+            <h2 className="text-xs font-semibold text-ink-2 uppercase tracking-wider mb-3">
               Not yet surveyed · {unsurveyed.length}
             </h2>
             <ul className="space-y-2 mb-8">
@@ -59,7 +59,7 @@ export default async function SurveyIndexPage() {
 
         {resurveyed.length > 0 && (
           <>
-            <h2 className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider mb-3">
+            <h2 className="text-xs font-semibold text-ink-2 uppercase tracking-wider mb-3">
               Already surveyed · {resurveyed.length}
             </h2>
             <ul className="space-y-2">
@@ -80,16 +80,16 @@ function PropertyRow({ p }: {
     <li>
       <Link
         href={`/survey/${p.id}`}
-        className="flex items-center justify-between gap-4 bg-white rounded-xl border border-[#cccccc] px-5 py-4 hover:border-[#1a7a5e] transition-colors"
+        className="flex items-center justify-between gap-4 bg-white rounded-2xl border border-line shadow-card px-5 py-4 hover:border-brand transition-colors"
       >
         <div className="min-w-0">
-          <p className="font-semibold text-[#0d2137] truncate">{p.name}</p>
-          <p className="text-xs text-[#6e7a74] mt-0.5">
+          <p className="font-semibold text-ink truncate">{p.name}</p>
+          <p className="text-xs text-ink-3 mt-0.5">
             {p.area ?? "Area not set"} · {p.status === "new_lead" ? "New lead" : "Draft"}
             {p.surveyCount > 0 && ` · ${p.surveyCount} previous`}
           </p>
         </div>
-        <span className="material-symbols-outlined text-[#1a7a5e] flex-shrink-0">chevron_right</span>
+        <span className="material-symbols-outlined text-brand-ink flex-shrink-0">chevron_right</span>
       </Link>
     </li>
   );

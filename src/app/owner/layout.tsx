@@ -14,5 +14,5 @@ import type { ReactNode } from "react";
  * portal's audience: it is how someone who is not yet an owner becomes one.
  */
 export default function OwnerLayout({ children }: { children: ReactNode }) {
-  return <div className="min-h-screen bg-[#f6f3f2]">{children}</div>;
+  return <div className="min-h-screen bg-canvas">{children}</div>;
 }

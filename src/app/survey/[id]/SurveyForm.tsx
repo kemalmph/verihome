@@ -4,10 +4,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { submitSurvey } from "@/lib/actions/survey-actions";
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white";
-const area = "w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white";
-const labelCls = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1";
-const sectionCls = "bg-white rounded-xl border border-[#cccccc] shadow-sm p-6 space-y-5";
+const input = "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const area = "w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
+const sectionCls = "bg-white rounded-2xl border border-line shadow-card p-6 space-y-5";
 
 const SCORES = [
   { name: "building_condition", label: "Building Condition", hint: "Structure, walls, fittings" },
@@ -22,11 +22,11 @@ const SCORES = [
 
 function SectionHeading({ icon, title, subtitle }: { icon: string; title: string; subtitle?: string }) {
   return (
-    <div className="flex items-start gap-3 pb-2 border-b border-[#e4e2e1]">
-      <span className="material-symbols-outlined text-[#1a7a5e] text-xl mt-0.5">{icon}</span>
+    <div className="flex items-start gap-3 pb-2 border-b border-line">
+      <span className="material-symbols-outlined text-brand-ink text-xl mt-0.5">{icon}</span>
       <div>
-        <h3 className="font-semibold text-[#0d2137]">{title}</h3>
-        {subtitle && <p className="text-xs text-[#6e7a74] mt-0.5">{subtitle}</p>}
+        <h3 className="font-semibold text-ink">{title}</h3>
+        {subtitle && <p className="text-xs text-ink-3 mt-0.5">{subtitle}</p>}
       </div>
     </div>
   );
@@ -42,17 +42,17 @@ function ScoreSlider({ name, label, hint }: { name: string; label: string; hint:
       <div className="flex items-baseline justify-between mb-1">
         <div>
           <span className={labelCls} style={{ display: "inline" }}>{label}</span>
-          <span className="text-xs text-[#6e7a74] ml-2 normal-case tracking-normal">{hint}</span>
+          <span className="text-xs text-ink-3 ml-2 normal-case tracking-normal">{hint}</span>
         </div>
-        <span className="text-sm font-bold text-[#0d2137] w-14 text-right tabular-nums">{val} / 10</span>
+        <span className="text-sm font-bold text-ink w-14 text-right tabular-nums">{val} / 10</span>
       </div>
       <div className="flex items-center gap-3">
         <input
           type="range" name={name} min={0} max={10} step={1}
           value={val} onChange={(e) => setVal(Number(e.target.value))}
-          className="flex-1 accent-[#1a7a5e] h-2"
+          className="flex-1 accent-brand h-2"
         />
-        <div className="w-20 bg-[#e4e2e1] h-2 rounded-full overflow-hidden flex-shrink-0">
+        <div className="w-20 bg-line h-2 rounded-full overflow-hidden flex-shrink-0">
           <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
         </div>
       </div>
@@ -107,25 +107,25 @@ export function SurveyForm({ propertyId, propertyName, defaultSurveyor = "" }: {
 
   if (saved) {
     return (
-      <div className="bg-white rounded-xl border border-[#9cf4d1] p-8 text-center">
-        <span className="material-symbols-outlined text-[#1a7a5e] text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+      <div className="bg-white rounded-xl border border-brand-light p-8 text-center">
+        <span className="material-symbols-outlined text-brand-ink text-4xl" style={{ fontVariationSettings: "'FILL' 1" }}>
           check_circle
         </span>
-        <h2 className="text-lg font-bold text-[#0d2137] mt-2">Survey recorded</h2>
-        <p className="text-sm text-[#6e7a74] mt-1 max-w-sm mx-auto">
+        <h2 className="text-lg font-bold text-ink mt-2">Survey recorded</h2>
+        <p className="text-sm text-ink-3 mt-1 max-w-sm mx-auto">
           {propertyName} now has your scores and area notes. The RLA and area overview
           are marked complete on its publish checklist.
         </p>
         <div className="flex items-center justify-center gap-3 mt-6">
           <button
             onClick={() => router.push("/survey")}
-            className="px-5 py-2.5 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90"
+            className="px-5 py-2.5 bg-brand text-white rounded-lg text-sm font-semibold hover:opacity-90"
           >
             Back to properties
           </button>
           <button
             onClick={() => setSaved(false)}
-            className="px-5 py-2.5 border border-[#cccccc] text-[#3e4944] rounded-lg text-sm font-semibold hover:border-[#1a7a5e]"
+            className="px-5 py-2.5 border border-line-strong text-ink-2 rounded-lg text-sm font-semibold hover:border-brand"
           >
             Record another visit
           </button>
@@ -223,7 +223,7 @@ export function SurveyForm({ propertyId, propertyName, defaultSurveyor = "" }: {
           <div className="flex items-baseline justify-between mb-1">
             <div>
               <span className={labelCls} style={{ display: "inline" }}>Expat Friendly</span>
-              <span className="text-xs text-[#6e7a74] ml-2 normal-case tracking-normal">
+              <span className="text-xs text-ink-3 ml-2 normal-case tracking-normal">
                 English spoken, international amenities
               </span>
             </div>
@@ -241,7 +241,7 @@ export function SurveyForm({ propertyId, propertyName, defaultSurveyor = "" }: {
       <div className="flex items-center gap-3">
         <button
           type="submit" disabled={isPending}
-          className="flex-1 bg-[#1a7a5e] text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
+          className="flex-1 bg-brand text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
         >
           {isPending ? (
             <><span className="material-symbols-outlined animate-spin">progress_activity</span> Saving survey…</>
@@ -250,7 +250,7 @@ export function SurveyForm({ propertyId, propertyName, defaultSurveyor = "" }: {
           )}
         </button>
       </div>
-      <p className="text-xs text-[#6e7a74] text-center">
+      <p className="text-xs text-ink-3 text-center">
         Saving records the visit and marks the RLA and area overview complete on the publish checklist.
       </p>
     </form>
@@ -264,9 +264,9 @@ function ExpatSlider() {
       <input
         type="range" name="expat_friendly" min={0} max={10} step={1}
         value={val} onChange={(e) => setVal(Number(e.target.value))}
-        className="flex-1 accent-[#1a7a5e] h-2"
+        className="flex-1 accent-brand h-2"
       />
-      <span className="text-sm font-bold text-[#0d2137] w-14 text-right tabular-nums">{val} / 10</span>
+      <span className="text-sm font-bold text-ink w-14 text-right tabular-nums">{val} / 10</span>
     </div>
   );
 }

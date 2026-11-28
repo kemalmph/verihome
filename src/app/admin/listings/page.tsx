@@ -65,18 +65,18 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
   const filtered = status && status !== "all" ? all.filter((p) => p.status === status) : all;
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/listings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="flex justify-between items-center mb-8">
           <div>
-            <h1 className="text-3xl font-bold text-[#0d2137]">Listings Pipeline</h1>
-            <p className="text-[#3e4944] mt-1">{all.length} total · {counts["live"] ?? 0} live</p>
+            <h1 className="text-3xl font-bold text-ink">Listings Pipeline</h1>
+            <p className="text-ink-2 mt-1">{all.length} total · {counts["live"] ?? 0} live</p>
           </div>
           <form action={createNewProperty}>
             <button
               type="submit"
-              className="bg-[#1a7a5e] text-white px-5 py-2.5 rounded-lg font-medium text-sm hover:opacity-90 flex items-center gap-2"
+              className="bg-brand text-white px-5 py-2.5 rounded-lg font-medium text-sm hover:opacity-90 flex items-center gap-2"
             >
               <span className="material-symbols-outlined text-lg">add</span>
               New Property
@@ -90,14 +90,14 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
             <Link
               key={stage.value}
               href={`/admin/listings?status=${stage.value}`}
-              className={`bg-white rounded-xl border p-4 text-center hover:border-[#1a7a5e] transition-colors ${
-                status === stage.value ? "border-[#1a7a5e] ring-1 ring-[#1a7a5e]" : "border-[#cccccc]"
+              className={`bg-white rounded-xl border p-4 text-center hover:border-brand transition-colors ${
+                status === stage.value ? "border-brand ring-1 ring-brand" : "border-line-strong"
               }`}
             >
-              <div className="text-2xl font-bold text-[#0d2137]">{counts[stage.value] ?? 0}</div>
-              <div className="text-xs text-[#6e7a74] mt-0.5 leading-tight">{stage.label}</div>
+              <div className="text-2xl font-bold text-ink">{counts[stage.value] ?? 0}</div>
+              <div className="text-xs text-ink-3 mt-0.5 leading-tight">{stage.label}</div>
               {i < activePipeline.length - 1 && (
-                <div className="text-[#bec9c2] text-xs mt-1">↓</div>
+                <div className="text-line-strong text-xs mt-1">↓</div>
               )}
             </Link>
           ))}
@@ -115,21 +115,21 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
               href={`/admin/listings?status=${s.value}`}
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors ${
                 status === s.value
-                  ? "border-[#1a7a5e] bg-white text-[#1a7a5e] font-semibold"
-                  : "border-[#cccccc] bg-white text-[#3e4944] hover:border-[#1a7a5e]"
+                  ? "border-brand bg-white text-brand-ink font-semibold"
+                  : "border-line-strong bg-white text-ink-2 hover:border-brand"
               }`}
             >
               <StatusBadge status={s.value} />
               <span className="font-bold">{counts[s.value] ?? 0}</span>
-              <span className="text-[#6e7a74]">{s.label}</span>
+              <span className="text-ink-3">{s.label}</span>
             </Link>
           ))}
           <Link
             href="/admin/listings"
             className={`ml-auto px-4 py-2 rounded-lg border text-sm transition-colors ${
               !status || status === "all"
-                ? "border-[#1a7a5e] bg-white text-[#1a7a5e] font-semibold"
-                : "border-[#cccccc] bg-white text-[#3e4944] hover:border-[#1a7a5e]"
+                ? "border-brand bg-white text-brand-ink font-semibold"
+                : "border-line-strong bg-white text-ink-2 hover:border-brand"
             }`}
           >
             View all
@@ -137,18 +137,18 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-line shadow-card overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#f6f3f2] border-b border-[#bec9c2]">
+              <tr className="bg-canvas border-b border-line-strong">
                 {["Property", "Area", "Price", "Stage", "Added", "Actions"].map((h) => (
-                  <th key={h} className="text-left px-6 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">
+                  <th key={h} className="text-left px-6 py-4 text-xs font-bold text-ink-2 uppercase tracking-wider">
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#bec9c2]">
+            <tbody className="divide-y divide-line-strong">
               {filtered.map((p) => {
                 const price = p.price_monthly
                   ? `IDR ${new Intl.NumberFormat("id-ID").format(p.price_monthly)}`
@@ -157,25 +157,25 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
                   day: "numeric", month: "short", year: "numeric",
                 });
                 return (
-                  <tr key={p.id} className="hover:bg-[#f6f3f2] transition-colors">
+                  <tr key={p.id} className="hover:bg-canvas transition-colors">
                     <td className="px-6 py-4">
-                      <p className="font-semibold text-[#0d2137] text-sm">{p.name}</p>
-                      <p className="text-xs text-[#3e4944] capitalize">{p.property_type ?? "—"}</p>
+                      <p className="font-semibold text-ink text-sm">{p.name}</p>
+                      <p className="text-xs text-ink-2 capitalize">{p.property_type ?? "—"}</p>
                     </td>
-                    <td className="px-6 py-4 text-sm text-[#1b1c1c]">{p.area ?? "—"}</td>
-                    <td className="px-6 py-4 text-sm font-medium text-[#1a7a5e]">{price}</td>
+                    <td className="px-6 py-4 text-sm text-ink">{p.area ?? "—"}</td>
+                    <td className="px-6 py-4 text-sm font-medium text-brand-ink">{price}</td>
                     <td className="px-6 py-4">
                       <StatusSelect propertyId={p.id} currentStatus={p.status} />
                     </td>
-                    <td className="px-6 py-4 text-xs text-[#6e7a74]">{added}</td>
+                    <td className="px-6 py-4 text-xs text-ink-3">{added}</td>
                     <td className="px-6 py-4">
                       <div className="flex items-center gap-3">
                         {p.status === "live" && (
-                          <Link href={`/listings/${p.slug}`} target="_blank" className="text-[#6e7a74] hover:text-[#1a7a5e] text-xs">
+                          <Link href={`/listings/${p.slug}`} target="_blank" className="text-ink-3 hover:text-brand-ink text-xs">
                             View
                           </Link>
                         )}
-                        <Link href={`/admin/listings/${p.id}/build`} className="text-[#1a7a5e] text-sm font-medium hover:underline">
+                        <Link href={`/admin/listings/${p.id}/build`} className="text-brand-ink text-sm font-medium hover:underline">
                           Edit
                         </Link>
                         <DeleteButton propertyId={p.id} propertyName={p.name} />
@@ -186,7 +186,7 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
               })}
               {filtered.length === 0 && (
                 <tr>
-                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-[#6e7a74]">
+                  <td colSpan={6} className="px-6 py-12 text-center text-sm text-ink-3">
                     No listings in this stage.
                   </td>
                 </tr>

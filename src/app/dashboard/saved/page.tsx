@@ -16,12 +16,12 @@ export default async function SavedListingsPage() {
   const saved = await guestSavedUnits();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/saved" userName={user.name} isActiveClient={user.is_active_client} />
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-4xl">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137] mb-1">{t("saved.title")}</h1>
-          <p className="text-[#3e4944]">{saved.length} unit tersimpan</p>
+          <h1 className="text-3xl font-bold text-ink mb-1">{t("saved.title")}</h1>
+          <p className="text-ink-2">{saved.length} unit tersimpan</p>
         </header>
         <SavedList items={saved} />
       </main>

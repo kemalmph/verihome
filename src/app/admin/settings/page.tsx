@@ -37,12 +37,12 @@ export default async function AdminSettingsPage() {
   const unset      = rows.filter((r) => r.source === "none").length;
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/settings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-10">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Pengaturan</h1>
-          <p className="text-[#3e4944] mt-1">Konfigurasi platform Cosystem</p>
+          <h1 className="text-3xl font-bold text-ink">Pengaturan</h1>
+          <p className="text-ink-2 mt-1">Konfigurasi platform Cosystem</p>
         </header>
 
         <div className="max-w-4xl space-y-8">
@@ -55,12 +55,12 @@ export default async function AdminSettingsPage() {
 
           {/* Which properties the default actually governs. A rate with no
               visible consequences is how the old one stayed unset for months. */}
-          <section className="bg-white rounded-xl border border-[#cccccc] shadow-sm">
-            <div className="p-6 border-b border-[#e4e2e1]">
-              <h2 className="text-lg font-semibold text-[#0d2137]">
+          <section className="bg-white rounded-2xl border border-line shadow-card">
+            <div className="p-6 border-b border-line">
+              <h2 className="text-lg font-semibold text-ink">
                 Properti sewa harian
               </h2>
-              <p className="text-sm text-[#3e4944] mt-1">
+              <p className="text-sm text-ink-2 mt-1">
                 {rows.length === 0 ? (
                   "Belum ada properti sewa harian."
                 ) : (
@@ -83,11 +83,11 @@ export default async function AdminSettingsPage() {
                     <div className="min-w-0">
                       <Link
                         href={`/admin/listings/${r.id}/build`}
-                        className="font-medium text-[#0d2137] hover:text-[#1a7a5e] hover:underline"
+                        className="font-medium text-ink hover:text-brand-ink hover:underline"
                       >
                         {r.name}
                       </Link>
-                      {r.area && <p className="text-xs text-[#6e7a74] mt-0.5">{r.area}</p>}
+                      {r.area && <p className="text-xs text-ink-3 mt-0.5">{r.area}</p>}
                     </div>
 
                     <div className="flex items-center gap-3 shrink-0">
@@ -97,13 +97,13 @@ export default async function AdminSettingsPage() {
                         </span>
                       ) : (
                         <>
-                          <span className="font-semibold text-[#0d2137] tabular-nums">
+                          <span className="font-semibold text-ink tabular-nums">
                             {r.effective}%
                           </span>
                           <span
                             className={`px-2.5 py-1 rounded-full text-xs font-semibold ${
                               r.source === "own"
-                                ? "bg-[#e8f5f0] text-[#1a7a5e]"
+                                ? "bg-brand-soft text-brand-ink"
                                 : "bg-gray-100 text-gray-600"
                             }`}
                           >

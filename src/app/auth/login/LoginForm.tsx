@@ -5,8 +5,8 @@ import { signInWithEmail, signUpWithEmail, signInWithGoogle } from "@/lib/supaba
 import { useT } from "@/lib/i18n/LocaleProvider";
 
 const input =
-  "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white";
-const labelCls = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1";
+  "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 
 type Mode = "signin" | "signup";
 
@@ -47,8 +47,8 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#cccccc] shadow-sm overflow-hidden">
-      <div className="flex border-b border-[#e4e2e1]">
+    <div className="bg-white rounded-2xl border border-line-strong shadow-sm overflow-hidden">
+      <div className="flex border-b border-line">
         {([["signin", t("login.tabSignIn")], ["signup", t("login.tabSignUp")]] as const).map(([value, label]) => (
           <button
             key={value}
@@ -56,8 +56,8 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
             onClick={() => switchMode(value)}
             className={`flex-1 py-3.5 text-sm font-semibold transition-colors ${
               mode === value
-                ? "text-[#1a7a5e] border-b-2 border-[#1a7a5e] -mb-px"
-                : "text-[#6e7a74] hover:text-[#3e4944]"
+                ? "text-brand-ink border-b-2 border-brand -mb-px"
+                : "text-ink-3 hover:text-ink-2"
             }`}
           >
             {label}
@@ -67,8 +67,8 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
 
       <div className="p-7">
         {reason && !error && !notice && (
-          <div className="mb-5 flex items-start gap-2 bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg px-4 py-3 text-sm text-[#12614a]">
-            <span className="material-symbols-outlined text-[#1a7a5e] text-base">info</span>
+          <div className="mb-5 flex items-start gap-2 bg-success-soft border border-success-line rounded-lg px-4 py-3 text-sm text-success-ink">
+            <span className="material-symbols-outlined text-brand-ink text-base">info</span>
             {reason}
           </div>
         )}
@@ -81,8 +81,8 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
         )}
 
         {notice && (
-          <div className="mb-5 flex items-start gap-2 bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg px-4 py-3 text-sm text-[#12614a]">
-            <span className="material-symbols-outlined text-[#1a7a5e] text-base">mark_email_unread</span>
+          <div className="mb-5 flex items-start gap-2 bg-success-soft border border-success-line rounded-lg px-4 py-3 text-sm text-success-ink">
+            <span className="material-symbols-outlined text-brand-ink text-base">mark_email_unread</span>
             {notice}
           </div>
         )}
@@ -121,7 +121,7 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
           <button
             type="submit"
             disabled={isPending}
-            className="w-full h-11 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-2"
+            className="w-full h-11 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-2"
           >
             {isPending ? (
               <><span className="material-symbols-outlined animate-spin text-base">progress_activity</span>
@@ -137,15 +137,15 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
         {googleEnabled && (
           <>
             <div className="flex items-center gap-3 my-5">
-              <span className="h-px flex-1 bg-[#e4e2e1]" />
-              <span className="text-xs text-[#6e7a74]">{t("login.or")}</span>
-              <span className="h-px flex-1 bg-[#e4e2e1]" />
+              <span className="h-px flex-1 bg-line" />
+              <span className="text-xs text-ink-3">{t("login.or")}</span>
+              <span className="h-px flex-1 bg-line" />
             </div>
 
             <form action={signInWithGoogle.bind(null, next)}>
               <button
                 type="submit"
-                className="w-full h-11 border border-[#cccccc] rounded-lg font-semibold text-sm text-[#3e4944] hover:border-[#1a7a5e] transition-colors"
+                className="w-full h-11 border border-line-strong rounded-lg font-semibold text-sm text-ink-2 hover:border-brand transition-colors"
               >
                 {t("login.google")}
               </button>

@@ -6,7 +6,7 @@ This version has breaking changes — APIs, conventions, and file structure may 
 
 # The system reference is read-only to you
 
-`VeriHome System Reference` — https://claude.ai/artifact/B9WY3ErwkBzWGoY7WRkmJf — is the
+`Cosystem System Reference` (judul lama: VeriHome System Reference) — https://claude.ai/artifact/B9WY3ErwkBzWGoY7WRkmJf — is the
 architectural reference for this project. Read it first; section numbers in handoffs and
 commit messages point at it.
 

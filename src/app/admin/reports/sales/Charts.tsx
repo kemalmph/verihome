@@ -9,8 +9,8 @@ const compact = (n: number) =>
   : n >= 1_000 ? `${Math.round(n / 1_000)}rb`
   : String(Math.round(n));
 
-const INK = "#0d2137";
-const MUTED = "#6e7a74";
+const INK = "#171717";
+const MUTED = "#62636a";
 const GRID = "#e4e2e1";
 
 // ── Revenue by stream ────────────────────────────────────────────────────────
@@ -25,7 +25,7 @@ export function StreamBars({ data }: {
 
   if (rows.length === 0) {
     return (
-      <div className="text-sm text-[#6e7a74] py-8 text-center border border-dashed border-[#cccccc] rounded-lg">
+      <div className="text-sm text-ink-3 py-8 text-center border border-dashed border-line-strong rounded-lg">
         Belum ada pendapatan pada periode ini.
       </div>
     );
@@ -63,7 +63,7 @@ export function StreamBars({ data }: {
         })}
       </svg>
       {hover !== null && rows[hover] && (
-        <p className="text-xs text-[#3e4944] mt-2">
+        <p className="text-xs text-ink-2 mt-2">
           <span className="font-semibold">{rows[hover].label}</span>
           {" — IDR "}{fmt(rows[hover].amount)}
         </p>
@@ -85,7 +85,7 @@ export function TrendLines({ months, series }: {
   const live = series.filter((s) => s.values.some((v) => v > 0));
   if (live.length === 0) {
     return (
-      <div className="text-sm text-[#6e7a74] py-10 text-center border border-dashed border-[#cccccc] rounded-lg">
+      <div className="text-sm text-ink-3 py-10 text-center border border-dashed border-line-strong rounded-lg">
         Belum ada pendapatan tercatat dalam 12 bulan terakhir.
       </div>
     );
@@ -148,7 +148,7 @@ export function TrendLines({ months, series }: {
       </svg>
 
       {hoverX !== null && (
-        <div className="text-xs text-[#3e4944] mt-2 flex flex-wrap gap-x-4 gap-y-1">
+        <div className="text-xs text-ink-2 mt-2 flex flex-wrap gap-x-4 gap-y-1">
           <span className="font-semibold">{months[hoverX]}</span>
           {live.map((s) => (
             <span key={s.label} className="inline-flex items-center gap-1.5">
@@ -164,7 +164,7 @@ export function TrendLines({ months, series }: {
 
 export function Legend({ items }: { items: { label: string; color: string }[] }) {
   return (
-    <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-[#3e4944]">
+    <div className="flex flex-wrap gap-x-4 gap-y-2 text-xs text-ink-2">
       {items.map((i) => (
         <span key={i.label} className="inline-flex items-center gap-1.5">
           <span className="w-3 h-3 rounded-sm inline-block" style={{ background: i.color }} />

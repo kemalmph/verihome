@@ -60,11 +60,11 @@ export function PendingCreditRefunds({ pending }: { pending: Pending[] }) {
             {pending.map((p) => (
               <li key={p.id} className="bg-white rounded-lg px-4 py-2.5 flex items-center justify-between gap-3 flex-wrap">
                 <div className="min-w-0">
-                  <p className="text-sm font-semibold text-[#0d2137]">
+                  <p className="text-sm font-semibold text-ink">
                     {p.who} — <span className="tabular-nums">{rp(p.amount)}</span>
                   </p>
                   {p.requestedAt && (
-                    <p className="text-xs text-[#6e7a74]">
+                    <p className="text-xs text-ink-3">
                       diminta {new Date(p.requestedAt).toLocaleDateString("id-ID", {
                         day: "numeric", month: "long", year: "numeric",
                       })}
@@ -74,7 +74,7 @@ export function PendingCreditRefunds({ pending }: { pending: Pending[] }) {
                 <button
                   onClick={() => onConfirm(p.id)}
                   disabled={busyId === p.id}
-                  className="px-3 py-1.5 bg-[#1a7a5e] text-white text-xs font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 shrink-0"
+                  className="px-3 py-1.5 bg-brand text-white text-xs font-semibold rounded-lg hover:opacity-90 disabled:opacity-50 shrink-0"
                 >
                   {busyId === p.id ? "Menyimpan…" : "Transfer sudah dikirim"}
                 </button>

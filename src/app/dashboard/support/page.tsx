@@ -46,26 +46,26 @@ export default async function SupportPage() {
   const user = await getCurrentUser();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/support" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">
-          <h2 className="text-3xl font-bold text-[#0d2137] mb-1">Support & Services</h2>
-          <p className="text-[#3e4944]">Additional relocation services to make your move seamless.</p>
+          <h2 className="text-3xl font-bold text-ink mb-1">Support & Services</h2>
+          <p className="text-ink-2">Additional relocation services to make your move seamless.</p>
         </header>
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {SERVICES.map((service) => (
-            <div key={service.id} className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm">
+            <div key={service.id} className="bg-white rounded-2xl border border-line shadow-card p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
-                  <div className="w-12 h-12 bg-[#e8f5f0] rounded-xl flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[#1a7a5e]">{service.icon}</span>
+                  <div className="w-12 h-12 bg-brand-soft rounded-xl flex items-center justify-center">
+                    <span className="material-symbols-outlined text-brand-ink">{service.icon}</span>
                   </div>
                   <div>
-                    <h3 className="font-semibold text-[#0d2137]">{service.title}</h3>
-                    <p className="text-[#1a7a5e] font-bold text-sm">{service.price}</p>
+                    <h3 className="font-semibold text-ink">{service.title}</h3>
+                    <p className="text-brand-ink font-bold text-sm">{service.price}</p>
                   </div>
                 </div>
                 {service.status && (
@@ -74,15 +74,15 @@ export default async function SupportPage() {
                   </span>
                 )}
               </div>
-              <p className="text-sm text-[#3e4944] mb-6 leading-relaxed">{service.desc}</p>
-              <button className="w-full py-2.5 border-2 border-[#1a7a5e] text-[#1a7a5e] rounded-lg text-sm font-medium hover:bg-[#1a7a5e] hover:text-white transition-colors">
+              <p className="text-sm text-ink-2 mb-6 leading-relaxed">{service.desc}</p>
+              <button className="w-full py-2.5 border-2 border-brand text-brand-ink rounded-lg text-sm font-medium hover:bg-brand hover:text-white transition-colors">
                 {service.status ? "View Details" : "Request Service"}
               </button>
             </div>
           ))}
         </div>
 
-        <div className="mt-10 p-6 bg-[#0d2137] rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
+        <div className="mt-10 p-6 bg-ink rounded-xl flex flex-col md:flex-row items-center justify-between gap-4">
           <div>
             <h3 className="font-bold text-white mb-1">Need something else?</h3>
             <p className="text-sm text-white/70">Our team is available 9 AM – 6 PM WIB, Monday to Saturday.</p>

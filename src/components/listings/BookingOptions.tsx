@@ -37,18 +37,18 @@ export function BookingOptions({
   const showTabs = rentalMode === "both";
 
   return (
-    <div className="bg-white border border-[#cccccc] rounded-xl p-6 shadow-sm">
+    <div className="bg-white border border-line-strong rounded-xl p-6 shadow-sm">
       {/* Tab switcher — only shown when mode is "both" */}
       {showTabs && (
-        <div className="flex rounded-lg overflow-hidden border border-[#cccccc] mb-5 text-sm font-semibold">
+        <div className="flex rounded-lg overflow-hidden border border-line-strong mb-5 text-sm font-semibold">
           {(["long_term", "short_stay"] as const).map((mode) => (
             <button
               key={mode}
               onClick={() => setTab(mode)}
               className={`flex-1 py-2 transition-colors ${
                 tab === mode
-                  ? "bg-[#1a7a5e] text-white"
-                  : "bg-white text-[#3e4944] hover:bg-[#f6f3f2]"
+                  ? "bg-brand text-white"
+                  : "bg-white text-ink-2 hover:bg-canvas"
               }`}
             >
               {mode === "long_term" ? t("book.longTerm") : t("book.shortStay")}
@@ -61,18 +61,18 @@ export function BookingOptions({
       {(tab === "long_term" || rentalMode === "long_term") && (
         <div className="space-y-4">
           <div>
-            <div className="text-xs text-[#3e4944] mb-1">{t("book.startingFrom")}</div>
-            <div className="text-[#1a7a5e] text-3xl font-bold">IDR {formatIDR(priceMonthly)}</div>
-            <div className="text-xs text-[#3e4944]">{t("book.perMonthPlus")}</div>
+            <div className="text-xs text-ink-2 mb-1">{t("book.startingFrom")}</div>
+            <div className="text-brand-ink text-3xl font-bold">IDR {formatIDR(priceMonthly)}</div>
+            <div className="text-xs text-ink-2">{t("book.perMonthPlus")}</div>
           </div>
 
           <div className="space-y-3 mb-6">
             {[
               { label: t("book.minStay"), value: `${minStayMonths} ${minStayMonths > 1 ? t("book.monthPlural") : t("book.month")}` },
             ].map((item) => (
-              <div key={item.label} className="flex justify-between items-center pb-3 border-b border-[#bec9c2]">
-                <span className="text-[#3e4944] text-sm">{item.label}</span>
-                <span className="text-[#1b1c1c] font-bold text-sm">{item.value}</span>
+              <div key={item.label} className="flex justify-between items-center pb-3 border-b border-line-strong">
+                <span className="text-ink-2 text-sm">{item.label}</span>
+                <span className="text-ink font-bold text-sm">{item.value}</span>
               </div>
             ))}
           </div>
@@ -80,14 +80,14 @@ export function BookingOptions({
           <div className="space-y-3">
             <Link
               href="/consultation"
-              className="w-full bg-[#1a7a5e] text-white py-4 rounded-lg font-semibold flex flex-col items-center hover:opacity-90 transition-opacity"
+              className="w-full bg-brand text-white py-4 rounded-lg font-semibold flex flex-col items-center hover:opacity-90 transition-opacity"
             >
               <span>{t("book.consult")}</span>
               <span className="text-xs font-normal opacity-80">{t("book.consultSub")}</span>
             </Link>
             <Link
               href={`/listings/${slug}/viewing`}
-              className="w-full border-2 border-[#0d2137] text-[#0d2137] py-4 rounded-lg font-semibold flex flex-col items-center hover:bg-[#f6f3f2] transition-colors"
+              className="w-full border-2 border-ink text-ink py-4 rounded-lg font-semibold flex flex-col items-center hover:bg-canvas transition-colors"
             >
               <span>{t("book.viewing")}</span>
               <span className="text-xs font-normal opacity-70">{t("book.viewingSub")}</span>
@@ -100,35 +100,35 @@ export function BookingOptions({
       {(tab === "short_stay" || rentalMode === "short_stay") && shortStayRate && (
         <div className="space-y-4">
           <div>
-            <div className="text-xs text-[#3e4944] mb-1">{t("book.nightlyRate")}</div>
-            <div className="text-[#1a7a5e] text-3xl font-bold">
+            <div className="text-xs text-ink-2 mb-1">{t("book.nightlyRate")}</div>
+            <div className="text-brand-ink text-3xl font-bold">
               IDR {formatIDR(shortStayRate.price_per_night)}
             </div>
             {shortStayRate.price_per_night_weekend && (
-              <div className="text-xs text-[#3e4944]">
+              <div className="text-xs text-ink-2">
                 {t("book.weekend")}: IDR {formatIDR(shortStayRate.price_per_night_weekend)}
               </div>
             )}
             {shortStayRate.cleaning_fee > 0 && (
-              <div className="text-xs text-[#6e7a74]">
+              <div className="text-xs text-ink-3">
                 + IDR {formatIDR(shortStayRate.cleaning_fee)} {t("book.cleaningFee")}
               </div>
             )}
           </div>
 
-          <div className="space-y-2 pb-4 border-b border-[#bec9c2]">
+          <div className="space-y-2 pb-4 border-b border-line-strong">
             <div className="flex justify-between text-sm">
-              <span className="text-[#3e4944]">{t("book.minNights")}</span>
-              <span className="font-bold text-[#1b1c1c]">{shortStayRate.min_nights}</span>
+              <span className="text-ink-2">{t("book.minNights")}</span>
+              <span className="font-bold text-ink">{shortStayRate.min_nights}</span>
             </div>
             {shortStayRate.max_nights && (
               <div className="flex justify-between text-sm">
-                <span className="text-[#3e4944]">{t("book.maxNights")}</span>
-                <span className="font-bold text-[#1b1c1c]">{shortStayRate.max_nights}</span>
+                <span className="text-ink-2">{t("book.maxNights")}</span>
+                <span className="font-bold text-ink">{shortStayRate.max_nights}</span>
               </div>
             )}
             {isInstantBookable && (
-              <div className="flex items-center gap-1.5 text-xs text-[#1a7a5e] font-semibold">
+              <div className="flex items-center gap-1.5 text-xs text-brand-ink font-semibold">
                 <span className="material-symbols-outlined text-sm">bolt</span>
                 {t("book.instantAvail")}
               </div>
@@ -137,7 +137,7 @@ export function BookingOptions({
 
           <Link
             href={`/listings/${slug}/book`}
-            className="w-full bg-[#1a7a5e] text-white py-4 rounded-lg font-semibold flex flex-col items-center hover:opacity-90 transition-opacity"
+            className="w-full bg-brand text-white py-4 rounded-lg font-semibold flex flex-col items-center hover:opacity-90 transition-opacity"
           >
             <span>{t("book.bookNow")}</span>
             <span className="text-xs font-normal opacity-80">
@@ -149,7 +149,7 @@ export function BookingOptions({
 
       {/* Short-stay mode but no rate configured (admin hasn't set it yet) */}
       {(tab === "short_stay" || rentalMode === "short_stay") && !shortStayRate && (
-        <div className="text-center py-6 text-sm text-[#6e7a74]">
+        <div className="text-center py-6 text-sm text-ink-3">
           {t("book.noRates")}
         </div>
       )}

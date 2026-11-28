@@ -1,84 +1,42 @@
 import Link from "next/link";
+import { Logo } from "@/components/brand/Logo";
 import { getLocale } from "@/lib/i18n/server";
 import { t, type StringKey } from "@/lib/i18n/strings";
 
 /**
- * Every link here resolves.
+ * The public footer (prototype V7): one quiet row — wordmark, tagline,
+ * links, copyright.
  *
- * The previous footer pointed at /about, /terms, /privacy and /cookies —
- * none of which exist, so four of its twelve links were 404s sitting in the
- * footer of every page. /terms and /privacy now exist as real pages; /about
- * and /cookies are gone rather than left pointing at nothing.
+ * The V7 copy lists Product, Solutions and Contact. Terms and Privacy are
+ * kept beside them: they are real pages, and a public site that takes
+ * bookings and payments should not hide its legal terms.
  */
-const COLUMNS: { heading: StringKey; links: { href: string; label: StringKey }[] }[] = [
-  {
-    heading: "footer.product",
-    links: [
-      { href: "/#workspace-hunian", label: "footer.manageWork" },
-      { href: "/#workspace-hunian", label: "footer.manageLiving" },
-      { href: "/listings", label: "footer.marketplace" },
-      { href: "/#harga", label: "nav.pricing" },
-    ],
-  },
-  {
-    heading: "footer.tenants",
-    links: [
-      { href: "/listings", label: "footer.findCoworking" },
-      { href: "/listings", label: "footer.findLiving" },
-      { href: "/#cara-kerja", label: "footer.howToBook" },
-    ],
-  },
-  {
-    heading: "footer.company",
-    links: [
-      { href: "/contact", label: "nav.contact" },
-      { href: "/list-your-property", label: "footer.listProperty" },
-      { href: "/terms", label: "footer.terms" },
-      { href: "/privacy", label: "footer.privacy" },
-    ],
-  },
+const LINKS: { href: string; label: StringKey }[] = [
+  { href: "/#features", label: "footer.product" },
+  { href: "/#solutions", label: "footer.solutions" },
+  { href: "/contact", label: "footer.contact" },
+  { href: "/terms", label: "footer.terms" },
+  { href: "/privacy", label: "footer.privacy" },
 ];
 
 export async function Footer() {
   const lang = await getLocale();
 
   return (
-    <footer className="w-full bg-[#0d2137] text-[#e4e2e1]">
-      <div className="max-w-7xl mx-auto px-4 md:px-16 py-12">
-        <div className="grid grid-cols-1 md:grid-cols-4 gap-10 mb-12">
-          <div className="md:col-span-1">
-            <h2 className="text-xl font-bold text-[#9cf4d1] mb-4">Cosystem</h2>
-            <p className="text-sm text-[#bec9c2] leading-relaxed">
-              {t("footer.tagline", lang)}
-            </p>
-          </div>
-
-          {COLUMNS.map((col) => (
-            <div key={col.heading}>
-              <h5 className="text-xs font-bold text-white uppercase tracking-widest mb-4">
-                {t(col.heading, lang)}
-              </h5>
-              <ul className="space-y-3">
-                {col.links.map((link) => (
-                  <li key={`${col.heading}-${link.label}`}>
-                    <Link
-                      href={link.href}
-                      className="text-sm text-[#bec9c2] hover:text-[#9cf4d1] transition-colors"
-                    >
-                      {t(link.label, lang)}
-                    </Link>
-                  </li>
-                ))}
-              </ul>
-            </div>
+    <footer id="footer" className="w-full border-t border-line bg-white text-[13px] text-ink-3">
+      <div className="max-w-[1160px] mx-auto px-4 md:px-6 py-7 flex flex-col md:flex-row md:items-center md:justify-between gap-4 md:gap-5">
+        <Link href="/" aria-label="Cosystem" className="shrink-0">
+          <Logo height={22} />
+        </Link>
+        <p>{t("footer.tagline", lang)}</p>
+        <nav className="flex flex-wrap gap-x-5 gap-y-2">
+          {LINKS.map((l) => (
+            <Link key={l.label} href={l.href} className="hover:text-ink transition-colors">
+              {t(l.label, lang)}
+            </Link>
           ))}
-        </div>
-
-        <div className="pt-8 border-t border-[#bec9c2]/20">
-          <p className="text-xs text-[#bec9c2]/70">
-            © 2026 Cosystem. {t("footer.rights", lang)}
-          </p>
-        </div>
+        </nav>
+        <p>© 2026 Cosystem</p>
       </div>
     </footer>
   );

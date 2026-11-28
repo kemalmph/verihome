@@ -24,24 +24,24 @@ export default async function AdminViewingsPage() {
     .order("preferred_date", { ascending: true });
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/viewings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#0d2137]">Viewings</h1>
-          <p className="text-[#6e7a74] text-sm mt-1">All property viewing requests</p>
+          <h1 className="text-2xl font-bold text-ink">Viewings</h1>
+          <p className="text-ink-3 text-sm mt-1">All property viewing requests</p>
         </div>
 
         {!viewings || viewings.length === 0 ? (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-12 text-center">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-12 text-center">
             <span className="material-symbols-outlined text-[#cccccc] text-5xl">location_on</span>
-            <p className="text-[#6e7a74] mt-4">No viewing requests yet.</p>
+            <p className="text-ink-3 mt-4">No viewing requests yet.</p>
           </div>
         ) : (
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#cccccc] text-[#6e7a74] text-xs uppercase">
+                <tr className="border-b border-line-strong text-ink-3 text-xs uppercase">
                   <th className="text-left py-3 px-4">Property</th>
                   <th className="text-left py-3 px-4">Guest</th>
                   <th className="text-left py-3 px-4">Date / Time</th>
@@ -55,19 +55,19 @@ export default async function AdminViewingsPage() {
                   const property = (v.property as unknown) as { name: string; area: string } | null;
                   const user     = (v.user     as unknown) as { name: string; email: string; phone_whatsapp: string | null } | null;
                   return (
-                    <tr key={v.id} className="border-b border-[#f6f3f2] hover:bg-[#f6f3f2] bg-white">
+                    <tr key={v.id} className="border-b border-canvas hover:bg-canvas bg-white">
                       <td className="py-3 px-4">
-                        <div className="font-semibold text-[#0d2137]">{property?.name ?? "—"}</div>
-                        <div className="text-xs text-[#6e7a74]">{property?.area}</div>
+                        <div className="font-semibold text-ink">{property?.name ?? "—"}</div>
+                        <div className="text-xs text-ink-3">{property?.area}</div>
                       </td>
                       <td className="py-3 px-4">
                         <div>{user?.name ?? "—"}</div>
-                        <div className="text-xs text-[#6e7a74]">{user?.email}</div>
-                        {user?.phone_whatsapp && <div className="text-xs text-[#6e7a74]">{user.phone_whatsapp}</div>}
+                        <div className="text-xs text-ink-3">{user?.email}</div>
+                        {user?.phone_whatsapp && <div className="text-xs text-ink-3">{user.phone_whatsapp}</div>}
                       </td>
                       <td className="py-3 px-4">
                         <div>{v.preferred_date}</div>
-                        <div className="text-xs text-[#6e7a74]">{v.preferred_time}</div>
+                        <div className="text-xs text-ink-3">{v.preferred_time}</div>
                       </td>
                       <td className="py-3 px-4">
                         <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${
@@ -84,18 +84,18 @@ export default async function AdminViewingsPage() {
                             <span className={`text-xs font-semibold ${v.deposit_paid ? "text-green-700" : "text-amber-700"}`}>
                               {v.deposit_paid ? "Paid" : "Unpaid"}
                             </span>
-                            <div className="text-xs text-[#6e7a74]">IDR {fmt(Number(v.deposit_amount))}</div>
+                            <div className="text-xs text-ink-3">IDR {fmt(Number(v.deposit_amount))}</div>
                             {v.bank_transfer_code && (
-                              <div className="text-xs text-[#6e7a74]">Code: {v.bank_transfer_code}</div>
+                              <div className="text-xs text-ink-3">Code: {v.bank_transfer_code}</div>
                             )}
                           </div>
                         ) : (
-                          <span className="text-xs text-[#6e7a74]">—</span>
+                          <span className="text-xs text-ink-3">—</span>
                         )}
                       </td>
                       <td className="py-3 px-4">
                         {v.attended === null ? (
-                          <span className="text-xs text-[#6e7a74]">Pending</span>
+                          <span className="text-xs text-ink-3">Pending</span>
                         ) : v.attended ? (
                           <span className="text-xs text-green-700 font-semibold">Yes {v.credit_issued ? "✓ Credit" : ""}</span>
                         ) : (
