@@ -157,7 +157,7 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
 
   if (!photos.length) {
     return (
-      <div className="aspect-video bg-line rounded-xl flex items-center justify-center">
+      <div className="aspect-video bg-cream rounded-3xl flex items-center justify-center">
         <span className="material-symbols-outlined text-ink-3 text-6xl">image</span>
       </div>
     );
@@ -166,20 +166,20 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
   return (
     <div className="space-y-3">
       {/* Hero */}
-      <div className="relative rounded-xl overflow-hidden aspect-video group shadow-sm bg-[#eae8e7] cursor-pointer" onClick={() => setLightbox(0)}>
+      <div className="relative rounded-3xl overflow-hidden aspect-video group bg-cream cursor-pointer" onClick={() => setLightbox(0)}>
         <Image src={photos[0]} alt={title} fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority />
         <div className="absolute top-4 left-4">
-          <span className="bg-brand-soft text-brand-ink px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm">verified</span>Curated
+          <span className="bg-white/95 text-ink px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
+            <span aria-hidden className="material-symbols-outlined text-sm text-brand">verified</span>{t("card.curated")}
           </span>
         </div>
         {videoUrl && (
           <button
             onClick={(e) => { e.stopPropagation(); setShowVideo(true); }}
-            className="absolute bottom-4 left-4 flex items-center gap-2 bg-black/60 hover:bg-black/80 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 hover:bg-white text-ink px-4 py-2 rounded-full text-sm font-bold shadow-sm transition-colors"
           >
-            <span className="material-symbols-outlined text-base">play_circle</span>
-            Watch Video
+            <span aria-hidden className="material-symbols-outlined text-base text-brand">play_circle</span>
+            {t("gallery.video")}
           </button>
         )}
       </div>
@@ -188,7 +188,7 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
       {photos.length > 1 && (
         <div className="grid grid-cols-4 gap-3">
           {photos.slice(1, 5).map((url, i) => (
-            <button key={i} onClick={() => setLightbox(i + 1)} className="relative rounded-lg overflow-hidden aspect-video border-2 border-transparent hover:border-brand transition-colors">
+            <button key={i} onClick={() => setLightbox(i + 1)} className="relative rounded-xl overflow-hidden aspect-video border-2 border-transparent hover:border-brand transition-colors">
               <Image src={url} alt={`${title} ${i + 2}`} fill className="object-cover" />
               {i === 3 && photos.length > 5 && (
                 <div className="absolute inset-0 bg-black/50 flex items-center justify-center text-white text-sm font-bold">
@@ -223,7 +223,7 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
 
   if (availableTabs.length === 0) {
     return (
-      <div className="aspect-video bg-line rounded-xl flex items-center justify-center">
+      <div className="aspect-video bg-cream rounded-3xl flex items-center justify-center">
         <span className="material-symbols-outlined text-ink-3 text-6xl">image</span>
       </div>
     );
@@ -243,7 +243,7 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
             key={tab.key}
             onClick={() => handleTabChange(tab.key)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              activeTab === tab.key ? "bg-brand text-white" : "bg-line text-ink-2 hover:bg-line-strong"
+              activeTab === tab.key ? "bg-ink text-white" : "bg-canvas text-ink-2 hover:bg-line"
             }`}
           >
             <span className="material-symbols-outlined text-base">{tab.icon}</span>
@@ -255,28 +255,28 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
 
       {/* Hero */}
       <div
-        className="relative rounded-xl overflow-hidden aspect-video group shadow-sm bg-[#eae8e7] cursor-pointer"
+        className="relative rounded-3xl overflow-hidden aspect-video group bg-cream cursor-pointer"
         onClick={() => setLightbox({ photos: currentPhotos, index: activeIndex, label: currentLabel })}
       >
         {currentPhotos[activeIndex] && (
           <Image src={currentPhotos[activeIndex]} alt={`${title} — ${activeTab} ${activeIndex + 1}`} fill className="object-cover group-hover:scale-105 transition-transform duration-700" priority={activeIndex === 0} />
         )}
         <div className="absolute top-4 left-4">
-          <span className="bg-brand-soft text-brand-ink px-3 py-1 rounded-full text-xs font-bold flex items-center gap-1">
-            <span className="material-symbols-outlined text-sm">verified</span>Curated
+          <span className="bg-white/95 text-ink px-3 py-1.5 rounded-full text-xs font-bold flex items-center gap-1 shadow-sm">
+            <span aria-hidden className="material-symbols-outlined text-sm text-brand">verified</span>{t("card.curated")}
           </span>
         </div>
         {videoUrl && (
           <button
             onClick={(e) => { e.stopPropagation(); setShowVideo(true); }}
-            className="absolute bottom-4 left-4 flex items-center gap-2 bg-black/60 hover:bg-black/80 text-white px-4 py-2 rounded-lg text-sm font-medium transition-colors"
+            className="absolute bottom-4 left-4 flex items-center gap-2 bg-white/95 hover:bg-white text-ink px-4 py-2 rounded-full text-sm font-bold shadow-sm transition-colors"
           >
-            <span className="material-symbols-outlined text-base">play_circle</span>
-            Watch Video
+            <span aria-hidden className="material-symbols-outlined text-base text-brand">play_circle</span>
+            {t("gallery.video")}
           </button>
         )}
         {currentPhotos.length > 1 && (
-          <div className="absolute bottom-4 right-4 bg-black/50 text-white text-xs px-2 py-1 rounded-lg">
+          <div className="absolute bottom-4 right-4 bg-black/55 text-white text-xs font-semibold px-2.5 py-1 rounded-full">
             {activeIndex + 1} / {currentPhotos.length}
           </div>
         )}
@@ -289,8 +289,8 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
             <button
               key={i}
               onClick={() => setActiveIndex(i)}
-              className={`relative rounded-lg overflow-hidden aspect-video border-2 transition-colors ${
-                i === activeIndex ? "border-brand" : "border-transparent hover:border-[#80d7b6]"
+              className={`relative rounded-xl overflow-hidden aspect-video border-2 transition-colors ${
+                i === activeIndex ? "border-brand" : "border-transparent hover:border-brand-light"
               }`}
             >
               <Image src={url} alt={`${title} ${activeTab} thumbnail ${i + 1}`} fill className="object-cover" />
