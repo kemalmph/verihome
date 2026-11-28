@@ -6,8 +6,8 @@ lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
 Terakhir diperbarui: 2026-11-28 · branch kerja
 `claude/site-management-phase-3-inventory-uyamoo` (Fase 3 — Site Management
-per pemilik site & staf site; PR menunggu persetujuan owner, **migration
-`20261128120000_site_staff_invites.sql` belum diterapkan ke produksi**). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+per pemilik site & staf site; PR #9 di-merge ke `main` atas persetujuan owner;
+migration `20261128120000_site_staff_invites.sql` **sudah di produksi**). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -90,7 +90,14 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 ## Selesai
 
 - **Fase 3 — Site Management per pemilik site & staf site** (28 Nov, branch
-  `claude/site-management-phase-3-inventory-uyamoo`, PR belum di-merge).
+  `claude/site-management-phase-3-inventory-uyamoo`, PR #9 di-merge atas
+  persetujuan owner). **Migration `20261128120000_site_staff_invites.sql`
+  diterapkan ke produksi 28 Nov lewat MCP `apply_migration`** (versi tercatat
+  `20261128115051`). Terverifikasi: RLS aktif, 0 policy, tanpa grant
+  anon/authenticated; `redeem_site_staff_invite` SECURITY DEFINER,
+  `search_path=public, pg_temp`, EXECUTE hanya service_role (+ owner
+  postgres); `site_staff` dan `site_staff_invites` 0 baris; `owner_id`
+  Co&co Lokalima tetap kosong.
   Inventaris action/route/halaman disetujui owner sebelum kode ditulis.
   - `src/lib/auth/site-permissions.ts` (murni): relasi site — pemilik
     (owners.portal_access='active' + sites.owner_id), superstaff,
@@ -379,11 +386,10 @@ Tes: 13 suite, ±434 check, semua hijau di DB lokal bersih.
 
 ## Sedang dikerjakan
 
-**Fase 3 menunggu owner:** (1) persetujuan menerapkan
-`20261128120000_site_staff_invites.sql` ke produksi lewat MCP
-`apply_migration` — kode yang di-merge tanpa migration itu membuat halaman
-Staf & penebusan undangan error; (2) review & merge PR. `sites.owner_id`
-Co&co Lokalima sengaja **tidak** diisi dan belum ada undangan di produksi.
+**Fase 3 selesai** (PR #9 di-merge, migration di produksi). `sites.owner_id`
+Co&co Lokalima sengaja **tidak** diisi dan belum ada undangan di produksi —
+menunggu instruksi owner. Cek deploy Vercel untuk merge commit PR #9. Berikutnya
+**Fase 3b (`/account`)** — instruksi dari owner menyusul.
 
 Redesign V7 sudah di `main` (PR #5). Cek di Vercel bahwa `630ee4c` Ready ·
 Current. Yang belum: halaman lain (listing, detail, login, contact, form) baru ikut
@@ -402,9 +408,7 @@ placeholder.
 
 Urut prioritas:
 
-0. **Fase 3: apply migration (setelah owner setuju) → merge PR #9 → cek Vercel.**
-   Lalu perbarui System Reference (§21, §02, §20.7, §19 jebakan `auth.users`)
-   atas persetujuan owner, lalu **PR `/account` (Fase 3b)**, yang juga
+0. **Fase 3b: PR `/account`** (instruksi owner menyusul), yang juga
    memperbaiki `test-login-no-js` (selector navbar V7). Sesudahnya: email
    binding + konfirmasi untuk undangan pemilik; dashboard per peran; migration
    hapus kolom `is_admin`/`is_surveyor`.
@@ -585,9 +589,9 @@ Bukan pemblokir, tapi sayang kalau hilang:
 (`hxktoewssuahtkrksbpx`, ap-northeast-1, Postgres 17).
 Migration di `supabase/migrations/` (15 file; yang lama di
 `supabase/migrations-archive/`).
-Terakhir di produksi: `20261126180000_drop_admin_email_hook.sql`.
-**Belum di produksi:** `20261128120000_site_staff_invites.sql` (Fase 3,
-menunggu persetujuan owner).
+Terakhir: `20261128120000_site_staff_invites.sql` (produksi sudah sama;
+tercatat di produksi sebagai versi `20261128115051` karena MCP memberi
+timestamp sendiri — lihat HANDOFF Phase B).
 Isi produksi saat ini: 1 site · 14 unit · 2 reservasi · 3 cicilan · 10 entri
 buku besar · 7 properti (6 tayang) · 3 pemilik · 30 pengguna · 24 amenity ·
 0 membership plan.
