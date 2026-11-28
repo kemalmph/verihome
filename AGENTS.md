@@ -17,3 +17,10 @@ subsystem that no longer works the way it is described — say so in chat and na
 then leave it alone. The owner decides what goes in.
 
 This holds even when a handoff summary from a previous session says to keep it updated.
+
+# Design system
+
+Before any UI work, read `DESIGN.md` (rules) — tokens live in the `@theme` block of
+`src/app/globals.css`. Use tokens, never hex literals in class names. The visual version
+is the Cosystem Design System artifact, https://claude.ai/artifact/52wLDrjHLDbbgfiCYg2qyN.
+When a rule changes, update the code, then `DESIGN.md`, then the artifact.

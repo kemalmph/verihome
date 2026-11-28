@@ -1,208 +1,220 @@
-# Cosystem Design System
+# Cosystem Design System (V7)
 
-Extracted from Stitch project `10150202233806739775` (9 screens).
+Panduan visual untuk semua halaman Cosystem. Diturunkan dari prototype V7
+owner (homepage "Run Your Space.", mockup dashboard laptop + ponsel) dan dari
+halaman yang sudah dibangun mengikutinya. Versi visualnya (token, komponen
+dengan pratinjau, logo, foto): **Cosystem Design System** —
+<https://claude.ai/artifact/52wLDrjHLDbbgfiCYg2qyN>.
 
----
+Kalau aturan berubah, ubah kode lebih dulu, lalu dokumen ini, lalu
+artifact-nya. Ketiganya harus berkata sama.
 
-## Color Tokens
+**Aturan utama:** jangan menulis warna sebagai hex di kelas
+(`bg-[#f36b21]`). Pakai token. Seluruh aplikasi pernah ditulis dengan literal
+hex di 124 file, dan rebrand butuh codemod; dengan token, rebrand cukup
+mengubah satu blok.
 
-### Brand Colors (Core)
-| Token | Hex | Usage |
-|---|---|---|
-| `primary-green` | `#1A7A5E` | Primary container, CTAs, accents |
-| `dark-navy` | `#0D2137` | Footer, sidebar, hero dark sections |
-| `light-green-bg` | `#E8F5F0` | Badges, tag backgrounds, hover fills |
-| `text-primary` | `#333333` | Body text (mapped to `on-surface`) |
-| `text-muted` | `#888888` | Secondary text, labels |
-| `border-color` | `#CCCCCC` | Card borders, dividers |
+Sumber kebenaran ada di kode, bukan di dokumen ini. Kalau keduanya berbeda,
+kode yang benar dan dokumen ini yang perlu diperbarui:
 
-### Material Design Color System (from Stitch)
-| Token | Hex | Description |
-|---|---|---|
-| `primary` | `#006048` | Deep green (text/icon use) |
-| `primary-container` | `#1A7A5E` | Primary button backgrounds |
-| `on-primary` | `#FFFFFF` | Text on primary containers |
-| `primary-fixed` | `#9CF4D1` | Subtle green tint |
-| `primary-fixed-dim` | `#80D7B6` | Dimmed primary fixed |
-| `secondary` | `#4D6079` | Secondary text, nav links |
-| `secondary-container` | `#CEE1FF` | Light blue container |
-| `on-secondary` | `#FFFFFF` | Text on secondary |
-| `surface` | `#FBF9F8` | Page background |
-| `surface-container-lowest` | `#FFFFFF` | Card background (white) |
-| `surface-container-low` | `#F6F3F2` | Subtle card bg |
-| `surface-container` | `#F0EDED` | Input/field background |
-| `surface-container-high` | `#EAE8E7` | Higher elevation surface |
-| `surface-container-highest` | `#E4E2E1` | Highest elevation surface |
-| `surface-dim` | `#DCD9D9` | Dimmed surface |
-| `on-surface` | `#1B1C1C` | Primary text on light backgrounds |
-| `on-surface-variant` | `#3E4944` | Secondary text, icons |
-| `outline` | `#6E7A74` | Borders, dividers |
-| `outline-variant` | `#BEC9C2` | Subtle borders |
-| `inverse-surface` | `#303030` | Dark surfaces |
-| `inverse-on-surface` | `#F3F0F0` | Text on dark surfaces |
-| `on-secondary-fixed` | `#081C32` | Dark navy text |
-| `error` | `#BA1A1A` | Error states |
-| `error-container` | `#FFDAD6` | Error backgrounds |
-
-### Semantic Mappings
-- **Page background**: `#FBF9F8` (surface)
-- **Card background**: `#FFFFFF` (surface-container-lowest)
-- **Brand green**: `#1A7A5E` (primary-container)
-- **Dark text**: `#1B1C1C` (on-surface)
-- **Muted text**: `#3E4944` (on-surface-variant)
-- **Sidebar/Footer bg**: `#0D2137` (dark navy custom)
-- **Badge green bg**: `#E8F5F0` (light-green-bg)
-- **Badge green text**: `#1A7A5E` (primary-container)
-
----
-
-## Typography Scale
-
-**Font Family**: Public Sans (Google Fonts)  
-Weights used: 300, 400, 500, 600, 700, 800
-
-| Token | Size | Line Height | Weight | Letter Spacing | Usage |
-|---|---|---|---|---|---|
-| `h1` | 40px | 1.2 | 700 | -0.02em | Hero headings (desktop) |
-| `h1-mobile` | 32px | 1.2 | 700 | — | Hero headings (mobile) |
-| `h2` | 32px | 1.3 | 700 | — | Section headings |
-| `h2-mobile` | 24px | 1.3 | 700 | — | Section headings (mobile) |
-| `h3` | 24px | 1.4 | 600 | — | Card titles, sidebar brand |
-| `h4` | 20px | 1.4 | 600 | — | Card subtitles, price |
-| `body-lg` | 18px | 1.6 | 400 | — | Hero subtext, important body |
-| `body-md` | 16px | 1.6 | 400 | — | Standard body text |
-| `label-md` | 14px | 1.0 | 500 | — | Buttons, nav links, badges |
-| `small` | 12px | 1.4 | 400 | — | Captions, timestamps, meta |
-
----
-
-## Spacing Scale
-
-| Token | Value | Description |
-|---|---|---|
-| `xs` | 4px | Micro gaps |
-| `base` | 8px | Base unit |
-| `sm` | 12px | Small gaps |
-| `md` | 24px | Section padding, card padding |
-| `gutter` | 24px | Grid gutter |
-| `lg` | 48px | Large section spacing |
-| `xl` | 80px | Extra large section spacing |
-| `margin-mobile` | 16px | Page margin (mobile) |
-| `margin-desktop` | 64px | Page margin (desktop) |
-
----
-
-## Border Radius
-
-| Token | Value | Usage |
-|---|---|---|
-| `DEFAULT` | 4px (`0.25rem`) | Inputs, small elements |
-| `lg` | 8–12px | Cards, buttons |
-| `xl` | 12–16px | Featured cards, sections |
-| `full` | 9999px | Pills, avatars, badges |
-
----
-
-## Shadow Styles
-
-```css
-/* Surface 1 — standard card */
-box-shadow: 0px 4px 12px rgba(13, 33, 55, 0.05);
-
-/* Surface 1 Hover — elevated card */
-box-shadow: 0px 8px 20px rgba(13, 33, 55, 0.08);
-
-/* Card border hover */
-border-color: rgba(26, 122, 94, 0.3);
-```
-
----
-
-## Component Patterns
-
-### Navbar
-- Height: 80px (h-20), sticky, z-50
-- Background: `surface` (#FBF9F8), border-bottom `outline-variant`
-- Logo: `h3` weight bold, `primary` color
-- Nav links: `body-md` / `label-md`, `on-surface-variant`, hover `primary`
-- Active nav link: `primary` color + border-bottom-2 `primary`
-- CTA button: `bg-primary-container text-on-primary` rounded-lg
-- Language toggle: `EN | ID` pill, `surface-container-low` bg
-
-### Listing Card
-- White background, `1px solid #CCCCCC`, `border-radius: 12px`
-- Image: 16:9 aspect ratio, hover scale-110 with transition-500
-- Verified badge: `bg-[#E8F5F0] text-[#1A7A5E]` rounded-full, top-left
-- RLA Score: `bg-[#E8F5F0] text-[#1A7A5E]` badge, top-right or inline
-- Price: `text-[#1A7A5E] font-h3 font-bold`
-- Title: `text-[#0D2137] font-h4`
-- Location: `on-surface-variant` + location_on icon
-- Amenity row: icons + small text, border-y `outline-variant`
-- CTA: full-width outline button `border-[#1A7A5E] text-[#1A7A5E]`, hover fill green
-- Hover: card lifts with `shadow: 0px 8px 20px rgba(13,33,55,0.08)`, border-color `rgba(26,122,94,0.3)`
-
-### RLA Score Component
-- Container: `surface-container-low` bg, `outline-variant` border, `rounded-xl`
-- Score badge: white bg, `primary` star icon, `h3` text
-- Progress bars: `surface-container-highest` track, `primary` fill, `h-2 rounded-full`
-- Categories: Building Condition, Natural Lighting, Bathroom, Ventilation
-- Tag pills: `secondary-container` / `primary-fixed` backgrounds
-
-### Dashboard Sidebar
-- Width: 288px (w-72)
-- Background: `#0D2137` (dark navy)
-- Logo: `primary-fixed` color (`#9CF4D1`)
-- Active item: `primary-fixed-dim` text + `bg-white/5`
-- Inactive items: `white/70`, hover `white + bg-white/5`
-- User card: `bg-white/5 border-white/10`
-- Active badge: `bg-green-custom (#1A7A5E)` text white
-
-### Consultation Package Cards
-- Basic: standard border `outline-variant`
-- Premium: `border-2 border-primary-container`, `scale-105` on desktop
-- "Most Popular" chip: `bg-primary-container text-on-primary`, top-right corner
-- Check icons: filled, `primary` color
-
-### Payment Cards
-- Border: `1px solid #CCCCCC`
-- Selected: `border-color: #1A7A5E`, `bg-[#E8F5F0]`
-- Hover: `border-color: rgba(26,122,94,0.3)`, box-shadow lift
-
-### Footer
-- Background: `#0D2137` (on-background / dark navy)
-- Text: `surface-variant` (muted white/gray)
-- Logo: `primary-fixed` (#9CF4D1 mint green)
-- Link hover: `primary-fixed`
-- Simple footer variant: `secondary` (#4D6079) background
-
-### Buttons
-| Variant | Style |
+| File | Isi |
 |---|---|
-| Primary filled | `bg-primary text-on-primary` or `bg-primary-container text-on-primary` |
-| Outline | `border-2 border-primary text-primary`, hover fill |
-| Ghost | `text-primary`, hover `bg-surface-container` |
-| Destructive | `bg-error text-on-error` |
-
-### Verified/Curated Badge
-```
-bg: #E8F5F0
-text: #1A7A5E
-icon: verified (filled)
-border-radius: full (pill)
-font: label-md, semi-bold
-```
-
-### Trust & Cosystem Guarantee block
-- Dark navy bg `#0D2137`
-- Icon: `verified_user`, `primary-fixed` color
-- Text: white, small, opacity 90
+| `src/app/globals.css` (`@theme`) | Token warna, bayangan, font |
+| `src/lib/design-tokens.ts` | Salinan token untuk SVG, canvas, style inline |
+| `src/components/brand/styles.ts` | Resep tombol pil dan `kicker` |
+| `src/components/brand/Logo.tsx` | Logo (varian `dark` / `light`) |
+| `src/components/checkout/` | Kartu, field, indikator langkah untuk alur multi-langkah |
 
 ---
 
-## Layout
+## 1. Warna
 
-- Max content width: `1280px` (max-w-[1280px]) or `1400px` for dashboard
-- Grid: 12-column, `24px` gutter
-- Desktop breakpoint: `md:` (768px), `lg:` (1024px)
-- Mobile padding: 16px sides
-- Desktop padding: 64px sides
+### Merek
+
+| Token | Hex | Dipakai untuk |
+|---|---|---|
+| `brand` | `#F36B21` | Tombol utama, item nav aktif, ikon, isian progress |
+| `brand-strong` | `#DF5814` | Hover / pressed dari isian `brand` |
+| `brand-ink` | `#C2410C` | **Teks** oranye di atas latar terang |
+| `brand-soft` | `#FFF0E4` | Tile ikon, chip lembut, sorotan jumlah |
+| `brand-light` | `#FFC9A6` | Garis/ring di sekitar `brand-soft`, aksen di latar gelap |
+
+> **Teks oranye selalu `text-brand-ink`, bukan `text-brand`.** `#F36B21` di
+> atas putih hanya ~3:1, di bawah WCAG AA untuk teks biasa. `brand-ink`
+> menjaga rona yang sama dan mencapai ~5:1. Tombol tetap `bg-brand` dengan
+> teks putih, mengikuti prototype.
+
+### Netral
+
+| Token | Hex | Dipakai untuk |
+|---|---|---|
+| `ink` | `#171717` | Judul, angka utama, teks penting |
+| `ink-2` | `#3F3F46` | Teks isi |
+| `ink-3` | `#62636A` | Teks sekunder, label, keterangan |
+| `line` | `#EEE8E1` | Garis tipis, border kartu |
+| `line-strong` | `#DDD6CF` | Border field input |
+| `cream` | `#FFF7EF` | Latar kartu model ruang, chip fasilitas |
+| `cream-2` | `#FFFAF5` | Latar section hangat (showcase, header halaman, alur checkout) |
+| `canvas` | `#F6F5F3` | Latar halaman dashboard, segmented control |
+| `panel` / `panel-2` | `#1C1C1E` / `#2A2A2D` | Sidebar gelap dashboard |
+
+### Status
+
+`success` `#15803D`, `success-ink` `#166534`, `success-soft` `#E7F6EC`,
+`success-line` `#B7E0C3` — **hanya untuk status** (Confirmed, Lunas, Aktif).
+Hijau berarti "selesai", bukan merek. Peringatan tenggat memakai amber
+Tailwind (`amber-50/200/600/900`), error memakai `red-50/200/700`.
+
+Warna semantik yang sengaja tidak memakai token: bar skor RLA (hijau/biru/
+amber/merah menurut nilai) dan warna aliran pendapatan di laporan.
+
+---
+
+## 2. Tipografi
+
+Font: **Inter** (variabel, `next/font`), satu-satunya keluarga. Ikon memakai
+Material Symbols Outlined.
+
+| Peran | Kelas | Contoh |
+|---|---|---|
+| Hero | `text-[61px] md:text-[clamp(54px,7vw,86px)] leading-[0.96] font-black tracking-[-0.055em]` | "Run Your Space." |
+| Judul halaman | `text-[36px] md:text-[48px] leading-[1.02] font-extrabold tracking-[-0.045em]` | "Semua Listing" |
+| Judul section | `text-[32px] md:text-[clamp(32px,4vw,44px)] leading-[1.08] font-extrabold tracking-[-0.04em]` | "Designed for Different Space Models" |
+| Judul kartu besar | `text-xl font-extrabold tracking-[-0.03em]` | "Penilaian RLA", judul langkah checkout |
+| Judul kartu kecil | `text-[17px] font-bold tracking-[-0.02em]` | Nama listing di kartu |
+| Kicker | `kicker` dari `brand/styles.ts` (12px, extrabold, uppercase, `tracking-[0.12em]`, `brand-ink`) | "MARKETPLACE" |
+| Isi | `text-base leading-[1.65] text-ink-3` (paragraf lepas) / `text-sm text-ink-2` (di kartu) | |
+| Label field | `text-xs font-semibold text-ink-2` | |
+| Angka uang utama | `font-extrabold tracking-[-0.03em] tabular-nums` | "IDR 1.520.963" |
+
+Judul besar selalu dengan tracking negatif; makin besar, makin rapat.
+Angka uang dan jam memakai `tabular-nums` dan `whitespace-nowrap` agar
+"IDR" tidak terpisah dari nominal di ponsel.
+
+---
+
+## 3. Bentuk, bayangan, jarak
+
+### Radius
+
+| Elemen | Radius |
+|---|---|
+| Tombol, chip, tab, slot jam | `rounded-full` (pil) |
+| Field input | `rounded-xl`, tinggi `h-12` |
+| Kartu kecil / baris / sub-panel | `rounded-2xl` |
+| Kartu utama, panel CTA, kartu langkah checkout, kotak filter | `rounded-3xl` |
+| Kartu listing dan kartu model ruang | `rounded-[19px]` |
+| Tile ikon fitur | `w-[54px] h-[54px] rounded-[17px] bg-brand-soft` |
+
+### Bayangan
+
+| Token | Untuk |
+|---|---|
+| `shadow-card` | Kartu diam (dashboard, kartu listing) |
+| `shadow-lift` | Kartu yang menonjol (filter mengambang, kotak booking, dropdown) dan hover kartu |
+| `shadow-brand` | Tombol `brand` dan item aktif |
+
+Kartu standar: `bg-white rounded-2xl border border-line shadow-card`.
+Kartu yang bisa diklik naik saat hover: `hover:-translate-y-1 hover:shadow-lift`.
+
+### Tata letak
+
+- Halaman publik: kontainer `max-w-[1160px] mx-auto px-4 md:px-6`.
+- Halaman checkout: `max-w-2xl`, latar `bg-cream-2`.
+- Dashboard: latar `bg-canvas`, konten `p-6 md:p-12` di samping sidebar
+  (`md:ml-(--sidebar-w)`).
+- Section publik: `py-14 md:py-20` kira-kira; prototype memakai angka
+  spesifik per section — ikuti angka itu kalau ada prototype-nya.
+
+---
+
+## 4. Komponen
+
+### Tombol (`pill` di `brand/styles.ts`)
+
+| Resep | Tampilan | Kapan |
+|---|---|---|
+| `pill.primary` | Oranye, teks putih, `shadow-brand`, naik 1px saat hover | Satu aksi utama per tampilan |
+| `pill.secondary` | Putih, garis tipis | Aksi kedua di samping primary, "Kembali" |
+| `pill.primarySm` | Primary kecil | Header, toolbar |
+
+Tombol bisa berupa `<Link>`, karena resepnya kelas, bukan komponen. Tombol
+dua baris (judul + subjudul) tambahkan `flex-col gap-0.5 text-center`.
+
+### Field
+
+`w-full h-12 rounded-xl border border-line-strong bg-white px-3.5 text-sm
+focus:border-brand focus:ring-2 focus:ring-brand/20` — tersedia sebagai
+`flow.field` di `checkout/styles.ts`. Label di atas field, bukan placeholder
+sebagai label.
+
+### Chip
+
+- Spesifikasi/fasilitas: `rounded-full bg-cream border border-[#f3e9df] px-3.5 py-1.5`.
+- Status lembut: `rounded-full bg-brand-soft text-brand-ink` atau `success-soft`.
+- Label di atas foto: `rounded-full bg-white/95 shadow-sm`, ikon `text-brand`.
+
+### Segmented control / tab
+
+Wadah `rounded-full bg-canvas p-1`; item aktif `bg-white text-ink shadow-card`,
+item lain `text-ink-3`. Tab kategori galeri: aktif `bg-ink text-white`.
+
+### Indikator langkah (`checkout/FlowSteps`)
+
+Pil per langkah: aktif oranye dengan nama, selesai `brand-soft` dengan ✓,
+belum `canvas`. Di ponsel hanya langkah aktif yang menampilkan nama.
+
+### Daftar centang
+
+Lingkaran `w-[22px] h-[22px] rounded-full bg-brand text-white` berisi ✓.
+Untuk kekurangan: lingkaran `bg-line-strong` berisi ✕.
+
+### Panel CTA
+
+`rounded-3xl bg-[#fff2e7] border border-[#ffead9]`, teks kiri, `pill.primary`
+kanan; di ponsel tombol jadi lebar penuh.
+
+### Sidebar dashboard
+
+`bg-panel`, logo varian `light`. Item: `rounded-xl px-4 py-2.5`, aktif
+`bg-brand text-white font-semibold shadow-brand`, lain `text-white/75
+hover:bg-white/[.06]`. Rail ciut menampilkan "c" + titik oranye.
+
+### Ikon
+
+Material Symbols Outlined, berat 400. Di tile fitur homepage dipakai SVG
+garis 24×24, stroke 1.8, `currentColor` (lihat `src/app/page.tsx`).
+
+---
+
+## 5. Logo
+
+`<Logo variant="dark" | "light" height={…} />`. Tinggi lazim: 24 (navbar),
+22 (footer), 26 (sidebar), 20 (bar ponsel). Jangan menulis "Cosystem" sebagai
+teks berwarna untuk menggantikan logo.
+
+---
+
+## 6. Bahasa dan teks
+
+Semua teks antarmuka lewat `t()` / `useT()` dari `src/lib/i18n/strings.ts`,
+ID dan EN berdampingan. "Run Your Space." tetap Inggris di kedua bahasa.
+Jangan menanam teks langsung di komponen ("Continue", "Watch Video" pernah
+lolos begini).
+
+---
+
+## 7. Halaman tanpa prototype
+
+Sebagian besar halaman belum punya prototype. Urutan acuan:
+
+1. Prototype owner, kalau ada.
+2. Halaman V7 yang sudah ada dengan pola serupa: daftar → `/listings`,
+   detail → `/listings/[slug]`, form multi-langkah → `/listings/[slug]/book`,
+   dashboard → `/admin`.
+3. Dokumen ini.
+
+Status per 28 Nov 2026: sudah V7 — homepage, navbar/footer publik, kedua
+sidebar dashboard, kartu dashboard, `/listings`, `/listings/[slug]`, alur
+`/book` dan `/viewing`. Halaman lain baru ikut berganti **warna** lewat token;
+tata letaknya masih gaya lama (tombol `rounded-lg`, bukan pil).
