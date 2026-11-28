@@ -33,7 +33,10 @@ sebagian besar Indonesia.
 
 ---
 
-## Dokumen referensi: VeriHome System Reference
+## Dokumen referensi: Cosystem System Reference
+
+Bernama *VeriHome System Reference* sampai 28 Nov 2026; diganti atas
+permintaan owner. URL dan nomor bagian tidak berubah.
 
 <https://claude.ai/artifact/B9WY3ErwkBzWGoY7WRkmJf>
 
@@ -434,7 +437,7 @@ Diberikan owner di session sebelumnya, masih berlaku kecuali dicabut:
   beserta buku besarnya. Izinnya belum dicabut, tapi "belum live" tidak lagi
   benar — konfirmasikan ulang ke owner sebelum mengandalkan izin ini untuk
   perubahan yang berisiko.
-- `AGENTS.md`: **VeriHome System Reference jangan diubah atau diterbitkan
+- `AGENTS.md`: **Cosystem System Reference jangan diubah atau diterbitkan
   ulang** kecuali owner memintanya di session itu juga. Kalau ada yang pantas
   masuk ke sana, sebutkan di chat beserta nomor bagiannya dan biarkan.
 - **Register Co&co tidak boleh masuk repo.** Repo ini publik; registernya
