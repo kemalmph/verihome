@@ -4,6 +4,7 @@ import { Footer } from "@/components/layout/Footer";
 import { getPropertyBySlug } from "@/lib/supabase/queries";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { ViewingFlow } from "./ViewingFlow";
+import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
 import { getLocale } from "@/lib/i18n/server";
 import { t } from "@/lib/i18n/strings";
 
@@ -30,20 +31,24 @@ export default async function ViewingPage({ params }: Props) {
   return (
     <>
       <Navbar />
-      <main className="max-w-2xl mx-auto px-4 py-10">
-        <div className="mb-8">
-          <div className="text-sm text-ink-3 mb-1">{property.area}</div>
-          <h1 className="text-2xl font-bold text-ink">{property.name}</h1>
-          <p className="text-sm text-ink-2 mt-2">
-            {t("view.introA", lang)}{" "}
-            <strong>IDR {new Intl.NumberFormat("id-ID").format(DEPOSIT)}</strong>{" "}
-            {t("view.introB", lang)}
-          </p>
-        </div>
+      <main className="flex-1 bg-cream-2">
+        <div className="max-w-2xl mx-auto px-4 md:px-6 pt-8 pb-14 md:pt-10 md:pb-20">
+        <CheckoutHeader
+          slug={slug}
+          name={property.name}
+          area={property.area}
+          photo={property.photo_urls?.[0]}
+          backLabel={t("flow.backToListing", lang)}
+        >
+          {t("view.introA", lang)}{" "}
+          <strong className="text-ink">IDR {new Intl.NumberFormat("id-ID").format(DEPOSIT)}</strong>{" "}
+          {t("view.introB", lang)}
+        </CheckoutHeader>
         <ViewingFlow
           propertyId={property.id}
           depositAmount={DEPOSIT}
         />
+        </div>
       </main>
       <Footer />
     </>

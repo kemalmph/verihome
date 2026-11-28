@@ -1,24 +1,20 @@
 "use client";
 
-
 import { useState } from "react";
+import Link from "next/link";
 import { useT } from "@/lib/i18n/LocaleProvider";
 import { DepositPolicy } from "@/components/viewings/DepositPolicy";
 import { VIEWING_POLICY_VERSION } from "@/lib/viewings/policy";
+import { pill } from "@/components/brand/styles";
+import { FlowSteps } from "@/components/checkout/FlowSteps";
+import { PaymentInstructions } from "@/components/checkout/PaymentInstructions";
+import type { PaymentIntent } from "@/lib/payment/types";
+import { flow } from "@/components/checkout/styles";
 
 interface Props {
   propertyId:    string;
   slug:          string;
   depositAmount: number;
-}
-
-interface Intent {
-  instructions:  string;
-  bankName:      string;
-  accountNumber: string;
-  accountHolder: string;
-  transferCode:  string;
-  totalAmount:   number;
 }
 
 function fmt(n: number) {
@@ -43,64 +39,68 @@ function StepSchedule({
   const slots = ["09:00", "10:00", "11:00", "13:00", "14:00", "15:00", "16:00"];
 
   return (
-    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
-      <h2 className="font-bold text-ink text-lg">{t("view.s1title")}</h2>
+    <section className={flow.card}>
+      <h2 className={flow.title}>{t("view.s1title")}</h2>
 
-      <div>
-        <label className="block text-sm text-ink-2 mb-1">{t("view.prefDate")}</label>
+      <label className="block">
+        <span className={flow.label}>{t("view.prefDate")}</span>
         <input
           type="date"
           min={today}
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
+          className={flow.field}
         />
-      </div>
+      </label>
 
-      <div>
-        <label className="block text-sm text-ink-2 mb-2">{t("view.prefTime")}</label>
-        <div className="flex flex-wrap gap-2">
+      <fieldset>
+        <legend className={flow.label}>{t("view.prefTime")}</legend>
+        <div className="flex flex-wrap gap-2 mt-1">
           {slots.map((s) => (
             <button
               key={s}
+              type="button"
+              aria-pressed={time === s}
               onClick={() => setTime(s)}
-              className={`px-4 py-1.5 rounded-full text-sm border transition-colors ${
+              className={`px-4 py-2 rounded-full text-sm font-semibold border tabular-nums transition-colors ${
                 time === s
-                  ? "bg-brand text-white border-brand"
-                  : "border-line-strong text-ink-2 hover:border-brand"
+                  ? "bg-brand text-white border-brand shadow-brand"
+                  : "bg-white border-line-strong text-ink-2 hover:border-brand hover:text-ink"
               }`}
             >
               {s}
             </button>
           ))}
         </div>
-      </div>
+      </fieldset>
 
-      <div>
-        <label className="block text-sm text-ink-2 mb-1">{t("view.notes")}</label>
+      <label className="block">
+        <span className={flow.label}>{t("view.notes")}</span>
         <textarea
           rows={3}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder={t("view.notesPh")}
-          className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand resize-none"
+          className={flow.textarea}
         />
-      </div>
+      </label>
 
-      <div className="bg-canvas rounded-lg p-3 text-sm text-ink-2">
-        {t("view.depositRequired")} <strong className="text-brand-ink">IDR {fmt(depositAmount)}</strong>
-        <br />
-        <span className="text-xs text-ink-3">{t("view.depositNote")}</span>
+      <div className="rounded-2xl bg-cream-2 border border-line px-5 py-4">
+        <p className="text-sm text-ink-2">
+          {t("view.depositRequired")}{" "}
+          <strong className="text-ink font-extrabold">IDR {fmt(depositAmount)}</strong>
+        </p>
+        <p className="mt-1 text-xs text-ink-3">{t("view.depositNote")}</p>
       </div>
 
       <button
         onClick={() => onNext(date, time, notes)}
         disabled={!date || !time}
-        className="w-full py-3 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-40"
+        className={`${pill.primary} w-full`}
       >
-        Continue →
+        {t("flow.continue")} <span aria-hidden>→</span>
       </button>
-    </div>
+    </section>
   );
 }
 
@@ -117,96 +117,79 @@ function StepConfirm({
 }) {
   const t = useT();
   return (
-    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
-      <h2 className="font-bold text-ink text-lg">{t("view.s2title")}</h2>
+    <section className={flow.card}>
+      <h2 className={flow.title}>{t("view.s2title")}</h2>
 
-      <div className="space-y-2 text-sm">
+      <dl className="text-sm divide-y divide-line">
         {[
           { label: t("view.date"),    value: date },
           { label: t("view.time"),    value: time },
           { label: t("view.deposit"), value: `IDR ${fmt(depositAmount)}` },
         ].map((r) => (
-          <div key={r.label} className="flex justify-between border-b border-canvas pb-2">
-            <span className="text-ink-2">{r.label}</span>
-            <span className="font-semibold text-ink">{r.value}</span>
+          <div key={r.label} className="flex justify-between gap-4 py-2.5">
+            <dt className="text-ink-3">{r.label}</dt>
+            <dd className="font-semibold text-ink tabular-nums">{r.value}</dd>
           </div>
         ))}
         {notes && (
-          <div>
-            <p className="text-ink-3 text-xs mb-0.5">{t("view.notesShort")}</p>
-            <p className="text-sm">{notes}</p>
+          <div className="py-2.5">
+            <dt className="text-ink-3 text-xs mb-0.5">{t("view.notesShort")}</dt>
+            <dd className="text-sm text-ink-2">{notes}</dd>
           </div>
         )}
-      </div>
+      </dl>
 
-      {/* The terms come before the money, not after it. */}
+      {/* The terms come before the money, not after it (Reference §10). */}
       <DepositPolicy deposit={depositAmount} />
 
-      <label className="flex items-start gap-3 bg-canvas rounded-lg p-3 cursor-pointer">
+      <label className="flex items-start gap-3 rounded-2xl border border-line bg-cream-2 px-4 py-3.5 cursor-pointer has-[:checked]:border-brand-light has-[:checked]:bg-brand-soft">
         <input
           type="checkbox"
           checked={acknowledged}
           onChange={(e) => onAcknowledge(e.target.checked)}
           className="mt-0.5 w-4 h-4 accent-brand shrink-0"
         />
-        <span className="text-sm text-ink-2">
-          {t("view.ack")}
-        </span>
+        <span className="text-sm text-ink-2">{t("view.ack")}</span>
       </label>
 
-      <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 py-3 border border-line-strong rounded-lg text-sm font-semibold text-ink-2 hover:bg-canvas">
-          ← {t("view.back")}
+      <div className="flex flex-col-reverse sm:flex-row gap-3">
+        <button onClick={onBack} className={`${pill.secondary} sm:flex-1`}>
+          <span aria-hidden>←</span> {t("view.back")}
         </button>
         <button
           onClick={onConfirm}
           disabled={loading || !acknowledged}
-          className="flex-1 py-3 bg-brand text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+          className={`${pill.primary} sm:flex-[2] disabled:cursor-not-allowed`}
         >
           {loading ? t("view.submitting") : t("view.submit")}
         </button>
       </div>
-    </div>
+    </section>
   );
 }
 
 // ── Step 3: payment ───────────────────────────────────────────
 
-function StepPayment({ intent }: { intent: Intent }) {
+function StepPayment({ intent }: { intent: PaymentIntent }) {
   const t = useT();
   return (
-    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
-      <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center">
-          <span className="material-symbols-outlined text-brand-ink">check_circle</span>
-        </div>
+    <section className={flow.card}>
+      <div className="flex items-center gap-4">
+        <span className="grid place-items-center shrink-0 w-12 h-12 rounded-2xl bg-success-soft">
+          <span aria-hidden className="material-symbols-outlined text-success">check_circle</span>
+        </span>
         <div>
-          <h2 className="font-bold text-ink text-lg">{t("view.requested")}</h2>
+          <h2 className={flow.title}>{t("view.requested")}</h2>
           <p className="text-sm text-ink-3">{t("view.requestedSub")}</p>
         </div>
       </div>
 
-      <div className="bg-canvas rounded-lg p-4 space-y-3">
-        <p className="font-semibold text-sm text-ink">{t("view.payNow")}</p>
-        <div className="space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-ink-3">{t("view.bank")}</span><strong>{intent.bankName}</strong></div>
-          <div className="flex justify-between"><span className="text-ink-3">{t("view.account")}</span><strong>{intent.accountNumber}</strong></div>
-          <div className="flex justify-between"><span className="text-ink-3">{t("view.accountName")}</span><strong>{intent.accountHolder}</strong></div>
-          <div className="flex justify-between text-brand-ink font-bold border-t border-line-strong pt-2 mt-2">
-            <span>{t("view.transferExactly")}</span>
-            <span>IDR {fmt(intent.totalAmount + Number(intent.transferCode))}</span>
-          </div>
-        </div>
-        <p className="text-xs text-ink-3">{intent.instructions}</p>
-      </div>
+      <PaymentInstructions intent={intent} title="view.payNow" />
 
-      <a
-        href="/dashboard/viewings"
-        className="block w-full py-3 bg-ink text-white rounded-lg text-sm font-semibold text-center hover:opacity-90"
-      >
-        {t("view.myViewings")}
-      </a>
-    </div>
+      <Link href="/dashboard/viewings" className={`${pill.primary} w-full`}>
+        {t("view.myViewings")} <span aria-hidden>→</span>
+      </Link>
+    </section>
   );
 }
 
@@ -220,11 +203,11 @@ export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "property
   const [notes,  setNotes]  = useState("");
   const [loading,setLoading]= useState(false);
   const [error,  setError]  = useState("");
-  const [intent, setIntent] = useState<Intent | null>(null);
+  const [intent, setIntent] = useState<PaymentIntent | null>(null);
   const [acknowledged, setAcknowledged] = useState(false);
 
-  function handleStep1(d: string, t: string, n: string) {
-    setDate(d); setTime(t); setNotes(n);
+  function handleStep1(d: string, tm: string, n: string) {
+    setDate(d); setTime(tm); setNotes(n);
     setStep(2);
   }
 
@@ -255,23 +238,10 @@ export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "property
   }
 
   return (
-    <div className="space-y-4">
-      {/* Progress */}
-      <div className="flex items-center gap-2 text-xs text-ink-3 mb-2">
-        {[t("view.stepSchedule"), t("view.stepConfirm"), t("view.stepPayment")].map((label, i) => (
-          <div key={label} className="flex items-center gap-2">
-            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-brand text-white" : step > i + 1 ? "bg-brand-light text-ink" : "bg-line text-ink-3"}`}>
-              {step > i + 1 ? "✓" : i + 1}
-            </span>
-            <span className={step === i + 1 ? "font-semibold text-ink" : ""}>{label}</span>
-            {i < 2 && <span className="text-[#cccccc]">›</span>}
-          </div>
-        ))}
-      </div>
+    <div className="space-y-5">
+      <FlowSteps labels={[t("view.stepSchedule"), t("view.stepConfirm"), t("view.stepPayment")]} current={step} />
 
-      {error && (
-        <div className="bg-red-50 border border-red-200 rounded-lg p-3 text-sm text-red-600">{error}</div>
-      )}
+      {error && <div role="alert" className={flow.error}>{error}</div>}
 
       {step === 1 && <StepSchedule depositAmount={depositAmount} onNext={handleStep1} />}
       {step === 2 && (

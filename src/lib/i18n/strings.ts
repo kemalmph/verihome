@@ -512,6 +512,9 @@ export const STRINGS = {
   "gallery.close":        { id: "Tutup",            en: "Close" },
   "gallery.previous":     { id: "Sebelumnya",       en: "Previous" },
   "gallery.next":         { id: "Berikutnya",       en: "Next" },
+  "flow.continue":        { id: "Lanjut",           en: "Continue" },
+  "flow.weeks":           { id: "minggu",           en: "weeks" },
+  "flow.backToListing":   { id: "Kembali ke listing", en: "Back to listing" },
   "gallery.video":        { id: "Tonton Video",     en: "Watch Video" },
 
   // ── Viewing request flow ──────────────────────────────────────────────────

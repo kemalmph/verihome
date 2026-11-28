@@ -34,14 +34,14 @@ export function DepositPolicy({ deposit }: { deposit: number }) {
   const lines = viewingPolicyLines(deposit);
 
   return (
-    <div className="border border-line-strong rounded-lg overflow-hidden">
-      <div className="bg-canvas px-4 py-2.5 border-b border-line">
-        <p className="font-semibold text-sm text-ink">
+    <div className="border border-line rounded-2xl overflow-hidden">
+      <div className="bg-canvas px-4 py-3 border-b border-line">
+        <p className="font-bold text-sm text-ink">
           {t("policy.title", lang)}
         </p>
       </div>
 
-      <ul className="divide-y divide-[#f0eeed]">
+      <ul className="divide-y divide-line">
         {lines.map((l) => {
           const tone = TONE[l.outcome];
           return (
