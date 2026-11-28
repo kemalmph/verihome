@@ -119,17 +119,30 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
   - Sidebar: tiap site satu grup (Overview, Dashboard, Members, Calendar,
     Staff), difilter izin site viewer. "All sites" untuk staf global atau yang
     punya >1 site; pemilik/staf satu site dialihkan dari `/site` ke site-nya.
-  - Tes: `test-site-isolation` 935 check (lintas-site 41 action × 5 orang +
+  - Tes: `test-site-isolation` 958 check (lintas-site 41 action × 5 orang +
     route + halaman + snapshot B, matriks 30 action × 12 orang, uang,
     eskalasi, pencabutan, undangan, B4, sidebar). Dibuktikan bisa merah
     (cek site record `setMembershipStatus` dilepas → 4 gagal; tidak dikomit).
-    `test-staff-permissions` (609) dan `test-admin-nav` (811) disesuaikan.
+    `test-staff-permissions` (609) dan `test-admin-nav` (831) disesuaikan.
     17 suite lain hijau di DB lokal bersih, **kecuali `test-login-no-js`**
     yang sudah merah sebelum PR ini: ia mencari tautan header
     `/auth/login?mode=signup` yang hilang sejak navbar V7 (tidak ada di
     `origin/main`).
   - Tiga fitur yang izinnya sudah ada tapi action-nya belum (buat reservasi,
     tandai cicilan lunas, status bayar reservasi) dicatat di `ROADMAP.md` §7.
+  - **Review owner atas PR #9** (di branch yang sama):
+    (1) `setMembershipPayment` menolak keluar dari `paid` (dan `refunded` dari
+    status apa pun) untuk semua peran termasuk global — refund belum punya
+    kebijakan & jurnal balik. Penjaganya di dalam UPDATE (`neq paid`), bukan
+    hanya dibaca sebelumnya. Jalur lain ke `memberships.payment_status`: hanya
+    `createMembership` (dikunci `unpaid`) dan `settle_membership_payment`;
+    anon/authenticated tertahan RLS (aktif, tanpa policy). Pilihan "refunded"
+    dihapus dari UI, membership lunas tampil "Lunas" tanpa dropdown.
+    (2) `redeem_site_staff_invite` mensyaratkan `email_confirmed_at IS NOT
+    NULL` (`invite_email_unconfirmed`); file migration diubah langsung karena
+    belum diterapkan. (3) Item Portal Pemilik properti hanya tampil kalau
+    pemilik punya ≥1 properti (`getNavContext`); pemilik yang hanya punya site
+    melihat Site Management saja. Gate `/owner` tidak berubah.
 
 - **Panduan desain V7 tertulis** (28 Nov). `DESIGN.md` di root (aturan:
   warna, tipografi, radius, bayangan, komponen, logo, teks, halaman tanpa
@@ -389,9 +402,12 @@ placeholder.
 
 Urut prioritas:
 
-0. **Fase 3: apply migration (setelah owner setuju) → merge PR → cek Vercel.**
-   Berikutnya dashboard per peran. Migration terpisah nanti: hapus kolom
-   `is_admin`/`is_surveyor`. Perbaiki `test-login-no-js` (selector navbar V7).
+0. **Fase 3: apply migration (setelah owner setuju) → merge PR #9 → cek Vercel.**
+   Lalu perbarui System Reference (§21, §02, §20.7, §19 jebakan `auth.users`)
+   atas persetujuan owner, lalu **PR `/account` (Fase 3b)**, yang juga
+   memperbaiki `test-login-no-js` (selector navbar V7). Sesudahnya: email
+   binding + konfirmasi untuk undangan pemilik; dashboard per peran; migration
+   hapus kolom `is_admin`/`is_surveyor`.
 
 1. **Putuskan pengembalian dana membership.** Jenis peristiwa
    `membership_refund_issued` sudah ada di daftar, fungsinya belum —
@@ -486,6 +502,14 @@ Urut prioritas:
   `RESEND_API_KEY`, `XENDIT_SECRET_KEY`, dan `XENDIT_WEBHOOK_TOKEN`; ketiganya
   perlu diperlakukan sama.
 
+- **Undangan pemilik (`owner_invites`) — celah untuk PR berikutnya.**
+  `redeem_owner_invite` tidak memeriksa email sama sekali: tokennya *bearer*,
+  siapa pun yang login (terkonfirmasi atau tidak) dan memegang tautan menjadi
+  pemilik itu. Undangan staf site kini mensyaratkan email sama + terkonfirmasi;
+  undangan pemilik belum. Sengaja tidak diubah di PR #9 (permintaan owner).
+  Catatan: Supabase lokal memakai `enable_confirmations = false`
+  (autokonfirmasi); setelan konfirmasi email di produksi belum diverifikasi
+  dari sini.
 - **Empat keputusan pemilik** di daftar "Berikutnya" (1–4) memblokir pekerjaan
   nyata, bukan sekadar kerapian.
 - **Xendit ditulis dan bisa dipilih, tapi `PAYMENT_PROVIDER` tetap `manual`.**

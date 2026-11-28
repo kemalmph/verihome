@@ -134,7 +134,7 @@ const canOnA = (who, anyOf) => anyOf.some((p) => permsOnA(who).includes(p));
     users[key] = { id: data.user.id, email };
     return users[key];
   }
-  for (const k of [...PEOPLE, "superstaff2", "fo2", "staffB", "inviteeX", "inviteeY", "inviteeZ"]) await mkUser(k);
+  for (const k of [...PEOPLE, "superstaff2", "fo2", "staffB", "inviteeX", "inviteeY", "inviteeZ", "inviteeU"]) await mkUser(k);
   for (const r of ["superadmin", "admin_general", "admin_finance", "admin_listings", "surveyor"]) {
     await q("insert into staff_roles(user_id, role) values ($1,$2)", [users[r].id, r]);
   }
@@ -546,6 +546,18 @@ const canOnA = (who, anyOf) => anyOf.some((p) => permsOnA(who).includes(p));
     const revd = await accept(tokR, "inviteeZ");
     check(/dicabut/.test(revd.text) && !(await isStaff("inviteeZ", "finance")), "a revoked invite is refused");
 
+    // An account under the invited address whose email is not confirmed:
+    // registering someone else's address does not make you them.
+    const tokU = await mk(users.inviteeU.email, "front_office");
+    await q("update auth.users set email_confirmed_at = null where id=$1", [users.inviteeU.id]);
+    const unconf = await accept(tokU, "inviteeU");
+    check(/belum dikonfirmasi/.test(unconf.text) && !(await isStaff("inviteeU", "front_office")), "an unconfirmed email cannot redeem an invite");
+    const stillOpen = await one("select redeemed_at from site_staff_invites where token_hash=$1", [crypto.createHash("sha256").update(tokU).digest("hex")]);
+    check(stillOpen.redeemed_at === null, "…and the invite is not consumed by the attempt");
+    await q("update auth.users set email_confirmed_at = now() where id=$1", [users.inviteeU.id]);
+    const conf = await accept(tokU, "inviteeU");
+    check(!!conf.redirect && await isStaff("inviteeU", "front_office"), "once confirmed, the same invite redeems");
+
     const page1 = await fetch(`${BASE}/invite/site/${tok}`, { redirect: "manual" });
     check(page1.status >= 300 && page1.status < 400 && /auth\/login/.test(page1.headers.get("location") ?? ""), "signed-out visitor to an invite is sent to sign in, then back");
   }
@@ -573,6 +585,35 @@ const canOnA = (who, anyOf) => anyOf.some((p) => permsOnA(who).includes(p));
     const n1 = (await one("select count(*)::int n from ledger_entries")).n;
     check(!refused(r) && m?.payment_status === "unpaid", "createMembership with payment_status=paid stores it unpaid");
     check(n1 === n0, "…and posts nothing to the ledger");
+  }
+
+  // ── 7b. a paid membership cannot leave 'paid' (no refund policy yet) ───
+  {
+    const name = `PAID-${RUN}`;
+    const [{ id: mid }] = await q(`insert into memberships(membership_code, site_id, member_name, starts_on, ends_on, price, period, status, payment_status)
+      values ($1,$2,$3, current_date, current_date + 30, 250000, 'monthly', 'pending', 'unpaid') returning id`, [`MB-PAID-${RUN}`, A.id, name]);
+    const refundedFromUnpaid = await call("setMembershipPayment", [A.id, mid, "refunded"], "superadmin");
+    check(/Refund membership belum/.test(refundedFromUnpaid.text)
+      && (await one("select payment_status from memberships where id=$1", [mid])).payment_status === "unpaid",
+      "'refunded' is refused even from unpaid (superadmin)");
+    const settle = await call("setMembershipPayment", [A.id, mid, "paid"], "finance");
+    check(!refused(settle) && (await one("select payment_status from memberships where id=$1", [mid])).payment_status === "paid",
+      "finance settles a membership to paid through settle_membership_payment");
+    const ledger0 = JSON.stringify(await q("select id from ledger_entries order by id"));
+    for (const who of ["finance", "ownerA", "superstaff", "admin_finance", "superadmin"]) {
+      for (const to of ["refunded", "unpaid", "pending_verification"]) {
+        const r = await call("setMembershipPayment", [A.id, mid, to], who);
+        const st = (await one("select payment_status from memberships where id=$1", [mid])).payment_status;
+        check(/Refund membership belum/.test(r.text) && st === "paid", `paid → ${to} refused for ${who} (still ${st})`);
+      }
+    }
+    const ledger1 = JSON.stringify(await q("select id from ledger_entries order by id"));
+    check(ledger0 === ledger1, "the ledger is untouched by every refused transition");
+    const again = await call("setMembershipPayment", [A.id, mid, "paid"], "finance");
+    check(/Sudah lunas sebelumnya/.test(again.text) && JSON.stringify(await q("select id from ledger_entries order by id")) === ledger1,
+      "paid → paid again posts nothing");
+    const pg = await page(`/site/${A.slug}/members`, "finance");
+    check(pg.text.includes(name) && !/<option value="refunded"/.test(pg.text), "members page offers no 'refunded' option");
   }
 
   // ── 8. sidebar ──────────────────────────────────────────────────────────

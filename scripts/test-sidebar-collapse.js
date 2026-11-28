@@ -181,6 +181,10 @@ const RUN = Date.now().toString(36);
       }).select("id").single();
       if (oe) throw new Error(`owner ${key}: ${oe.message}`);
       made.owners.push(o.id);
+      // Phase 3: the property portal is in the menu only for an owner with a property.
+      const { rows: [p] } = await db.query("insert into properties(name, slug, owner_id) values ($1,$2,$3) returning id",
+        [`Collapse ${key}`, `collapse-${key}-${RUN}`, o.id]);
+      (made.properties ??= []).push(p.id);
     }
     const jar = new Map();
     const sb = createServerClient(SUPA, ANON, {
@@ -215,6 +219,7 @@ const RUN = Date.now().toString(36);
     }
   } finally {
     await browser.close();
+    for (const id of made.properties ?? []) await svc.from("properties").delete().eq("id", id);
     for (const id of made.owners) await svc.from("owners").delete().eq("id", id);
     for (const id of made.users) {
       await db.query("delete from staff_roles where user_id=$1", [id]).catch(() => {});

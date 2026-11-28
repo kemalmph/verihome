@@ -122,10 +122,16 @@ const PEOPLE = {
   owner_finance:  { roles: ["admin_finance"], owner: true },
   guest:          { roles: [], owner: false },
   invited_owner:  { roles: [], owner: false, invited: true },
+  // Phase 3: an active owners row with NO property, owning a coworking site.
+  // Sees Site Management only; the property portal items stay hidden.
+  site_owner:     { roles: [], owner: false, siteOwner: true },
 };
+const SITE_OWNER_SLUG = `navsiteowner-${RUN}`;
+const SITE_OWNER_PAGES = ["", "/dashboard", "/members", "/calendar", "/staff"].map((p) => `/site/${SITE_OWNER_SLUG}${p}`);
 const LANDING = {
   superadmin: "/admin", admin_general: "/admin", admin_listings: "/admin", admin_finance: "/admin",
   surveyor: "/survey", owner: "/owner", owner_finance: "/admin", guest: "/dashboard", invited_owner: "/dashboard",
+  site_owner: `/site/${SITE_OWNER_SLUG}`,
 };
 function expectedFor(who) {
   const p = PEOPLE[who];
@@ -133,7 +139,7 @@ function expectedFor(who) {
     .filter(([, allowed]) => p.roles.some((r) => allowed.includes(r)))
     .map(([h]) => h);
   // /site/<slug> exists only because the fixture site does.
-  return [...staff, ...(p.owner ? OWNER_ITEMS : [])];
+  return [...staff, ...(p.owner ? OWNER_ITEMS : []), ...(p.siteOwner ? SITE_OWNER_PAGES : [])];
 }
 
 /** Menu catalog, read from the source, for the "no page without a link" check. */
@@ -172,16 +178,29 @@ function claimedHrefs() {
     for (const role of PEOPLE[who].roles) {
       await q("insert into staff_roles(user_id, role) values ($1,$2)", [data.user.id, role]);
     }
-    if (PEOPLE[who].owner || PEOPLE[who].invited) {
+    if (PEOPLE[who].owner || PEOPLE[who].invited || PEOPLE[who].siteOwner) {
       const { data: o, error: oe } = await svc.from("owners").insert({
         name: `Nav Owner ${who}`, email: `owner-${who}-${RUN}@test.invalid`, phone_whatsapp: "628000000000",
-        user_id: data.user.id, portal_access: PEOPLE[who].owner ? "active" : "invited",
+        user_id: data.user.id, portal_access: PEOPLE[who].invited ? "invited" : "active",
       }).select("id").single();
       if (oe) throw new Error(`owner ${who}: ${oe.message}`);
       made.owners.push(o.id);
+      users[who].ownerId = o.id;
+      // The property portal is offered only to an owner with a property.
+      if (PEOPLE[who].owner) {
+        const [{ id: pid }] = await q("insert into properties(name, slug, owner_id) values ($1,$2,$3) returning id",
+          [`Nav Prop ${who}`, `navprop-${who.replace(/_/g, "-")}-${RUN}`, o.id]);
+        (made.properties ??= []).push(pid);
+      }
+      if (PEOPLE[who].siteOwner) {
+        const [{ id: sid }] = await q("insert into sites(name, slug, owner_id) values ($1,$2,$3) returning id",
+          [`Nav Site Owner ${RUN}`, SITE_OWNER_SLUG, o.id]);
+        made.sites.push(sid);
+      }
     }
   }
-  // Other suites leave sites behind: every one of them is a menu entry too.
+  // Other suites leave sites behind: every one of them is a menu entry too
+  // (the site owner's own site included: global staff see it like any other).
   for (const s of await q("select slug from sites")) {
     addSitePages(s.slug);
   }
@@ -239,7 +258,7 @@ function claimedHrefs() {
   const refused = (r) => (r.status >= 300 && r.status < 400) || r.status === 404;
 
   // ── 1. the matrix: shown == allowed, hidden == refused ───────────────────
-  const landingPage = { surveyor: "/survey", owner: "/owner", owner_finance: "/admin" };
+  const landingPage = { surveyor: "/survey", owner: "/owner", owner_finance: "/admin", site_owner: `/site/${SITE_OWNER_SLUG}` };
   for (const who of Object.keys(PEOPLE)) {
     const expected = expectedFor(who);
     if (who === "guest" || who === "invited_owner") {
@@ -265,12 +284,32 @@ function claimedHrefs() {
     check(same(noJs.desktop, expected), `${who}: same sidebar with JavaScript off`);
 
     // Hidden URLs are refused; shown ones open.
-    const everything = [...Object.keys(STAFF_URLS), ...OWNER_ITEMS];
+    // The /owner gate is unchanged in Phase 3: a site-only owner is still an
+    // active owner and may open /owner — the portal is only left out of their
+    // menu. Their owner pages are checked separately below.
+    const everything = [...Object.keys(STAFF_URLS), ...(who === "site_owner" ? [] : OWNER_ITEMS)];
     for (const p of everything) {
       const r = await fetchAs(who, p);
       if (expected.includes(p)) check(opens(r), `${who}: shown ${p} opens (${r.status})`);
       else check(refused(r), `${who}: hidden ${p} is refused when opened directly (${r.status} ${r.location})`);
     }
+  }
+
+  // ── 1b. site-only owner: property portal hidden, gate unchanged ─────────
+  {
+    const got = await navFrom("site_owner", `/site/${SITE_OWNER_SLUG}`);
+    check(!got.desktop.some((h) => h.startsWith("/owner")), "site_owner: no property-portal items in the sidebar");
+    check(same(got.sections, ["site"]), `site_owner: Site Management is the only section (got ${fmt(got.sections)})`);
+    const r = await fetchAs("site_owner", "/owner");
+    check(r.status === 200, `site_owner: the /owner gate is unchanged — /owner still opens (${r.status})`);
+    // Give them a property: the portal items appear next to the site.
+    const [{ id: pid }] = await q("insert into properties(name, slug, owner_id) values ('Nav SO Prop',$1,$2) returning id",
+      [`navprop-so-${RUN}`, users.site_owner.ownerId]);
+    made.properties.push(pid);
+    const both = await navFrom("site_owner", `/site/${SITE_OWNER_SLUG}`);
+    check(same(both.desktop, [...SITE_OWNER_PAGES, ...OWNER_ITEMS]), `site_owner with a property: site pages + property portal (got ${fmt(both.desktop)})`);
+    await q("delete from properties where id=$1", [pid]);
+    made.properties = made.properties.filter((x) => x !== pid);
   }
 
   // ── 2. signed-out visitors ────────────────────────────────────────────────
@@ -287,7 +326,7 @@ function claimedHrefs() {
       price_monthly: 7654321, bedrooms: 1, bathrooms: 1, status: "draft", rental_mode: "short_stay",
     }).select("id").single();
     if (pe) throw new Error(`property: ${pe.message}`);
-    made.properties = [prop.id];
+    (made.properties ??= []).push(prop.id);
     const body = async (who) => {
       const res = await fetch(BASE + "/admin", { redirect: "manual", headers: { Cookie: header(who) } });
       return { status: res.status, location: res.headers.get("location") ?? "", text: res.status === 200 ? await res.text() : "" };
