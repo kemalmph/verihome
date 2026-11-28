@@ -5,8 +5,8 @@ Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
 Terakhir diperbarui: 2026-11-28 · branch kerja `claude/exciting-darwin-fosna9`
-(redesign V7: design system baru, homepage, shell dashboard; belum di-merge.
-Fase 2 / PR #4 sudah di `main`). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+(redesign V7 — design system, homepage, shell dashboard — di-merge ke `main`
+lewat PR #5, merge commit `630ee4c`, atas permintaan owner). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -88,8 +88,10 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 ## Selesai
 
-- **Redesign V7 — design system, homepage, shell dashboard** (28 Nov, branch
-  `claude/exciting-darwin-fosna9`, belum ada PR; **tanpa migration**).
+- **Redesign V7 — design system, homepage, shell dashboard** (28 Nov, PR #5,
+  di-merge ke `main` sebagai `630ee4c`; **tanpa migration**). Deploy Vercel
+  produksi belum diverifikasi dari sini — penanda unik commit ini di HTML
+  publik: `cosystem-logo.png`.
   Bahan dari owner: prototype HTML V7, copy `COSYSTEM_COPYWRITING_V7`, foto
   `COSYSTEM_PHOTO_ASSETS_FINAL`, logo, dan mockup laptop+ponsel (dipakai
   sebagai acuan gaya dashboard).
@@ -287,8 +289,8 @@ Tes: 13 suite, ±434 check, semua hijau di DB lokal bersih.
 
 ## Sedang dikerjakan
 
-Redesign V7 menunggu review owner di branch `claude/exciting-darwin-fosna9`.
-Yang belum: halaman lain (listing, detail, login, contact, form) baru ikut
+Redesign V7 sudah di `main` (PR #5). Cek di Vercel bahwa `630ee4c` Ready ·
+Current. Yang belum: halaman lain (listing, detail, login, contact, form) baru ikut
 berganti **warna** lewat token — tata letaknya masih gaya lama (tombol
 `rounded-lg`, bukan pil). Owner mau mengubahnya bertahap. Mockup dashboard
 juga punya top bar (pemilih site, lonceng, avatar) yang belum dibuat karena
