@@ -1,5 +1,6 @@
 import { getViewer, requireOwner, type Viewer, type OwnerViewer } from "@/lib/auth/guards";
 import { accessibleSites } from "@/lib/sites/accessible";
+import { getSiteActor } from "@/lib/auth/site-access";
 import { landingPath, type MenuInput } from "@/lib/nav/menu";
 
 export interface NavContext extends MenuInput {
@@ -18,11 +19,14 @@ export interface NavContext extends MenuInput {
  * request. Failing to resolve either one is "not that", never an error.
  */
 export async function getNavContext(): Promise<NavContext> {
-  const [viewer, owner] = await Promise.all([
+  const [viewer, owner, actor] = await Promise.all([
     getViewer(),
     requireOwner().catch(() => null),
+    getSiteActor(),
   ]);
-  const sites = await accessibleSites(viewer);
+  // Sites come from the signed-in person, staff or not: a site owner or site
+  // staff member holds no staff role (viewer is null) and still has sites.
+  const sites = await accessibleSites(actor);
   return {
     viewer,
     owner,

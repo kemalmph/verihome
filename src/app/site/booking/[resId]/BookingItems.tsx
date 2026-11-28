@@ -16,9 +16,15 @@ interface CatalogItem {
 }
 
 export function BookingItems({
-  reservationId, siteId, items, catalog,
+  reservationId, siteId, items, catalog, canEdit = true, canCatalog = true, showCost = true,
 }: {
   reservationId: string; siteId: string; items: ResItem[]; catalog: CatalogItem[];
+  /** site.reservations — add and remove items. */
+  canEdit?: boolean;
+  /** site.catalog — create a catalog item. */
+  canCatalog?: boolean;
+  /** site.revenue — cost prices (HPP). Hidden from every site role until §20.7. */
+  showCost?: boolean;
 }) {
   const router = useRouter();
   const [error, setError] = useState("");
@@ -71,7 +77,7 @@ export function BookingItems({
           <thead className="text-left">
             <tr className="border-b border-[#e8e3e0]">
               <Th>Item</Th><Th className="text-right">Jml</Th>
-              <Th className="text-right">HPP</Th><Th className="text-right">Jual</Th><Th />
+              {showCost && <Th className="text-right">HPP</Th>}<Th className="text-right">Jual</Th><Th />
             </tr>
           </thead>
           <tbody>
@@ -87,20 +93,24 @@ export function BookingItems({
                   {i.notes && <div className="text-xs text-ink-3">{i.notes}</div>}
                 </td>
                 <td className="px-4 py-2.5 text-right tabular-nums text-ink-2">{i.qty}</td>
-                <td className="px-4 py-2.5 text-right tabular-nums text-ink-2">
-                  {rupiah(i.qty * i.cost_price)}
-                </td>
+                {showCost && (
+                  <td className="px-4 py-2.5 text-right tabular-nums text-ink-2">
+                    {rupiah(i.qty * i.cost_price)}
+                  </td>
+                )}
                 <td className="px-4 py-2.5 text-right tabular-nums text-ink-2">
                   {i.included ? "—" : rupiah(i.qty * i.sell_price)}
                 </td>
                 <td className="px-3 py-2.5 text-right">
-                  <button
-                    onClick={() => onRemove(i.id)}
-                    disabled={busy}
-                    className="text-xs text-[#8c3a2c] hover:underline disabled:opacity-50"
-                  >
-                    hapus
-                  </button>
+                  {canEdit && (
+                    <button
+                      onClick={() => onRemove(i.id)}
+                      disabled={busy}
+                      className="text-xs text-[#8c3a2c] hover:underline disabled:opacity-50"
+                    >
+                      hapus
+                    </button>
+                  )}
                 </td>
               </tr>
             ))}
@@ -108,14 +118,15 @@ export function BookingItems({
         </table>
       )}
 
-      <form onSubmit={onAdd} className="px-5 py-4 border-t border-[#e8e3e0] flex flex-wrap items-end gap-2">
+      {(canEdit || canCatalog) && <form onSubmit={onAdd} className="px-5 py-4 border-t border-[#e8e3e0] flex flex-wrap items-end gap-2">
+        {canEdit && <>
         <label className="block">
           <span className="block text-xs text-ink-3 mb-1">Item</span>
           <select name="item_id" defaultValue="" className="border border-line-strong rounded-lg px-3 py-2 text-sm bg-white min-w-48">
             <option value="">— pilih dari katalog —</option>
             {catalog.map((c) => (
               <option key={c.id} value={c.id}>
-                {c.name} · HPP {rupiah(c.cost_price)} / jual {rupiah(c.sell_price)}
+                {c.name}{showCost ? ` · HPP ${rupiah(c.cost_price)}` : ""} / jual {rupiah(c.sell_price)}
               </option>
             ))}
           </select>
@@ -135,16 +146,19 @@ export function BookingItems({
         >
           Tambah
         </button>
-        <button
-          type="button"
-          onClick={() => { setNewItem((v) => !v); setError(""); }}
-          className="px-3 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
-        >
-          {newItem ? "Tutup" : "Item baru"}
-        </button>
-      </form>
+        </>}
+        {canCatalog && (
+          <button
+            type="button"
+            onClick={() => { setNewItem((v) => !v); setError(""); }}
+            className="px-3 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
+          >
+            {newItem ? "Tutup" : "Item baru"}
+          </button>
+        )}
+      </form>}
 
-      {newItem && (
+      {canCatalog && newItem && (
         <form onSubmit={onNewItem} className="px-5 pb-5 flex flex-wrap items-end gap-2 border-t border-[#e8e3e0] pt-4">
           <label className="block">
             <span className="block text-xs text-ink-3 mb-1">Nama</span>
@@ -185,8 +199,8 @@ export function BookingItems({
 }
 
 export function UtilitiesToggle({
-  reservationId, included,
-}: { reservationId: string; included: boolean }) {
+  reservationId, included, canEdit = true,
+}: { reservationId: string; included: boolean; canEdit?: boolean }) {
   const router = useRouter();
   const [on, setOn] = useState(included);
   const [busy, setBusy] = useState(false);
@@ -222,7 +236,7 @@ export function UtilitiesToggle({
         <input
           type="checkbox"
           checked={on}
-          disabled={busy}
+          disabled={busy || !canEdit}
           onChange={(e) => toggle(e.target.checked)}
           className="rounded border-line-strong mt-0.5"
         />

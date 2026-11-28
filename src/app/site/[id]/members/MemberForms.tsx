@@ -157,7 +157,7 @@ export function NewMembershipForm({ siteId, plans }: { siteId: string; plans: Pl
   );
 }
 
-export function NewPlanForm({ siteId }: { siteId: string }) {
+export function NewPlanForm({ siteId, allowAllSites = false }: { siteId: string; allowAllSites?: boolean }) {
   const router = useRouter();
   const [open, setOpen] = useState(false);
   const [error, setError] = useState("");
@@ -216,7 +216,7 @@ export function NewPlanForm({ siteId }: { siteId: string }) {
           <Check name="hot_desk_included" label="Hot desk termasuk" />
           <Check name="mail_handling" label="Terima surat" />
           <Check name="address_use" label="Alamat perusahaan" />
-          <Check name="all_sites" label="Berlaku di semua site" />
+          {allowAllSites && <Check name="all_sites" label="Berlaku di semua site" />}
         </div>
 
         <Field label="Catatan" className="sm:col-span-3">
@@ -251,9 +251,13 @@ export function NewPlanForm({ siteId }: { siteId: string }) {
 }
 
 export function MembershipControls({
-  siteId, membershipId, status, paymentStatus,
+  siteId, membershipId, status, paymentStatus, canStatus = true, canPayment = true,
 }: {
   siteId: string; membershipId: string; status: string; paymentStatus: string;
+  /** site.members — change the membership's status. */
+  canStatus?: boolean;
+  /** site.billing — change its payment status (settles to the ledger). */
+  canPayment?: boolean;
 }) {
   const router = useRouter();
   const [busy, setBusy] = useState(false);
@@ -271,7 +275,7 @@ export function MembershipControls({
     <div className="flex gap-1.5">
       <select
         value={status}
-        disabled={busy}
+        disabled={busy || !canStatus}
         onChange={(e) => change(() => setMembershipStatus(siteId, membershipId, e.target.value))}
         className="text-xs border border-line-strong rounded px-1.5 py-1 bg-white"
       >
@@ -280,16 +284,18 @@ export function MembershipControls({
         <option value="expired">Berakhir</option>
         <option value="cancelled">Dibatalkan</option>
       </select>
-      <select
-        value={paymentStatus}
-        disabled={busy}
-        onChange={(e) => change(() => setMembershipPayment(siteId, membershipId, e.target.value))}
-        className="text-xs border border-line-strong rounded px-1.5 py-1 bg-white"
-      >
-        {PAYMENT_STATUSES.map((s) => (
-          <option key={s.value} value={s.value}>{s.label}</option>
-        ))}
-      </select>
+      {canPayment && (
+        <select
+          value={paymentStatus}
+          disabled={busy}
+          onChange={(e) => change(() => setMembershipPayment(siteId, membershipId, e.target.value))}
+          className="text-xs border border-line-strong rounded px-1.5 py-1 bg-white"
+        >
+          {PAYMENT_STATUSES.map((s) => (
+            <option key={s.value} value={s.value}>{s.label}</option>
+          ))}
+        </select>
+      )}
     </div>
   );
 }

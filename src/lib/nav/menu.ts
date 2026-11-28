@@ -12,6 +12,7 @@
 // shown; if it would bounce them, the link is not. Change both together.
 
 import { hasAnyPermission, type Permission } from "@/lib/auth/permissions";
+import { hasSitePermission, type SitePermission } from "@/lib/auth/site-permissions";
 import type { StringKey } from "@/lib/i18n/strings";
 
 export type SectionId = "admin" | "site" | "marketplace";
@@ -28,6 +29,14 @@ export interface NavItem {
   requires?: readonly Permission[];
   /** Owner-portal item: shown only to an active property owner. */
   owner?: boolean;
+  /**
+   * Item inside one coworking site: shown when the viewer holds ANY of these
+   * on THAT site (`sitePerms`). Same rule as `requires`: the list is the one
+   * the page passes to requireSitePage.
+   */
+  siteRequires?: readonly SitePermission[];
+  /** The viewer's permissions on the item's site. */
+  sitePerms?: readonly SitePermission[];
 }
 
 export interface NavGroup {
@@ -141,10 +150,25 @@ export interface NavSite {
   /** Pages link sites by slug (/site/[slug]); the id resolves too. */
   slug: string;
   name: string;
+  /** What the viewer may do on this site (global ∪ owner ∪ site_staff). */
+  perms: readonly SitePermission[];
 }
 
-/** The "all sites" entry and its per-site entries. Both open /site pages that accept either site permission. */
+/** Global staff who see "All sites" regardless of how many sites exist. */
 export const SITE_REQUIRES: readonly Permission[] = ["sites.operate_all", "sites.finance_all"];
+
+/**
+ * The pages inside one site, and the site permission each page requires
+ * (src/app/site/[id]/**: the list passed to requireSitePage). Change both
+ * together.
+ */
+export const SITE_PAGES: readonly { path: string; icon: string; label: string; requires: readonly SitePermission[] }[] = [
+  { path: "",           icon: "meeting_room",   label: "Overview",  requires: ["site.view"] },
+  { path: "/dashboard", icon: "monitoring",     label: "Dashboard", requires: ["site.view"] },
+  { path: "/members",   icon: "card_membership", label: "Members",  requires: ["site.members.view"] },
+  { path: "/calendar",  icon: "calendar_month", label: "Calendar",  requires: ["site.reservations.view"] },
+  { path: "/staff",     icon: "badge",          label: "Staff",     requires: ["site.staff"] },
+];
 
 export interface MenuInput {
   /** Union of the viewer's staff permissions; empty for a non-staff user. */
@@ -157,6 +181,7 @@ export interface MenuInput {
 
 function visible(item: NavItem, input: MenuInput): boolean {
   if (item.owner) return input.isOwner;
+  if (item.siteRequires) return hasSitePermission(item.sitePerms ?? [], item.siteRequires);
   return !!item.requires && hasAnyPermission(input.permissions, item.requires);
 }
 
@@ -166,25 +191,28 @@ function visible(item: NavItem, input: MenuInput): boolean {
  * noise, and for a surveyor it would be three of them.
  */
 export function buildMenu(input: MenuInput): NavSection[] {
+  // "All sites" is the /site list: global site staff always, and anyone who
+  // reaches more than one site. Someone with exactly one site is sent from
+  // /site straight to it, so a list of one is not offered.
+  const allSites = hasAnyPermission(input.permissions, SITE_REQUIRES) || input.sites.length > 1;
   const siteSection: NavSection = {
     id: "site",
     heading: "Site Management",
     groups: [
-      {
-        items: [
-          ...(hasAnyPermission(input.permissions, SITE_REQUIRES)
-            ? [{ href: "/site", icon: "desk", label: "All sites", requires: SITE_REQUIRES } as NavItem]
-            : []),
-          ...input.sites.map(
-            (s): NavItem => ({
-              href: `/site/${s.slug}`,
-              icon: "meeting_room",
-              label: s.name,
-              requires: SITE_REQUIRES,
-            }),
-          ),
-        ],
-      },
+      ...(allSites
+        ? [{ items: [{ href: "/site", icon: "desk", label: "All sites", siteRequires: ["site.view"], sitePerms: ["site.view"] } as NavItem] }]
+        : []),
+      // One group per site, its pages filtered by what the viewer may do there.
+      ...input.sites.map((s): NavGroup => ({
+        label: s.name,
+        items: SITE_PAGES.map((p): NavItem => ({
+          href: `/site/${s.slug}${p.path}`,
+          icon: p.icon,
+          label: p.path === "" ? s.name : p.label,
+          siteRequires: p.requires,
+          sitePerms: s.perms,
+        })),
+      })),
     ],
   };
 

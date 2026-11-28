@@ -1,7 +1,10 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requirePermission, requireAnyPermission } from "@/lib/auth/guards";
+import { requirePermission, requireAnyPermission, requireAdmin, NotFoundError } from "@/lib/auth/guards";
+import {
+  accessibleSiteIds, getSiteActor, requireRecordAccess, requireSiteAccess,
+} from "@/lib/auth/site-access";
 import { createAdminClient } from "@/lib/supabase/admin";
 import {
   isLettingMode, isSiteStatus, isSiteType, isUnitStatus, isUnitType,
@@ -10,11 +13,15 @@ import {
 /**
  * Coworking: sites and the lettable units inside them.
  *
- * Every function here calls requirePermission("sites.operate_all") itself. Not because the /admin
- * layout is missing, but because a layout gates *rendering a page* and these
- * are separately addressable POST endpoints that any signed-in client can
- * invoke from anywhere (§19.6, and the Next.js docs say the same thing in
- * their own words). A disabled button is not a rule.
+ * Every function here checks access itself. Not because the /admin layout is
+ * missing, but because a layout gates *rendering a page* and these are
+ * separately addressable POST endpoints that any signed-in client can invoke
+ * from anywhere (§19.6, and the Next.js docs say the same thing in their own
+ * words). A disabled button is not a rule.
+ *
+ * Phase 3: access is per site (requireSiteAccess, site-access.ts). A unit's
+ * site is read from the unit, never taken from the form; a form site id that
+ * disagrees with the record is not-found. Only a superadmin sets owner_id.
  */
 
 export interface SiteRow {
@@ -77,13 +84,18 @@ function optionalNumber(fd: FormData, key: string): number | null | "invalid" {
 // ─── Reads ──────────────────────────────────────────────────────────────────
 
 export async function listSites(): Promise<SiteRow[]> {
-  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
+  const actor = await getSiteActor();
+  if (!actor) throw new NotFoundError();
+  const reach = await accessibleSiteIds(actor);
+  if (!reach.all && reach.ids.length === 0) throw new NotFoundError();
   const admin = createAdminClient();
 
-  const { data: sites } = await admin
+  let query = admin
     .from("sites")
     .select("id, name, slug, status, site_type, area, address, owner_id, opening_time, closing_time, notes")
     .order("name");
+  if (!reach.all) query = query.in("id", reach.ids);
+  const { data: sites } = await query;
 
   if (!sites?.length) return [];
 
@@ -115,7 +127,7 @@ export async function listSites(): Promise<SiteRow[]> {
 }
 
 export async function getSite(siteId: string) {
-  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
+  await requireSiteAccess(siteId, "site.view");
   const admin = createAdminClient();
 
   const { data: site } = await admin
@@ -136,8 +148,9 @@ export async function getSite(siteId: string) {
   return { site, units: (units ?? []) as UnitRow[] };
 }
 
+/** Every owner's name. Only a superadmin assigns a site's owner, so only they need it. */
 export async function listOwnerOptions() {
-  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
+  await requireAdmin();
   const admin = createAdminClient();
   const { data } = await admin.from("owners").select("id, name").order("name");
   return (data ?? []) as { id: string; name: string }[];
@@ -148,10 +161,18 @@ export async function listOwnerOptions() {
 export async function createSite(
   fd: FormData,
 ): Promise<{ error?: string; id?: string; slug?: string }> {
-  await requirePermission("sites.operate_all");
+  // Creating a site: superadmin and admin_general (both hold operate_all).
+  // Site owners and site staff cannot create sites.
+  const caller = await requirePermission("sites.operate_all");
+  const isSuperadmin = caller.roles.includes("superadmin");
 
   const name = text(fd, "name");
   if (!name) return { error: "Nama site wajib diisi." };
+
+  const ownerId = optionalText(fd, "owner_id");
+  if (ownerId && !isSuperadmin) {
+    return { error: "Hanya superadmin yang boleh menetapkan pemilik site." };
+  }
 
   const status = text(fd, "status") || "draft";
   if (!isSiteStatus(status)) return { error: "Status site tidak dikenal." };
@@ -178,7 +199,7 @@ export async function createSite(
       area: optionalText(fd, "area"),
       address: optionalText(fd, "address"),
       google_maps_url: optionalText(fd, "google_maps_url"),
-      owner_id: optionalText(fd, "owner_id"),
+      owner_id: isSuperadmin ? ownerId : null,
       opening_time: opening,
       closing_time: closing,
       notes: optionalText(fd, "notes"),
@@ -196,10 +217,21 @@ export async function createSite(
 }
 
 export async function updateSite(fd: FormData): Promise<{ error?: string }> {
-  await requirePermission("sites.operate_all");
-
   const id = text(fd, "id");
-  if (!id) return { error: "Site tidak dikenali." };
+  let access;
+  try { access = await requireSiteAccess(id, "site.settings"); } catch { return { error: "Not found." }; }
+
+  // owner_id is a superadmin decision. Anyone else's form has no owner field;
+  // a request that carries one anyway, with a different value, is refused
+  // rather than silently half-applied.
+  const isSuperadmin = access.actor.isSuperadmin;
+  const admin = createAdminClient();
+  if (!isSuperadmin && fd.has("owner_id")) {
+    const { data: cur } = await admin.from("sites").select("owner_id").eq("id", id).maybeSingle();
+    if ((optionalText(fd, "owner_id") ?? null) !== ((cur?.owner_id as string) ?? null)) {
+      return { error: "Hanya superadmin yang boleh mengubah pemilik site." };
+    }
+  }
 
   const name = text(fd, "name");
   if (!name) return { error: "Nama site wajib diisi." };
@@ -216,7 +248,6 @@ export async function updateSite(fd: FormData): Promise<{ error?: string }> {
     return { error: "Isi jam buka dan jam tutup bersama-sama, atau kosongkan keduanya." };
   }
 
-  const admin = createAdminClient();
   const { error } = await admin
     .from("sites")
     .update({
@@ -226,7 +257,7 @@ export async function updateSite(fd: FormData): Promise<{ error?: string }> {
       area: optionalText(fd, "area"),
       address: optionalText(fd, "address"),
       google_maps_url: optionalText(fd, "google_maps_url"),
-      owner_id: optionalText(fd, "owner_id"),
+      ...(isSuperadmin ? { owner_id: optionalText(fd, "owner_id") } : {}),
       opening_time: opening,
       closing_time: closing,
       notes: optionalText(fd, "notes"),
@@ -243,11 +274,10 @@ export async function updateSite(fd: FormData): Promise<{ error?: string }> {
 // ─── Units ──────────────────────────────────────────────────────────────────
 
 export async function createUnit(fd: FormData): Promise<{ error?: string }> {
-  await requirePermission("sites.operate_all");
-
   const siteId = text(fd, "site_id");
+  try { await requireSiteAccess(siteId, "site.units"); } catch { return { error: "Not found." }; }
+
   const name   = text(fd, "name");
-  if (!siteId) return { error: "Site tidak dikenali." };
   if (!name)   return { error: "Nama unit wajib diisi." };
 
   const unitType    = text(fd, "unit_type");
@@ -293,11 +323,11 @@ export async function createUnit(fd: FormData): Promise<{ error?: string }> {
 }
 
 export async function updateUnit(fd: FormData): Promise<{ error?: string }> {
-  await requirePermission("sites.operate_all");
-
   const id     = text(fd, "id");
-  const siteId = text(fd, "site_id");
-  if (!id || !siteId) return { error: "Unit tidak dikenali." };
+  // The unit's own site, from the database; a form site_id that disagrees is not-found.
+  let siteId: string;
+  try { siteId = (await requireRecordAccess("unit", id, "site.units", text(fd, "site_id") || null)).siteId; }
+  catch { return { error: "Not found." }; }
 
   const name = text(fd, "name");
   if (!name) return { error: "Nama unit wajib diisi." };
@@ -357,11 +387,10 @@ export async function updateUnit(fd: FormData): Promise<{ error?: string }> {
  * leaving everything that refers to it intact.
  */
 export async function retireUnit(fd: FormData): Promise<{ error?: string }> {
-  await requirePermission("sites.operate_all");
-
   const id     = text(fd, "id");
-  const siteId = text(fd, "site_id");
-  if (!id || !siteId) return { error: "Unit tidak dikenali." };
+  let siteId: string;
+  try { siteId = (await requireRecordAccess("unit", id, "site.units", text(fd, "site_id") || null)).siteId; }
+  catch { return { error: "Not found." }; }
 
   const admin = createAdminClient();
   const { error } = await admin
