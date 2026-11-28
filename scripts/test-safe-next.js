@@ -10,7 +10,7 @@
     if (!ok) bad++;
     console.log(`${ok ? "  ok  " : "  FAIL"} ${JSON.stringify(input)} -> ${JSON.stringify(got)}`);
   };
-  const F = "/dashboard";
+  const F = "/account";
   eq("//evil.com", F);
   eq("/\\evil.com", F);
   eq("/\\\\evil.com", F);

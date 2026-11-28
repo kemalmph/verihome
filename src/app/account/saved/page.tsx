@@ -1,5 +1,5 @@
 import { redirect } from "next/navigation";
-import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { AccountSidebar } from "@/components/layout/AccountSidebar";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { guestSavedUnits } from "@/lib/guest/unit";
 import { t } from "@/lib/i18n/strings";
@@ -9,7 +9,7 @@ export const dynamic = "force-dynamic";
 
 export default async function SavedListingsPage() {
   const user = await getCurrentUser().catch(() => null);
-  if (!user) redirect("/auth/login?next=/dashboard/saved");
+  if (!user) redirect("/auth/login?next=/account/saved");
 
   // This page used to render PLACEHOLDER_PROPERTIES — three fixed demo units,
   // identical for every account, regardless of what anyone had actually saved.
@@ -17,7 +17,7 @@ export default async function SavedListingsPage() {
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <DashboardSidebar activeHref="/dashboard/saved" userName={user.name} isActiveClient={user.is_active_client} />
+      <AccountSidebar activeHref="/account/saved" userName={user.name} isActiveClient={user.is_active_client} />
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-4xl">
         <header className="mb-8">
           <h1 className="text-3xl font-bold text-ink mb-1">{t("saved.title")}</h1>

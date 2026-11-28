@@ -4,7 +4,7 @@ import { redirect } from "next/navigation";
 import { createClient } from "./server";
 import { defaultLanding } from "@/lib/nav/server";
 
-export async function signInWithGoogle(redirectTo = "/dashboard") {
+export async function signInWithGoogle(redirectTo = "/account") {
   const supabase = await createClient();
   const origin = process.env.NEXT_PUBLIC_SITE_URL ?? "http://localhost:3000";
 
@@ -24,7 +24,7 @@ export async function signInWithGoogle(redirectTo = "/dashboard") {
 /**
  * `redirectTo` empty means the caller has no destination of its own, so the
  * person goes to the first page they actually have: staff to the first item of
- * their menu, an active property owner to /owner, anyone else to /dashboard.
+ * their menu, an active property owner to /owner, anyone else to /account.
  * An explicit destination (a booking they were in the middle of) always wins.
  */
 export async function signInWithEmail(formData: FormData, redirectTo = "") {
@@ -38,7 +38,7 @@ export async function signInWithEmail(formData: FormData, redirectTo = "") {
   redirect(redirectTo || (await defaultLanding()));
 }
 
-export async function signUpWithEmail(formData: FormData, redirectTo = "/dashboard") {
+export async function signUpWithEmail(formData: FormData, redirectTo = "/account") {
   const email = formData.get("email") as string;
   const password = formData.get("password") as string;
   const name = formData.get("name") as string;
@@ -51,7 +51,7 @@ export async function signUpWithEmail(formData: FormData, redirectTo = "/dashboa
     options: {
       data: { full_name: name },
       // Carry the destination through the confirmation email. Without this the
-      // link lands on /dashboard and a guest who signed up midway through a
+      // link lands on /account and a guest who signed up midway through a
       // booking has to find their way back to it themselves.
       emailRedirectTo: `${origin}/auth/callback?next=${encodeURIComponent(redirectTo)}`,
     },
@@ -93,7 +93,7 @@ export async function verifyOtp(formData: FormData) {
   });
   if (error) return { error: error.message };
 
-  redirect("/dashboard");
+  redirect("/account");
 }
 
 export async function signOut() {

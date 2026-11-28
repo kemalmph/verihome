@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { notFound, redirect } from "next/navigation";
-import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { AccountSidebar } from "@/components/layout/AccountSidebar";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { guestUnit, NotFoundError } from "@/lib/guest/unit";
 import { t } from "@/lib/i18n/strings";
@@ -26,7 +26,7 @@ export default async function UnitDetailPage({
   const { bookingId } = await params;
 
   const user = await getCurrentUser().catch(() => null);
-  if (!user) redirect(`/auth/login?next=/dashboard/unit/${bookingId}`);
+  if (!user) redirect(`/auth/login?next=/account/unit/${bookingId}`);
 
   let u;
   try {
@@ -39,9 +39,9 @@ export default async function UnitDetailPage({
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <DashboardSidebar activeHref="/dashboard/unit" userName={user.name} isActiveClient={user.is_active_client} />
+      <AccountSidebar activeHref="/account/unit" userName={user.name} isActiveClient={user.is_active_client} />
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-3xl">
-        <Link href="/dashboard/unit" className="text-sm text-brand-ink hover:underline">← {t("unit.title")}</Link>
+        <Link href="/account/unit" className="text-sm text-brand-ink hover:underline">← {t("unit.title")}</Link>
 
         <header className="mt-3 mb-6">
           <h1 className="text-3xl font-bold text-ink">{u.property.name}</h1>
@@ -188,7 +188,7 @@ export default async function UnitDetailPage({
               </div>
             )}
           </dl>
-          <Link href={`/dashboard/receipts/${u.booking.id}`}
+          <Link href={`/account/receipts/${u.booking.id}`}
                 className="inline-block mt-3 text-sm text-brand-ink font-medium hover:underline">
             {t("unit.receipt")} →
           </Link>
@@ -215,7 +215,7 @@ export default async function UnitDetailPage({
         <section className="bg-white rounded-2xl border border-line shadow-card p-5">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">{t("unit.contact")}</h2>
           <p className="text-sm text-ink font-medium">{t("unit.contactSupport")}</p>
-          <Link href="/dashboard/support" className="text-sm text-brand-ink hover:underline">Hubungi dukungan →</Link>
+          <Link href="/account/support" className="text-sm text-brand-ink hover:underline">Hubungi dukungan →</Link>
 
           <div className="mt-4 pt-4 border-t border-[#f0eeed]">
             <p className="text-sm text-ink font-medium">{t("unit.contactOwner")}</p>

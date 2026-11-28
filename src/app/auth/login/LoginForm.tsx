@@ -34,7 +34,7 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
       }
       // Redirects straight to `next` when the account is usable immediately;
       // only returns when confirmation is still required.
-      const res = await signUpWithEmail(formData, next || "/dashboard");
+      const res = await signUpWithEmail(formData, next || "/account");
       if (res?.error)   { setError(res.error); return; }
       if (res?.success) { setNotice(res.success); }
     });

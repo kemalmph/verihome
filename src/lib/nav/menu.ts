@@ -237,14 +237,14 @@ export function flattenMenu(sections: readonly NavSection[]): NavItem[] {
  * Where someone lands after signing in with no destination of their own.
  * Staff: the first item they have (a surveyor therefore lands on /survey,
  * everyone else on the dashboard). An active owner who is not staff: /owner.
- * Anyone else is an ordinary guest: /dashboard.
+ * Anyone else is an ordinary guest: /account (the customer area, formerly /dashboard).
  *
  * Staff wins over owner when someone is both, matching the order of the menu.
  */
 export function landingPath(input: MenuInput): string {
   const first = flattenMenu(buildMenu(input))[0];
   if (first) return first.href;
-  return "/dashboard";
+  return "/account";
 }
 
 /**

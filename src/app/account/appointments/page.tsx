@@ -1,4 +1,4 @@
-import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { AccountSidebar } from "@/components/layout/AccountSidebar";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import type { Appointment } from "@/lib/types";
 
@@ -22,7 +22,7 @@ export default async function AppointmentsPage() {
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <DashboardSidebar activeHref="/dashboard/appointments" userName={user.name} isActiveClient={user.is_active_client} />
+      <AccountSidebar activeHref="/account/appointments" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">

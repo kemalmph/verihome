@@ -21,7 +21,7 @@ export async function removeSaved(savedId: string) {
   if (error) return { error: error.message };
   if (!data?.length) return { error: "Tidak ditemukan." };
 
-  revalidatePath("/dashboard/saved");
-  revalidatePath("/dashboard/unit");
+  revalidatePath("/account/saved");
+  revalidatePath("/account/unit");
   return { success: true };
 }

@@ -186,7 +186,7 @@ function StepPayment({ intent }: { intent: PaymentIntent }) {
 
       <PaymentInstructions intent={intent} title="view.payNow" />
 
-      <Link href="/dashboard/viewings" className={`${pill.primary} w-full`}>
+      <Link href="/account/viewings" className={`${pill.primary} w-full`}>
         {t("view.myViewings")} <span aria-hidden>→</span>
       </Link>
     </section>

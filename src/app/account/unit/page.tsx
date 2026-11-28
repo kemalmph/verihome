@@ -1,6 +1,6 @@
 import Link from "next/link";
 import { redirect } from "next/navigation";
-import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { AccountSidebar } from "@/components/layout/AccountSidebar";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { guestUnitOverview, guestSavedUnits } from "@/lib/guest/unit";
 import { t } from "@/lib/i18n/strings";
@@ -12,7 +12,7 @@ const day = (d: string) => new Date(`${d}T00:00:00`).toLocaleDateString("id-ID",
 
 function StayCard({ label, stay }: { label: string; stay: { id: string; propertyName: string; propertyArea: string | null; checkIn: string; checkOut: string } }) {
   return (
-    <Link href={`/dashboard/unit/${stay.id}`}
+    <Link href={`/account/unit/${stay.id}`}
           className="block bg-white rounded-xl border-2 border-brand p-6 hover:shadow-md transition-shadow">
       <p className="text-xs font-bold text-brand-ink uppercase tracking-wider">{label}</p>
       <h2 className="text-xl font-bold text-ink mt-2">{stay.propertyName}</h2>
@@ -25,7 +25,7 @@ function StayCard({ label, stay }: { label: string; stay: { id: string; property
 
 export default async function UnitPage() {
   const user = await getCurrentUser().catch(() => null);
-  if (!user) redirect("/auth/login?next=/dashboard/unit");
+  if (!user) redirect("/auth/login?next=/account/unit");
 
   const [overview, saved] = await Promise.all([guestUnitOverview(), guestSavedUnits()]);
   const primary = overview.current ?? overview.next ?? overview.past;
@@ -33,7 +33,7 @@ export default async function UnitPage() {
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <DashboardSidebar activeHref="/dashboard/unit" userName={user.name} isActiveClient={user.is_active_client} />
+      <AccountSidebar activeHref="/account/unit" userName={user.name} isActiveClient={user.is_active_client} />
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-3xl">
         <h1 className="text-3xl font-bold text-ink mb-8">{t("unit.title")}</h1>
 
@@ -76,7 +76,7 @@ export default async function UnitPage() {
         <section>
           <div className="flex items-center justify-between mb-3">
             <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider">{t("saved.title")}</h2>
-            <Link href="/dashboard/saved" className="text-sm text-brand-ink font-medium hover:underline">
+            <Link href="/account/saved" className="text-sm text-brand-ink font-medium hover:underline">
               Semua →
             </Link>
           </div>

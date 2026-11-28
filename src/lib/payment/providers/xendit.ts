@@ -30,8 +30,8 @@ export const xenditProvider: PaymentProvider = {
         description:         request.description,
         payerEmail:          request.payerEmail,
         currency:            "IDR",
-        successRedirectUrl:  request.returnUrl ?? `${origin}/dashboard`,
-        failureRedirectUrl:  request.cancelUrl ?? `${origin}/dashboard`,
+        successRedirectUrl:  request.returnUrl ?? `${origin}/account`,
+        failureRedirectUrl:  request.cancelUrl ?? `${origin}/account`,
         invoiceDuration:     86400, // 24h
       },
     });

@@ -43,7 +43,7 @@ export default async function ConsultationSuccessPage() {
 
         <div className="flex flex-col sm:flex-row gap-3 justify-center">
           <Link
-            href="/dashboard/appointments"
+            href="/account/appointments"
             className="px-6 py-3 bg-brand text-white rounded-lg font-semibold hover:opacity-90 transition-opacity"
           >
             {t("consultOk.viewAppt", lang)}

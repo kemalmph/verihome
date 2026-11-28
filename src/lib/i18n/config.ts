@@ -3,7 +3,7 @@
  *
  * The alternative — moving every route under app/[lang]/ — buys shareable
  * /en URLs and separate indexing, at the cost of rewriting every link in
- * the app including /admin, /site and /dashboard, which have nothing to do
+ * the app including /admin, /site and /account, which have nothing to do
  * with the public site's language. That trade was weighed and declined.
  *
  * What this cannot do, and no amount of plumbing would: listing

@@ -274,9 +274,9 @@ async function run() {
   }
 
   console.log("\nGuest A requesting Guest B's records\n");
-  check("own unit page", (await get(`/dashboard/unit/${bookA}`, cGA)).status === 200, "control");
-  check("unit page", isRefused(await get(`/dashboard/unit/${bookB}`, cGA)));
-  check("receipt",   isRefused(await get(`/dashboard/receipts/${bookB}`, cGA)));
+  check("own unit page", (await get(`/account/unit/${bookA}`, cGA)).status === 200, "control");
+  check("unit page", isRefused(await get(`/account/unit/${bookB}`, cGA)));
+  check("receipt",   isRefused(await get(`/account/receipts/${bookB}`, cGA)));
 
   console.log("\nRevoked owner\n");
   check("active session works first", (await get("/owner", cR)).status === 200, "control");

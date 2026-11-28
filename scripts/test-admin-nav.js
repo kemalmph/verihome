@@ -23,7 +23,7 @@
  *   It works with JavaScript off, and the phone drawer opens without it.
  *
  *   The default page after sign-in: staff -> the first item they have, a
- *   property owner who is not staff -> /owner, a guest -> /dashboard.
+ *   property owner who is not staff -> /owner, a guest -> /account.
  *
  *   The two older checks stay: no link goes nowhere (superadmin walks the
  *   whole menu, no 5xx), and no page is missing from the menu (every literal
@@ -130,7 +130,7 @@ const SITE_OWNER_SLUG = `navsiteowner-${RUN}`;
 const SITE_OWNER_PAGES = ["", "/dashboard", "/members", "/calendar", "/staff"].map((p) => `/site/${SITE_OWNER_SLUG}${p}`);
 const LANDING = {
   superadmin: "/admin", admin_general: "/admin", admin_listings: "/admin", admin_finance: "/admin",
-  surveyor: "/survey", owner: "/owner", owner_finance: "/admin", guest: "/dashboard", invited_owner: "/dashboard",
+  surveyor: "/survey", owner: "/owner", owner_finance: "/admin", guest: "/account", invited_owner: "/account",
   site_owner: `/site/${SITE_OWNER_SLUG}`,
 };
 function expectedFor(who) {
@@ -152,8 +152,8 @@ function claimedHrefs() {
   const root = path.join(__dirname, "..", "src", "app");
   let out = "";
   try {
-    // /dashboard is the tenant area and keeps its own sidebar: not in the menu.
-    out = execFileSync("grep", ["-rhoE", "--exclude-dir=dashboard", 'activeHref="[^"]+"', root], { encoding: "utf8" });
+    // /account (formerly /dashboard) is the customer area and keeps its own sidebar: not in the menu.
+    out = execFileSync("grep", ["-rhoE", "--exclude-dir=account", 'activeHref="[^"]+"', root], { encoding: "utf8" });
   } catch { /* none */ }
   return [...new Set(out.split("\n").filter(Boolean).map((l) => l.replace(/activeHref="|"/g, "")))];
 }
@@ -458,9 +458,9 @@ function claimedHrefs() {
     const ctx = await browser.newContext({ viewport: { width: 1280, height: 800 } });
     await ctx.addCookies(sessions.guest.map((c) => ({ ...c, url: BASE })));
     const page = await ctx.newPage();
-    await page.goto(BASE + "/dashboard", { waitUntil: "load" });
-    check((await page.locator("aside[data-app-sidebar]").count()) === 0, "/dashboard does not use the shared sidebar");
-    check((await page.locator("aside").count()) >= 1, "/dashboard still has its own sidebar");
+    await page.goto(BASE + "/account", { waitUntil: "load" });
+    check((await page.locator("aside[data-app-sidebar]").count()) === 0, "/account does not use the shared sidebar");
+    check((await page.locator("aside").count()) >= 1, "/account still has its own sidebar");
     await ctx.close();
   }
 

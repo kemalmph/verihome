@@ -23,7 +23,7 @@ export async function toggleSave(propertyId: string, currentlySaved: boolean) {
     if (error) return { error: error.message };
   }
 
-  revalidatePath("/dashboard/saved");
+  revalidatePath("/account/saved");
   return { saved: !currentlySaved };
 }
 

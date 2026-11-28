@@ -24,7 +24,7 @@ export default async function LoginPage({
 }) {
   const { next: rawNext, mode } = await searchParams;
   // Empty when the visitor came with no destination: after sign-in they go
-  // to the first page they have (see defaultLanding), not blindly /dashboard.
+  // to the first page they have (see defaultLanding), not blindly /account.
   const next = safeNext(rawNext, "");
   const lang = await getLocale();
 
