@@ -4,9 +4,10 @@ Posisi terakhir pekerjaan, untuk disambung session berikutnya.
 Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
-Terakhir diperbarui: 2026-11-28 · branch kerja `claude/exciting-darwin-fosna9`
-(redesign V7 — design system, homepage, shell dashboard — di-merge ke `main`
-lewat PR #5, merge commit `630ee4c`, atas permintaan owner). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+Terakhir diperbarui: 2026-11-28 · branch kerja
+`claude/site-management-phase-3-inventory-uyamoo` (Fase 3 — Site Management
+per pemilik site & staf site; PR menunggu persetujuan owner, **migration
+`20261128120000_site_staff_invites.sql` belum diterapkan ke produksi**). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -87,6 +88,48 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 ---
 
 ## Selesai
+
+- **Fase 3 — Site Management per pemilik site & staf site** (28 Nov, branch
+  `claude/site-management-phase-3-inventory-uyamoo`, PR belum di-merge).
+  Inventaris action/route/halaman disetujui owner sebelum kode ditulis.
+  - `src/lib/auth/site-permissions.ts` (murni): relasi site — pemilik
+    (owners.portal_access='active' + sites.owner_id), superstaff,
+    front_office, back_office, finance — → 14 izin `site.*`. Global:
+    operate_all = semua kecuali billing/staff/revenue; finance_all = billing +
+    revenue + lihat; superadmin semua. `site.revenue` (sewa terikat, barang
+    terjual, HPP, margin) **tidak dipegang peran site mana pun** sampai §20.7.
+    `site.documents.view` = finance hanya invoice/receipt.
+  - `src/lib/auth/site-access.ts`: `requireSiteAccess`, `requireRecordAccess`
+    (site record anak dari DB; siteId client yang tidak cocok = NotFoundError),
+    `requireSitePage` (404 untuk "tidak ada" dan "bukan milikmu"), dibaca ulang
+    tiap panggilan. Semua action site, route dokumen, halaman `/site` memakai
+    ini. Gate `/site` kini menerima pemilik/staf site non-staf.
+  - Celah lama yang ikut tertutup: `setMembershipStatus`/`setMembershipPayment`
+    dan `setReservationUtilities` tanpa filter site; rilis ruangan
+    `setEventStatus` lintas site; item/plan site lain; unduhan dokumen mana pun;
+    admin_general bisa mengisi `owner_id`; `listOwnerOptions` bocor ke semua staf site.
+  - **B4** (commit terpisah): `createMembership` selalu `unpaid`; lunas hanya
+    lewat `settle_membership_payment`.
+  - Staf & undangan: migration `20261128120000_site_staff_invites.sql`
+    (hash token saja, RLS tanpa policy, grant dicabut; `redeem_site_staff_invite`
+    SECURITY DEFINER karena membaca `auth.users`, EXECUTE hanya service_role).
+    Pemilik mengundang semua peran, superstaff tidak bisa superstaff. Tautan +
+    WhatsApp, tanpa email (seperti undangan pemilik). `/site/[id]/staff`,
+    `/invite/site/[token]`.
+  - Sidebar: tiap site satu grup (Overview, Dashboard, Members, Calendar,
+    Staff), difilter izin site viewer. "All sites" untuk staf global atau yang
+    punya >1 site; pemilik/staf satu site dialihkan dari `/site` ke site-nya.
+  - Tes: `test-site-isolation` 935 check (lintas-site 41 action × 5 orang +
+    route + halaman + snapshot B, matriks 30 action × 12 orang, uang,
+    eskalasi, pencabutan, undangan, B4, sidebar). Dibuktikan bisa merah
+    (cek site record `setMembershipStatus` dilepas → 4 gagal; tidak dikomit).
+    `test-staff-permissions` (609) dan `test-admin-nav` (811) disesuaikan.
+    17 suite lain hijau di DB lokal bersih, **kecuali `test-login-no-js`**
+    yang sudah merah sebelum PR ini: ia mencari tautan header
+    `/auth/login?mode=signup` yang hilang sejak navbar V7 (tidak ada di
+    `origin/main`).
+  - Tiga fitur yang izinnya sudah ada tapi action-nya belum (buat reservasi,
+    tandai cicilan lunas, status bayar reservasi) dicatat di `ROADMAP.md` §7.
 
 - **Panduan desain V7 tertulis** (28 Nov). `DESIGN.md` di root (aturan:
   warna, tipografi, radius, bayangan, komponen, logo, teks, halaman tanpa
@@ -323,6 +366,12 @@ Tes: 13 suite, ±434 check, semua hijau di DB lokal bersih.
 
 ## Sedang dikerjakan
 
+**Fase 3 menunggu owner:** (1) persetujuan menerapkan
+`20261128120000_site_staff_invites.sql` ke produksi lewat MCP
+`apply_migration` — kode yang di-merge tanpa migration itu membuat halaman
+Staf & penebusan undangan error; (2) review & merge PR. `sites.owner_id`
+Co&co Lokalima sengaja **tidak** diisi dan belum ada undangan di produksi.
+
 Redesign V7 sudah di `main` (PR #5). Cek di Vercel bahwa `630ee4c` Ready ·
 Current. Yang belum: halaman lain (listing, detail, login, contact, form) baru ikut
 berganti **warna** lewat token — tata letaknya masih gaya lama (tombol
@@ -340,10 +389,9 @@ placeholder.
 
 Urut prioritas:
 
-0. **Fase 2: merge PR setelah owner setuju, lalu pastikan deploy Vercel Ready.**
-   Lalu Fase 3 (`site_staff`: `accessibleSites` ditambah site milik/tempat staf)
-   dan dashboard per peran. Migration terpisah nanti: hapus kolom
-   `is_admin`/`is_surveyor`.
+0. **Fase 3: apply migration (setelah owner setuju) → merge PR → cek Vercel.**
+   Berikutnya dashboard per peran. Migration terpisah nanti: hapus kolom
+   `is_admin`/`is_surveyor`. Perbaiki `test-login-no-js` (selector navbar V7).
 
 1. **Putuskan pengembalian dana membership.** Jenis peristiwa
    `membership_refund_issued` sudah ada di daftar, fungsinya belum —
@@ -511,9 +559,11 @@ Bukan pemblokir, tapi sayang kalau hilang:
 
 **Supabase** — org `nzqxxsuurhvtygpyxdvb`, project `verihome`
 (`hxktoewssuahtkrksbpx`, ap-northeast-1, Postgres 17).
-Migration di `supabase/migrations/` (14 file; yang lama di
+Migration di `supabase/migrations/` (15 file; yang lama di
 `supabase/migrations-archive/`).
-Terakhir: `20261126180000_drop_admin_email_hook.sql` (produksi sudah sama).
+Terakhir di produksi: `20261126180000_drop_admin_email_hook.sql`.
+**Belum di produksi:** `20261128120000_site_staff_invites.sql` (Fase 3,
+menunggu persetujuan owner).
 Isi produksi saat ini: 1 site · 14 unit · 2 reservasi · 3 cicilan · 10 entri
 buku besar · 7 properti (6 tayang) · 3 pemilik · 30 pengguna · 24 amenity ·
 0 membership plan.

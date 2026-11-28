@@ -74,7 +74,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
               href={`/site/${site.slug}`}
               className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
             >
-              Kelola unit
+              Detail site
             </Link>
           </div>
         </header>
