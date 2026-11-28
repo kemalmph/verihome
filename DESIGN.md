@@ -198,7 +198,8 @@ teks berwarna untuk menggantikan logo.
 ## 6. Bahasa dan teks
 
 Semua teks antarmuka lewat `t()` / `useT()` dari `src/lib/i18n/strings.ts`,
-ID dan EN berdampingan. "Run Your Space." tetap Inggris di kedua bahasa.
+ID dan EN berdampingan. Bahasa bawaan **Inggris** untuk semua pengunjung yang
+belum memilih (keputusan owner, 28 Nov 2026); bahasa browser tidak dipakai. "Run Your Space." tetap Inggris di kedua bahasa.
 Jangan menanam teks langsung di komponen ("Continue", "Watch Video" pernah
 lolos begini).
 

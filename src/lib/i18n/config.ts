@@ -15,7 +15,12 @@ export const LOCALES = ["id", "en"] as const;
 
 export type Locale = (typeof LOCALES)[number];
 
-export const DEFAULT_LOCALE: Locale = "id";
+/**
+ * What a visitor sees before choosing. English, by the owner's decision
+ * (28 Nov 2026) — and for everyone, whatever their browser's language:
+ * only the EN/ID switch changes it. See getLocale().
+ */
+export const DEFAULT_LOCALE: Locale = "en";
 
 export const LOCALE_COOKIE = "cosystem_locale";
 

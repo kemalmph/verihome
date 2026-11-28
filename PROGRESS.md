@@ -366,6 +366,12 @@ Urut prioritas:
 
 ## Keputusan penting & alasannya
 
+- **Bahasa bawaan: Inggris, untuk semua pengunjung** (keputusan owner,
+  28 Nov 2026). `getLocale()` kini hanya membaca cookie `cosystem_locale`;
+  tanpa cookie → `en`. Accept-Language tidak lagi dipakai, jadi ponsel
+  berbahasa Indonesia pun melihat versi Inggris sampai pengunjung menekan ID.
+  Pengunjung yang sudah punya cookie tetap pada pilihannya.
+
 - **Marketplace = produk sekunder** (keputusan owner, 28 Nov 2026). Homepage
   V7 menjual Cosystem sebagai software untuk operator ruang; marketplace
   hunian hanya dicapai lewat menu **Resources → Marketplace** dan lewat
