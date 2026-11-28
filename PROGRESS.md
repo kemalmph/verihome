@@ -99,6 +99,34 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 ## Selesai
 
+- **Undangan pemilik terikat ke email yang dikonfirmasi** (28 Nov, branch
+  `claude/owner-invite-email`, PR menunggu persetujuan owner). **Migration
+  `20261128150000_owner_invite_email.sql` belum diterapkan ke produksi —
+  menunggu persetujuan owner.**
+  - `owner_invites.email` (huruf kecil, disalin dari `owners.email` saat
+    undangan dibuat — salinan, bukan join). `redeem_owner_invite` kini menolak
+    `invite_email_missing` (undangan lama tanpa alamat), `invite_email_mismatch`,
+    dan `invite_email_unconfirmed`, sebelum menyentuh `owners`. Fungsi jadi
+    `SECURITY DEFINER` + `search_path` dikunci (§19.21).
+  - **Celah tambahan yang ditemukan di produksi dan ditutup di migration yang
+    sama:** EXECUTE `redeem_owner_invite` dipegang `PUBLIC`, `anon`,
+    `authenticated`, dan `owner_invites` memberi grant tabel penuh ke anon/
+    authenticated — keduanya hanya tertahan RLS. Kini service_role saja.
+  - Data produksi saat ditulis: 1 undangan (kedaluwarsa), 0 terbuka, 3 pemilik
+    semua ber-email — tidak ada undangan berjalan yang rusak.
+  - App: `createOwnerInvite` menolak pemilik tanpa email valid, menyimpan
+    email, menyebutnya di pesan WhatsApp dan di panel admin; tiga kalimat i18n
+    baru untuk halaman undangan.
+  - Tes: `test-portal-isolation` (+ undangan tanpa alamat, email beda, email
+    belum dikonfirmasi → tidak terpakai → setelah konfirmasi berhasil sekali,
+    anon tak bisa EXECUTE/baca); `test-staff-permissions` (+ email disimpan
+    huruf kecil, pemilik tanpa email ditolak).
+
+- **PR #10 (`/dashboard` → `/account`) di-merge** (`4547da8`) atas persetujuan
+  owner; **deploy produksi terverifikasi**: `www.cosystem.co/dashboard/statement?months=3`
+  → 308 `/account/statement?months=3` sekitar satu menit setelah merge. System
+  Reference versi 30 mencatat merge-nya.
+
 - **Fase 3b — area pelanggan `/dashboard` → `/account`** (28 Nov, branch
   `claude/account-phase-3b`, PR terpisah menunggu persetujuan owner; **tanpa
   migration**, rename murni — perilaku, izin, data tidak berubah).
@@ -452,12 +480,10 @@ placeholder.
 
 Urut prioritas:
 
-0. **Fase 3b: PR `/account`** (branch `claude/account-phase-3b`, dibuat dari
-   `main` setelah merge PR #9) — siap direview; jangan merge tanpa persetujuan
-   owner. Sudah termasuk perbaikan `test-login-no-js` (selector navbar V7).
-   Sesudahnya: email
-   binding + konfirmasi untuk undangan pemilik; dashboard per peran; migration
-   hapus kolom `is_admin`/`is_surveyor`.
+0. **Undangan pemilik: setujui & terapkan migration
+   `20261128150000_owner_invite_email.sql`, lalu merge PR-nya.** Sesudahnya:
+   dashboard per peran; migration hapus kolom `is_admin`/`is_surveyor`;
+   proxy membawa path asal ke login (`/?login=1` sekarang membuangnya).
 
 1. **Putuskan pengembalian dana membership.** Jenis peristiwa
    `membership_refund_issued` sudah ada di daftar, fungsinya belum —
@@ -552,14 +578,11 @@ Urut prioritas:
   `RESEND_API_KEY`, `XENDIT_SECRET_KEY`, dan `XENDIT_WEBHOOK_TOKEN`; ketiganya
   perlu diperlakukan sama.
 
-- **Undangan pemilik (`owner_invites`) — celah untuk PR berikutnya.**
-  `redeem_owner_invite` tidak memeriksa email sama sekali: tokennya *bearer*,
-  siapa pun yang login (terkonfirmasi atau tidak) dan memegang tautan menjadi
-  pemilik itu. Undangan staf site kini mensyaratkan email sama + terkonfirmasi;
-  undangan pemilik belum. Sengaja tidak diubah di PR #9 (permintaan owner).
-  Catatan: Supabase lokal memakai `enable_confirmations = false`
-  (autokonfirmasi); setelan konfirmasi email di produksi belum diverifikasi
-  dari sini.
+- **Undangan pemilik (`owner_invites`)** — diperbaiki di branch
+  `claude/owner-invite-email` (lihat "Selesai"); tertutup di produksi setelah
+  migration-nya diterapkan. Catatan: Supabase lokal memakai
+  `enable_confirmations = false` (autokonfirmasi); setelan konfirmasi email di
+  produksi belum diverifikasi dari sini.
 - **Empat keputusan pemilik** di daftar "Berikutnya" (1–4) memblokir pekerjaan
   nyata, bukan sekadar kerapian.
 - **Xendit ditulis dan bisa dipilih, tapi `PAYMENT_PROVIDER` tetap `manual`.**
@@ -633,11 +656,13 @@ Bukan pemblokir, tapi sayang kalau hilang:
 
 **Supabase** — org `nzqxxsuurhvtygpyxdvb`, project `verihome`
 (`hxktoewssuahtkrksbpx`, ap-northeast-1, Postgres 17).
-Migration di `supabase/migrations/` (15 file; yang lama di
+Migration di `supabase/migrations/` (16 file; yang lama di
 `supabase/migrations-archive/`).
-Terakhir: `20261128120000_site_staff_invites.sql` (produksi sudah sama;
-tercatat di produksi sebagai versi `20261128115051` karena MCP memberi
-timestamp sendiri — lihat HANDOFF Phase B).
+Terakhir di produksi: `20261128120000_site_staff_invites.sql` (tercatat di
+produksi sebagai versi `20261128115051` karena MCP memberi timestamp sendiri —
+lihat HANDOFF Phase B).
+**Belum di produksi:** `20261128150000_owner_invite_email.sql` (menunggu
+persetujuan owner).
 Isi produksi saat ini: 1 site · 14 unit · 2 reservasi · 3 cicilan · 10 entri
 buku besar · 7 properti (6 tayang) · 3 pemilik · 30 pengguna · 24 amenity ·
 0 membership plan.
