@@ -173,7 +173,10 @@ export const SITE_PAGES: readonly { path: string; icon: string; label: string; r
 export interface MenuInput {
   /** Union of the viewer's staff permissions; empty for a non-staff user. */
   permissions: readonly Permission[];
-  /** True for a user whose owners row has portal_access = 'active'. */
+  /**
+   * Show the property-owner portal: an owners row with portal_access =
+   * 'active' AND at least one property. A site-only owner is false here.
+   */
   isOwner: boolean;
   /** From accessibleSites(); already filtered to what the viewer may open. */
   sites: readonly NavSite[];
