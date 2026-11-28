@@ -67,13 +67,13 @@ export function DashboardSidebar({
             title={rail ? userName : undefined}
             className={`flex items-center gap-4 p-3 rounded-lg bg-white/5 border border-white/10 ${r("collapsed:p-1.5 collapsed:justify-center")}`}
           >
-            <div className="w-10 h-10 rounded-full bg-[#1a7a5e] flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
+            <div className="w-10 h-10 rounded-full bg-brand flex items-center justify-center text-white font-bold text-sm flex-shrink-0">
               {userName.charAt(0).toUpperCase()}
             </div>
             <div className={`min-w-0 ${r("collapsed:hidden")}`}>
               <p className="text-sm font-bold text-white truncate">{userName}</p>
               {isActiveClient && (
-                <span className="inline-block px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-[#1a7a5e] text-white uppercase tracking-wider">
+                <span className="inline-block px-2 py-0.5 mt-1 rounded-full text-[10px] font-bold bg-brand text-white uppercase tracking-wider">
                   Active Client
                 </span>
               )}
@@ -106,7 +106,7 @@ export function DashboardSidebar({
                   )}
                 </div>
                 {link.badge && (
-                  <span className={`bg-[#1a7a5e] text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full ${r("collapsed:hidden")}`}>
+                  <span className={`bg-brand text-white text-[10px] font-bold h-5 w-5 flex items-center justify-center rounded-full ${r("collapsed:hidden")}`}>
                     {link.badge}
                   </span>
                 )}
@@ -163,31 +163,31 @@ export function DashboardSidebar({
       <details ref={drawer} className="md:hidden">
         <summary
           aria-label="Menu"
-          className="list-none cursor-pointer fixed top-0 left-0 right-0 h-14 bg-[#0d2137] flex items-center px-4 z-50 gap-3 [&::-webkit-details-marker]:hidden"
+          className="list-none cursor-pointer fixed top-0 left-0 right-0 h-14 bg-ink flex items-center px-4 z-50 gap-3 [&::-webkit-details-marker]:hidden"
         >
           <span aria-hidden className="material-symbols-outlined text-white text-xl p-1.5">
             menu
           </span>
-          <p className="text-[#9cf4d1] font-extrabold text-lg tracking-tight">Cosystem</p>
+          <p className="text-brand font-extrabold text-lg tracking-tight">Cosystem</p>
         </summary>
 
         <div onClick={closeDrawer} className="fixed top-14 left-0 right-0 bottom-0 bg-black/50 z-40" />
 
-        <aside className="fixed top-14 left-0 bottom-0 w-72 bg-[#0d2137] text-white flex flex-col z-50 pt-6">
+        <aside className="fixed top-14 left-0 bottom-0 w-72 bg-ink text-white flex flex-col z-50 pt-6">
           {renderBody(false)}
         </aside>
       </details>
 
       {/* ── Desktop: full, or folded to an icon rail ──────────────────── */}
-      <aside className="hidden md:flex fixed top-0 left-0 h-full w-(--dash-sidebar-w) transition-[width] bg-[#0d2137] text-white flex-col z-40 overflow-hidden">
+      <aside className="hidden md:flex fixed top-0 left-0 h-full w-(--dash-sidebar-w) transition-[width] bg-ink text-white flex-col z-40 overflow-hidden">
         <div className="px-8 py-10 whitespace-nowrap collapsed:px-0 collapsed:text-center">
-          <Link href="/" className="text-2xl font-extrabold tracking-tight text-[#9cf4d1] collapsed:hidden">
+          <Link href="/" className="text-2xl font-extrabold tracking-tight text-brand collapsed:hidden">
             Cosystem
           </Link>
           <Link
             href="/"
             aria-label="Cosystem"
-            className="hidden collapsed:inline text-2xl font-extrabold tracking-tight text-[#9cf4d1]"
+            className="hidden collapsed:inline text-2xl font-extrabold tracking-tight text-brand"
           >
             C
           </Link>

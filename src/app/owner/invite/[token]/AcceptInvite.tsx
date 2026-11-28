@@ -36,7 +36,7 @@ export function AcceptInvite({ token }: { token: string }) {
       <button
         onClick={accept}
         disabled={busy}
-        className="w-full py-3 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50"
+        className="w-full py-3 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50"
       >
         {busy ? t("common.loading") : t("owner.invite.accept")}
       </button>

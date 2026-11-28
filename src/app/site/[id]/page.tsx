@@ -40,35 +40,35 @@ export default async function CoworkingSitePage({ params }: Props) {
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
-        <nav className="text-sm text-[#6e7a74] mb-4">
+        <nav className="text-sm text-ink-3 mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
           <span className="mx-2">/</span>
-          <span className="text-[#3e4944]">{site.name}</span>
+          <span className="text-ink-2">{site.name}</span>
         </nav>
 
         <header className="mb-8 flex items-start justify-between gap-6 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold text-[#0d2137]">{site.name}</h1>
-            <p className="text-[#3e4944] mt-1">
+            <h1 className="text-3xl font-bold text-ink">{site.name}</h1>
+            <p className="text-ink-2 mt-1">
               {units.length} unit · {lettable.length} tersedia · kapasitas {seats}
             </p>
           </div>
           <div className="flex gap-2">
             <Link
               href={`/site/${site.slug}/members`}
-              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
+              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-white"
             >
               Member
             </Link>
             <Link
               href={`/site/${site.slug}/calendar`}
-              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
+              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-white"
             >
               Kalender
             </Link>
             <Link
               href={`/site/${site.slug}/dashboard`}
-              className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750]"
+              className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong"
             >
               Dashboard operator
             </Link>

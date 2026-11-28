@@ -83,12 +83,12 @@ export function BookingDocuments({
 
   return (
     <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden mt-8">
-      <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-[#0d2137]">
+      <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
         Dokumen kontrak
       </h2>
 
       {documents.length === 0 ? (
-        <p className="px-5 py-6 text-sm text-[#6e7a74]">
+        <p className="px-5 py-6 text-sm text-ink-3">
           Belum ada dokumen. Kontrak yang ditandatangani, adendum, KTP penanggung
           jawab — simpan di sini supaya tidak tercecer di percakapan.
         </p>
@@ -99,11 +99,11 @@ export function BookingDocuments({
               <div className="min-w-0">
                 <button
                   onClick={() => open(d.id)}
-                  className="font-medium text-[#1a7a5e] hover:underline text-left truncate block max-w-md"
+                  className="font-medium text-brand-ink hover:underline text-left truncate block max-w-md"
                 >
                   {d.title || d.file_name}
                 </button>
-                <div className="text-xs text-[#6e7a74]">
+                <div className="text-xs text-ink-3">
                   {kindLabel(d.kind)} · {size(d.size_bytes)} · diunggah {tanggal(d.created_at)}
                   {d.title && ` · ${d.file_name}`}
                 </div>
@@ -122,13 +122,13 @@ export function BookingDocuments({
 
       <form onSubmit={onUpload} className="px-5 py-4 border-t border-[#e8e3e0] flex flex-wrap items-end gap-2">
         <label className="block">
-          <span className="block text-xs text-[#6e7a74] mb-1">Jenis</span>
+          <span className="block text-xs text-ink-3 mb-1">Jenis</span>
           <select name="kind" defaultValue="contract" className="border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm bg-white">
             {KINDS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
         </label>
         <label className="block">
-          <span className="block text-xs text-[#6e7a74] mb-1">Judul</span>
+          <span className="block text-xs text-ink-3 mb-1">Judul</span>
           <input
             name="title"
             placeholder="Opsional"
@@ -136,23 +136,23 @@ export function BookingDocuments({
           />
         </label>
         <label className="block">
-          <span className="block text-xs text-[#6e7a74] mb-1">Berkas</span>
+          <span className="block text-xs text-ink-3 mb-1">Berkas</span>
           <input
             ref={fileRef}
             type="file"
             name="file"
             accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx"
-            className="text-sm file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border file:border-[#ddd7d4] file:bg-white file:text-[#3e4944] file:text-sm"
+            className="text-sm file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border file:border-[#ddd7d4] file:bg-white file:text-ink-2 file:text-sm"
           />
         </label>
         <button
           type="submit"
           disabled={busy}
-          className="px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750] disabled:opacity-60"
+          className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
         >
           {busy ? "Mengunggah…" : "Unggah"}
         </button>
-        <p className="w-full text-xs text-[#6e7a74] mt-1">
+        <p className="w-full text-xs text-ink-3 mt-1">
           PDF, gambar, atau Word, maksimal 20 MB. Disimpan di penyimpanan privat —
           tautannya dibuat saat diklik dan hanya berlaku 15 menit.
         </p>

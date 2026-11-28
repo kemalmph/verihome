@@ -91,8 +91,8 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
     redirect("/admin/listings");
   }
 
-  const inputClass = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white";
-  const labelClass = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1";
+  const inputClass = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white";
+  const labelClass = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 
   return (
     <div className="flex min-h-screen bg-[#f6f3f2]">
@@ -100,12 +100,12 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1200px]">
         <div className="flex items-center justify-between mb-8">
           <div>
-            <div className="flex items-center gap-2 text-sm text-[#3e4944] mb-2">
-              <Link href="/admin/listings" className="hover:text-[#1a7a5e]">Listings</Link>
+            <div className="flex items-center gap-2 text-sm text-ink-2 mb-2">
+              <Link href="/admin/listings" className="hover:text-brand-ink">Listings</Link>
               <span className="material-symbols-outlined text-sm">chevron_right</span>
-              <span className="text-[#1b1c1c] font-medium">Edit</span>
+              <span className="text-ink font-medium">Edit</span>
             </div>
-            <h1 className="text-2xl font-bold text-[#0d2137]">{property.name}</h1>
+            <h1 className="text-2xl font-bold text-ink">{property.name}</h1>
           </div>
           <div className="flex items-center gap-3">
             <Link
@@ -117,7 +117,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
             <Link
               href={`/listings/${property.slug}`}
               target="_blank"
-              className="px-4 py-2 border border-[#cccccc] text-[#3e4944] rounded-lg text-sm hover:bg-white"
+              className="px-4 py-2 border border-[#cccccc] text-ink-2 rounded-lg text-sm hover:bg-white"
             >
               View live →
             </Link>
@@ -134,7 +134,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
           {/* Main edit form */}
           <form action={handleUpdate} className="lg:col-span-2 space-y-6">
             <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-5">
-              <h2 className="font-semibold text-[#0d2137]">Property Details</h2>
+              <h2 className="font-semibold text-ink">Property Details</h2>
 
               <div>
                 <label className={labelClass}>Name</label>
@@ -175,7 +175,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
                     </option>
                   ))}
                 </select>
-                <p className="text-xs text-[#6e7a74] mt-1">
+                <p className="text-xs text-ink-3 mt-1">
                   {sites.length === 0
                     ? "Belum ada site. Tambahkan di menu Coworking kalau properti ini berada di dalam sebuah gedung yang dikelola."
                     : "Kosongkan kalau properti ini bukan bagian dari gedung yang dikelola — ini kasus yang normal."}
@@ -220,7 +220,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
 
             <button
               type="submit"
-              className="w-full bg-[#1a7a5e] text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-md"
+              className="w-full bg-brand text-white py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity shadow-md"
             >
               Save Changes
             </button>
@@ -230,19 +230,19 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
           <div className="space-y-6">
             {/* Publish checklist */}
             <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
-              <h3 className="font-semibold text-[#0d2137] flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#1a7a5e]">checklist</span>
+              <h3 className="font-semibold text-ink flex items-center gap-2">
+                <span className="material-symbols-outlined text-brand-ink">checklist</span>
                 Publish Checklist
               </h3>
               {checklist.map((item) => (
                 <div key={item.label} className="flex items-center gap-2 text-sm">
                   <span
-                    className={`material-symbols-outlined text-base ${item.done ? "text-[#1a7a5e]" : "text-[#bec9c2]"}`}
+                    className={`material-symbols-outlined text-base ${item.done ? "text-brand-ink" : "text-line-strong"}`}
                     style={{ fontVariationSettings: item.done ? "'FILL' 1" : "'FILL' 0" }}
                   >
                     {item.done ? "check_circle" : "radio_button_unchecked"}
                   </span>
-                  <span className={item.done ? "text-[#1b1c1c]" : "text-[#6e7a74]"}>{item.label}</span>
+                  <span className={item.done ? "text-ink" : "text-ink-3"}>{item.label}</span>
                 </div>
               ))}
             </div>
@@ -250,26 +250,26 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
             {/* Owner info */}
             {owner && (
               <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
-                <h3 className="font-semibold text-[#0d2137] flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#1a7a5e]">person</span>
+                <h3 className="font-semibold text-ink flex items-center gap-2">
+                  <span className="material-symbols-outlined text-brand-ink">person</span>
                   Owner
                 </h3>
-                <p className="font-medium text-sm text-[#1b1c1c]">{owner.name}</p>
-                <p className="text-xs text-[#6e7a74]">{owner.email}</p>
-                <p className="text-xs text-[#6e7a74]">{owner.phone_whatsapp}</p>
+                <p className="font-medium text-sm text-ink">{owner.name}</p>
+                <p className="text-xs text-ink-3">{owner.email}</p>
+                <p className="text-xs text-ink-3">{owner.phone_whatsapp}</p>
               </div>
             )}
 
             {/* RLA summary — 0-10 scale */}
             {rla && (
               <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
-                <h3 className="font-semibold text-[#0d2137] flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#1a7a5e]">verified_user</span>
+                <h3 className="font-semibold text-ink flex items-center gap-2">
+                  <span className="material-symbols-outlined text-brand-ink">verified_user</span>
                   RLA Score
                 </h3>
                 <div className="flex items-center gap-2">
-                  <span className="text-3xl font-bold text-[#1a7a5e]">{Number(rla.rla_score).toFixed(1)}</span>
-                  <span className="text-[#6e7a74] text-sm">/ 10</span>
+                  <span className="text-3xl font-bold text-brand-ink">{Number(rla.rla_score).toFixed(1)}</span>
+                  <span className="text-ink-3 text-sm">/ 10</span>
                 </div>
                 {[
                   { label: "Building",   val: rla.building_condition },
@@ -282,12 +282,12 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
                   { label: "Furniture",  val: rla.furniture_quality },
                 ].filter((i) => i.val != null).map((item) => (
                   <div key={item.label}>
-                    <div className="flex justify-between text-xs text-[#3e4944] mb-1">
+                    <div className="flex justify-between text-xs text-ink-2 mb-1">
                       <span>{item.label}</span>
                       <span className="font-bold">{item.val}/10</span>
                     </div>
                     <div className="w-full bg-[#e4e2e1] h-1.5 rounded-full">
-                      <div className="bg-[#1a7a5e] h-full rounded-full" style={{ width: `${((item.val ?? 0) / 10) * 100}%` }} />
+                      <div className="bg-brand h-full rounded-full" style={{ width: `${((item.val ?? 0) / 10) * 100}%` }} />
                     </div>
                   </div>
                 ))}
@@ -297,12 +297,12 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
             {/* Photo count */}
             {media && (
               <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-2">
-                <h3 className="font-semibold text-[#0d2137] flex items-center gap-2">
-                  <span className="material-symbols-outlined text-[#1a7a5e]">photo_library</span>
+                <h3 className="font-semibold text-ink flex items-center gap-2">
+                  <span className="material-symbols-outlined text-brand-ink">photo_library</span>
                   Photos
                 </h3>
-                <p className="text-sm text-[#3e4944]">
-                  <span className={`font-bold ${media.total_photo_count >= 15 ? "text-[#1a7a5e]" : "text-amber-600"}`}>
+                <p className="text-sm text-ink-2">
+                  <span className={`font-bold ${media.total_photo_count >= 15 ? "text-brand-ink" : "text-amber-600"}`}>
                     {media.total_photo_count}
                   </span>
                   {" "}/ 15 minimum
@@ -313,7 +313,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
                   { label: "Unit",        val: (media.photos_unit        as string[])?.length ?? 0 },
                   { label: "Bathroom",    val: (media.photos_bathroom    as string[])?.length ?? 0 },
                 ].map((c) => (
-                  <div key={c.label} className="flex justify-between text-xs text-[#6e7a74]">
+                  <div key={c.label} className="flex justify-between text-xs text-ink-3">
                     <span>{c.label}</span>
                     <span>{c.val}</span>
                   </div>
@@ -324,10 +324,10 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
             {/* Facilities */}
             {details && (
               <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-2">
-                <h3 className="font-semibold text-[#0d2137]">Facilities</h3>
+                <h3 className="font-semibold text-ink">Facilities</h3>
                 <div className="flex flex-wrap gap-1">
                   {((details.facilities as string[]) ?? []).map((f: string) => (
-                    <span key={f} className="bg-[#e4e2e1] text-[#3e4944] px-2 py-1 rounded text-xs">{f}</span>
+                    <span key={f} className="bg-[#e4e2e1] text-ink-2 px-2 py-1 rounded text-xs">{f}</span>
                   ))}
                 </div>
               </div>

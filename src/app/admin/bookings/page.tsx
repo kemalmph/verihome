@@ -11,7 +11,7 @@ function statusColor(s: BookingStatus) {
     pending:   "bg-amber-100 text-amber-700",
     confirmed: "bg-green-100 text-green-700",
     cancelled: "bg-red-100 text-red-700",
-    completed: "bg-[#e8f5f0] text-[#1a7a5e]",
+    completed: "bg-brand-soft text-brand-ink",
     // Muted, not red: an expiry is the deadline passing, not a cancellation.
     expired:   "bg-gray-200 text-gray-600",
   };
@@ -52,14 +52,14 @@ export default async function AdminBookingsPage() {
       <AppSidebar activeHref="/admin/bookings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#0d2137]">Bookings</h1>
-          <p className="text-[#6e7a74] text-sm mt-1">All short-stay booking requests</p>
+          <h1 className="text-2xl font-bold text-ink">Bookings</h1>
+          <p className="text-ink-3 text-sm mt-1">All short-stay booking requests</p>
         </div>
 
         {!bookings || bookings.length === 0 ? (
           <div className="bg-white rounded-xl border border-[#cccccc] p-12 text-center">
             <span className="material-symbols-outlined text-[#cccccc] text-5xl">hotel</span>
-            <p className="text-[#6e7a74] mt-4">No bookings yet.</p>
+            <p className="text-ink-3 mt-4">No bookings yet.</p>
           </div>
         ) : (
           <div className="space-y-4">
@@ -71,8 +71,8 @@ export default async function AdminBookingsPage() {
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-[#0d2137]">{property?.name ?? "—"}</span>
-                        <span className="text-xs text-[#6e7a74]">{property?.area}</span>
+                        <span className="font-bold text-ink">{property?.name ?? "—"}</span>
+                        <span className="text-xs text-ink-3">{property?.area}</span>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${statusColor(b.status as BookingStatus)}`}>
                           {b.status}
                         </span>
@@ -80,27 +80,27 @@ export default async function AdminBookingsPage() {
                           {b.payment_status.replace("_", " ")}
                         </span>
                       </div>
-                      <div className="text-sm text-[#3e4944]">
+                      <div className="text-sm text-ink-2">
                         {b.check_in_date} → {b.check_out_date} · {b.nights}n · {b.guests} guests
                       </div>
-                      <div className="text-xs text-[#6e7a74]">
+                      <div className="text-xs text-ink-3">
                         Code: <strong>{b.booking_code}</strong> ·
                         Guest: <strong>{user?.name ?? "—"}</strong> ({user?.email ?? "—"})
                         {user?.phone_whatsapp && ` · WA: ${user.phone_whatsapp}`}
                       </div>
-                      <div className="text-xs text-[#6e7a74]">
+                      <div className="text-xs text-ink-3">
                         Transfer code: <strong>{b.bank_transfer_code ?? "—"}</strong>
                       </div>
                     </div>
 
                     <div className="text-right">
-                      <div className="text-xl font-bold text-[#1a7a5e] mb-1">IDR {fmt(Number(b.total_price))}</div>
+                      <div className="text-xl font-bold text-brand-ink mb-1">IDR {fmt(Number(b.total_price))}</div>
                       {b.payment_proof_url && (
                         <a
                           href={b.payment_proof_url}
                           target="_blank"
                           rel="noopener noreferrer"
-                          className="text-xs text-[#1a7a5e] hover:underline"
+                          className="text-xs text-brand-ink hover:underline"
                         >
                           View proof →
                         </a>

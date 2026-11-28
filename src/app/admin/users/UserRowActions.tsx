@@ -42,14 +42,14 @@ export function RoleToggles({ userId, roles, canEdit }: { userId: string; roles:
               }
               title={canEdit ? (on ? `Revoke ${ROLE_LABEL[role]}` : `Grant ${ROLE_LABEL[role]}`) : ROLE_LABEL[role]}
               className={`px-2 py-0.5 rounded-full text-[11px] font-semibold border disabled:opacity-60 ${
-                on ? "bg-[#1a7a5e] text-white border-[#1a7a5e]" : "bg-white text-[#6e7a74] border-[#bec9c2]"
+                on ? "bg-brand text-white border-brand" : "bg-white text-ink-3 border-line-strong"
               }`}
             >
               {ROLE_LABEL[role]}
             </button>
           );
         })}
-        {!canEdit && current.length === 0 && <span className="text-xs text-[#6e7a74]">—</span>}
+        {!canEdit && current.length === 0 && <span className="text-xs text-ink-3">—</span>}
       </div>
       {error && <span className="text-[10px] text-red-600 max-w-[200px] leading-tight">{error}</span>}
     </div>
@@ -74,7 +74,7 @@ export function ActiveClientToggle({ userId, isActive }: { userId: string; isAct
       }
       title={current ? "Deactivate client" : "Mark as active client"}
       className={`relative inline-flex h-6 w-11 items-center rounded-full transition-colors disabled:opacity-50 ${
-        current ? "bg-[#3b82f6]" : "bg-[#bec9c2]"
+        current ? "bg-[#3b82f6]" : "bg-line-strong"
       }`}
     >
       <span

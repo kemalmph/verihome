@@ -11,7 +11,7 @@ const day = (d: string) => new Date(`${d}T00:00:00`).toLocaleDateString("id-ID",
 
 const STATUS: Record<string, { label: string; cls: string }> = {
   pending:   { label: "menunggu",  cls: "bg-amber-100 text-amber-800" },
-  confirmed: { label: "terkonfirmasi", cls: "bg-[#e8f5f0] text-[#12614a]" },
+  confirmed: { label: "terkonfirmasi", cls: "bg-success-soft text-success-ink" },
   completed: { label: "selesai",   cls: "bg-blue-50 text-blue-800" },
   cancelled: { label: "dibatalkan", cls: "bg-red-100 text-red-700" },
   expired:   { label: "kedaluwarsa", cls: "bg-gray-200 text-gray-600" },
@@ -26,11 +26,11 @@ export default async function OwnerBookingsPage() {
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AppSidebar activeHref="/owner/bookings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
-        <h1 className="text-3xl font-bold text-[#0d2137]">{t("owner.bookings.title")}</h1>
-        <p className="text-xs text-[#6e7a74] mt-2 mb-6 max-w-2xl">{t("owner.bookings.privacyNote")}</p>
+        <h1 className="text-3xl font-bold text-ink">{t("owner.bookings.title")}</h1>
+        <p className="text-xs text-ink-3 mt-2 mb-6 max-w-2xl">{t("owner.bookings.privacyNote")}</p>
 
         {bookings.length === 0 ? (
-          <p className="text-[#3e4944]">{t("owner.bookings.none")}</p>
+          <p className="text-ink-2">{t("owner.bookings.none")}</p>
         ) : (
           <div className="space-y-3">
             {bookings.map((b) => {
@@ -39,28 +39,28 @@ export default async function OwnerBookingsPage() {
                 <article key={b.id} className="bg-white rounded-xl border border-[#cccccc] p-5">
                   <div className="flex items-start justify-between gap-3 flex-wrap">
                     <div className="min-w-0">
-                      <p className="font-semibold text-[#0d2137]">{b.propertyName}</p>
-                      <p className="text-sm text-[#3e4944] mt-0.5">{day(b.checkIn)} → {day(b.checkOut)}</p>
-                      <p className="text-xs text-[#6e7a74] mt-1">
+                      <p className="font-semibold text-ink">{b.propertyName}</p>
+                      <p className="text-sm text-ink-2 mt-0.5">{day(b.checkIn)} → {day(b.checkOut)}</p>
+                      <p className="text-xs text-ink-3 mt-1">
                         {b.nights} malam · {b.guests} tamu · {t("owner.bookings.guest")}: {b.guestFirstName}
                       </p>
                     </div>
                     <div className="text-right shrink-0">
                       <span className={`px-2.5 py-1 rounded-full text-xs font-semibold ${s.cls}`}>{s.label}</span>
-                      <p className="text-sm font-bold text-[#1a7a5e] mt-2 tabular-nums">{rp(b.toOwner)}</p>
-                      <p className="text-[11px] text-[#6e7a74]">{t("owner.bookings.toYou")}</p>
+                      <p className="text-sm font-bold text-brand-ink mt-2 tabular-nums">{rp(b.toOwner)}</p>
+                      <p className="text-[11px] text-ink-3">{t("owner.bookings.toYou")}</p>
                     </div>
                   </div>
 
                   <div className="mt-3 pt-3 border-t border-[#f0eeed]">
                     {b.contactOpen && b.guestPhone ? (
                       <a href={`https://wa.me/${b.guestPhone.replace(/\D/g, "")}`} target="_blank" rel="noopener noreferrer"
-                         className="inline-flex items-center gap-1.5 text-sm text-[#1a7a5e] font-medium hover:underline">
+                         className="inline-flex items-center gap-1.5 text-sm text-brand-ink font-medium hover:underline">
                         <span className="material-symbols-outlined text-base">chat</span>
                         {b.guestPhone}
                       </a>
                     ) : (
-                      <p className="text-[11px] text-[#6e7a74]">{t("owner.bookings.contactWindow")}</p>
+                      <p className="text-[11px] text-ink-3">{t("owner.bookings.contactWindow")}</p>
                     )}
                   </div>
                 </article>

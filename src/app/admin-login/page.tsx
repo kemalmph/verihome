@@ -18,10 +18,10 @@ export default function AdminLoginPage() {
   }
 
   return (
-    <div className="min-h-screen bg-[#0d2137] flex items-center justify-center p-4">
+    <div className="min-h-screen bg-ink flex items-center justify-center p-4">
       <div className="bg-white rounded-2xl shadow-2xl w-full max-w-sm overflow-hidden">
-        <div className="bg-[#0d2137] px-8 py-6 text-white">
-          <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
+        <div className="bg-ink px-8 py-6 text-white">
+          <p className="text-brand font-bold text-lg">Cosystem</p>
           <h1 className="text-2xl font-bold mt-1">Admin Access</h1>
           <p className="text-white/60 text-sm mt-1">Restricted to authorized staff only.</p>
         </div>
@@ -42,29 +42,29 @@ export default function AdminLoginPage() {
           JavaScript siap. */}
           <form method="post" onSubmit={handleSubmit} className="space-y-4">
             <div>
-              <label className="text-xs font-medium text-[#3e4944] block mb-1">Email</label>
+              <label className="text-xs font-medium text-ink-2 block mb-1">Email</label>
               <input
                 name="email"
                 type="email"
                 required
                 placeholder="admin@cosystem.co"
-                className="w-full h-11 border border-[#bec9c2] rounded-lg px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
+                className="w-full h-11 border border-line-strong rounded-lg px-3 text-sm focus:outline-none focus:border-brand"
               />
             </div>
             <div>
-              <label className="text-xs font-medium text-[#3e4944] block mb-1">Password</label>
+              <label className="text-xs font-medium text-ink-2 block mb-1">Password</label>
               <input
                 name="password"
                 type="password"
                 required
                 placeholder="••••••••"
-                className="w-full h-11 border border-[#bec9c2] rounded-lg px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
+                className="w-full h-11 border border-line-strong rounded-lg px-3 text-sm focus:outline-none focus:border-brand"
               />
             </div>
             <button
               type="submit"
               disabled={isPending}
-              className="w-full h-11 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50 transition-opacity"
+              className="w-full h-11 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50 transition-opacity"
             >
               {isPending ? "Signing in…" : "Sign In"}
             </button>

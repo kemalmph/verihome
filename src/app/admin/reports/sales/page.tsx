@@ -38,8 +38,8 @@ export default async function SalesReportPage({
       <AppSidebar activeHref="/admin/reports/sales" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <header className="mb-6">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Laporan penjualan</h1>
-          <p className="text-[#3e4944] mt-1">
+          <h1 className="text-3xl font-bold text-ink">Laporan penjualan</h1>
+          <p className="text-ink-2 mt-1">
             Semua angka berasal dari buku besar — {period.label.toLowerCase()}.
           </p>
         </header>
@@ -52,8 +52,8 @@ export default async function SalesReportPage({
               href={`/admin/reports/sales?period=${o.key}`}
               className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                 period.key === o.key
-                  ? "bg-white border-[#1a7a5e] text-[#1a7a5e] shadow-sm"
-                  : "bg-white border-[#cccccc] text-[#3e4944] hover:border-[#1a7a5e]"
+                  ? "bg-white border-brand text-brand-ink shadow-sm"
+                  : "bg-white border-[#cccccc] text-ink-2 hover:border-brand"
               }`}
             >
               {o.label}
@@ -63,11 +63,11 @@ export default async function SalesReportPage({
             <input type="hidden" name="period" value="custom" />
             <input type="date" name="from" defaultValue={sp.from}
               className="h-10 px-3 rounded-lg border border-[#cccccc] text-sm bg-white" />
-            <span className="text-[#6e7a74] text-sm">–</span>
+            <span className="text-ink-3 text-sm">–</span>
             <input type="date" name="to" defaultValue={sp.to}
               className="h-10 px-3 rounded-lg border border-[#cccccc] text-sm bg-white" />
             <button type="submit"
-              className="h-10 px-4 rounded-lg border border-[#cccccc] bg-white text-sm font-medium text-[#3e4944] hover:border-[#1a7a5e]">
+              className="h-10 px-4 rounded-lg border border-[#cccccc] bg-white text-sm font-medium text-ink-2 hover:border-brand">
               Terapkan
             </button>
           </form>
@@ -77,8 +77,8 @@ export default async function SalesReportPage({
         {/* Net revenue is the primary figure and is styled as such; GBV is
             deliberately quieter so the two are never read as the same thing. */}
         <section className="grid grid-cols-1 md:grid-cols-2 gap-5 mb-10">
-          <div className="bg-[#0d2137] text-white rounded-xl p-6 md:row-span-1">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#9cf4d1]">Pendapatan Cosystem</p>
+          <div className="bg-ink text-white rounded-xl p-6 md:row-span-1">
+            <p className="text-xs font-bold uppercase tracking-wider text-brand">Pendapatan Cosystem</p>
             <p className="text-4xl font-bold mt-2 tabular-nums">IDR {fmt(r.netRevenue)}</p>
             <p className="text-sm text-white/60 mt-2">
               Yang benar-benar menjadi milik Cosystem pada periode ini
@@ -86,25 +86,25 @@ export default async function SalesReportPage({
           </div>
 
           <div className="bg-white rounded-xl border border-[#cccccc] p-6">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#6e7a74]">Nilai transaksi bruto</p>
-            <p className="text-3xl font-semibold text-[#3e4944] mt-2 tabular-nums">IDR {fmt(r.gbv)}</p>
-            <p className="text-sm text-[#6e7a74] mt-2">
-              Total transaksi — <strong className="text-[#3e4944]">bukan pendapatan Cosystem</strong>
+            <p className="text-xs font-bold uppercase tracking-wider text-ink-3">Nilai transaksi bruto</p>
+            <p className="text-3xl font-semibold text-ink-2 mt-2 tabular-nums">IDR {fmt(r.gbv)}</p>
+            <p className="text-sm text-ink-3 mt-2">
+              Total transaksi — <strong className="text-ink-2">bukan pendapatan Cosystem</strong>
             </p>
           </div>
 
           <div className="bg-white rounded-xl border border-[#cccccc] p-6">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#6e7a74]">Take rate</p>
-            <p className="text-3xl font-semibold text-[#0d2137] mt-2 tabular-nums">{pct(r.takeRate)}</p>
-            <p className="text-sm text-[#6e7a74] mt-2">Pendapatan dibagi nilai transaksi</p>
+            <p className="text-xs font-bold uppercase tracking-wider text-ink-3">Take rate</p>
+            <p className="text-3xl font-semibold text-ink mt-2 tabular-nums">{pct(r.takeRate)}</p>
+            <p className="text-sm text-ink-3 mt-2">Pendapatan dibagi nilai transaksi</p>
           </div>
 
           <div className="bg-white rounded-xl border border-[#cccccc] p-6">
-            <p className="text-xs font-bold uppercase tracking-wider text-[#6e7a74]">Saldo kas</p>
-            <p className="text-3xl font-semibold text-[#0d2137] mt-2 tabular-nums">IDR {fmt(r.cashPosition)}</p>
-            <p className="text-sm text-[#6e7a74] mt-2">
+            <p className="text-xs font-bold uppercase tracking-wider text-ink-3">Saldo kas</p>
+            <p className="text-3xl font-semibold text-ink mt-2 tabular-nums">IDR {fmt(r.cashPosition)}</p>
+            <p className="text-sm text-ink-3 mt-2">
               Termasuk dana milik pihak lain ·{" "}
-              <Link href="/admin/reports/position" className="text-[#1a7a5e] font-semibold hover:underline">
+              <Link href="/admin/reports/position" className="text-brand-ink font-semibold hover:underline">
                 rincian
               </Link>
             </p>
@@ -113,15 +113,15 @@ export default async function SalesReportPage({
 
         {/* ── 2. Revenue by stream ────────────────────────────────────────── */}
         <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
-          <h2 className="font-bold text-[#0d2137] mb-1">Pendapatan per sumber</h2>
-          <p className="text-sm text-[#6e7a74] mb-5">Perbandingan dengan periode sebelumnya yang setara</p>
+          <h2 className="font-bold text-ink mb-1">Pendapatan per sumber</h2>
+          <p className="text-sm text-ink-3 mb-5">Perbandingan dengan periode sebelumnya yang setara</p>
 
           <StreamBars data={r.streams} />
 
           <div className="overflow-x-auto mt-6">
             <table className="w-full text-sm" style={{ minWidth: 560 }}>
               <thead>
-                <tr className="text-xs uppercase tracking-wider text-[#6e7a74] border-b border-[#e4e2e1]">
+                <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
                   <th className="text-left py-2 font-medium">Sumber</th>
                   <th className="text-right py-2 font-medium">Jumlah</th>
                   <th className="text-right py-2 font-medium">Porsi</th>
@@ -138,19 +138,19 @@ export default async function SalesReportPage({
                         {s.label}
                       </span>
                     </td>
-                    <td className="py-2.5 text-right tabular-nums font-semibold text-[#0d2137]">
+                    <td className="py-2.5 text-right tabular-nums font-semibold text-ink">
                       {fmt(s.amount)}
                     </td>
-                    <td className="py-2.5 text-right tabular-nums text-[#6e7a74]">{pct(s.share, 0)}</td>
-                    <td className="py-2.5 text-right tabular-nums text-[#6e7a74]">{s.count}</td>
+                    <td className="py-2.5 text-right tabular-nums text-ink-3">{pct(s.share, 0)}</td>
+                    <td className="py-2.5 text-right tabular-nums text-ink-3">{s.count}</td>
                     <td className={`py-2.5 text-right tabular-nums ${
-                      s.change === null ? "text-[#6e7a74]"
-                        : s.change >= 0 ? "text-[#0d8f66]" : "text-[#cf2f52]"}`}>
+                      s.change === null ? "text-ink-3"
+                        : s.change >= 0 ? "text-success" : "text-[#cf2f52]"}`}>
                       {s.change === null ? "—" : `${s.change >= 0 ? "+" : ""}${s.change.toFixed(0)}%`}
                     </td>
                   </tr>
                 ))}
-                <tr className="font-bold text-[#0d2137]">
+                <tr className="font-bold text-ink">
                   <td className="py-3">TOTAL PENDAPATAN</td>
                   <td className="py-3 text-right tabular-nums">{fmt(r.netRevenue)}</td>
                   <td colSpan={3} />
@@ -162,8 +162,8 @@ export default async function SalesReportPage({
 
         {/* ── 3. Trend ─────────────────────────────────────────────────────── */}
         <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
-          <h2 className="font-bold text-[#0d2137] mb-1">Tren 12 bulan</h2>
-          <p className="text-sm text-[#6e7a74] mb-4">Pendapatan bersih per bulan, dipisah per sumber</p>
+          <h2 className="font-bold text-ink mb-1">Tren 12 bulan</h2>
+          <p className="text-sm text-ink-3 mb-4">Pendapatan bersih per bulan, dipisah per sumber</p>
           <Legend items={REVENUE_STREAMS.map((s) => ({ label: s.label, color: s.color }))} />
           <div className="mt-4">
             <TrendLines
@@ -206,12 +206,12 @@ export default async function SalesReportPage({
 
         {/* ── 5. Top properties ────────────────────────────────────────────── */}
         <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
-          <h2 className="font-bold text-[#0d2137] mb-1">Properti teratas</h2>
-          <p className="text-sm text-[#6e7a74] mb-4">Diurutkan berdasarkan kontribusi pendapatan Cosystem</p>
+          <h2 className="font-bold text-ink mb-1">Properti teratas</h2>
+          <p className="text-sm text-ink-3 mb-4">Diurutkan berdasarkan kontribusi pendapatan Cosystem</p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: 680 }}>
               <thead>
-                <tr className="text-xs uppercase tracking-wider text-[#6e7a74] border-b border-[#e4e2e1]">
+                <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
                   <th className="text-left py-2 font-medium">Properti</th>
                   <th className="text-right py-2 font-medium">Pesanan</th>
                   <th className="text-right py-2 font-medium">Bruto</th>
@@ -224,20 +224,20 @@ export default async function SalesReportPage({
                 {r.topProperties.map((p) => (
                   <tr key={p.id} className="border-b border-[#f6f3f2]">
                     <td className="py-2.5">
-                      <Link href={`/admin/listings/${p.id}/build`} className="font-semibold text-[#0d2137] hover:text-[#1a7a5e]">
+                      <Link href={`/admin/listings/${p.id}/build`} className="font-semibold text-ink hover:text-brand-ink">
                         {p.name}
                       </Link>
-                      {p.area && <span className="block text-xs text-[#6e7a74]">{p.area}</span>}
+                      {p.area && <span className="block text-xs text-ink-3">{p.area}</span>}
                     </td>
                     <td className="py-2.5 text-right tabular-nums">{p.bookings}</td>
-                    <td className="py-2.5 text-right tabular-nums text-[#6e7a74]">{fmt(p.gbv)}</td>
-                    <td className="py-2.5 text-right tabular-nums font-semibold text-[#0d8f66]">{fmt(p.revenue)}</td>
-                    <td className="py-2.5 text-right tabular-nums text-[#3e4944]">{fmt(p.ownerPayout)}</td>
-                    <td className="py-2.5 text-right tabular-nums text-[#6e7a74]">{p.nights}</td>
+                    <td className="py-2.5 text-right tabular-nums text-ink-3">{fmt(p.gbv)}</td>
+                    <td className="py-2.5 text-right tabular-nums font-semibold text-success">{fmt(p.revenue)}</td>
+                    <td className="py-2.5 text-right tabular-nums text-ink-2">{fmt(p.ownerPayout)}</td>
+                    <td className="py-2.5 text-right tabular-nums text-ink-3">{p.nights}</td>
                   </tr>
                 ))}
                 {r.topProperties.length === 0 && (
-                  <tr><td colSpan={6} className="py-10 text-center text-[#6e7a74]">
+                  <tr><td colSpan={6} className="py-10 text-center text-ink-3">
                     Belum ada aktivitas pada periode ini.
                   </td></tr>
                 )}
@@ -248,8 +248,8 @@ export default async function SalesReportPage({
 
         {/* ── Exports ───────────────────────────────────────────────────────── */}
         <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
-          <h2 className="font-bold text-[#0d2137] mb-1">Ekspor untuk akuntan</h2>
-          <p className="text-sm text-[#6e7a74] mb-4">
+          <h2 className="font-bold text-ink mb-1">Ekspor untuk akuntan</h2>
+          <p className="text-sm text-ink-3 mb-4">
             CSV dengan angka polos tanpa pemisah ribuan, siap dibuka di spreadsheet.
           </p>
           <div className="flex flex-wrap gap-2">
@@ -262,7 +262,7 @@ export default async function SalesReportPage({
               <a
                 key={e.type}
                 href={`/api/admin/reports/export?type=${e.type}&from=${period.from.toISOString()}&to=${period.to.toISOString()}`}
-                className="px-4 py-2 border border-[#cccccc] rounded-lg text-sm font-medium text-[#3e4944] hover:border-[#1a7a5e] inline-flex items-center gap-2"
+                className="px-4 py-2 border border-[#cccccc] rounded-lg text-sm font-medium text-ink-2 hover:border-brand inline-flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-base">table_view</span>
                 {e.label}
@@ -273,16 +273,16 @@ export default async function SalesReportPage({
 
         {/* ── 6. Needs attention ───────────────────────────────────────────── */}
         <section className="bg-white rounded-xl border border-[#cccccc] p-6">
-          <h2 className="font-bold text-[#0d2137] mb-4">Perlu tindakan</h2>
+          <h2 className="font-bold text-ink mb-4">Perlu tindakan</h2>
           {attention.length === 0 ? (
-            <p className="text-sm text-[#6e7a74]">Tidak ada yang tertunda.</p>
+            <p className="text-sm text-ink-3">Tidak ada yang tertunda.</p>
           ) : (
             <ul className="divide-y divide-[#f6f3f2]">
               {attention.map((a) => (
                 <li key={a.label}>
                   <Link href={a.href}
-                    className="flex items-center justify-between gap-4 py-3 hover:text-[#1a7a5e] group">
-                    <span className="text-sm text-[#3e4944] group-hover:text-[#1a7a5e]">{a.label}</span>
+                    className="flex items-center justify-between gap-4 py-3 hover:text-brand-ink group">
+                    <span className="text-sm text-ink-2 group-hover:text-brand-ink">{a.label}</span>
                     <span className="flex items-center gap-3 text-sm whitespace-nowrap">
                       {a.count !== null && (
                         <span className="px-2 py-0.5 rounded-full bg-amber-100 text-amber-800 text-xs font-bold">
@@ -290,9 +290,9 @@ export default async function SalesReportPage({
                         </span>
                       )}
                       {a.amount !== null && a.amount > 0 && (
-                        <span className="font-semibold text-[#0d2137] tabular-nums">IDR {fmt(a.amount)}</span>
+                        <span className="font-semibold text-ink tabular-nums">IDR {fmt(a.amount)}</span>
                       )}
-                      <span className="material-symbols-outlined text-[#6e7a74] text-base">chevron_right</span>
+                      <span className="material-symbols-outlined text-ink-3 text-base">chevron_right</span>
                     </span>
                   </Link>
                 </li>
@@ -308,12 +308,12 @@ export default async function SalesReportPage({
 function VolumeCard({ title, rows }: { title: string; rows: [string, string][] }) {
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-5">
-      <h3 className="font-semibold text-[#0d2137] mb-3">{title}</h3>
+      <h3 className="font-semibold text-ink mb-3">{title}</h3>
       <dl className="space-y-2 text-sm">
         {rows.map(([k, v]) => (
           <div key={k} className="flex justify-between gap-4 border-b border-[#f6f3f2] pb-2 last:border-0 last:pb-0">
-            <dt className="text-[#6e7a74]">{k}</dt>
-            <dd className="font-semibold text-[#0d2137] tabular-nums">{v}</dd>
+            <dt className="text-ink-3">{k}</dt>
+            <dd className="font-semibold text-ink tabular-nums">{v}</dd>
           </div>
         ))}
       </dl>

@@ -45,29 +45,29 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
-        <nav className="text-sm text-[#6e7a74] mb-4">
+        <nav className="text-sm text-ink-3 mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
           <span className="mx-2">/</span>
           <Link href={`/site/${site.slug}`} className="hover:underline">{site.name}</Link>
           <span className="mx-2">/</span>
-          <span className="text-[#3e4944]">Dashboard</span>
+          <span className="text-ink-2">Dashboard</span>
         </nav>
 
         <header className="mb-8 flex items-start justify-between gap-6 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold text-[#0d2137]">{site.name}</h1>
-            {site.address && <p className="text-[#3e4944] mt-1">{site.address}</p>}
+            <h1 className="text-3xl font-bold text-ink">{site.name}</h1>
+            {site.address && <p className="text-ink-2 mt-1">{site.address}</p>}
           </div>
           <div className="flex gap-2">
             <Link
               href={`/site/${site.slug}/calendar`}
-              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
+              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-white"
             >
               Kalender
             </Link>
             <Link
               href={`/site/${site.slug}`}
-              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] hover:bg-white"
+              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-white"
             >
               Kelola unit
             </Link>
@@ -99,7 +99,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
         {/* ── what needs doing ────────────────────────────────────────── */}
         {(instalments.overdue.length > 0 || totals.unpriced > 0 || ending_soon.length > 0) && (
           <section className="mb-8 bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
-            <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-[#0d2137]">Perlu tindakan</h2>
+            <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">Perlu tindakan</h2>
             <ul className="divide-y divide-[#e8e3e0]">
               {instalments.overdue.map((i) => (
                 <Action key={i.id} tone="alert"
@@ -119,11 +119,11 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
 
         {/* ── units ───────────────────────────────────────────────────── */}
         <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden mb-8">
-          <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-[#0d2137]">
+          <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
             Unit ({units.length})
           </h2>
           {units.length === 0 ? (
-            <p className="p-8 text-center text-[#6e7a74] text-sm">Belum ada unit di site ini.</p>
+            <p className="p-8 text-center text-ink-3 text-sm">Belum ada unit di site ini.</p>
           ) : (
             <table className="w-full text-sm">
               <thead className="text-left">
@@ -141,9 +141,9 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
 
         {/* ── the schedule ────────────────────────────────────────────── */}
         <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
-          <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-[#0d2137]">Jadwal pembayaran</h2>
+          <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">Jadwal pembayaran</h2>
           {instalments.overdue.length + instalments.upcoming.length === 0 ? (
-            <p className="p-8 text-center text-[#6e7a74] text-sm">Tidak ada tagihan terbuka.</p>
+            <p className="p-8 text-center text-ink-3 text-sm">Tidak ada tagihan terbuka.</p>
           ) : (
             <table className="w-full text-sm">
               <thead className="text-left">
@@ -156,7 +156,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
               </tbody>
             </table>
           )}
-          <p className="px-5 py-3 text-xs text-[#6e7a74] border-t border-[#e8e3e0]">
+          <p className="px-5 py-3 text-xs text-ink-3 border-t border-[#e8e3e0]">
             Jadwal ini mencatat apa yang terutang. Penandaan lunas di sini belum
             terhubung ke buku besar — pengakuan pendapatan tetap lewat fungsi
             settlement, supaya tidak terhitung dua kali.
@@ -171,17 +171,17 @@ function UnitRow({ u }: { u: DashboardUnit }) {
   const occ = u.occupied_by;
   return (
     <tr className="border-b border-[#f0ecea] last:border-0 hover:bg-[#faf9f8]">
-      <td className="px-4 py-3 font-medium text-[#0d2137]">{u.name}</td>
-      <td className="px-4 py-3 text-[#3e4944]">{unitTypeLabel(u.unit_type)}</td>
-      <td className="px-4 py-3 text-right tabular-nums text-[#3e4944]">
+      <td className="px-4 py-3 font-medium text-ink">{u.name}</td>
+      <td className="px-4 py-3 text-ink-2">{unitTypeLabel(u.unit_type)}</td>
+      <td className="px-4 py-3 text-right tabular-nums text-ink-2">
         {u.size_sqm !== null ? `${u.size_sqm} m²` : "—"}
       </td>
       <td className="px-4 py-3 text-right tabular-nums">
         {u.price !== null
           ? (
             <>
-              <span className="text-[#3e4944]">{rupiah(u.price)}</span>
-              <span className="text-[#6e7a74] text-xs">{pricePeriodLabel(u.letting_mode)}</span>
+              <span className="text-ink-2">{rupiah(u.price)}</span>
+              <span className="text-ink-3 text-xs">{pricePeriodLabel(u.letting_mode)}</span>
             </>
           )
           : <span className="text-[#8c3a2c]">belum ada harga</span>}
@@ -195,16 +195,16 @@ function UnitRow({ u }: { u: DashboardUnit }) {
               ? <Pill tone="warn">Mulai {tanggal(u.next_up.starts_at)}</Pill>
               : <Pill tone="free">Kosong</Pill>}
       </td>
-      <td className="px-4 py-3 text-[#3e4944]">
+      <td className="px-4 py-3 text-ink-2">
         {occ ? (
           <>
             <div className="max-w-xs truncate" title={occ.tenant}>{occ.tenant}</div>
-            <div className="text-xs text-[#6e7a74]">
+            <div className="text-xs text-ink-3">
               {occ.contract_ref ?? "tanpa no. kontrak"} · {paymentStatusLabel(occ.payment_status)}
             </div>
           </>
         ) : u.next_up ? (
-          <div className="max-w-xs truncate text-[#6e7a74]" title={u.next_up.tenant}>{u.next_up.tenant}</div>
+          <div className="max-w-xs truncate text-ink-3" title={u.next_up.tenant}>{u.next_up.tenant}</div>
         ) : "—"}
       </td>
     </tr>
@@ -216,22 +216,22 @@ function InstalmentRow({ i }: { i: DashboardInstalment }) {
   return (
     <tr className="border-b border-[#f0ecea] last:border-0">
       <td className="px-4 py-3">
-        <span className={late ? "text-[#8c3a2c] font-medium" : "text-[#3e4944]"}>{tanggal(i.due_date)}</span>
-        <div className="text-xs text-[#6e7a74]">
+        <span className={late ? "text-[#8c3a2c] font-medium" : "text-ink-2"}>{tanggal(i.due_date)}</span>
+        <div className="text-xs text-ink-3">
           {late ? `lewat ${Math.abs(i.days_until_due)} hari` : `${i.days_until_due} hari lagi`}
         </div>
       </td>
-      <td className="px-4 py-3 text-[#3e4944]">{i.unit_name}</td>
-      <td className="px-4 py-3 text-[#3e4944] max-w-xs truncate" title={i.tenant}>{i.tenant}</td>
-      <td className="px-4 py-3 text-[#6e7a74]">{i.seq}</td>
-      <td className="px-4 py-3 text-right tabular-nums text-[#0d2137] font-medium">{rupiah(i.amount)}</td>
+      <td className="px-4 py-3 text-ink-2">{i.unit_name}</td>
+      <td className="px-4 py-3 text-ink-2 max-w-xs truncate" title={i.tenant}>{i.tenant}</td>
+      <td className="px-4 py-3 text-ink-3">{i.seq}</td>
+      <td className="px-4 py-3 text-right tabular-nums text-ink font-medium">{rupiah(i.amount)}</td>
     </tr>
   );
 }
 
 function Th({ children, className = "" }: { children: React.ReactNode; className?: string }) {
   return (
-    <th className={`px-4 py-3 text-xs font-semibold uppercase tracking-wide text-[#6e7a74] ${className}`}>
+    <th className={`px-4 py-3 text-xs font-semibold uppercase tracking-wide text-ink-3 ${className}`}>
       {children}
     </th>
   );
@@ -240,11 +240,11 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
 function Stat({ label, value, hint, tone }: { label: string; value: string; hint?: string; tone?: "alert" }) {
   return (
     <div className={`bg-white border rounded-lg p-5 ${tone === "alert" ? "border-[#e2b3ab]" : "border-[#ddd7d4]"}`}>
-      <div className="text-xs uppercase tracking-wide text-[#6e7a74]">{label}</div>
-      <div className={`text-2xl font-bold mt-1 tabular-nums ${tone === "alert" ? "text-[#8c3a2c]" : "text-[#0d2137]"}`}>
+      <div className="text-xs uppercase tracking-wide text-ink-3">{label}</div>
+      <div className={`text-2xl font-bold mt-1 tabular-nums ${tone === "alert" ? "text-[#8c3a2c]" : "text-ink"}`}>
         {value}
       </div>
-      {hint && <div className="text-xs text-[#6e7a74] mt-1">{hint}</div>}
+      {hint && <div className="text-xs text-ink-3 mt-1">{hint}</div>}
     </div>
   );
 }
@@ -253,17 +253,17 @@ function Action({ text, tone }: { text: string; tone: "alert" | "warn" }) {
   return (
     <li className="px-5 py-3 flex items-start gap-3 text-sm">
       <span className={`mt-1.5 w-2 h-2 rounded-full shrink-0 ${tone === "alert" ? "bg-[#c2503c]" : "bg-[#d79a2b]"}`} />
-      <span className="text-[#3e4944]">{text}</span>
+      <span className="text-ink-2">{text}</span>
     </li>
   );
 }
 
 function Pill({ children, tone }: { children: React.ReactNode; tone: "free" | "busy" | "warn" | "muted" }) {
   const cls = {
-    free:  "bg-[#e8f5f0] text-[#12614a] border-[#a9dcc8]",
+    free:  "bg-success-soft text-success-ink border-success-line",
     busy:  "bg-[#eef2fb] text-[#2d4a86] border-[#b6c6e8]",
     warn:  "bg-[#fdf4e3] text-[#8a6416] border-[#e6d09a]",
-    muted: "bg-[#efeae8] text-[#6e7a74] border-[#ddd7d4]",
+    muted: "bg-[#efeae8] text-ink-3 border-[#ddd7d4]",
   }[tone];
   return <span className={`inline-block text-xs px-2 py-0.5 rounded-full border whitespace-nowrap ${cls}`}>{children}</span>;
 }

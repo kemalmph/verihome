@@ -43,14 +43,14 @@ export default async function OwnerCalendarPage({
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AppSidebar activeHref="/owner/properties" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
-        <Link href={`/owner/properties/${id}`} className="text-sm text-[#1a7a5e] hover:underline">
+        <Link href={`/owner/properties/${id}`} className="text-sm text-brand-ink hover:underline">
           ← {property.name}
         </Link>
 
         <header className="mt-3 mb-6 flex items-end justify-between gap-3 flex-wrap">
           <div>
-            <h1 className="text-2xl font-bold text-[#0d2137]">{t("owner.calendar.title")}</h1>
-            <p className="text-sm text-[#3e4944] mt-1">
+            <h1 className="text-2xl font-bold text-ink">{t("owner.calendar.title")}</h1>
+            <p className="text-sm text-ink-2 mt-1">
               {first.toLocaleDateString("id-ID", { month: "long", year: "numeric" })}
             </p>
           </div>

@@ -25,22 +25,22 @@ export default async function AdminConsultationsPage() {
       <AppSidebar activeHref="/admin/consultations" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Consultations</h1>
-          <p className="text-[#3e4944] mt-1">{consultations?.length ?? 0} total</p>
+          <h1 className="text-3xl font-bold text-ink">Consultations</h1>
+          <p className="text-ink-2 mt-1">{consultations?.length ?? 0} total</p>
         </header>
 
         <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#f6f3f2] border-b border-[#bec9c2]">
+              <tr className="bg-[#f6f3f2] border-b border-line-strong">
                 {["User", "Package", "Price", "Status", "Notes", "Booked", "Actions"].map((h) => (
-                  <th key={h} className="text-left px-5 py-4 text-xs font-bold text-[#3e4944] uppercase tracking-wider">
+                  <th key={h} className="text-left px-5 py-4 text-xs font-bold text-ink-2 uppercase tracking-wider">
                     {h}
                   </th>
                 ))}
               </tr>
             </thead>
-            <tbody className="divide-y divide-[#bec9c2]">
+            <tbody className="divide-y divide-line-strong">
               {(consultations ?? []).map((c) => {
                 const user = c.users as unknown as { name: string; email: string } | null;
                 const price = new Intl.NumberFormat("id-ID").format(c.price ?? 0);
@@ -48,17 +48,17 @@ export default async function AdminConsultationsPage() {
                 return (
                   <tr key={c.id} className="hover:bg-[#f6f3f2] transition-colors">
                     <td className="px-5 py-4">
-                      <p className="font-medium text-sm text-[#0d2137]">{user?.name ?? "—"}</p>
-                      <p className="text-xs text-[#6e7a74] truncate max-w-[140px]">{user?.email ?? "—"}</p>
+                      <p className="font-medium text-sm text-ink">{user?.name ?? "—"}</p>
+                      <p className="text-xs text-ink-3 truncate max-w-[140px]">{user?.email ?? "—"}</p>
                     </td>
-                    <td className="px-5 py-4 text-sm capitalize text-[#1b1c1c]">{c.package_type}</td>
-                    <td className="px-5 py-4 text-sm font-medium text-[#1a7a5e]">IDR {price}</td>
+                    <td className="px-5 py-4 text-sm capitalize text-ink">{c.package_type}</td>
+                    <td className="px-5 py-4 text-sm font-medium text-brand-ink">IDR {price}</td>
                     <td className="px-5 py-4">
                       <ConsultationStatusSelect consultationId={c.id} currentStatus={c.status ?? "pending_payment"} statusColors={STATUS_COLORS} />
                     </td>
-                    <td className="px-5 py-4 text-xs text-[#6e7a74] max-w-[160px] truncate">{c.notes ?? "—"}</td>
-                    <td className="px-5 py-4 text-xs text-[#6e7a74]">{booked}</td>
-                    <td className="px-5 py-4 text-xs text-[#3e4944]">
+                    <td className="px-5 py-4 text-xs text-ink-3 max-w-[160px] truncate">{c.notes ?? "—"}</td>
+                    <td className="px-5 py-4 text-xs text-ink-3">{booked}</td>
+                    <td className="px-5 py-4 text-xs text-ink-2">
                       {c.id.slice(0, 8)}…
                     </td>
                   </tr>
@@ -66,7 +66,7 @@ export default async function AdminConsultationsPage() {
               })}
               {(consultations ?? []).length === 0 && (
                 <tr>
-                  <td colSpan={7} className="px-6 py-12 text-center text-sm text-[#6e7a74]">
+                  <td colSpan={7} className="px-6 py-12 text-center text-sm text-ink-3">
                     No consultations yet.
                   </td>
                 </tr>

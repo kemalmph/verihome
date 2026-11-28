@@ -51,7 +51,7 @@ export function SiteDetailForm({
       onSubmit={onSubmit}
       className="bg-white border border-[#ddd7d4] rounded-lg p-6 mb-10"
     >
-      <h2 className="text-lg font-semibold text-[#0d2137] mb-5">Detail site</h2>
+      <h2 className="text-lg font-semibold text-ink mb-5">Detail site</h2>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Nama" className="sm:col-span-2">
@@ -114,7 +114,7 @@ export function SiteDetailForm({
         </p>
       )}
       {saved && !error && (
-        <p className="mt-4 text-sm text-[#12614a] bg-[#e8f5f0] border border-[#a9dcc8] rounded px-3 py-2">
+        <p className="mt-4 text-sm text-success-ink bg-success-soft border border-success-line rounded px-3 py-2">
           Tersimpan.
         </p>
       )}
@@ -122,7 +122,7 @@ export function SiteDetailForm({
       <button
         type="submit"
         disabled={isPending}
-        className="mt-6 px-4 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:bg-[#166750] disabled:opacity-60"
+        className="mt-6 px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
       >
         {isPending ? "Menyimpan…" : "Simpan perubahan"}
       </button>
@@ -131,7 +131,7 @@ export function SiteDetailForm({
 }
 
 const inputCls =
-  "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-[#0d2137] focus:outline-none focus:ring-2 focus:ring-[#1a7a5e]/30 focus:border-[#1a7a5e]";
+  "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 function Field({
   label, hint, className = "", children,
@@ -140,9 +140,9 @@ function Field({
 }) {
   return (
     <label className={`block ${className}`}>
-      <span className="block text-sm font-medium text-[#0d2137] mb-1">{label}</span>
+      <span className="block text-sm font-medium text-ink mb-1">{label}</span>
       {children}
-      {hint && <span className="block text-xs text-[#6e7a74] mt-1">{hint}</span>}
+      {hint && <span className="block text-xs text-ink-3 mt-1">{hint}</span>}
     </label>
   );
 }

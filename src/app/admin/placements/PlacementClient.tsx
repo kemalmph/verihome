@@ -4,8 +4,8 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { recordPlacement, markPlacementPaid, updatePlacementStatus } from "@/lib/actions/placement-actions";
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white";
-const labelCls = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1";
+const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 const fmt = (n: number) => new Intl.NumberFormat("id-ID").format(n);
 
 const STATUS_LABEL: Record<string, string> = {
@@ -15,7 +15,7 @@ const STATUS_LABEL: Record<string, string> = {
 const STATUS_STYLE: Record<string, string> = {
   reported: "bg-blue-100 text-blue-800", invoiced: "bg-amber-100 text-amber-800",
   paid: "bg-green-100 text-green-800", disputed: "bg-red-100 text-red-700",
-  written_off: "bg-[#f6f3f2] text-[#3e4944]",
+  written_off: "bg-[#f6f3f2] text-ink-2",
 };
 
 export function PlacementForm({ properties }: { properties: { id: string; name: string; area: string | null }[] }) {
@@ -44,7 +44,7 @@ export function PlacementForm({ properties }: { properties: { id: string; name: 
     return (
       <button
         onClick={() => setOpen(true)}
-        className="px-5 py-2.5 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 flex items-center gap-2"
+        className="px-5 py-2.5 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 flex items-center gap-2"
       >
         <span className="material-symbols-outlined text-lg">add</span>
         Catat penempatan
@@ -54,7 +54,7 @@ export function PlacementForm({ properties }: { properties: { id: string; name: 
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-semibold text-[#0d2137]">Catat penempatan baru</h2>
+      <h2 className="font-semibold text-ink">Catat penempatan baru</h2>
 
       {error && (
         <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
@@ -104,24 +104,24 @@ export function PlacementForm({ properties }: { properties: { id: string; name: 
         <div className="md:col-span-2">
           <label className={labelCls} htmlFor="notes">Catatan</label>
           <textarea id="notes" name="notes" rows={2}
-            className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white" />
+            className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white" />
         </div>
       </div>
 
       {preview > 0 && (
-        <div className="bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg px-4 py-3 text-sm">
-          <span className="text-[#12614a]">Komisi tercatat sebagai piutang: </span>
-          <strong className="text-[#12614a] tabular-nums">IDR {fmt(preview)}</strong>
+        <div className="bg-brand-soft border border-brand-light rounded-lg px-4 py-3 text-sm">
+          <span className="text-success-ink">Komisi tercatat sebagai piutang: </span>
+          <strong className="text-success-ink tabular-nums">IDR {fmt(preview)}</strong>
         </div>
       )}
 
       <div className="flex gap-3">
         <button type="submit" disabled={isPending}
-          className="flex-1 py-3 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50">
+          className="flex-1 py-3 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50">
           {isPending ? "Menyimpan…" : "Simpan penempatan"}
         </button>
         <button type="button" onClick={() => setOpen(false)}
-          className="px-5 py-3 border border-[#cccccc] text-[#3e4944] rounded-lg font-semibold text-sm hover:border-[#1a7a5e]">
+          className="px-5 py-3 border border-[#cccccc] text-ink-2 rounded-lg font-semibold text-sm hover:border-brand">
           Batal
         </button>
       </div>
@@ -152,16 +152,16 @@ export function PlacementRow({ placement }: {
   return (
     <tr className="hover:bg-[#f6f3f2]">
       <td className="px-5 py-3">
-        <p className="font-semibold text-[#0d2137]">{placement.propertyName}</p>
-        {placement.area && <p className="text-xs text-[#6e7a74]">{placement.area}</p>}
+        <p className="font-semibold text-ink">{placement.propertyName}</p>
+        {placement.area && <p className="text-xs text-ink-3">{placement.area}</p>}
         {error && <p className="text-xs text-red-600 mt-1">{error}</p>}
       </td>
-      <td className="px-5 py-3 text-right tabular-nums text-[#3e4944]">IDR {fmt(placement.monthlyRent)}</td>
+      <td className="px-5 py-3 text-right tabular-nums text-ink-2">IDR {fmt(placement.monthlyRent)}</td>
       <td className="px-5 py-3 text-right tabular-nums">
-        <span className="font-semibold text-[#0d2137]">IDR {fmt(placement.commissionAmount)}</span>
-        <span className="block text-xs text-[#6e7a74]">{placement.commissionPct}%</span>
+        <span className="font-semibold text-ink">IDR {fmt(placement.commissionAmount)}</span>
+        <span className="block text-xs text-ink-3">{placement.commissionPct}%</span>
       </td>
-      <td className="px-5 py-3 text-xs text-[#6e7a74]">{placement.leaseStart ?? "—"}</td>
+      <td className="px-5 py-3 text-xs text-ink-3">{placement.leaseStart ?? "—"}</td>
       <td className="px-5 py-3">
         <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${STATUS_STYLE[placement.status] ?? ""}`}>
           {STATUS_LABEL[placement.status] ?? placement.status}
@@ -173,13 +173,13 @@ export function PlacementRow({ placement }: {
             {placement.status === "reported" && (
               <button disabled={isPending}
                 onClick={() => act(() => updatePlacementStatus(placement.id, "invoiced"))}
-                className="text-xs font-semibold text-[#3e4944] hover:text-[#1a7a5e] disabled:opacity-50">
+                className="text-xs font-semibold text-ink-2 hover:text-brand-ink disabled:opacity-50">
                 Tandai ditagih
               </button>
             )}
             <button disabled={isPending}
               onClick={() => act(() => markPlacementPaid(placement.id))}
-              className="text-xs font-semibold text-[#1a7a5e] hover:underline disabled:opacity-50">
+              className="text-xs font-semibold text-brand-ink hover:underline disabled:opacity-50">
               Tandai lunas
             </button>
           </div>

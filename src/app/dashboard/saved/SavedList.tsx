@@ -30,7 +30,7 @@ export function SavedList({ items }: { items: Saved[] }) {
   }
 
   if (items.length === 0) {
-    return <p className="text-[#3e4944] bg-white rounded-xl border border-[#cccccc] p-6">{t("saved.none")}</p>;
+    return <p className="text-ink-2 bg-white rounded-xl border border-[#cccccc] p-6">{t("saved.none")}</p>;
   }
 
   return (
@@ -41,8 +41,8 @@ export function SavedList({ items }: { items: Saved[] }) {
           <article key={s.id} className="bg-white rounded-xl border border-[#cccccc] p-5 flex flex-col">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
-                <h3 className="font-semibold text-[#0d2137]">{s.name}</h3>
-                {s.area && <p className="text-xs text-[#6e7a74] mt-0.5">{s.area}</p>}
+                <h3 className="font-semibold text-ink">{s.name}</h3>
+                {s.area && <p className="text-xs text-ink-3 mt-0.5">{s.area}</p>}
               </div>
               {!s.isLive && (
                 <span className="px-2 py-1 rounded-full text-[10px] font-bold bg-gray-200 text-gray-600 shrink-0 uppercase">
@@ -52,26 +52,26 @@ export function SavedList({ items }: { items: Saved[] }) {
             </div>
 
             <div className="mt-3 flex items-baseline gap-2 flex-wrap">
-              <span className="text-lg font-bold text-[#0d2137] tabular-nums">
+              <span className="text-lg font-bold text-ink tabular-nums">
                 {rp(s.currentPrice)}
-                <span className="text-xs font-normal text-[#6e7a74]">{s.isShortStay ? "/malam" : "/bulan"}</span>
+                <span className="text-xs font-normal text-ink-3">{s.isShortStay ? "/malam" : "/bulan"}</span>
               </span>
               {s.delta !== 0 && (
                 <span className={`text-xs font-semibold px-2 py-0.5 rounded-full ${
-                  s.delta > 0 ? "bg-red-50 text-red-700" : "bg-[#e8f5f0] text-[#12614a]"
+                  s.delta > 0 ? "bg-red-50 text-red-700" : "bg-success-soft text-success-ink"
                 }`}>
                   {s.delta > 0 ? "↑" : "↓"} {rp(Math.abs(s.delta))} {s.delta > 0 ? t("saved.priceUp") : t("saved.priceDown")}
                 </span>
               )}
             </div>
             {s.delta !== 0 && (
-              <p className="text-[11px] text-[#6e7a74] mt-0.5">
+              <p className="text-[11px] text-ink-3 mt-0.5">
                 {t("saved.priceSaved")} {rp(s.savedPrice)}
               </p>
             )}
 
             {s.isShortStay && s.nextAvailable && (
-              <p className="text-xs text-[#3e4944] mt-2">
+              <p className="text-xs text-ink-2 mt-2">
                 {t("saved.nextAvailable")} {new Date(`${s.nextAvailable}T00:00:00`).toLocaleDateString("id-ID", { day: "numeric", month: "long" })}
               </p>
             )}
@@ -81,18 +81,18 @@ export function SavedList({ items }: { items: Saved[] }) {
                 <>
                   {s.isShortStay && (
                     <Link href={`/listings/${s.slug}/book`}
-                          className="px-3 py-1.5 bg-[#1a7a5e] text-white text-xs font-semibold rounded-lg hover:opacity-90">
+                          className="px-3 py-1.5 bg-brand text-white text-xs font-semibold rounded-lg hover:opacity-90">
                       {t("saved.book")}
                     </Link>
                   )}
                   <Link href={`/listings/${s.slug}/viewing`}
-                        className="px-3 py-1.5 border border-[#1a7a5e] text-[#1a7a5e] text-xs font-semibold rounded-lg hover:bg-[#e8f5f0]">
+                        className="px-3 py-1.5 border border-brand text-brand-ink text-xs font-semibold rounded-lg hover:bg-brand-soft">
                     {t("saved.requestViewing")}
                   </Link>
                 </>
               )}
               <button onClick={() => drop(s.id)} disabled={busy === s.id}
-                      className="px-3 py-1.5 border border-[#cccccc] text-[#3e4944] text-xs font-semibold rounded-lg hover:bg-[#f6f3f2] disabled:opacity-50 ml-auto">
+                      className="px-3 py-1.5 border border-[#cccccc] text-ink-2 text-xs font-semibold rounded-lg hover:bg-[#f6f3f2] disabled:opacity-50 ml-auto">
                 {busy === s.id ? "…" : t("saved.remove")}
               </button>
             </div>

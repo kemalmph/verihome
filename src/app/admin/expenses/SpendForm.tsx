@@ -4,8 +4,8 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { recordSpend } from "@/lib/actions/expense-actions";
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1]/40 text-sm bg-white";
-const labelCls = "text-xs font-semibold text-[#3e4944] uppercase tracking-wider block mb-1";
+const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 const fmt = (n: number) => new Intl.NumberFormat("id-ID").format(Math.round(n));
 
 export function SpendForm({ available }: { available: number }) {
@@ -33,7 +33,7 @@ export function SpendForm({ available }: { available: number }) {
 
   return (
     <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137]">Catat pengeluaran</h2>
+      <h2 className="font-bold text-ink">Catat pengeluaran</h2>
 
       {error && (
         <div className="flex items-start gap-2 bg-red-50 border border-red-200 rounded-lg px-4 py-3 text-sm text-red-700">
@@ -73,7 +73,7 @@ export function SpendForm({ available }: { available: number }) {
       )}
 
       <button type="submit" disabled={isPending}
-        className="px-6 py-2.5 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50">
+        className="px-6 py-2.5 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-50">
         {isPending ? "Menyimpan…" : "Catat pengeluaran"}
       </button>
     </form>

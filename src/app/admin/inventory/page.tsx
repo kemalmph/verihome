@@ -15,7 +15,7 @@ function modeLabel(m: RentalMode) {
 function modeColor(m: RentalMode) {
   if (m === "both")       return "bg-purple-100 text-purple-700";
   if (m === "short_stay") return "bg-blue-100 text-blue-700";
-  return "bg-[#e8f5f0] text-[#1a7a5e]";
+  return "bg-brand-soft text-brand-ink";
 }
 
 export default async function AdminInventoryPage() {
@@ -37,14 +37,14 @@ export default async function AdminInventoryPage() {
       <AppSidebar activeHref="/admin/inventory" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="mb-8">
-          <h1 className="text-2xl font-bold text-[#0d2137]">Inventory</h1>
-          <p className="text-[#6e7a74] text-sm mt-1">All properties with rental mode and short-stay status</p>
+          <h1 className="text-2xl font-bold text-ink">Inventory</h1>
+          <p className="text-ink-3 text-sm mt-1">All properties with rental mode and short-stay status</p>
         </div>
 
         <div className="overflow-x-auto bg-white rounded-xl border border-[#cccccc]">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#cccccc] text-[#6e7a74] text-xs uppercase">
+              <tr className="border-b border-[#cccccc] text-ink-3 text-xs uppercase">
                 <th className="text-left py-3 px-4">Property</th>
                 <th className="text-left py-3 px-4">Status</th>
                 <th className="text-left py-3 px-4">Rental Mode</th>
@@ -63,11 +63,11 @@ export default async function AdminInventoryPage() {
                 return (
                   <tr key={p.id} className="border-b border-[#f6f3f2] hover:bg-[#f6f3f2]">
                     <td className="py-3 px-4">
-                      <div className="font-semibold text-[#0d2137]">{p.name}</div>
-                      <div className="text-xs text-[#6e7a74]">{p.area}</div>
+                      <div className="font-semibold text-ink">{p.name}</div>
+                      <div className="text-xs text-ink-3">{p.area}</div>
                     </td>
                     <td className="py-3 px-4">
-                      <span className="text-xs capitalize text-[#3e4944]">{p.status}</span>
+                      <span className="text-xs capitalize text-ink-2">{p.status}</span>
                     </td>
                     <td className="py-3 px-4">
                       <span className={`px-2 py-0.5 rounded-full text-xs font-semibold ${modeColor(mode)}`}>
@@ -79,7 +79,7 @@ export default async function AdminInventoryPage() {
                     </td>
                     <td className="py-3 px-4 text-xs">
                       {rate ? (
-                        <span className={rate.active ? "text-green-700 font-semibold" : "text-[#6e7a74] line-through"}>
+                        <span className={rate.active ? "text-green-700 font-semibold" : "text-ink-3 line-through"}>
                           IDR {new Intl.NumberFormat("id-ID").format(rate.price_per_night)}/night
                         </span>
                       ) : (
@@ -94,7 +94,7 @@ export default async function AdminInventoryPage() {
                     <td className="py-3 px-4">
                       <Link
                         href={`/admin/listings/${p.id}/build`}
-                        className="text-xs text-[#1a7a5e] hover:underline"
+                        className="text-xs text-brand-ink hover:underline"
                       >
                         Edit →
                       </Link>

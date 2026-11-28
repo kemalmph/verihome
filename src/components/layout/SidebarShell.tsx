@@ -141,12 +141,12 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
       <details ref={drawer} className="md:hidden">
         <summary
           aria-label={labels.menu}
-          className="list-none cursor-pointer fixed top-0 left-0 right-0 h-14 bg-[#0d2137] flex items-center px-4 z-50 gap-3 [&::-webkit-details-marker]:hidden"
+          className="list-none cursor-pointer fixed top-0 left-0 right-0 h-14 bg-ink flex items-center px-4 z-50 gap-3 [&::-webkit-details-marker]:hidden"
         >
           <span aria-hidden className="material-symbols-outlined text-white text-xl p-1.5">
             menu
           </span>
-          <p className="text-[#9cf4d1] font-bold text-lg">Cosystem</p>
+          <p className="text-brand font-bold text-lg">Cosystem</p>
           <p className="text-white/50 text-xs mt-0.5">{subtitle}</p>
         </summary>
 
@@ -155,7 +155,7 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
           className="fixed top-14 left-0 right-0 bottom-0 bg-black/50 z-40"
         />
 
-        <aside className="fixed top-14 left-0 bottom-0 w-64 bg-[#0d2137] text-white flex flex-col z-50">
+        <aside className="fixed top-14 left-0 bottom-0 w-64 bg-ink text-white flex flex-col z-50">
           {renderNav(false)}
         </aside>
       </details>
@@ -163,11 +163,11 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
       {/* ── Desktop: always there, full or folded to an icon rail ─────── */}
       <aside
         data-app-sidebar
-        className="hidden md:flex fixed top-0 left-0 h-full w-(--sidebar-w) transition-[width] bg-[#0d2137] text-white flex-col z-50 overflow-hidden"
+        className="hidden md:flex fixed top-0 left-0 h-full w-(--sidebar-w) transition-[width] bg-ink text-white flex-col z-50 overflow-hidden"
       >
         <div className="px-6 py-8 collapsed:px-0 collapsed:text-center whitespace-nowrap">
-          <p className="text-[#9cf4d1] font-bold text-xl collapsed:hidden">Cosystem</p>
-          <p aria-hidden className="text-[#9cf4d1] font-bold text-xl hidden collapsed:block">C</p>
+          <p className="text-brand font-bold text-xl collapsed:hidden">Cosystem</p>
+          <p aria-hidden className="text-brand font-bold text-xl hidden collapsed:block">C</p>
           <p className="text-white/50 text-xs mt-1 collapsed:hidden">{subtitle}</p>
           {person && (
             <p className="text-white text-sm mt-3 font-medium truncate collapsed:hidden">{person}</p>

@@ -29,22 +29,22 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
   const total = Number(assessment.rla_score).toFixed(1);
 
   return (
-    <section className="bg-[#f6f3f2] p-6 rounded-xl space-y-6 border border-[#bec9c2]">
+    <section className="bg-[#f6f3f2] p-6 rounded-xl space-y-6 border border-line-strong">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold text-[#1b1c1c]">{t("rla.title", lang)}</h2>
+          <h2 className="text-xl font-semibold text-ink">{t("rla.title", lang)}</h2>
           <span
-            className="material-symbols-outlined text-[#6e7a74] text-sm cursor-help"
+            className="material-symbols-outlined text-ink-3 text-sm cursor-help"
             title={t("rla.tooltip", lang)}
           >
             info
           </span>
         </div>
-        <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-[#bec9c2] shadow-sm">
-          <span className="text-[#1a7a5e] text-xl font-semibold">{total}</span>
-          <span className="text-[#3e4944] text-sm">/ 10</span>
+        <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-line-strong shadow-sm">
+          <span className="text-brand-ink text-xl font-semibold">{total}</span>
+          <span className="text-ink-2 text-sm">/ 10</span>
           <span
-            className="material-symbols-outlined text-[#1a7a5e] text-xl"
+            className="material-symbols-outlined text-brand-ink text-xl"
             style={{ fontVariationSettings: "'FILL' 1" }}
           >
             star
@@ -60,9 +60,9 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
           const color = scoreColor(score);
           return (
             <div key={cat.key} className="space-y-1.5">
-              <div className="flex justify-between text-sm text-[#3e4944]">
+              <div className="flex justify-between text-sm text-ink-2">
                 <span>{t(cat.label, lang)}</span>
-                <span className="font-bold text-[#1b1c1c]">{score}/10</span>
+                <span className="font-bold text-ink">{score}/10</span>
               </div>
               <div className="w-full bg-[#e4e2e1] h-2 rounded-full overflow-hidden">
                 <div
@@ -76,13 +76,13 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
       </div>
 
       {assessment.overall_notes && (
-        <div className="p-4 bg-white border border-[#bec9c2] rounded-lg">
+        <div className="p-4 bg-white border border-line-strong rounded-lg">
           <div className="flex items-start gap-3">
-            <span className="material-symbols-outlined text-[#1a7a5e]">notes</span>
-            <p className="text-sm text-[#3e4944] italic">
+            <span className="material-symbols-outlined text-brand-ink">notes</span>
+            <p className="text-sm text-ink-2 italic">
               &ldquo;{assessment.overall_notes}&rdquo;
               <br />
-              <span className="text-[#1b1c1c] font-bold mt-1 inline-block not-italic">
+              <span className="text-ink font-bold mt-1 inline-block not-italic">
                 {t("rla.team", lang)}
               </span>
             </p>

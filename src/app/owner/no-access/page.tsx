@@ -19,13 +19,13 @@ export default async function OwnerNoAccessPage() {
       <Navbar />
       <main className="max-w-lg mx-auto px-4 py-20 text-center">
         <div className="w-16 h-16 bg-[#f6f3f2] rounded-full flex items-center justify-center mx-auto mb-6">
-          <span className="material-symbols-outlined text-[#6e7a74] text-3xl">lock</span>
+          <span className="material-symbols-outlined text-ink-3 text-3xl">lock</span>
         </div>
-        <h1 className="text-xl font-bold text-[#0d2137]">{t("owner.access.denied", lang)}</h1>
-        <p className="text-sm text-[#3e4944] mt-6">
+        <h1 className="text-xl font-bold text-ink">{t("owner.access.denied", lang)}</h1>
+        <p className="text-sm text-ink-2 mt-6">
           {t("owner.access.noInvite", lang)}
         </p>
-        <Link href="/" className="inline-block mt-8 px-6 py-3 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90">
+        <Link href="/" className="inline-block mt-8 px-6 py-3 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90">
           {t("owner.access.home", lang)}
         </Link>
       </main>

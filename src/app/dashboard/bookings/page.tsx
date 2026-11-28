@@ -11,7 +11,7 @@ function statusBadge(status: BookingStatus) {
     pending:   "bg-amber-100 text-amber-700",
     confirmed: "bg-green-100 text-green-700",
     cancelled: "bg-red-100 text-red-700",
-    completed: "bg-[#e8f5f0] text-[#1a7a5e]",
+    completed: "bg-brand-soft text-brand-ink",
     expired:   "bg-gray-200 text-gray-600",
   };
   return map[status] ?? "bg-gray-100 text-gray-600";
@@ -51,22 +51,22 @@ export default async function DashboardBookingsPage() {
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">
-          <h2 className="text-3xl font-bold text-[#0d2137] mb-1">My Bookings</h2>
-          <p className="text-[#3e4944]">Short-stay bookings you&apos;ve made through Cosystem.</p>
+          <h2 className="text-3xl font-bold text-ink mb-1">My Bookings</h2>
+          <p className="text-ink-2">Short-stay bookings you&apos;ve made through Cosystem.</p>
         </header>
 
         {!bookings || bookings.length === 0 ? (
           <div className="text-center py-20">
-            <div className="w-20 h-20 bg-[#e8f5f0] rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-symbols-outlined text-[#1a7a5e] text-4xl">hotel</span>
+            <div className="w-20 h-20 bg-brand-soft rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="material-symbols-outlined text-brand-ink text-4xl">hotel</span>
             </div>
-            <h3 className="text-xl font-semibold text-[#1b1c1c] mb-2">No bookings yet</h3>
-            <p className="text-[#3e4944] mb-6">
+            <h3 className="text-xl font-semibold text-ink mb-2">No bookings yet</h3>
+            <p className="text-ink-2 mb-6">
               Browse short-stay listings and make your first booking.
             </p>
             <Link
               href="/listings"
-              className="inline-block bg-[#1a7a5e] text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              className="inline-block bg-brand text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
             >
               Browse Listings
             </Link>
@@ -80,20 +80,20 @@ export default async function DashboardBookingsPage() {
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">
-                        <span className="font-bold text-[#0d2137] text-lg">{property?.name ?? "—"}</span>
-                        <span className="text-xs text-[#6e7a74]">{property?.area}</span>
+                        <span className="font-bold text-ink text-lg">{property?.name ?? "—"}</span>
+                        <span className="text-xs text-ink-3">{property?.area}</span>
                         <span className={`px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${statusBadge(b.status as BookingStatus)}`}>
                           {b.status}
                         </span>
                       </div>
-                      <div className="text-sm text-[#3e4944]">
+                      <div className="text-sm text-ink-2">
                         {b.check_in_date} → {b.check_out_date} · {b.nights} nights · {b.guests} guest{b.guests > 1 ? "s" : ""}
                       </div>
-                      <div className="text-xs text-[#6e7a74]">Booking code: <strong>{b.booking_code}</strong></div>
+                      <div className="text-xs text-ink-3">Booking code: <strong>{b.booking_code}</strong></div>
                     </div>
 
                     <div className="text-right space-y-1">
-                      <div className="text-xl font-bold text-[#1a7a5e]">IDR {fmt(Number(b.total_price))}</div>
+                      <div className="text-xl font-bold text-brand-ink">IDR {fmt(Number(b.total_price))}</div>
                       <span className={`inline-block px-2 py-0.5 rounded-full text-xs font-semibold capitalize ${paymentBadge(b.payment_status as PaymentStatus)}`}>
                         {b.payment_status.replace("_", " ")}
                       </span>
@@ -115,7 +115,7 @@ export default async function DashboardBookingsPage() {
                     {property?.slug && (
                       <Link
                         href={`/listings/${property.slug}`}
-                        className="text-sm text-[#1a7a5e] hover:underline"
+                        className="text-sm text-brand-ink hover:underline"
                       >
                         View listing →
                       </Link>

@@ -7,13 +7,13 @@ export const PIPELINE_STAGES = [
   { value: "approved",          label: "Approved",          color: "bg-indigo-100 text-indigo-800" },
   { value: "live",              label: "Live",              color: "bg-green-100 text-green-800" },
   { value: "closed",            label: "Closed",            color: "bg-red-100 text-red-700" },
-  { value: "archived",          label: "Archived",          color: "bg-[#f6f3f2] text-[#3e4944]" },
+  { value: "archived",          label: "Archived",          color: "bg-[#f6f3f2] text-ink-2" },
 ] as const;
 
 export type PipelineStatus = (typeof PIPELINE_STAGES)[number]["value"];
 
 export function statusColor(status: string) {
-  return PIPELINE_STAGES.find((s) => s.value === status)?.color ?? "bg-[#f6f3f2] text-[#3e4944]";
+  return PIPELINE_STAGES.find((s) => s.value === status)?.color ?? "bg-[#f6f3f2] text-ink-2";
 }
 
 export function statusLabel(status: string) {

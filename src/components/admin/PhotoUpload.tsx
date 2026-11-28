@@ -146,20 +146,20 @@ export function PhotoUpload({
     <div className="space-y-4">
       {/* Header */}
       <div className="flex items-center justify-between">
-        <p className="text-sm text-[#3e4944]">
-          <span className={photos.length >= minPhotos ? "text-[#1a7a5e] font-bold" : "text-amber-600 font-bold"}>
+        <p className="text-sm text-ink-2">
+          <span className={photos.length >= minPhotos ? "text-brand-ink font-bold" : "text-amber-600 font-bold"}>
             {photos.length}
           </span>
           {" / "}
           <span className="font-medium">{maxPhotos} photos</span>
           {minPhotos > 0 && (
-            <span className="text-[#6e7a74] ml-1">(min {minPhotos})</span>
+            <span className="text-ink-3 ml-1">(min {minPhotos})</span>
           )}
         </p>
         <button
           onClick={() => inputRef.current?.click()}
           disabled={isProcessing || photos.length >= maxPhotos}
-          className="flex items-center gap-2 px-4 py-2 bg-[#1a7a5e] text-white text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-40 transition-opacity"
+          className="flex items-center gap-2 px-4 py-2 bg-brand text-white text-sm font-medium rounded-lg hover:opacity-90 disabled:opacity-40 transition-opacity"
         >
           <span className="material-symbols-outlined text-base">add_photo_alternate</span>
           Add Photos
@@ -182,7 +182,7 @@ export function PhotoUpload({
         </div>
       )}
       {successMsg && (
-        <div className="p-3 bg-[#e8f5f0] border border-[#9cf4d1] text-[#1a7a5e] text-sm rounded-lg flex items-center gap-2">
+        <div className="p-3 bg-brand-soft border border-brand-light text-brand-ink text-sm rounded-lg flex items-center gap-2">
           <span className="material-symbols-outlined text-base" style={{ fontVariationSettings: "'FILL' 1" }}>check_circle</span>
           {successMsg}
         </div>
@@ -192,7 +192,7 @@ export function PhotoUpload({
       {queue.length > 0 && (
         <div className="space-y-2">
           {processing.length > 0 && (
-            <p className="text-xs text-[#6e7a74]">
+            <p className="text-xs text-ink-3">
               Processing {doneInQueue + 1} of {totalInQueue} photos…
             </p>
           )}
@@ -206,7 +206,7 @@ export function PhotoUpload({
       {errorsInQueue.length > 0 && (
         <button
           onClick={() => handleFiles(makeFileList(errorsInQueue.map((f) => f.file)))}
-          className="text-xs text-[#1a7a5e] underline"
+          className="text-xs text-brand-ink underline"
         >
           Retry {errorsInQueue.length} failed photo{errorsInQueue.length > 1 ? "s" : ""}
         </button>
@@ -237,11 +237,11 @@ export function PhotoUpload({
       ) : (
         <div
           onClick={() => inputRef.current?.click()}
-          className="border-2 border-dashed border-[#cccccc] rounded-xl p-10 text-center cursor-pointer hover:border-[#1a7a5e] transition-colors"
+          className="border-2 border-dashed border-[#cccccc] rounded-xl p-10 text-center cursor-pointer hover:border-brand transition-colors"
         >
-          <span className="material-symbols-outlined text-4xl text-[#bec9c2] block mb-2">add_photo_alternate</span>
-          <p className="text-sm text-[#6e7a74]">Click to add photos</p>
-          <p className="text-xs text-[#bec9c2] mt-1">JPEG, PNG, WEBP, HEIC · max 20 MB each</p>
+          <span className="material-symbols-outlined text-4xl text-line-strong block mb-2">add_photo_alternate</span>
+          <p className="text-sm text-ink-3">Click to add photos</p>
+          <p className="text-xs text-line-strong mt-1">JPEG, PNG, WEBP, HEIC · max 20 MB each</p>
         </div>
       )}
     </div>
@@ -254,8 +254,8 @@ function QueueItem({ item, onRetry }: { item: FileItem; onRetry: () => void }) {
   return (
     <div className="bg-[#f6f3f2] rounded-lg p-3 space-y-1.5">
       <div className="flex items-center justify-between text-xs">
-        <span className="text-[#1b1c1c] font-medium truncate max-w-[60%]">{item.file.name}</span>
-        <span className="text-[#6e7a74]">
+        <span className="text-ink font-medium truncate max-w-[60%]">{item.file.name}</span>
+        <span className="text-ink-3">
           {item.status === "compressing" && "Compressing…"}
           {item.status === "uploading" && `Uploading… ${item.progress}%`}
           {item.status === "done" && "✓ Done"}
@@ -265,14 +265,14 @@ function QueueItem({ item, onRetry }: { item: FileItem; onRetry: () => void }) {
         </span>
       </div>
       {item.compressedSize && item.status !== "pending" && (
-        <p className="text-[10px] text-[#6e7a74]">
+        <p className="text-[10px] text-ink-3">
           {formatFileSize(item.originalSize)} → {formatFileSize(item.compressedSize)}
         </p>
       )}
       {(item.status === "uploading") && (
         <div className="w-full bg-[#e4e2e1] h-1 rounded-full overflow-hidden">
           <div
-            className="h-full bg-[#1a7a5e] transition-all"
+            className="h-full bg-brand transition-all"
             style={{ width: `${item.progress}%` }}
           />
         </div>

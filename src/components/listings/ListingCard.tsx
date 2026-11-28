@@ -35,13 +35,13 @@ export async function ListingCard({ property, savedIds = [] }: ListingCardProps)
           />
         ) : (
           <div className="w-full h-full bg-[#e4e2e1] flex items-center justify-center">
-            <span className="material-symbols-outlined text-[#6e7a74] text-4xl">
+            <span className="material-symbols-outlined text-ink-3 text-4xl">
               apartment
             </span>
           </div>
         )}
 
-        <span className="absolute top-3 left-3 bg-[#e8f5f0] text-[#1a7a5e] px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-sm">
+        <span className="absolute top-3 left-3 bg-brand-soft text-brand-ink px-3 py-1 rounded-full text-xs font-semibold flex items-center gap-1 shadow-sm">
           <span className="material-symbols-outlined text-[14px]">verified</span>
           {t("card.curated", lang)}
         </span>
@@ -59,7 +59,7 @@ export async function ListingCard({ property, savedIds = [] }: ListingCardProps)
 
         <div className="absolute top-3 right-3 flex items-center gap-2">
           {rla?.rla_score && (
-            <span className="bg-[#e8f5f0] text-[#1a7a5e] px-2 py-1 rounded-lg text-xs font-bold whitespace-nowrap">
+            <span className="bg-brand-soft text-brand-ink px-2 py-1 rounded-lg text-xs font-bold whitespace-nowrap">
               {Number(rla.rla_score).toFixed(1)}/5 ★
             </span>
           )}
@@ -70,31 +70,31 @@ export async function ListingCard({ property, savedIds = [] }: ListingCardProps)
       <div className="p-6 space-y-3">
         <div className="flex justify-between items-start">
           <div>
-            <h3 className="text-lg font-semibold text-[#0d2137] leading-tight">
+            <h3 className="text-lg font-semibold text-ink leading-tight">
               {property.name}
             </h3>
-            <div className="flex items-center text-[#3e4944] mt-1 gap-1">
+            <div className="flex items-center text-ink-2 mt-1 gap-1">
               <span className="material-symbols-outlined text-sm">location_on</span>
               <span className="text-xs">{property.area}</span>
             </div>
           </div>
         </div>
 
-        <div className="text-[#1a7a5e] text-xl font-bold">
+        <div className="text-brand-ink text-xl font-bold">
           IDR {price}{" "}
-          <span className="text-xs font-normal text-[#6e7a74]">{t("card.perMonth", lang)}</span>
+          <span className="text-xs font-normal text-ink-3">{t("card.perMonth", lang)}</span>
         </div>
 
-        <div className="flex items-center gap-4 border-y border-[#bec9c2] py-3">
-          <div className="flex items-center gap-1 text-[#3e4944]">
+        <div className="flex items-center gap-4 border-y border-line-strong py-3">
+          <div className="flex items-center gap-1 text-ink-2">
             <span className="material-symbols-outlined text-sm">straighten</span>
             <span className="text-xs">{property.size_sqm} m²</span>
           </div>
-          <div className="flex items-center gap-1 text-[#3e4944]">
+          <div className="flex items-center gap-1 text-ink-2">
             <span className="material-symbols-outlined text-sm">bed</span>
             <span className="text-xs">{property.bedrooms}</span>
           </div>
-          <div className="flex items-center gap-1 text-[#3e4944]">
+          <div className="flex items-center gap-1 text-ink-2">
             <span className="material-symbols-outlined text-sm">bathtub</span>
             <span className="text-xs">{property.bathrooms}</span>
           </div>
@@ -102,7 +102,7 @@ export async function ListingCard({ property, savedIds = [] }: ListingCardProps)
 
         <Link
           href={`/listings/${property.slug}`}
-          className="block w-full text-center py-2.5 border-2 border-[#1a7a5e] text-[#1a7a5e] rounded-lg text-sm font-medium hover:bg-[#1a7a5e] hover:text-white transition-colors duration-300"
+          className="block w-full text-center py-2.5 border-2 border-brand text-brand-ink rounded-lg text-sm font-medium hover:bg-brand hover:text-white transition-colors duration-300"
         >
           {t("card.seeDetails", lang)}
         </Link>

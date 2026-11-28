@@ -12,9 +12,9 @@ type DayState = "available" | "booked" | "blocked" | "buffer";
 
 const LEGEND: [DayState, string, string][] = [
   ["available", "owner.calendar.available", "bg-white border-[#cccccc]"],
-  ["booked",    "owner.calendar.booked",    "bg-[#0d2137] text-white border-[#0d2137]"],
+  ["booked",    "owner.calendar.booked",    "bg-ink text-white border-ink"],
   ["blocked",   "owner.calendar.blocked",   "bg-[#c27c00] text-white border-[#c27c00]"],
-  ["buffer",    "owner.calendar.buffer",    "bg-[#e4e2e1] text-[#6e7a74] border-[#cccccc]"],
+  ["buffer",    "owner.calendar.buffer",    "bg-[#e4e2e1] text-ink-3 border-[#cccccc]"],
 ];
 
 const iso = (d: Date) => d.toISOString().slice(0, 10);
@@ -76,7 +76,7 @@ export function CalendarBoard({
       {/* Legend */}
       <div className="flex flex-wrap gap-3">
         {LEGEND.map(([k, key, cls]) => (
-          <span key={k} className="flex items-center gap-1.5 text-xs text-[#3e4944]">
+          <span key={k} className="flex items-center gap-1.5 text-xs text-ink-2">
             <span className={`w-4 h-4 rounded border ${cls}`} />
             {t(key as Parameters<typeof t>[0])}
           </span>
@@ -87,7 +87,7 @@ export function CalendarBoard({
       <div className="bg-white rounded-xl border border-[#cccccc] p-4">
         <div className="grid grid-cols-7 gap-1 mb-1">
           {["Sen", "Sel", "Rab", "Kam", "Jum", "Sab", "Min"].map((d) => (
-            <div key={d} className="text-[11px] text-center text-[#6e7a74] font-semibold py-1">{d}</div>
+            <div key={d} className="text-[11px] text-center text-ink-3 font-semibold py-1">{d}</div>
           ))}
         </div>
         <div className="grid grid-cols-7 gap-1">
@@ -97,10 +97,10 @@ export function CalendarBoard({
             const day = `${year}-${String(month + 1).padStart(2, "0")}-${String(dayNum).padStart(2, "0")}`;
             const st = stateOf(day);
             const cls =
-              st === "booked"  ? "bg-[#0d2137] text-white border-[#0d2137]" :
+              st === "booked"  ? "bg-ink text-white border-ink" :
               st === "blocked" ? "bg-[#c27c00] text-white border-[#c27c00]" :
-              st === "buffer"  ? "bg-[#e4e2e1] text-[#6e7a74] border-[#cccccc]" :
-                                 "bg-white text-[#0d2137] border-[#cccccc]";
+              st === "buffer"  ? "bg-[#e4e2e1] text-ink-3 border-[#cccccc]" :
+                                 "bg-white text-ink border-[#cccccc]";
             return (
               <div key={day} className={`aspect-square rounded-lg border flex items-center justify-center text-sm tabular-nums ${cls}`}>
                 {dayNum}
@@ -112,26 +112,26 @@ export function CalendarBoard({
 
       {/* Block form */}
       <section className="bg-white rounded-xl border border-[#cccccc] p-5">
-        <h2 className="font-semibold text-[#0d2137] text-sm">{t("owner.calendar.blockDates")}</h2>
-        <p className="text-xs text-[#6e7a74] mt-1 mb-4">{t("owner.calendar.blockNote")}</p>
+        <h2 className="font-semibold text-ink text-sm">{t("owner.calendar.blockDates")}</h2>
+        <p className="text-xs text-ink-3 mt-1 mb-4">{t("owner.calendar.blockNote")}</p>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
           <div>
-            <label htmlFor="bs" className="block text-xs font-semibold text-[#3e4944] mb-1">Mulai</label>
+            <label htmlFor="bs" className="block text-xs font-semibold text-ink-2 mb-1">Mulai</label>
             <input id="bs" type="date" value={start} onChange={(e) => setStart(e.target.value)}
-                   className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-[#1a7a5e]" />
+                   className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand" />
           </div>
           <div>
-            <label htmlFor="be" className="block text-xs font-semibold text-[#3e4944] mb-1">Selesai</label>
+            <label htmlFor="be" className="block text-xs font-semibold text-ink-2 mb-1">Selesai</label>
             <input id="be" type="date" value={end} onChange={(e) => setEnd(e.target.value)}
-                   className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-[#1a7a5e]" />
+                   className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand" />
           </div>
         </div>
 
         <input
           value={note} onChange={(e) => setNote(e.target.value)}
           placeholder="Catatan (opsional)"
-          className="w-full h-10 px-3 mt-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-[#1a7a5e]"
+          className="w-full h-10 px-3 mt-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand"
         />
 
         {error && <p className="text-sm text-red-600 mt-3">{error}</p>}
@@ -139,7 +139,7 @@ export function CalendarBoard({
         <button
           onClick={submitBlock}
           disabled={busy || !start || !end}
-          className="mt-4 px-4 py-2 bg-[#1a7a5e] text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-40"
+          className="mt-4 px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-40"
         >
           {busy ? t("common.loading") : t("owner.calendar.blockDates")}
         </button>
@@ -149,12 +149,12 @@ export function CalendarBoard({
       {myBlocks.length > 0 && (
         <section className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
           <div className="px-5 py-3">
-            <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">Blokir Anda</p>
-            <p className="text-[11px] text-[#6e7a74] mt-0.5">{t("owner.calendar.onlyOwnBlocks")}</p>
+            <p className="text-xs font-bold text-ink-2 uppercase tracking-wider">Blokir Anda</p>
+            <p className="text-[11px] text-ink-3 mt-0.5">{t("owner.calendar.onlyOwnBlocks")}</p>
           </div>
           {myBlocks.map((b) => (
             <div key={b.id} className="px-5 py-3 flex items-center justify-between gap-3">
-              <p className="text-sm text-[#0d2137]">{b.start} → {b.end}</p>
+              <p className="text-sm text-ink">{b.start} → {b.end}</p>
               <button
                 onClick={() => drop(b.id)}
                 disabled={busy}

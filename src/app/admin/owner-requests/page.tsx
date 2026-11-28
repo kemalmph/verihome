@@ -26,12 +26,12 @@ export default async function AdminOwnerRequestsPage() {
       <AppSidebar activeHref="/admin/owner-requests" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-4xl">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">{t("admin.requests.title")}</h1>
-          <p className="text-[#3e4944] mt-1">{requests.length} menunggu</p>
+          <h1 className="text-3xl font-bold text-ink">{t("admin.requests.title")}</h1>
+          <p className="text-ink-2 mt-1">{requests.length} menunggu</p>
         </header>
 
         {requests.length === 0 ? (
-          <p className="text-[#3e4944] bg-white rounded-xl border border-[#cccccc] p-6">
+          <p className="text-ink-2 bg-white rounded-xl border border-[#cccccc] p-6">
             {t("admin.requests.none")}
           </p>
         ) : (
@@ -44,10 +44,10 @@ export default async function AdminOwnerRequestsPage() {
                            isPayout ? "border-[#e2b3ab]" : "border-[#cccccc]"}`}>
                   <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
                     <div className="min-w-0">
-                      <p className="font-semibold text-[#0d2137]">
+                      <p className="font-semibold text-ink">
                         {isPayout ? "Perubahan rekening pembayaran" : "Perubahan tarif"}
                       </p>
-                      <p className="text-xs text-[#6e7a74] mt-0.5">
+                      <p className="text-xs text-ink-3 mt-0.5">
                         {r.ownerName}
                         {r.propertyName ? ` · ${r.propertyName}` : ""}
                         {" · "}
@@ -76,19 +76,19 @@ export default async function AdminOwnerRequestsPage() {
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
                         <div className="border border-[#e4e2e1] rounded-lg p-3">
-                          <p className="text-[11px] font-bold text-[#6e7a74] uppercase tracking-wider mb-2">Sekarang</p>
+                          <p className="text-[11px] font-bold text-ink-3 uppercase tracking-wider mb-2">Sekarang</p>
                           <dl className="text-sm space-y-1">
-                            <div className="flex justify-between gap-2"><dt className="text-[#6e7a74]">Bank</dt><dd>{String(r.previous?.payout_bank ?? "—")}</dd></div>
-                            <div className="flex justify-between gap-2"><dt className="text-[#6e7a74]">Rekening</dt><dd className="font-mono">{maskAccount(r.previous?.payout_account_number as string)}</dd></div>
-                            <div className="flex justify-between gap-2"><dt className="text-[#6e7a74]">Atas nama</dt><dd>{String(r.previous?.payout_account_holder ?? "—")}</dd></div>
+                            <div className="flex justify-between gap-2"><dt className="text-ink-3">Bank</dt><dd>{String(r.previous?.payout_bank ?? "—")}</dd></div>
+                            <div className="flex justify-between gap-2"><dt className="text-ink-3">Rekening</dt><dd className="font-mono">{maskAccount(r.previous?.payout_account_number as string)}</dd></div>
+                            <div className="flex justify-between gap-2"><dt className="text-ink-3">Atas nama</dt><dd>{String(r.previous?.payout_account_holder ?? "—")}</dd></div>
                           </dl>
                         </div>
                         <div className="border-2 border-[#8c3a2c] rounded-lg p-3">
                           <p className="text-[11px] font-bold text-[#8c3a2c] uppercase tracking-wider mb-2">Diminta</p>
                           <dl className="text-sm space-y-1">
-                            <div className="flex justify-between gap-2"><dt className="text-[#6e7a74]">Bank</dt><dd className="font-semibold">{String(r.proposed.bank ?? "—")}</dd></div>
-                            <div className="flex justify-between gap-2"><dt className="text-[#6e7a74]">Rekening</dt><dd className="font-mono font-semibold">{maskAccount(r.proposed.account_number as string)}</dd></div>
-                            <div className="flex justify-between gap-2"><dt className="text-[#6e7a74]">Atas nama</dt><dd className="font-semibold">{String(r.proposed.account_holder ?? "—")}</dd></div>
+                            <div className="flex justify-between gap-2"><dt className="text-ink-3">Bank</dt><dd className="font-semibold">{String(r.proposed.bank ?? "—")}</dd></div>
+                            <div className="flex justify-between gap-2"><dt className="text-ink-3">Rekening</dt><dd className="font-mono font-semibold">{maskAccount(r.proposed.account_number as string)}</dd></div>
+                            <div className="flex justify-between gap-2"><dt className="text-ink-3">Atas nama</dt><dd className="font-semibold">{String(r.proposed.account_holder ?? "—")}</dd></div>
                           </dl>
                         </div>
                       </div>
@@ -97,7 +97,7 @@ export default async function AdminOwnerRequestsPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm" style={{ minWidth: 380 }}>
                         <thead>
-                          <tr className="text-xs uppercase tracking-wider text-[#6e7a74] border-b border-[#e4e2e1]">
+                          <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
                             <th className="text-left py-2 font-medium">Item</th>
                             <th className="text-right py-2 font-medium">Sekarang</th>
                             <th className="text-right py-2 font-medium">Diminta</th>
@@ -106,17 +106,17 @@ export default async function AdminOwnerRequestsPage() {
                         <tbody>
                           {RATE_FIELDS.filter(([k]) => r.proposed[k] != null).map(([k, label]) => (
                             <tr key={k} className="border-b border-[#f0eeed] last:border-0">
-                              <td className="py-2 text-[#3e4944]">{label}</td>
-                              <td className="py-2 text-right tabular-nums text-[#6e7a74]">{fmt(r.previous?.[k])}</td>
-                              <td className="py-2 text-right tabular-nums font-semibold text-[#0d2137]">{fmt(r.proposed[k])}</td>
+                              <td className="py-2 text-ink-2">{label}</td>
+                              <td className="py-2 text-right tabular-nums text-ink-3">{fmt(r.previous?.[k])}</td>
+                              <td className="py-2 text-right tabular-nums font-semibold text-ink">{fmt(r.proposed[k])}</td>
                             </tr>
                           ))}
                         </tbody>
                       </table>
                       {r.proposed.note ? (
-                        <p className="text-xs text-[#3e4944] mt-2">Catatan pemilik: {String(r.proposed.note)}</p>
+                        <p className="text-xs text-ink-2 mt-2">Catatan pemilik: {String(r.proposed.note)}</p>
                       ) : null}
-                      <p className="text-[11px] text-[#6e7a74] mt-2">{t("owner.request.rateNote")}</p>
+                      <p className="text-[11px] text-ink-3 mt-2">{t("owner.request.rateNote")}</p>
                     </div>
                   )}
 

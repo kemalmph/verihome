@@ -47,8 +47,8 @@ export function CommissionSettingsForm({
   return (
     <form onSubmit={onSubmit} className="bg-white rounded-xl border border-[#cccccc] shadow-sm">
       <div className="p-6 border-b border-[#e4e2e1]">
-        <h2 className="text-lg font-semibold text-[#0d2137]">Komisi platform bawaan</h2>
-        <p className="text-sm text-[#3e4944] mt-1 max-w-2xl">
+        <h2 className="text-lg font-semibold text-ink">Komisi platform bawaan</h2>
+        <p className="text-sm text-ink-2 mt-1 max-w-2xl">
           Bagian Cosystem dari harga sewa untuk properti yang belum punya komisi
           sendiri. Properti dengan komisi khusus tetap memakai angka miliknya.
         </p>
@@ -59,7 +59,7 @@ export function CommissionSettingsForm({
           <div>
             <label
               htmlFor="default_commission_pct"
-              className="block text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-1.5"
+              className="block text-xs font-bold text-ink-2 uppercase tracking-wider mb-1.5"
             >
               Komisi bawaan (%)
             </label>
@@ -71,9 +71,9 @@ export function CommissionSettingsForm({
                 value={pct}
                 onChange={(e) => { setPct(e.target.value); setSaved(false); setError(""); }}
                 placeholder="mis. 15"
-                className="w-full border border-[#cccccc] rounded-lg px-3 py-2 pr-9 text-[#0d2137] focus:outline-none focus:border-[#1a7a5e]"
+                className="w-full border border-[#cccccc] rounded-lg px-3 py-2 pr-9 text-ink focus:outline-none focus:border-brand"
               />
-              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-[#6e7a74] text-sm">%</span>
+              <span className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 text-sm">%</span>
             </div>
 
             {!valid && (
@@ -90,19 +90,19 @@ export function CommissionSettingsForm({
 
           {valid && parsed !== null && margin !== null && (
             <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm self-start">
-              <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+              <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
                 Contoh — sewa {example.toLocaleString("id-ID")}
               </div>
               <div className="divide-y divide-[#f0eeed]">
                 <div className="px-4 py-2.5 flex justify-between">
-                  <span className="text-[#3e4944]">Cosystem</span>
-                  <span className="font-semibold text-[#1a7a5e] tabular-nums">
+                  <span className="text-ink-2">Cosystem</span>
+                  <span className="font-semibold text-brand-ink tabular-nums">
                     {margin.toLocaleString("id-ID")}
                   </span>
                 </div>
                 <div className="px-4 py-2.5 flex justify-between">
-                  <span className="text-[#3e4944]">Pemilik</span>
-                  <span className="font-semibold text-[#0d2137] tabular-nums">
+                  <span className="text-ink-2">Pemilik</span>
+                  <span className="font-semibold text-ink tabular-nums">
                     {(example - margin).toLocaleString("id-ID")}
                   </span>
                 </div>
@@ -113,9 +113,9 @@ export function CommissionSettingsForm({
 
         {/* The question everyone asks first, answered with a number. */}
         <div className="bg-[#f6f3f2] border border-[#e4e2e1] rounded-lg p-4 flex items-start gap-3">
-          <span className="material-symbols-outlined text-[#3e4944] text-lg">lock_clock</span>
-          <div className="text-sm text-[#3e4944]">
-            <p className="font-semibold text-[#0d2137]">
+          <span className="material-symbols-outlined text-ink-2 text-lg">lock_clock</span>
+          <div className="text-sm text-ink-2">
+            <p className="font-semibold text-ink">
               Perubahan di sini tidak mengubah pemesanan yang sudah ada.
             </p>
             <p className="mt-1 max-w-2xl">
@@ -124,7 +124,7 @@ export function CommissionSettingsForm({
               {unaffectedBookings > 0 ? (
                 <>
                   Saat ini ada{" "}
-                  <strong className="text-[#0d2137]">{unaffectedBookings} pemesanan berjalan</strong>{" "}
+                  <strong className="text-ink">{unaffectedBookings} pemesanan berjalan</strong>{" "}
                   yang tidak akan terpengaruh.
                 </>
               ) : (
@@ -145,20 +145,20 @@ export function CommissionSettingsForm({
         <button
           type="submit"
           disabled={!dirty || !valid || isPending}
-          className="px-4 py-2 bg-[#1a7a5e] text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {isPending ? "Menyimpan…" : "Simpan"}
         </button>
 
         {saved && !dirty && (
-          <span className="text-sm text-[#1a7a5e] font-medium flex items-center gap-1">
+          <span className="text-sm text-brand-ink font-medium flex items-center gap-1">
             <span className="material-symbols-outlined text-base">check_circle</span>
             Tersimpan
           </span>
         )}
 
         {updatedAt && (
-          <span className="text-xs text-[#6e7a74]">
+          <span className="text-xs text-ink-3">
             Terakhir diubah {new Date(updatedAt).toLocaleDateString("id-ID", {
               day: "numeric", month: "long", year: "numeric",
             })}

@@ -36,7 +36,7 @@ export function RequestActions({ requestId, needsPhoneCheck }: { requestId: stri
       <input
         value={note} onChange={(e) => setNote(e.target.value)}
         placeholder="Catatan (opsional)"
-        className="w-full h-9 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-[#1a7a5e]"
+        className="w-full h-9 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand"
       />
 
       {error && <p className="text-sm text-red-600">{error}</p>}
@@ -45,7 +45,7 @@ export function RequestActions({ requestId, needsPhoneCheck }: { requestId: stri
         <button
           onClick={() => run(approveOwnerRequest)}
           disabled={busy || (needsPhoneCheck && !confirmed)}
-          className="px-4 py-2 bg-[#1a7a5e] text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {t("admin.requests.approve")}
         </button>

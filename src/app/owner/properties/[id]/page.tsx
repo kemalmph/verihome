@@ -76,25 +76,25 @@ export default async function OwnerPropertyPage({
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AppSidebar activeHref="/owner/properties" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-4xl">
-        <Link href="/owner/properties" className="text-sm text-[#1a7a5e] hover:underline">← {t("owner.nav.properties")}</Link>
+        <Link href="/owner/properties" className="text-sm text-brand-ink hover:underline">← {t("owner.nav.properties")}</Link>
 
         <header className="mt-3 mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">{property.name}</h1>
-          <p className="text-[#3e4944] mt-1">{property.area}</p>
+          <h1 className="text-3xl font-bold text-ink">{property.name}</h1>
+          <p className="text-ink-2 mt-1">{property.area}</p>
         </header>
 
         {/* Status */}
         <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
-          <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+          <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
             {t("owner.property.status")}
           </h2>
           {isLive ? (
             <div className="flex items-center gap-3 flex-wrap">
-              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#e8f5f0] text-[#12614a]">
+              <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-success-soft text-success-ink">
                 Tayang
               </span>
               {property.slug && (
-                <Link href={`/listings/${property.slug}`} className="text-sm text-[#1a7a5e] font-medium hover:underline">
+                <Link href={`/listings/${property.slug}`} className="text-sm text-brand-ink font-medium hover:underline">
                   {t("owner.property.viewPublic")} →
                 </Link>
               )}
@@ -102,17 +102,17 @@ export default async function OwnerPropertyPage({
           ) : (
             <>
               <p className="font-semibold text-amber-900">{t("owner.property.notLive")}</p>
-              <p className="text-sm text-[#3e4944] mt-1">{t("owner.property.missingItems")}:</p>
+              <p className="text-sm text-ink-2 mt-1">{t("owner.property.missingItems")}:</p>
               <ul className="mt-2 space-y-1">
                 {unmet.map((u) => (
-                  <li key={u} className="text-sm text-[#3e4944] flex items-start gap-2">
+                  <li key={u} className="text-sm text-ink-2 flex items-start gap-2">
                     <span className="material-symbols-outlined text-amber-500 text-base shrink-0">radio_button_unchecked</span>
                     <span>{u}</span>
                   </li>
                 ))}
               </ul>
               {unmet.length === 0 && (
-                <p className="text-sm text-[#1a7a5e] mt-2">
+                <p className="text-sm text-brand-ink mt-2">
                   Semua sudah lengkap — tim Cosystem akan menayangkan listing ini.
                 </p>
               )}
@@ -122,41 +122,41 @@ export default async function OwnerPropertyPage({
 
         {/* Rates and split */}
         <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
-          <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+          <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
             {t("owner.property.rates")}
           </h2>
 
           {perNight > 0 ? (
             <>
               <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm mb-4">
-                <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+                <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
                   {t("owner.property.perNight")}
                 </div>
                 <div className="divide-y divide-[#f0eeed]">
                   <div className="px-4 py-2.5 flex justify-between">
-                    <span className="text-[#3e4944]">Tamu membayar (sewa)</span>
+                    <span className="text-ink-2">Tamu membayar (sewa)</span>
                     <span className="tabular-nums">{rp(perNight)}</span>
                   </div>
                   <div className="px-4 py-2.5 flex justify-between">
-                    <span className="text-[#3e4944]">
+                    <span className="text-ink-2">
                       Komisi Cosystem{pct != null ? ` (${pct}%)` : ""}
                     </span>
                     <span className="tabular-nums">− {rp(margin)}</span>
                   </div>
-                  <div className="px-4 py-2.5 flex justify-between bg-[#e8f5f0]">
-                    <span className="font-semibold text-[#12614a]">{t("owner.property.youReceive")}</span>
-                    <span className="font-bold text-[#12614a] tabular-nums">{rp(perNight - margin)}</span>
+                  <div className="px-4 py-2.5 flex justify-between bg-brand-soft">
+                    <span className="font-semibold text-success-ink">{t("owner.property.youReceive")}</span>
+                    <span className="font-bold text-success-ink tabular-nums">{rp(perNight - margin)}</span>
                   </div>
                 </div>
               </div>
 
-              <p className="text-xs text-[#6e7a74]">
+              <p className="text-xs text-ink-3">
                 Biaya kebersihan {rp(Number(rate?.cleaning_fee ?? 0))} —{" "}
                 {cleaningToOwner ? "menjadi hak Anda" : "menjadi hak Cosystem"}.
               </p>
             </>
           ) : (
-            <p className="text-sm text-[#3e4944]">Tarif harian belum diatur untuk properti ini.</p>
+            <p className="text-sm text-ink-2">Tarif harian belum diatur untuk properti ini.</p>
           )}
 
           <div className="mt-5 pt-4 border-t border-[#e4e2e1]">
@@ -166,10 +166,10 @@ export default async function OwnerPropertyPage({
 
         {/* Assessment — read only */}
         <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
-          <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-1">
+          <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-1">
             {t("owner.property.assessment")}
           </h2>
-          <p className="text-xs text-[#6e7a74] mb-4 max-w-2xl">{t("owner.property.assessmentNote")}</p>
+          <p className="text-xs text-ink-3 mb-4 max-w-2xl">{t("owner.property.assessmentNote")}</p>
 
           {rla ? (
             <>
@@ -178,8 +178,8 @@ export default async function OwnerPropertyPage({
                   const v = (rla as Record<string, unknown>)[k];
                   return (
                     <div key={k} className="bg-[#f6f3f2] rounded-lg p-3">
-                      <p className="text-[11px] text-[#6e7a74] leading-tight">{label}</p>
-                      <p className="text-lg font-bold text-[#0d2137] tabular-nums">
+                      <p className="text-[11px] text-ink-3 leading-tight">{label}</p>
+                      <p className="text-lg font-bold text-ink tabular-nums">
                         {v == null ? "—" : `${v}/10`}
                       </p>
                     </div>
@@ -189,33 +189,33 @@ export default async function OwnerPropertyPage({
 
               <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
                 <div>
-                  <p className="text-xs font-semibold text-[#12614a] mb-1">{t("owner.property.pros")}</p>
-                  <ul className="text-sm text-[#3e4944] space-y-0.5">
+                  <p className="text-xs font-semibold text-success-ink mb-1">{t("owner.property.pros")}</p>
+                  <ul className="text-sm text-ink-2 space-y-0.5">
                     {((rla.pros as string[]) ?? []).map((p, i) => <li key={i}>· {p}</li>)}
-                    {(((rla.pros as string[]) ?? []).length === 0) && <li className="text-[#6e7a74]">—</li>}
+                    {(((rla.pros as string[]) ?? []).length === 0) && <li className="text-ink-3">—</li>}
                   </ul>
                 </div>
                 <div>
                   <p className="text-xs font-semibold text-[#8c3a2c] mb-1">{t("owner.property.cons")}</p>
-                  <ul className="text-sm text-[#3e4944] space-y-0.5">
+                  <ul className="text-sm text-ink-2 space-y-0.5">
                     {((rla.cons as string[]) ?? []).map((c, i) => <li key={i}>· {c}</li>)}
-                    {(((rla.cons as string[]) ?? []).length === 0) && <li className="text-[#6e7a74]">—</li>}
+                    {(((rla.cons as string[]) ?? []).length === 0) && <li className="text-ink-3">—</li>}
                   </ul>
                 </div>
               </div>
             </>
           ) : (
-            <p className="text-sm text-[#3e4944]">Penilaian belum dilakukan.</p>
+            <p className="text-sm text-ink-2">Penilaian belum dilakukan.</p>
           )}
         </section>
 
         {/* Media — read only */}
         <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
-          <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">
+          <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
             {t("owner.property.media")}
           </h2>
           {photos.length === 0 ? (
-            <p className="text-sm text-[#3e4944]">Belum ada foto.</p>
+            <p className="text-sm text-ink-2">Belum ada foto.</p>
           ) : (
             <div className="grid grid-cols-2 sm:grid-cols-4 gap-2">
               {photos.slice(0, 8).map((url, i) => (
@@ -226,7 +226,7 @@ export default async function OwnerPropertyPage({
           )}
           {media?.video_url ? (
             <a href={media.video_url as string} target="_blank" rel="noopener noreferrer"
-               className="inline-block mt-3 text-sm text-[#1a7a5e] font-medium hover:underline">
+               className="inline-block mt-3 text-sm text-brand-ink font-medium hover:underline">
               Lihat video keliling →
             </a>
           ) : null}
@@ -235,9 +235,9 @@ export default async function OwnerPropertyPage({
         {/* Area + rules */}
         {(area || details) && (
           <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
-            <h2 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-3">Lingkungan & fasilitas</h2>
+            <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">Lingkungan & fasilitas</h2>
             {area && (
-              <p className="text-sm text-[#3e4944] mb-3">
+              <p className="text-sm text-ink-2 mb-3">
                 {[area.nearest_mrt && `MRT ${area.nearest_mrt} (${area.mrt_distance ?? "—"})`,
                   area.nearest_minimarket && `Minimarket ${area.nearest_minimarket}`,
                   area.nearest_clinic && `Klinik ${area.nearest_clinic}`]
@@ -245,7 +245,7 @@ export default async function OwnerPropertyPage({
               </p>
             )}
             {details?.facilities && (
-              <p className="text-sm text-[#3e4944]">
+              <p className="text-sm text-ink-2">
                 {((details.facilities as string[]) ?? []).join(" · ")}
               </p>
             )}
@@ -254,7 +254,7 @@ export default async function OwnerPropertyPage({
 
         <Link
           href={`/owner/properties/${property.id}/calendar`}
-          className="inline-block px-5 py-3 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90"
+          className="inline-block px-5 py-3 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90"
         >
           {t("owner.calendar.title")} →
         </Link>

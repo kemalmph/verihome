@@ -32,8 +32,8 @@ export default async function OwnerInvitePage({
     <>
       <Navbar />
       <main className="max-w-lg mx-auto px-4 py-16">
-        <h1 className="text-2xl font-bold text-[#0d2137]">{t("owner.invite.title", lang)}</h1>
-        <p className="text-sm text-[#3e4944] mt-2">{t("owner.invite.intro", lang)}</p>
+        <h1 className="text-2xl font-bold text-ink">{t("owner.invite.title", lang)}</h1>
+        <p className="text-sm text-ink-2 mt-2">{t("owner.invite.intro", lang)}</p>
 
         <div className="mt-8">
           <AcceptInvite token={token} />

@@ -59,7 +59,7 @@ export function BookingStatusActions({ bookingId, currentStatus, currentPaymentS
         <button
           disabled={isPending}
           onClick={() => update({ status: "confirmed", payment_status: "paid" })}
-          className="px-3 py-1.5 bg-[#1a7a5e] text-white text-xs font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
+          className="px-3 py-1.5 bg-brand text-white text-xs font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
         >
           Confirm booking
         </button>

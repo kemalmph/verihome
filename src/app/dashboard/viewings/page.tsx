@@ -13,7 +13,7 @@ const rp = (n: number) => `Rp ${new Intl.NumberFormat("id-ID").format(Math.round
 const STATUS: Record<string, { label: string; cls: string }> = {
   pending:        { label: "Menunggu konfirmasi", cls: "bg-amber-100 text-amber-800" },
   confirmed:      { label: "Terjadwal",           cls: "bg-green-100 text-green-700" },
-  attended:       { label: "Hadir",               cls: "bg-[#e8f5f0] text-[#1a7a5e]" },
+  attended:       { label: "Hadir",               cls: "bg-brand-soft text-brand-ink" },
   no_show:        { label: "Tidak hadir",         cls: "bg-red-100 text-red-700" },
   cancelled:      { label: "Dibatalkan",          cls: "bg-gray-200 text-gray-600" },
   refund_pending: { label: "Pengembalian diproses", cls: "bg-blue-50 text-blue-800" },
@@ -45,8 +45,8 @@ export default async function ViewingsPage() {
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">
-          <h2 className="text-3xl font-bold text-[#0d2137] mb-1">Viewings</h2>
-          <p className="text-[#3e4944]">Track your scheduled property viewings.</p>
+          <h2 className="text-3xl font-bold text-ink mb-1">Viewings</h2>
+          <p className="text-ink-2">Track your scheduled property viewings.</p>
         </header>
 
         {refundable.length > 0 && (
@@ -57,16 +57,16 @@ export default async function ViewingsPage() {
 
         {rows.length === 0 ? (
           <div className="text-center py-20">
-            <div className="w-20 h-20 bg-[#e8f5f0] rounded-full flex items-center justify-center mx-auto mb-6">
-              <span className="material-symbols-outlined text-[#1a7a5e] text-4xl">location_on</span>
+            <div className="w-20 h-20 bg-brand-soft rounded-full flex items-center justify-center mx-auto mb-6">
+              <span className="material-symbols-outlined text-brand-ink text-4xl">location_on</span>
             </div>
-            <h3 className="text-xl font-semibold text-[#1b1c1c] mb-2">No viewings scheduled</h3>
-            <p className="text-[#3e4944] mb-6">
+            <h3 className="text-xl font-semibold text-ink mb-2">No viewings scheduled</h3>
+            <p className="text-ink-2 mb-6">
               Request a viewing from any listing page to schedule a physical visit.
             </p>
             <Link
               href="/listings"
-              className="inline-block bg-[#1a7a5e] text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
+              className="inline-block bg-brand text-white px-8 py-3 rounded-lg font-semibold hover:opacity-90 transition-opacity"
             >
               Browse Listings
             </Link>
@@ -85,16 +85,16 @@ export default async function ViewingsPage() {
               return (
                 <div key={v.id} className="p-5 flex items-start justify-between gap-4 flex-wrap">
                   <div className="min-w-0">
-                    <p className="font-semibold text-[#0d2137]">
+                    <p className="font-semibold text-ink">
                       {p?.slug ? (
-                        <Link href={`/listings/${p.slug}`} className="hover:text-[#1a7a5e] hover:underline">
+                        <Link href={`/listings/${p.slug}`} className="hover:text-brand-ink hover:underline">
                           {p.name}
                         </Link>
                       ) : (p?.name ?? "—")}
                     </p>
-                    <p className="text-xs text-[#6e7a74] mt-0.5">{p?.area}</p>
-                    <p className="text-sm text-[#3e4944] mt-1.5">{when}</p>
-                    <p className="text-xs text-[#6e7a74] mt-1">
+                    <p className="text-xs text-ink-3 mt-0.5">{p?.area}</p>
+                    <p className="text-sm text-ink-2 mt-1.5">{when}</p>
+                    <p className="text-xs text-ink-3 mt-1">
                       Titipan {rp(Number(v.deposit_amount ?? 0))}
                       {v.credit_issued
                         ? " · sudah menjadi kredit"

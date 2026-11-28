@@ -26,18 +26,18 @@ export function ListYourPropertyForm() {
   if (result?.success) {
     return (
       <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-12 text-center space-y-4">
-        <div className="w-16 h-16 bg-[#e8f5f0] rounded-full flex items-center justify-center mx-auto">
-          <span className="material-symbols-outlined text-[#1a7a5e] text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+        <div className="w-16 h-16 bg-brand-soft rounded-full flex items-center justify-center mx-auto">
+          <span className="material-symbols-outlined text-brand-ink text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             check_circle
           </span>
         </div>
-        <h2 className="text-2xl font-bold text-[#0d2137]">{t("lp.received")}</h2>
-        <p className="text-[#3e4944] max-w-sm mx-auto">
+        <h2 className="text-2xl font-bold text-ink">{t("lp.received")}</h2>
+        <p className="text-ink-2 max-w-sm mx-auto">
           {t("lp.receivedBody")}
         </p>
         <button
           onClick={() => setResult(null)}
-          className="mt-4 px-6 py-2.5 border border-[#1a7a5e] text-[#1a7a5e] rounded-lg text-sm font-medium hover:bg-[#e8f5f0]"
+          className="mt-4 px-6 py-2.5 border border-brand text-brand-ink rounded-lg text-sm font-medium hover:bg-brand-soft"
         >
           {t("lp.another")}
         </button>
@@ -54,7 +54,7 @@ export function ListYourPropertyForm() {
       )}
 
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+        <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
           {t("lp.propertyName")}
         </label>
         <input
@@ -62,13 +62,13 @@ export function ListYourPropertyForm() {
           type="text"
           required
           placeholder={t("lp.propertyNamePh")}
-          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
+          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
             {t("lp.city")}
           </label>
           <select
@@ -76,21 +76,21 @@ export function ListYourPropertyForm() {
             required
             value={selectedCity}
             onChange={(e) => setSelectedCity(e.target.value)}
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
           >
             <option value="">{t("lp.selectCity")}</option>
             <option value="Jakarta">Jakarta</option>
           </select>
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
             {t("lp.neighborhood")}
           </label>
           <select
             name="area"
             required
             disabled={!selectedCity}
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option value="">{t("lp.selectNeighborhood")}</option>
             {(CITY_NEIGHBORHOODS[selectedCity] ?? []).map((n) => (
@@ -101,7 +101,7 @@ export function ListYourPropertyForm() {
       </div>
 
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+        <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
           {t("lp.address")}
         </label>
         <input
@@ -109,31 +109,31 @@ export function ListYourPropertyForm() {
           type="text"
           required
           placeholder={t("lp.addressPh")}
-          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
+          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
         />
       </div>
 
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+        <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
           {t("lp.mapsUrl")}
         </label>
         <input
           name="google_maps_url"
           type="url"
           placeholder="https://maps.google.com/..."
-          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
+          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
         />
       </div>
 
       <div className="grid grid-cols-1 md:grid-cols-3 gap-6">
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
             {t("lp.propertyType")}
           </label>
           <select
             name="property_type"
             required
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
           >
             <option value="">{t("lp.selectType")}</option>
             <option value="apartment">{t("lp.apartment")}</option>
@@ -142,13 +142,13 @@ export function ListYourPropertyForm() {
           </select>
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
             {t("lp.bedrooms")}
           </label>
           <select
             name="bedrooms"
             required
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
           >
             <option value="studio">{t("lp.studio")}</option>
             <option value="1">1</option>
@@ -158,13 +158,13 @@ export function ListYourPropertyForm() {
           </select>
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
             {t("lp.bathrooms")}
           </label>
           <select
             name="bathrooms"
             required
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
           >
             <option value="1">1</option>
             <option value="2">2</option>
@@ -175,7 +175,7 @@ export function ListYourPropertyForm() {
 
       <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
             {t("lp.monthlyRent")}
           </label>
           <input
@@ -184,11 +184,11 @@ export function ListYourPropertyForm() {
             required
             min="500000"
             placeholder={t("lp.rentPh")}
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
           />
         </div>
         <div className="space-y-1">
-          <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+          <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
             {t("lp.size")}
           </label>
           <input
@@ -196,28 +196,28 @@ export function ListYourPropertyForm() {
             type="number"
             min="10"
             placeholder={t("lp.sizePh")}
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm"
+            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
           />
         </div>
       </div>
 
       <div className="space-y-1">
-        <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+        <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
           {t("lp.description")}
         </label>
         <textarea
           name="description"
           rows={4}
           placeholder={t("lp.descriptionPh")}
-          className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none focus:ring-2 focus:ring-[#9cf4d1] text-sm resize-none"
+          className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm resize-none"
         />
       </div>
 
-      <div className="border-t border-[#bec9c2] pt-6">
-        <p className="text-sm font-semibold text-[#1b1c1c] mb-4">{t("lp.ownerDetails")}</p>
+      <div className="border-t border-line-strong pt-6">
+        <p className="text-sm font-semibold text-ink mb-4">{t("lp.ownerDetails")}</p>
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+            <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
               {t("lp.fullName")}
             </label>
             <input
@@ -225,11 +225,11 @@ export function ListYourPropertyForm() {
               type="text"
               required
               placeholder={t("lp.fullNamePh")}
-              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm"
+              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+            <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
               {t("lp.emailLabel")}
             </label>
             <input
@@ -237,11 +237,11 @@ export function ListYourPropertyForm() {
               type="email"
               required
               placeholder="your@email.com"
-              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm"
+              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
             />
           </div>
           <div className="space-y-1">
-            <label className="text-xs font-semibold text-[#3e4944] uppercase tracking-wider">
+            <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider">
               {t("lp.whatsapp")}
             </label>
             <input
@@ -249,7 +249,7 @@ export function ListYourPropertyForm() {
               type="tel"
               required
               placeholder="+62 812-xxxx-xxxx"
-              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm"
+              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
             />
           </div>
         </div>
@@ -258,7 +258,7 @@ export function ListYourPropertyForm() {
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-[#1a7a5e] text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full bg-brand text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {isPending ? (
           <>
@@ -270,7 +270,7 @@ export function ListYourPropertyForm() {
         )}
       </button>
 
-      <p className="text-xs text-center text-[#6e7a74]">
+      <p className="text-xs text-center text-ink-3">
         {t("lp.footnote")}
       </p>
     </form>

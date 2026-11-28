@@ -34,8 +34,8 @@ export default async function BookPage({ params }: Props) {
       <Navbar />
       <main className="max-w-3xl mx-auto px-4 py-10">
         <div className="mb-8">
-          <div className="text-sm text-[#6e7a74] mb-1">{property.area}</div>
-          <h1 className="text-2xl font-bold text-[#0d2137]">{property.name}</h1>
+          <div className="text-sm text-ink-3 mb-1">{property.area}</div>
+          <h1 className="text-2xl font-bold text-ink">{property.name}</h1>
         </div>
         <BookingFlow
           propertyId={property.id}

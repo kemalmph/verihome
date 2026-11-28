@@ -38,7 +38,7 @@ export function ProposeRate({
 
   if (done) {
     return (
-      <p className="text-sm text-[#12614a] bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg px-4 py-3">
+      <p className="text-sm text-success-ink bg-success-soft border border-success-line rounded-lg px-4 py-3">
         {t("owner.request.submitted")} {t("owner.request.pending")}.
       </p>
     );
@@ -48,7 +48,7 @@ export function ProposeRate({
     return (
       <button
         onClick={() => setOpen(true)}
-        className="px-4 py-2 border border-[#1a7a5e] text-[#1a7a5e] text-sm font-semibold rounded-lg hover:bg-[#e8f5f0]"
+        className="px-4 py-2 border border-brand text-brand-ink text-sm font-semibold rounded-lg hover:bg-brand-soft"
       >
         {t("owner.property.proposeRate")}
       </button>
@@ -57,15 +57,15 @@ export function ProposeRate({
 
   return (
     <form onSubmit={submit} className="space-y-4">
-      <p className="text-xs text-[#6e7a74] max-w-xl">{t("owner.request.rateNote")}</p>
+      <p className="text-xs text-ink-3 max-w-xl">{t("owner.request.rateNote")}</p>
 
       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
         {FIELDS.map(([name, label]) => (
           <div key={name}>
-            <label htmlFor={name} className="block text-xs font-semibold text-[#3e4944] mb-1">
+            <label htmlFor={name} className="block text-xs font-semibold text-ink-2 mb-1">
               {label}
               {current?.[name] != null && (
-                <span className="font-normal text-[#6e7a74]">
+                <span className="font-normal text-ink-3">
                   {" "}· sekarang {new Intl.NumberFormat("id-ID").format(Number(current[name]))}
                 </span>
               )}
@@ -73,17 +73,17 @@ export function ProposeRate({
             <input
               id={name} name={name} type="text" inputMode="numeric"
               placeholder="kosongkan jika tidak berubah"
-              className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-[#1a7a5e]"
+              className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand"
             />
           </div>
         ))}
       </div>
 
       <div>
-        <label htmlFor="note" className="block text-xs font-semibold text-[#3e4944] mb-1">Catatan (opsional)</label>
+        <label htmlFor="note" className="block text-xs font-semibold text-ink-2 mb-1">Catatan (opsional)</label>
         <textarea
           id="note" name="note" rows={2}
-          className="w-full px-3 py-2 rounded-lg border border-[#cccccc] text-sm resize-none focus:outline-none focus:border-[#1a7a5e]"
+          className="w-full px-3 py-2 rounded-lg border border-[#cccccc] text-sm resize-none focus:outline-none focus:border-brand"
         />
       </div>
 
@@ -92,13 +92,13 @@ export function ProposeRate({
       <div className="flex gap-2">
         <button
           type="submit" disabled={busy}
-          className="px-4 py-2 bg-[#1a7a5e] text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
+          className="px-4 py-2 bg-brand text-white text-sm font-semibold rounded-lg hover:opacity-90 disabled:opacity-50"
         >
           {busy ? t("common.loading") : t("common.submit")}
         </button>
         <button
           type="button" onClick={() => setOpen(false)}
-          className="px-4 py-2 border border-[#cccccc] text-sm font-semibold text-[#3e4944] rounded-lg hover:bg-[#f6f3f2]"
+          className="px-4 py-2 border border-[#cccccc] text-sm font-semibold text-ink-2 rounded-lg hover:bg-[#f6f3f2]"
         >
           {t("common.cancel")}
         </button>

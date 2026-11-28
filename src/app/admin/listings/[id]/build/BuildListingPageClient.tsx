@@ -62,8 +62,8 @@ function UnsavedModal({
             <span className="material-symbols-outlined text-amber-600">warning</span>
           </div>
           <div>
-            <h2 className="font-bold text-[#0d2137] text-lg">Unsaved changes</h2>
-            <p className="text-sm text-[#6e7a74]">You have changes that haven&apos;t been saved yet.</p>
+            <h2 className="font-bold text-ink text-lg">Unsaved changes</h2>
+            <p className="text-sm text-ink-3">You have changes that haven&apos;t been saved yet.</p>
           </div>
         </div>
 
@@ -71,7 +71,7 @@ function UnsavedModal({
           <button
             onClick={onSaveAndLeave}
             disabled={isSaving}
-            className="w-full py-3 bg-[#1a7a5e] text-white rounded-xl font-semibold hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
+            className="w-full py-3 bg-brand text-white rounded-xl font-semibold hover:opacity-90 disabled:opacity-50 flex items-center justify-center gap-2"
           >
             {isSaving ? (
               <><span className="material-symbols-outlined animate-spin text-lg">progress_activity</span> Saving…</>
@@ -89,7 +89,7 @@ function UnsavedModal({
           <button
             onClick={onCancel}
             disabled={isSaving}
-            className="w-full py-3 text-[#6e7a74] hover:text-[#1b1c1c] text-sm"
+            className="w-full py-3 text-ink-3 hover:text-ink text-sm"
           >
             Cancel — stay on page
           </button>
@@ -184,15 +184,15 @@ export function BuildListingPageClient({
 
       {/* Header breadcrumb — guarded */}
       <div className="mb-8">
-        <div className="flex items-center gap-2 text-sm text-[#3e4944] mb-2">
-          <button onClick={() => guardedNavigate(listingsHref)} className="hover:text-[#1a7a5e]">
+        <div className="flex items-center gap-2 text-sm text-ink-2 mb-2">
+          <button onClick={() => guardedNavigate(listingsHref)} className="hover:text-brand-ink">
             Listings
           </button>
           <span className="material-symbols-outlined text-sm">chevron_right</span>
-          <span className="text-[#1b1c1c] font-medium">Build Listing</span>
+          <span className="text-ink font-medium">Build Listing</span>
         </div>
         <div className="flex items-center gap-3">
-          <h1 className="text-2xl font-bold text-[#0d2137]">{property.name}</h1>
+          <h1 className="text-2xl font-bold text-ink">{property.name}</h1>
           <span className={`px-2.5 py-1 rounded-full text-xs font-bold ${statusColor(property.status)}`}>
             {statusLabel(property.status)}
           </span>
@@ -224,24 +224,24 @@ export function BuildListingPageClient({
         <div className="space-y-4 sticky top-8">
           <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-3">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#1a7a5e]">edit_note</span>
-              <h3 className="font-bold text-[#0d2137]">Record a survey</h3>
+              <span className="material-symbols-outlined text-brand-ink">edit_note</span>
+              <h3 className="font-bold text-ink">Record a survey</h3>
             </div>
-            <p className="text-sm text-[#3e4944] leading-relaxed">
+            <p className="text-sm text-ink-2 leading-relaxed">
               Enter a site visit directly — RLA scores, area overview, pros and cons. Fills the same fields as a Tally import.
             </p>
             <button
               onClick={() => guardedNavigate(`/survey/${property.id}`)}
-              className="w-full py-2.5 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
+              className="w-full py-2.5 bg-brand text-white rounded-lg text-sm font-semibold hover:opacity-90 transition-opacity flex items-center justify-center gap-1.5"
             >
               <span className="material-symbols-outlined text-sm">add</span>
               New survey
             </button>
           </div>
 
-          <div className="bg-[#0d2137] text-white rounded-xl p-6 space-y-4">
+          <div className="bg-ink text-white rounded-xl p-6 space-y-4">
             <div className="flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#9cf4d1]">bolt</span>
+              <span className="material-symbols-outlined text-brand">bolt</span>
               <h3 className="font-bold">Import from Tally</h3>
             </div>
             <p className="text-sm text-white/70 leading-relaxed">
@@ -274,7 +274,7 @@ export function BuildListingPageClient({
                           router.refresh();
                         });
                       }}
-                      className="w-full py-2 bg-[#9cf4d1] text-[#0d2137] rounded-lg text-sm font-bold hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-1"
+                      className="w-full py-2 bg-brand-light text-ink rounded-lg text-sm font-bold hover:opacity-90 disabled:opacity-50 transition-opacity flex items-center justify-center gap-1"
                     >
                       {isLinking ? (
                         <><span className="material-symbols-outlined animate-spin text-sm">progress_activity</span> Importing…</>
@@ -290,7 +290,7 @@ export function BuildListingPageClient({
             <div className="pt-2 border-t border-white/10">
               <button
                 onClick={() => guardedNavigate("/admin/surveys/pending")}
-                className="text-xs text-[#9cf4d1] hover:underline flex items-center gap-1"
+                className="text-xs text-brand hover:underline flex items-center gap-1"
               >
                 <span className="material-symbols-outlined text-sm">open_in_new</span>
                 Manage all pending imports
@@ -299,9 +299,9 @@ export function BuildListingPageClient({
           </div>
 
           {/* Build checklist */}
-          <div className="bg-white rounded-xl border border-[#cccccc] p-5 space-y-3 text-sm text-[#3e4944]">
-            <p className="font-semibold text-[#0d2137] flex items-center gap-2">
-              <span className="material-symbols-outlined text-[#1a7a5e] text-base">info</span>
+          <div className="bg-white rounded-xl border border-[#cccccc] p-5 space-y-3 text-sm text-ink-2">
+            <p className="font-semibold text-ink flex items-center gap-2">
+              <span className="material-symbols-outlined text-brand-ink text-base">info</span>
               Build checklist
             </p>
             {[
@@ -314,7 +314,7 @@ export function BuildListingPageClient({
               "Approve → Publish as Live",
             ].map((tip, i) => (
               <div key={i} className="flex items-start gap-2">
-                <span className="text-[#1a7a5e] font-bold text-xs mt-0.5">{i + 1}.</span>
+                <span className="text-brand-ink font-bold text-xs mt-0.5">{i + 1}.</span>
                 <span className="text-xs">{tip}</span>
               </div>
             ))}

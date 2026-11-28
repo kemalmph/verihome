@@ -34,8 +34,8 @@ export default async function AdminCronPage() {
       <AppSidebar activeHref="/admin/cron" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Tugas harian</h1>
-          <p className="text-[#3e4944] mt-1 max-w-2xl">
+          <h1 className="text-3xl font-bold text-ink">Tugas harian</h1>
+          <p className="text-ink-2 mt-1 max-w-2xl">
             Satu jadwal, <code className="text-sm">0 0 * * *</code> UTC —{" "}
             <strong>07:00 WIB</strong>. Setiap langkah mencatat berapa baris yang
             layak diproses, berapa berhasil, dan berapa gagal.
@@ -44,14 +44,14 @@ export default async function AdminCronPage() {
 
         <div className="mb-8 bg-white rounded-xl border border-[#cccccc] shadow-sm p-5">
           <RunNowButton />
-          <p className="text-xs text-[#6e7a74] mt-2">
+          <p className="text-xs text-ink-3 mt-2">
             Menjalankan langkah yang sama dengan penjadwal, tanpa menunggu sehari.
           </p>
         </div>
 
         {groups.size === 0 ? (
           <div className="bg-white rounded-xl border border-[#cccccc] p-10 text-center">
-            <p className="text-[#3e4944]">Belum ada catatan. Jalankan sekali untuk mengisinya.</p>
+            <p className="text-ink-2">Belum ada catatan. Jalankan sekali untuk mengisinya.</p>
           </div>
         ) : (
           <div className="space-y-6">
@@ -67,13 +67,13 @@ export default async function AdminCronPage() {
                   <div className={`px-5 py-3 border-b flex items-center justify-between gap-3 flex-wrap ${
                     anyFailed ? "bg-[#fbeeec] border-[#e2b3ab]" : "border-[#e4e2e1]"
                   }`}>
-                    <p className="font-semibold text-sm text-[#0d2137]">{wib(steps[0].started_at)}</p>
+                    <p className="font-semibold text-sm text-ink">{wib(steps[0].started_at)}</p>
                     {anyFailed ? (
                       <span className="px-2.5 py-1 rounded-full text-xs font-bold bg-[#cf2f52] text-white">
                         ada kegagalan
                       </span>
                     ) : (
-                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#e8f5f0] text-[#12614a]">
+                      <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-success-soft text-success-ink">
                         bersih
                       </span>
                     )}
@@ -82,7 +82,7 @@ export default async function AdminCronPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm" style={{ minWidth: 560 }}>
                       <thead>
-                        <tr className="text-xs uppercase tracking-wider text-[#6e7a74] border-b border-[#e4e2e1]">
+                        <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
                           <th className="text-left px-5 py-2 font-medium">Langkah</th>
                           <th className="text-right px-3 py-2 font-medium">Layak</th>
                           <th className="text-right px-3 py-2 font-medium">Berhasil</th>
@@ -98,20 +98,20 @@ export default async function AdminCronPage() {
                           const notes = Array.isArray(payload) ? null : (payload?.notes ?? null);
                           return (
                             <tr key={s.id} className="border-b border-[#f0eeed] last:border-0 align-top">
-                              <td className="px-5 py-2.5 text-[#0d2137]">
+                              <td className="px-5 py-2.5 text-ink">
                                 {STEP_LABEL[s.step] ?? s.step}
-                                <span className="block text-xs text-[#6e7a74]">{s.step}</span>
+                                <span className="block text-xs text-ink-3">{s.step}</span>
                               </td>
                               <td className="px-3 py-2.5 text-right tabular-nums">{s.candidates}</td>
-                              <td className="px-3 py-2.5 text-right tabular-nums text-[#1a7a5e] font-semibold">
+                              <td className="px-3 py-2.5 text-right tabular-nums text-brand-ink font-semibold">
                                 {s.succeeded}
                               </td>
                               <td className={`px-3 py-2.5 text-right tabular-nums font-semibold ${
-                                s.failed > 0 ? "text-[#cf2f52]" : "text-[#6e7a74]"
+                                s.failed > 0 ? "text-[#cf2f52]" : "text-ink-3"
                               }`}>
                                 {s.failed}
                               </td>
-                              <td className="px-5 py-2.5 text-xs text-[#3e4944]">
+                              <td className="px-5 py-2.5 text-xs text-ink-2">
                                 {errs.length > 0 && (
                                   <ul className="space-y-0.5 mb-1">
                                     {errs.slice(0, 4).map((e, i) => (
@@ -123,12 +123,12 @@ export default async function AdminCronPage() {
                                   </ul>
                                 )}
                                 {notes && (
-                                  <code className="text-[11px] text-[#6e7a74] break-all">
+                                  <code className="text-[11px] text-ink-3 break-all">
                                     {JSON.stringify(notes)}
                                   </code>
                                 )}
                                 {errs.length === 0 && !notes && s.candidates === 0 && (
-                                  <span className="text-[#6e7a74]">tidak ada yang perlu diproses</span>
+                                  <span className="text-ink-3">tidak ada yang perlu diproses</span>
                                 )}
                               </td>
                             </tr>

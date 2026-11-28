@@ -36,8 +36,8 @@ export default async function PlacementsPage() {
       <AppSidebar activeHref="/admin/placements" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <div className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Penempatan jangka panjang</h1>
-          <p className="text-[#3e4944] mt-1">
+          <h1 className="text-3xl font-bold text-ink">Penempatan jangka panjang</h1>
+          <p className="text-ink-2 mt-1">
             Komisi dicatat saat penempatan dilaporkan — pekerjaan sudah selesai dan
             uangnya menjadi piutang, bukan menunggu pembayaran.
           </p>
@@ -45,14 +45,14 @@ export default async function PlacementsPage() {
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
           <div className="bg-white rounded-xl border border-[#cccccc] p-5">
-            <p className="text-xs font-semibold text-[#6e7a74] uppercase tracking-wider">Belum dibayar</p>
-            <p className="text-2xl font-bold text-[#0d2137] mt-1 tabular-nums">IDR {fmt(outstanding)}</p>
-            <p className="text-xs text-[#6e7a74] mt-1">Piutang komisi</p>
+            <p className="text-xs font-semibold text-ink-3 uppercase tracking-wider">Belum dibayar</p>
+            <p className="text-2xl font-bold text-ink mt-1 tabular-nums">IDR {fmt(outstanding)}</p>
+            <p className="text-xs text-ink-3 mt-1">Piutang komisi</p>
           </div>
           <div className="bg-white rounded-xl border border-[#cccccc] p-5">
-            <p className="text-xs font-semibold text-[#6e7a74] uppercase tracking-wider">Sudah diterima</p>
-            <p className="text-2xl font-bold text-[#1a7a5e] mt-1 tabular-nums">IDR {fmt(collected)}</p>
-            <p className="text-xs text-[#6e7a74] mt-1">Masuk ke kas</p>
+            <p className="text-xs font-semibold text-ink-3 uppercase tracking-wider">Sudah diterima</p>
+            <p className="text-2xl font-bold text-brand-ink mt-1 tabular-nums">IDR {fmt(collected)}</p>
+            <p className="text-xs text-ink-3 mt-1">Masuk ke kas</p>
           </div>
         </div>
 
@@ -62,7 +62,7 @@ export default async function PlacementsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: 720 }}>
               <thead>
-                <tr className="bg-[#f6f3f2] border-b border-[#bec9c2] text-xs uppercase tracking-wider text-[#3e4944]">
+                <tr className="bg-[#f6f3f2] border-b border-line-strong text-xs uppercase tracking-wider text-ink-2">
                   <th className="text-left px-5 py-3 font-bold">Properti</th>
                   <th className="text-right px-5 py-3 font-bold">Sewa/bulan</th>
                   <th className="text-right px-5 py-3 font-bold">Komisi</th>
@@ -89,7 +89,7 @@ export default async function PlacementsPage() {
                 ))}
                 {rows.length === 0 && (
                   <tr>
-                    <td colSpan={6} className="px-5 py-12 text-center text-[#6e7a74]">
+                    <td colSpan={6} className="px-5 py-12 text-center text-ink-3">
                       Belum ada penempatan tercatat.
                     </td>
                   </tr>

@@ -52,18 +52,18 @@ export default async function SiteCalendarPage({
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
-        <nav className="text-sm text-[#6e7a74] mb-4">
+        <nav className="text-sm text-ink-3 mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
           <span className="mx-2">/</span>
           <Link href={`/site/${site.slug}`} className="hover:underline">{site.name}</Link>
           <span className="mx-2">/</span>
-          <span className="text-[#3e4944]">Kalender</span>
+          <span className="text-ink-2">Kalender</span>
         </nav>
 
         <header className="mb-6 flex items-end justify-between gap-6 flex-wrap">
           <div>
-            <h1 className="text-3xl font-bold text-[#0d2137]">Kalender</h1>
-            <p className="text-[#3e4944] mt-1">
+            <h1 className="text-3xl font-bold text-ink">Kalender</h1>
+            <p className="text-ink-2 mt-1">
               {days[0].label} – {days[6].label} · waktu Jakarta
             </p>
           </div>
@@ -92,8 +92,8 @@ export default async function SiteCalendarPage({
             <ul className="divide-y divide-[#f0ecea]">
               {eventsWithGaps.map((e) => (
                 <li key={e.id} className="px-5 py-3 text-sm">
-                  <span className="font-medium text-[#0d2137]">{e.title}</span>
-                  <span className="text-[#6e7a74]"> — belum ada booking ruangan untuk </span>
+                  <span className="font-medium text-ink">{e.title}</span>
+                  <span className="text-ink-3"> — belum ada booking ruangan untuk </span>
                   {e.gaps.map((g, i) => (
                     <span key={i} className="text-[#8c3a2c]">
                       {i > 0 && ", "}{tanggalJam(g.gap_start)}–{jam(g.gap_end)}
@@ -108,19 +108,19 @@ export default async function SiteCalendarPage({
         {/* ── the week chart ──────────────────────────────────────────── */}
         <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-x-auto mb-8">
           {units.length === 0 ? (
-            <p className="p-8 text-center text-[#6e7a74] text-sm">Belum ada unit di site ini.</p>
+            <p className="p-8 text-center text-ink-3 text-sm">Belum ada unit di site ini.</p>
           ) : (
             <table className="w-full text-sm min-w-[900px]">
               <thead>
                 <tr className="bg-[#efeae8]">
-                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-[#6e7a74] w-44">
+                  <th className="px-4 py-3 text-left text-xs font-semibold uppercase tracking-wide text-ink-3 w-44">
                     Unit
                   </th>
                   {days.map((d) => (
                     <th
                       key={d.ymd}
                       className={`px-2 py-3 text-xs font-semibold tracking-wide ${
-                        d.is_today ? "text-[#1a7a5e] bg-[#e8f5f0]" : "text-[#6e7a74]"
+                        d.is_today ? "text-brand-ink bg-brand-soft" : "text-ink-3"
                       }`}
                     >
                       {d.label}
@@ -132,8 +132,8 @@ export default async function SiteCalendarPage({
                 {units.map((u) => (
                   <tr key={u.id} className="border-t border-[#e8e3e0]">
                     <td className="px-4 py-2 align-top">
-                      <div className="font-medium text-[#0d2137]">{u.name}</div>
-                      <div className="text-xs text-[#6e7a74]">{unitTypeLabel(u.unit_type)}</div>
+                      <div className="font-medium text-ink">{u.name}</div>
+                      <div className="text-xs text-ink-3">{unitTypeLabel(u.unit_type)}</div>
                       {u.status !== "available" && (
                         <div className="text-xs text-[#8c3a2c] mt-0.5">
                           {u.status === "maintenance" ? "Perbaikan" : "Tidak aktif"}
@@ -165,11 +165,11 @@ export default async function SiteCalendarPage({
         {/* ── agenda ──────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
           <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
-            <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-[#0d2137]">
+            <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
               Booking minggu ini ({bookings.length})
             </h2>
             {bookings.length === 0 ? (
-              <p className="p-8 text-center text-[#6e7a74] text-sm">Tidak ada booking.</p>
+              <p className="p-8 text-center text-ink-3 text-sm">Tidak ada booking.</p>
             ) : (
               <ul className="divide-y divide-[#f0ecea]">
                 {bookings.map((b) => (
@@ -178,12 +178,12 @@ export default async function SiteCalendarPage({
                       <div className="min-w-0">
                         <Link
                           href={`/site/booking/${b.code}`}
-                          className="font-medium text-[#1a7a5e] hover:underline truncate block"
+                          className="font-medium text-brand-ink hover:underline truncate block"
                           title={b.who}
                         >
                           {b.who}
                         </Link>
-                        <div className="text-xs text-[#6e7a74]">
+                        <div className="text-xs text-ink-3">
                           {units.find((u) => u.id === b.unit_id)?.name}
                           {" · "}
                           {b.time_label ?? `${tanggalJam(b.starts_at)} – ${tanggalJam(b.ends_at)}`}
@@ -206,28 +206,28 @@ export default async function SiteCalendarPage({
           </section>
 
           <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
-            <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-[#0d2137]">
+            <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
               Event minggu ini ({events.length})
             </h2>
             {events.length === 0 ? (
-              <p className="p-8 text-center text-[#6e7a74] text-sm">Tidak ada event.</p>
+              <p className="p-8 text-center text-ink-3 text-sm">Tidak ada event.</p>
             ) : (
               <ul className="divide-y divide-[#f0ecea]">
                 {events.map((e) => (
                   <li key={e.id} className="px-5 py-3 text-sm">
-                    <div className="font-medium text-[#0d2137]">{e.title}</div>
-                    <div className="text-xs text-[#6e7a74]">
+                    <div className="font-medium text-ink">{e.title}</div>
+                    <div className="text-xs text-ink-3">
                       {tanggalJam(e.starts_at)} – {jam(e.ends_at)}
                       {e.host && ` · ${e.host}`}
                     </div>
                     <div className="text-xs mt-0.5">
                       {e.unit_names.length > 0 ? (
-                        <span className="text-[#12614a]">Ruangan: {e.unit_names.join(", ")}</span>
+                        <span className="text-success-ink">Ruangan: {e.unit_names.join(", ")}</span>
                       ) : (
                         <span className="text-[#8c3a2c]">Belum memesan ruangan</span>
                       )}
                       {e.status !== "confirmed" && (
-                        <span className="text-[#6e7a74]"> · {e.status === "draft" ? "draf" : e.status}</span>
+                        <span className="text-ink-3"> · {e.status === "draft" ? "draf" : e.status}</span>
                       )}
                     </div>
                     <EventControls
@@ -252,7 +252,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="px-3 py-2 rounded-lg border border-[#ddd7d4] text-sm text-[#3e4944] bg-white hover:bg-[#f6f3f2]"
+      className="px-3 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 bg-white hover:bg-[#f6f3f2]"
     >
       {children}
     </Link>
@@ -266,7 +266,7 @@ function Chip({ b }: { b: CalBooking }) {
     ? "bg-[#eef2fb] text-[#2d4a86] border-[#b6c6e8]"
     : b.status === "pending"
       ? "bg-[#fdf4e3] text-[#8a6416] border-[#e6d09a]"
-      : "bg-[#e8f5f0] text-[#12614a] border-[#a9dcc8]";
+      : "bg-success-soft text-success-ink border-success-line";
   return (
     <div
       className={`text-[11px] leading-tight px-1.5 py-1 mb-1 rounded border truncate ${tone}`}

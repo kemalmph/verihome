@@ -1,21 +1,22 @@
 import type { Metadata } from "next";
-import { Public_Sans } from "next/font/google";
+import { Inter } from "next/font/google";
 import "./globals.css";
 import { getLocale } from "@/lib/i18n/server";
 import { LocaleProvider } from "@/lib/i18n/LocaleProvider";
 import { cookies } from "next/headers";
 import { SIDEBAR_COLLAPSED, SIDEBAR_COOKIE } from "@/lib/sidebar/config";
 
-const publicSans = Public_Sans({
-  variable: "--font-sans",
+// Inter, per the V7 prototype. Variable font, so every weight from the
+// 400 body to the 850 hero headline comes from one file.
+const inter = Inter({
+  variable: "--font-inter",
   subsets: ["latin"],
-  weight: ["300", "400", "500", "600", "700", "800"],
 });
 
 export const metadata: Metadata = {
-  title: "Cosystem | Curated Property Rentals in Jakarta",
+  title: "Cosystem — Run Your Space.",
   description:
-    "Cosystem is Jakarta's most trusted curated rental marketplace for international professionals, expats, and local talent. Verified listings with independent RLA assessments.",
+    "The all-in-one platform to manage your workspace, members, bookings, facilities, and business.",
 };
 
 export default async function RootLayout({
@@ -38,7 +39,7 @@ export default async function RootLayout({
     <html
       lang={locale}
       data-sidebar={sidebarCollapsed ? SIDEBAR_COLLAPSED : undefined}
-      className={`${publicSans.variable} h-full antialiased`}
+      className={`${inter.variable} h-full antialiased`}
     >
       <head>
         <link
@@ -47,7 +48,7 @@ export default async function RootLayout({
         />
         <style>{`.material-symbols-outlined { font-variation-settings: 'FILL' 0, 'wght' 400, 'GRAD' 0, 'opsz' 24; vertical-align: middle; }`}</style>
       </head>
-      <body className="min-h-full flex flex-col bg-[#fbf9f8] text-[#1b1c1c] font-sans">
+      <body className="min-h-full flex flex-col bg-background text-ink font-sans">
         <LocaleProvider locale={locale}>{children}</LocaleProvider>
       </body>
     </html>

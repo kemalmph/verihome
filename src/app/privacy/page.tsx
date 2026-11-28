@@ -22,16 +22,16 @@ export default async function Page() {
       <Navbar />
       <main className="bg-[#f6f3f2] min-h-[60vh]">
         <div className="max-w-3xl mx-auto px-4 md:px-16 py-16 md:py-24">
-          <h1 className="text-3xl md:text-4xl font-bold text-[#0d2137]">{t("legal.privacy.title", lang)}</h1>
-          <p className="mt-6 text-[#3e4944] text-lg leading-relaxed">
+          <h1 className="text-3xl md:text-4xl font-bold text-ink">{t("legal.privacy.title", lang)}</h1>
+          <p className="mt-6 text-ink-2 text-lg leading-relaxed">
             {t("legal.pending", lang)}
           </p>
-          <p className="mt-4 text-[#3e4944] leading-relaxed">
+          <p className="mt-4 text-ink-2 leading-relaxed">
             {t("legal.meanwhile", lang)}
           </p>
           <Link
             href="/contact"
-            className="mt-8 inline-block px-5 py-3 rounded-lg bg-[#1a7a5e] text-white font-semibold hover:bg-[#166750] transition-colors"
+            className="mt-8 inline-block px-5 py-3 rounded-lg bg-brand text-white font-semibold hover:bg-brand-strong transition-colors"
           >
             {t("nav.contact", lang)}
           </Link>

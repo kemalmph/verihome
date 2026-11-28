@@ -44,21 +44,21 @@ function StepSchedule({
 
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137] text-lg">{t("view.s1title")}</h2>
+      <h2 className="font-bold text-ink text-lg">{t("view.s1title")}</h2>
 
       <div>
-        <label className="block text-sm text-[#3e4944] mb-1">{t("view.prefDate")}</label>
+        <label className="block text-sm text-ink-2 mb-1">{t("view.prefDate")}</label>
         <input
           type="date"
           min={today}
           value={date}
           onChange={(e) => setDate(e.target.value)}
-          className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1a7a5e]"
+          className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
         />
       </div>
 
       <div>
-        <label className="block text-sm text-[#3e4944] mb-2">{t("view.prefTime")}</label>
+        <label className="block text-sm text-ink-2 mb-2">{t("view.prefTime")}</label>
         <div className="flex flex-wrap gap-2">
           {slots.map((s) => (
             <button
@@ -66,8 +66,8 @@ function StepSchedule({
               onClick={() => setTime(s)}
               className={`px-4 py-1.5 rounded-full text-sm border transition-colors ${
                 time === s
-                  ? "bg-[#1a7a5e] text-white border-[#1a7a5e]"
-                  : "border-[#cccccc] text-[#3e4944] hover:border-[#1a7a5e]"
+                  ? "bg-brand text-white border-brand"
+                  : "border-[#cccccc] text-ink-2 hover:border-brand"
               }`}
             >
               {s}
@@ -77,26 +77,26 @@ function StepSchedule({
       </div>
 
       <div>
-        <label className="block text-sm text-[#3e4944] mb-1">{t("view.notes")}</label>
+        <label className="block text-sm text-ink-2 mb-1">{t("view.notes")}</label>
         <textarea
           rows={3}
           value={notes}
           onChange={(e) => setNotes(e.target.value)}
           placeholder={t("view.notesPh")}
-          className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-[#1a7a5e] resize-none"
+          className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand resize-none"
         />
       </div>
 
-      <div className="bg-[#f6f3f2] rounded-lg p-3 text-sm text-[#3e4944]">
-        {t("view.depositRequired")} <strong className="text-[#1a7a5e]">IDR {fmt(depositAmount)}</strong>
+      <div className="bg-[#f6f3f2] rounded-lg p-3 text-sm text-ink-2">
+        {t("view.depositRequired")} <strong className="text-brand-ink">IDR {fmt(depositAmount)}</strong>
         <br />
-        <span className="text-xs text-[#6e7a74]">{t("view.depositNote")}</span>
+        <span className="text-xs text-ink-3">{t("view.depositNote")}</span>
       </div>
 
       <button
         onClick={() => onNext(date, time, notes)}
         disabled={!date || !time}
-        className="w-full py-3 bg-[#1a7a5e] text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-40"
+        className="w-full py-3 bg-brand text-white rounded-lg font-semibold text-sm hover:opacity-90 disabled:opacity-40"
       >
         Continue →
       </button>
@@ -118,7 +118,7 @@ function StepConfirm({
   const t = useT();
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
-      <h2 className="font-bold text-[#0d2137] text-lg">{t("view.s2title")}</h2>
+      <h2 className="font-bold text-ink text-lg">{t("view.s2title")}</h2>
 
       <div className="space-y-2 text-sm">
         {[
@@ -127,13 +127,13 @@ function StepConfirm({
           { label: t("view.deposit"), value: `IDR ${fmt(depositAmount)}` },
         ].map((r) => (
           <div key={r.label} className="flex justify-between border-b border-[#f6f3f2] pb-2">
-            <span className="text-[#3e4944]">{r.label}</span>
-            <span className="font-semibold text-[#1b1c1c]">{r.value}</span>
+            <span className="text-ink-2">{r.label}</span>
+            <span className="font-semibold text-ink">{r.value}</span>
           </div>
         ))}
         {notes && (
           <div>
-            <p className="text-[#6e7a74] text-xs mb-0.5">{t("view.notesShort")}</p>
+            <p className="text-ink-3 text-xs mb-0.5">{t("view.notesShort")}</p>
             <p className="text-sm">{notes}</p>
           </div>
         )}
@@ -147,21 +147,21 @@ function StepConfirm({
           type="checkbox"
           checked={acknowledged}
           onChange={(e) => onAcknowledge(e.target.checked)}
-          className="mt-0.5 w-4 h-4 accent-[#1a7a5e] shrink-0"
+          className="mt-0.5 w-4 h-4 accent-brand shrink-0"
         />
-        <span className="text-sm text-[#3e4944]">
+        <span className="text-sm text-ink-2">
           {t("view.ack")}
         </span>
       </label>
 
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 py-3 border border-[#cccccc] rounded-lg text-sm font-semibold text-[#3e4944] hover:bg-[#f6f3f2]">
+        <button onClick={onBack} className="flex-1 py-3 border border-[#cccccc] rounded-lg text-sm font-semibold text-ink-2 hover:bg-[#f6f3f2]">
           ← {t("view.back")}
         </button>
         <button
           onClick={onConfirm}
           disabled={loading || !acknowledged}
-          className="flex-1 py-3 bg-[#1a7a5e] text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
+          className="flex-1 py-3 bg-brand text-white rounded-lg text-sm font-semibold hover:opacity-90 disabled:opacity-40 disabled:cursor-not-allowed"
         >
           {loading ? t("view.submitting") : t("view.submit")}
         </button>
@@ -177,32 +177,32 @@ function StepPayment({ intent }: { intent: Intent }) {
   return (
     <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
       <div className="flex items-center gap-3">
-        <div className="w-10 h-10 rounded-full bg-[#1a7a5e]/10 flex items-center justify-center">
-          <span className="material-symbols-outlined text-[#1a7a5e]">check_circle</span>
+        <div className="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center">
+          <span className="material-symbols-outlined text-brand-ink">check_circle</span>
         </div>
         <div>
-          <h2 className="font-bold text-[#0d2137] text-lg">{t("view.requested")}</h2>
-          <p className="text-sm text-[#6e7a74]">{t("view.requestedSub")}</p>
+          <h2 className="font-bold text-ink text-lg">{t("view.requested")}</h2>
+          <p className="text-sm text-ink-3">{t("view.requestedSub")}</p>
         </div>
       </div>
 
       <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
-        <p className="font-semibold text-sm text-[#0d2137]">{t("view.payNow")}</p>
+        <p className="font-semibold text-sm text-ink">{t("view.payNow")}</p>
         <div className="space-y-1 text-sm">
-          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.bank")}</span><strong>{intent.bankName}</strong></div>
-          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.account")}</span><strong>{intent.accountNumber}</strong></div>
-          <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.accountName")}</span><strong>{intent.accountHolder}</strong></div>
-          <div className="flex justify-between text-[#1a7a5e] font-bold border-t border-[#cccccc] pt-2 mt-2">
+          <div className="flex justify-between"><span className="text-ink-3">{t("view.bank")}</span><strong>{intent.bankName}</strong></div>
+          <div className="flex justify-between"><span className="text-ink-3">{t("view.account")}</span><strong>{intent.accountNumber}</strong></div>
+          <div className="flex justify-between"><span className="text-ink-3">{t("view.accountName")}</span><strong>{intent.accountHolder}</strong></div>
+          <div className="flex justify-between text-brand-ink font-bold border-t border-[#cccccc] pt-2 mt-2">
             <span>{t("view.transferExactly")}</span>
             <span>IDR {fmt(intent.totalAmount + Number(intent.transferCode))}</span>
           </div>
         </div>
-        <p className="text-xs text-[#6e7a74]">{intent.instructions}</p>
+        <p className="text-xs text-ink-3">{intent.instructions}</p>
       </div>
 
       <a
         href="/dashboard/viewings"
-        className="block w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold text-center hover:opacity-90"
+        className="block w-full py-3 bg-ink text-white rounded-lg text-sm font-semibold text-center hover:opacity-90"
       >
         {t("view.myViewings")}
       </a>
@@ -257,13 +257,13 @@ export function ViewingFlow({ propertyId, depositAmount }: Pick<Props, "property
   return (
     <div className="space-y-4">
       {/* Progress */}
-      <div className="flex items-center gap-2 text-xs text-[#6e7a74] mb-2">
+      <div className="flex items-center gap-2 text-xs text-ink-3 mb-2">
         {[t("view.stepSchedule"), t("view.stepConfirm"), t("view.stepPayment")].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
-            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-[#1a7a5e] text-white" : step > i + 1 ? "bg-[#9cf4d1] text-[#0d2137]" : "bg-[#e4e2e1] text-[#6e7a74]"}`}>
+            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-brand text-white" : step > i + 1 ? "bg-brand-light text-ink" : "bg-[#e4e2e1] text-ink-3"}`}>
               {step > i + 1 ? "✓" : i + 1}
             </span>
-            <span className={step === i + 1 ? "font-semibold text-[#0d2137]" : ""}>{label}</span>
+            <span className={step === i + 1 ? "font-semibold text-ink" : ""}>{label}</span>
             {i < 2 && <span className="text-[#cccccc]">›</span>}
           </div>
         ))}

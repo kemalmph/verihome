@@ -37,14 +37,14 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
       <Navbar />
       {/* Pemilik properti yang mendarat di halaman penyewa perlu satu jalan
           kembali ke sisi pengelola. */}
-      <div className="bg-[#0d2137] text-white">
+      <div className="bg-ink text-white">
         <div className="max-w-7xl mx-auto px-4 md:px-16 py-3.5 flex flex-wrap items-center justify-between gap-3">
           <p className="text-sm text-white/85">
             {t("listings.ownerBanner", lang)}
           </p>
           <Link
             href="/contact"
-            className="text-sm font-semibold whitespace-nowrap px-4 py-2 rounded-lg bg-[#1a7a5e] hover:bg-[#166750] transition-colors"
+            className="text-sm font-semibold whitespace-nowrap px-4 py-2 rounded-lg bg-brand hover:bg-brand-strong transition-colors"
           >
             {t("nav.contact", lang)} →
           </Link>
@@ -53,10 +53,10 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
 
       <main className="max-w-7xl mx-auto px-4 md:px-16 py-12">
         <header className="mb-10">
-          <h1 className="text-4xl font-bold text-[#1b1c1c] mb-1">
+          <h1 className="text-4xl font-bold text-ink mb-1">
             {t("listings.title", lang)}
           </h1>
-          <p className="text-lg text-[#3e4944]">
+          <p className="text-lg text-ink-2">
             {t("listings.sub", lang)}
           </p>
         </header>
@@ -65,11 +65,11 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
         <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-12 shadow-sm">
           <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
             <div className="space-y-1">
-              <label className="text-xs font-medium text-[#3e4944]">{t("listings.area", lang)}</label>
+              <label className="text-xs font-medium text-ink-2">{t("listings.area", lang)}</label>
               <select
                 name="area"
                 defaultValue={filters.area ?? ""}
-                className="w-full h-11 border border-[#bec9c2] rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
+                className="w-full h-11 border border-line-strong rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-brand"
               >
                 <option value="">{t("listings.allAreas", lang)}</option>
                 {["Senayan", "Kemang", "SCBD", "Sudirman", "Kuningan", "Menteng"].map(
@@ -83,13 +83,13 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-[#3e4944]">
+              <label className="text-xs font-medium text-ink-2">
                 {t("listings.type", lang)}
               </label>
               <select
                 name="type"
                 defaultValue={filters.type ?? ""}
-                className="w-full h-11 border border-[#bec9c2] rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
+                className="w-full h-11 border border-line-strong rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-brand"
               >
                 <option value="">{t("listings.allTypes", lang)}</option>
                 <option value="kost">{t("listings.typeKost", lang)}</option>
@@ -100,7 +100,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-[#3e4944]">
+              <label className="text-xs font-medium text-ink-2">
                 {t("listings.minPrice", lang)}
               </label>
               <input
@@ -108,12 +108,12 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 name="min_price"
                 defaultValue={filters.min_price ?? ""}
                 placeholder="2,000,000"
-                className="w-full h-11 border border-[#bec9c2] rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
+                className="w-full h-11 border border-line-strong rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-brand"
               />
             </div>
 
             <div className="space-y-1">
-              <label className="text-xs font-medium text-[#3e4944]">
+              <label className="text-xs font-medium text-ink-2">
                 {t("listings.maxPrice", lang)}
               </label>
               <input
@@ -121,13 +121,13 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
                 name="max_price"
                 defaultValue={filters.max_price ?? ""}
                 placeholder="20,000,000"
-                className="w-full h-11 border border-[#bec9c2] rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-[#1a7a5e]"
+                className="w-full h-11 border border-line-strong rounded-lg bg-white px-3 text-sm focus:outline-none focus:border-brand"
               />
             </div>
 
             <button
               type="submit"
-              className="h-11 bg-[#1a7a5e] text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all shadow-sm"
+              className="h-11 bg-brand text-white rounded-lg text-sm font-medium hover:opacity-90 transition-all shadow-sm"
             >
               {t("listings.apply", lang)}
             </button>
@@ -137,13 +137,13 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
         {/* Listings Grid */}
         {properties.length === 0 ? (
           <div className="text-center py-20">
-            <span className="material-symbols-outlined text-5xl text-[#bec9c2] block mb-4">
+            <span className="material-symbols-outlined text-5xl text-line-strong block mb-4">
               search_off
             </span>
-            <h3 className="text-xl font-semibold text-[#1b1c1c] mb-2">
+            <h3 className="text-xl font-semibold text-ink mb-2">
               {t("listings.emptyTitle", lang)}
             </h3>
-            <p className="text-[#3e4944]">
+            <p className="text-ink-2">
               {t("listings.emptyBody", lang)}
             </p>
           </div>

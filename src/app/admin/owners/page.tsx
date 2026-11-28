@@ -31,8 +31,8 @@ export default async function AdminOwnersPage() {
       <AppSidebar activeHref="/admin/owners" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">Pemilik</h1>
-          <p className="text-[#3e4944] mt-1">
+          <h1 className="text-3xl font-bold text-ink">Pemilik</h1>
+          <p className="text-ink-2 mt-1">
             {owners?.length ?? 0} pemilik · {linked} aktif di portal
           </p>
         </header>
@@ -47,15 +47,15 @@ export default async function AdminOwnersPage() {
         </div>
 
         {(owners ?? []).length === 0 ? (
-          <p className="text-[#3e4944]">Belum ada pemilik.</p>
+          <p className="text-ink-2">Belum ada pemilik.</p>
         ) : (
           <div className="space-y-4">
             {(owners ?? []).map((o) => (
               <section key={o.id} className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-5">
                 <div className="flex items-start justify-between gap-4 flex-wrap mb-4">
                   <div className="min-w-0">
-                    <p className="font-semibold text-[#0d2137]">{o.name}</p>
-                    <p className="text-xs text-[#6e7a74] mt-0.5">
+                    <p className="font-semibold text-ink">{o.name}</p>
+                    <p className="text-xs text-ink-3 mt-0.5">
                       {o.email ?? "tanpa email"}
                       {o.phone_whatsapp ? ` · ${o.phone_whatsapp}` : ""}
                       {" · "}
@@ -64,7 +64,7 @@ export default async function AdminOwnersPage() {
                   </div>
                   <Link
                     href={`/admin/owners/${o.id}/statement`}
-                    className="text-[#1a7a5e] text-sm font-medium hover:underline shrink-0"
+                    className="text-brand-ink text-sm font-medium hover:underline shrink-0"
                   >
                     Laporan →
                   </Link>

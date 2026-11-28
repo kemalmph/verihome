@@ -80,23 +80,23 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
     return (
       <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-[#1a7a5e] text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+          <span className="material-symbols-outlined text-brand-ink text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             check_circle
           </span>
           <div>
-            <h2 className="font-bold text-[#0d2137] text-lg">{t("cf.paidWithCredit")}</h2>
-            <p className="text-sm text-[#6e7a74]">{t("cf.paidWithCreditSub")}</p>
+            <h2 className="font-bold text-ink text-lg">{t("cf.paidWithCredit")}</h2>
+            <p className="text-sm text-ink-3">{t("cf.paidWithCreditSub")}</p>
           </div>
         </div>
 
-        <div className="bg-[#e8f5f0] border border-[#9cf4d1] rounded-lg p-4 text-sm text-[#12614a]">
+        <div className="bg-success-soft border border-success-line rounded-lg p-4 text-sm text-success-ink">
           {t("cf.creditUsed")} <strong>{rp(covered.creditApplied)}</strong>
-          <span className="block text-xs text-[#3e4944] mt-1">{t("cf.contact24")}</span>
+          <span className="block text-xs text-ink-2 mt-1">{t("cf.contact24")}</span>
         </div>
 
         <button
           onClick={() => router.push("/dashboard/appointments")}
-          className="w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold hover:opacity-90"
+          className="w-full py-3 bg-ink text-white rounded-lg text-sm font-semibold hover:opacity-90"
         >
           {t("cf.viewAppointments")}
         </button>
@@ -108,35 +108,35 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
     return (
       <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
         <div className="flex items-center gap-3">
-          <span className="material-symbols-outlined text-[#1a7a5e] text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
+          <span className="material-symbols-outlined text-brand-ink text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             check_circle
           </span>
           <div>
-            <h2 className="font-bold text-[#0d2137] text-lg">{t("cf.reserved")}</h2>
-            <p className="text-sm text-[#6e7a74]">{t("cf.reservedSub")}</p>
+            <h2 className="font-bold text-ink text-lg">{t("cf.reserved")}</h2>
+            <p className="text-sm text-ink-3">{t("cf.reservedSub")}</p>
           </div>
         </div>
 
         <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
           <div className="space-y-1 text-sm">
-            <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.bank")}</span><strong>{transfer.bankName}</strong></div>
-            <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.account")}</span><strong>{transfer.accountNumber}</strong></div>
-            <div className="flex justify-between"><span className="text-[#6e7a74]">{t("view.accountName")}</span><strong>{transfer.accountHolder}</strong></div>
-            <div className="flex justify-between text-[#1a7a5e] font-bold border-t border-[#cccccc] pt-2 mt-2">
+            <div className="flex justify-between"><span className="text-ink-3">{t("view.bank")}</span><strong>{transfer.bankName}</strong></div>
+            <div className="flex justify-between"><span className="text-ink-3">{t("view.account")}</span><strong>{transfer.accountNumber}</strong></div>
+            <div className="flex justify-between"><span className="text-ink-3">{t("view.accountName")}</span><strong>{transfer.accountHolder}</strong></div>
+            <div className="flex justify-between text-brand-ink font-bold border-t border-[#cccccc] pt-2 mt-2">
               <span>{t("view.transferExactly")}</span>
               <span>IDR {transfer.payableAmount.toLocaleString("id-ID")}</span>
             </div>
           </div>
-          <p className="text-xs text-[#6e7a74]">{transfer.instructions}</p>
+          <p className="text-xs text-ink-3">{transfer.instructions}</p>
         </div>
 
-        <p className="text-xs text-[#6e7a74]">
+        <p className="text-xs text-ink-3">
           {t("cf.confirmNote")}
         </p>
 
         <button
           onClick={() => router.push("/dashboard/appointments")}
-          className="w-full py-3 bg-[#0d2137] text-white rounded-lg text-sm font-semibold hover:opacity-90"
+          className="w-full py-3 bg-ink text-white rounded-lg text-sm font-semibold hover:opacity-90"
         >
           {t("cf.viewAppointments")}
         </button>
@@ -148,7 +148,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
     <form onSubmit={handleSubmit} className="space-y-8">
       {/* Package selector */}
       <div>
-        <p className="text-sm font-semibold text-[#1b1c1c] mb-3">{t("cf.package")}</p>
+        <p className="text-sm font-semibold text-ink mb-3">{t("cf.package")}</p>
         <div className="grid grid-cols-2 gap-4">
           {(Object.entries(PACKAGES) as [PackageId, typeof PACKAGES[PackageId]][]).map(([id, pkg]) => (
             <button
@@ -157,13 +157,13 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
               onClick={() => setSelectedPackage(id)}
               className={`p-5 rounded-xl border-2 text-left transition-all ${
                 selectedPackage === id
-                  ? "border-[#1a7a5e] bg-[#e8f5f0]"
-                  : "border-[#cccccc] bg-white hover:border-[#1a7a5e]/50"
+                  ? "border-brand bg-brand-soft"
+                  : "border-[#cccccc] bg-white hover:border-brand/50"
               }`}
             >
-              <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">{pkg.label}</p>
-              <p className="text-xl font-bold text-[#0d2137] mt-1">{rp(pkg.price)}</p>
-              <p className="text-xs text-[#6e7a74] mt-0.5">{pkg.duration} {t("cf.session")}</p>
+              <p className="text-xs font-bold text-ink-2 uppercase tracking-wider">{pkg.label}</p>
+              <p className="text-xl font-bold text-ink mt-1">{rp(pkg.price)}</p>
+              <p className="text-xs text-ink-3 mt-0.5">{pkg.duration} {t("cf.session")}</p>
             </button>
           ))}
         </div>
@@ -171,12 +171,12 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
 
       {/* Property selection */}
       <div className="space-y-1">
-        <label className="text-sm font-semibold text-[#1b1c1c]">
-          {t("cf.propertyToDiscuss")} <span className="text-[#6e7a74] font-normal">{t("cf.optional")}</span>
+        <label className="text-sm font-semibold text-ink">
+          {t("cf.propertyToDiscuss")} <span className="text-ink-3 font-normal">{t("cf.optional")}</span>
         </label>
         <select
           name="property_id"
-          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm bg-white"
+          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
         >
           <option value="">{t("cf.generalConsult")}</option>
           {savedProperties.map((p) => (
@@ -189,14 +189,14 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
 
       {/* Notes */}
       <div className="space-y-1">
-        <label className="text-sm font-semibold text-[#1b1c1c]">
-          {t("cf.questions")} <span className="text-[#6e7a74] font-normal">{t("cf.optional")}</span>
+        <label className="text-sm font-semibold text-ink">
+          {t("cf.questions")} <span className="text-ink-3 font-normal">{t("cf.optional")}</span>
         </label>
         <textarea
           name="notes"
           rows={3}
           placeholder={t("cf.questionsPh")}
-          className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-[#1a7a5e] focus:outline-none text-sm resize-none"
+          className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
         />
       </div>
 
@@ -208,45 +208,45 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
 
       {/* Credit */}
       {availableCredit > 0 && (
-        <label className="flex items-start gap-3 bg-[#e8f5f0] border border-[#9cf4d1] rounded-xl p-4 cursor-pointer">
+        <label className="flex items-start gap-3 bg-brand-soft border border-brand-light rounded-xl p-4 cursor-pointer">
           <input
             type="checkbox"
             name="use_credit"
             checked={useCredit}
             onChange={(e) => setUseCredit(e.target.checked)}
-            className="mt-0.5 w-4 h-4 accent-[#1a7a5e] shrink-0"
+            className="mt-0.5 w-4 h-4 accent-brand shrink-0"
           />
-          <span className="text-sm text-[#12614a]">
+          <span className="text-sm text-success-ink">
             {t("cf.useCredit")} <strong>{rp(availableCredit)}</strong> {t("cf.available")}
-            <span className="block text-xs text-[#3e4944] mt-0.5">{t("cf.creditOrder")}</span>
+            <span className="block text-xs text-ink-2 mt-0.5">{t("cf.creditOrder")}</span>
           </span>
         </label>
       )}
 
       {/* Order summary */}
-      <div className="bg-[#f6f3f2] rounded-xl p-5 space-y-3 border border-[#bec9c2]">
-        <p className="text-xs font-bold text-[#3e4944] uppercase tracking-wider">{t("cf.orderSummary")}</p>
+      <div className="bg-[#f6f3f2] rounded-xl p-5 space-y-3 border border-line-strong">
+        <p className="text-xs font-bold text-ink-2 uppercase tracking-wider">{t("cf.orderSummary")}</p>
         <div className="flex justify-between items-center">
-          <span className="text-sm text-[#1b1c1c]">
+          <span className="text-sm text-ink">
             {PACKAGES[selectedPackage].label} {t("cf.consultation")} ({PACKAGES[selectedPackage].duration})
           </span>
-          <span className="font-bold text-[#1a7a5e]">{rp(price)}</span>
+          <span className="font-bold text-brand-ink">{rp(price)}</span>
         </div>
 
         {estimatedCredit > 0 && (
           <div className="flex justify-between items-center">
-            <span className="text-sm text-[#1b1c1c]">{t("cf.cosystemCredit")}</span>
-            <span className="font-bold text-[#1a7a5e]">− {rp(estimatedCredit)}</span>
+            <span className="text-sm text-ink">{t("cf.cosystemCredit")}</span>
+            <span className="font-bold text-brand-ink">− {rp(estimatedCredit)}</span>
           </div>
         )}
 
-        <div className="flex justify-between items-center border-t border-[#bec9c2] pt-3">
-          <span className="text-sm font-semibold text-[#1b1c1c]">{t("cf.total")}</span>
-          <span className="text-lg font-bold text-[#0d2137]">{rp(estimatedDue)}</span>
+        <div className="flex justify-between items-center border-t border-line-strong pt-3">
+          <span className="text-sm font-semibold text-ink">{t("cf.total")}</span>
+          <span className="text-lg font-bold text-ink">{rp(estimatedDue)}</span>
         </div>
 
         {estimatedCredit > 0 && (
-          <p className="text-xs text-[#6e7a74]">
+          <p className="text-xs text-ink-3">
             {t("cf.recomputed")}
           </p>
         )}
@@ -255,7 +255,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
       <button
         type="submit"
         disabled={isPending}
-        className="w-full bg-[#1a7a5e] text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
+        className="w-full bg-brand text-white py-4 rounded-xl font-semibold text-lg hover:opacity-90 transition-all shadow-md disabled:opacity-50 flex items-center justify-center gap-2"
       >
         {isPending ? (
           <>
@@ -269,7 +269,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
           </>
         )}
       </button>
-      <p className="text-xs text-center text-[#6e7a74]">
+      <p className="text-xs text-center text-ink-3">
         {t("cf.footnote")}
       </p>
     </form>

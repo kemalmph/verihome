@@ -40,22 +40,22 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
     <div className="flex min-h-screen bg-[#f6f3f2]">
       <AppSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
-        <nav className="text-sm text-[#6e7a74] mb-4">
+        <nav className="text-sm text-ink-3 mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
           <span className="mx-2">/</span>
           <Link href={`/site/${r.site_slug}`} className="hover:underline">{r.site_name}</Link>
           <span className="mx-2">/</span>
           <Link href={`/site/${r.site_slug}/calendar`} className="hover:underline">Kalender</Link>
           <span className="mx-2">/</span>
-          <span className="text-[#3e4944]">{r.reservation_code}</span>
+          <span className="text-ink-2">{r.reservation_code}</span>
         </nav>
 
         <header className="mb-8">
-          <h1 className="text-3xl font-bold text-[#0d2137]">{r.who}</h1>
-          <p className="text-[#3e4944] mt-1">
+          <h1 className="text-3xl font-bold text-ink">{r.who}</h1>
+          <p className="text-ink-2 mt-1">
             {r.unit_name} · {unitTypeLabel(r.unit_type)} · {waktu(r.starts_at)} – {waktu(r.ends_at)}
           </p>
-          <p className="text-sm text-[#6e7a74] mt-1">
+          <p className="text-sm text-ink-3 mt-1">
             {r.reservation_code}
             {r.contract_ref && ` · ${r.contract_ref}`}
             {` · ${reservationStatusLabel(r.status)} · ${paymentStatusLabel(r.payment_status)}`}
@@ -117,7 +117,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
 
         <BookingDocuments reservationId={r.id} documents={r.documents} />
 
-        <p className="text-xs text-[#6e7a74] mt-6 max-w-3xl">
+        <p className="text-xs text-ink-3 mt-6 max-w-3xl">
           Margin di sini hanya menghitung yang bisa diukur per booking: sewa,
           barang yang keluar, dan harga pokoknya. Biaya tetap gedung — listrik,
           internet, cleaning — tidak dibagi ke tiap booking, karena pembagian
@@ -135,14 +135,14 @@ function Stat({
 }) {
   const colour =
     tone === "alert" ? "text-[#8c3a2c]"
-    : tone === "good" ? "text-[#12614a]"
+    : tone === "good" ? "text-success-ink"
     : tone === "cost" ? "text-[#8a6416]"
-    : "text-[#0d2137]";
+    : "text-ink";
   return (
     <div className="bg-white border border-[#ddd7d4] rounded-lg p-5">
-      <div className="text-xs uppercase tracking-wide text-[#6e7a74]">{label}</div>
+      <div className="text-xs uppercase tracking-wide text-ink-3">{label}</div>
       <div className={`text-xl font-bold mt-1 tabular-nums ${colour}`}>{value}</div>
-      {hint && <div className="text-xs text-[#6e7a74] mt-1">{hint}</div>}
+      {hint && <div className="text-xs text-ink-3 mt-1">{hint}</div>}
     </div>
   );
 }

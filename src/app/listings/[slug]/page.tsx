@@ -82,12 +82,12 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
       <Navbar />
       <main className="max-w-7xl mx-auto px-4 md:px-16 py-8">
         {/* Breadcrumb */}
-        <nav className="flex items-center gap-2 mb-6 text-sm text-[#3e4944]">
-          <Link href="/" className="hover:text-[#1a7a5e]">{t("detail.home", lang)}</Link>
-          <span className="material-symbols-outlined text-sm text-[#6e7a74]">chevron_right</span>
-          <Link href="/listings" className="hover:text-[#1a7a5e]">{t("detail.listings", lang)}</Link>
-          <span className="material-symbols-outlined text-sm text-[#6e7a74]">chevron_right</span>
-          <span className="text-[#1b1c1c] font-medium truncate max-w-xs">{property.name}</span>
+        <nav className="flex items-center gap-2 mb-6 text-sm text-ink-2">
+          <Link href="/" className="hover:text-brand-ink">{t("detail.home", lang)}</Link>
+          <span className="material-symbols-outlined text-sm text-ink-3">chevron_right</span>
+          <Link href="/listings" className="hover:text-brand-ink">{t("detail.listings", lang)}</Link>
+          <span className="material-symbols-outlined text-sm text-ink-3">chevron_right</span>
+          <span className="text-ink font-medium truncate max-w-xs">{property.name}</span>
         </nav>
 
         <div className="grid grid-cols-1 lg:grid-cols-12 gap-6 items-start">
@@ -101,28 +101,28 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
               <div className="flex flex-col md:flex-row md:justify-between md:items-end gap-4">
                 <div>
                   <div className="flex items-start gap-3">
-                    <h1 className="text-3xl font-bold text-[#1b1c1c]">{property.name}</h1>
+                    <h1 className="text-3xl font-bold text-ink">{property.name}</h1>
                     <SaveButton propertyId={property.id} initialSaved={isSaved} size="md" />
                   </div>
                   {/* Area only. The exact address is disclosed after a booking
                       is confirmed — see the guest unit page — so that the
                       arrangement stays on the platform and an occupied home's
                       location is not published to anyone who loads the page. */}
-                  <div className="flex items-center gap-1 text-[#3e4944] mt-1">
-                    <span className="material-symbols-outlined text-[#1a7a5e] text-lg">location_on</span>
+                  <div className="flex items-center gap-1 text-ink-2 mt-1">
+                    <span className="material-symbols-outlined text-brand-ink text-lg">location_on</span>
                     {property.area}
                   </div>
-                  <p className="text-xs text-[#6e7a74] mt-1">
+                  <p className="text-xs text-ink-3 mt-1">
                     {t("detail.addressNote", lang)}
                   </p>
                 </div>
                 <div className="text-left md:text-right">
-                  <div className="text-[#1a7a5e] text-2xl font-bold">IDR {price}</div>
-                  <div className="text-[#3e4944] text-sm">{t("detail.perMonth", lang)}</div>
+                  <div className="text-brand-ink text-2xl font-bold">IDR {price}</div>
+                  <div className="text-ink-2 text-sm">{t("detail.perMonth", lang)}</div>
                 </div>
               </div>
 
-              <div className="flex flex-wrap gap-6 py-4 border-y border-[#bec9c2]">
+              <div className="flex flex-wrap gap-6 py-4 border-y border-line-strong">
                 {[
                   { icon: "bed", value: `${property.bedrooms} ${t("detail.beds", lang)}` },
                   { icon: "bathtub", value: `${property.bathrooms} ${t("detail.baths", lang)}` },
@@ -130,8 +130,8 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                   { icon: "calendar_today", value: `${t("detail.minMonths", lang)} ${property.min_stay_months} ${t("detail.months", lang)}` },
                 ].map((item) => (
                   <div key={item.icon} className="flex items-center gap-2">
-                    <span className="material-symbols-outlined text-[#6e7a74]">{item.icon}</span>
-                    <span className="text-[#1b1c1c]">{item.value}</span>
+                    <span className="material-symbols-outlined text-ink-3">{item.icon}</span>
+                    <span className="text-ink">{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -144,21 +144,21 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
             {rla && (
               <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
                 <div className="bg-white p-6 rounded-xl border border-[#cccccc]">
-                  <h3 className="text-lg font-semibold text-[#1a7a5e] mb-4">{t("detail.pros", lang)}</h3>
+                  <h3 className="text-lg font-semibold text-brand-ink mb-4">{t("detail.pros", lang)}</h3>
                   <ul className="space-y-3">
                     {(rla.pros as string[]).map((pro) => (
                       <li key={pro} className="flex items-start gap-3">
-                        <span className="material-symbols-outlined text-[#1a7a5e]">check_circle</span>
+                        <span className="material-symbols-outlined text-brand-ink">check_circle</span>
                         <span>{pro}</span>
                       </li>
                     ))}
                   </ul>
                 </div>
                 <div className="bg-[#f6f3f2] p-6 rounded-xl border border-[#cccccc]">
-                  <h3 className="text-lg font-semibold text-[#3e4944] mb-4">{t("detail.cons", lang)}</h3>
+                  <h3 className="text-lg font-semibold text-ink-2 mb-4">{t("detail.cons", lang)}</h3>
                   <ul className="space-y-3">
                     {(rla.cons as string[]).map((con) => (
-                      <li key={con} className="flex items-start gap-3 text-[#3e4944]">
+                      <li key={con} className="flex items-start gap-3 text-ink-2">
                         <span className="material-symbols-outlined">cancel</span>
                         <span>{con}</span>
                       </li>
@@ -171,24 +171,24 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
             {/* Facilities */}
             {details && (
               <section className="space-y-4">
-                <h2 className="text-lg font-semibold text-[#1b1c1c]">{t("detail.facilities", lang)}</h2>
+                <h2 className="text-lg font-semibold text-ink">{t("detail.facilities", lang)}</h2>
                 <div className="flex flex-wrap gap-2">
                   {(details.facilities as string[]).map((f) => (
-                    <span key={f} className="bg-[#e4e2e1] text-[#3e4944] px-3 py-1.5 rounded-lg text-sm border border-[#bec9c2]">
+                    <span key={f} className="bg-[#e4e2e1] text-ink-2 px-3 py-1.5 rounded-lg text-sm border border-line-strong">
                       {f}
                     </span>
                   ))}
                 </div>
                 <div className="grid grid-cols-2 gap-6 mt-4">
                   <div>
-                    <h4 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-2">{t("detail.included", lang)}</h4>
+                    <h4 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-2">{t("detail.included", lang)}</h4>
                     <ul className="space-y-1 text-sm">
                       {(details.included_utilities as string[]).map((u) => <li key={u}>• {u}</li>)}
                     </ul>
                   </div>
                   <div>
-                    <h4 className="text-xs font-bold text-[#3e4944] uppercase tracking-wider mb-2">{t("detail.houseRules", lang)}</h4>
-                    <p className="text-sm text-[#3e4944]">{details.rules}</p>
+                    <h4 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-2">{t("detail.houseRules", lang)}</h4>
+                    <p className="text-sm text-ink-2">{details.rules}</p>
                   </div>
                 </div>
               </section>
@@ -197,10 +197,10 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
             {/* Area Overview */}
             {area && (
               <section className="space-y-4">
-                <h2 className="text-lg font-semibold text-[#1b1c1c]">{t("detail.areaOverview", lang)}</h2>
+                <h2 className="text-lg font-semibold text-ink">{t("detail.areaOverview", lang)}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
                   <div className="md:col-span-2 rounded-xl bg-[#e4e2e1] h-56 flex items-center justify-center">
-                    <span className="material-symbols-outlined text-[#6e7a74] text-5xl">map</span>
+                    <span className="material-symbols-outlined text-ink-3 text-5xl">map</span>
                   </div>
                   <div className="space-y-3">
                     {[
@@ -212,8 +212,8 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                       area.nearest_gym  ? { label: area.nearest_gym,  value: null } : null,
                     ].filter(Boolean).map((place) => (
                       <div key={place!.label} className="bg-white p-3 rounded-xl border border-[#cccccc] flex justify-between items-center">
-                        <span className="text-sm text-[#1b1c1c]">{place!.label}</span>
-                        {place!.value && <span className="text-sm font-bold text-[#1a7a5e]">{place!.value}</span>}
+                        <span className="text-sm text-ink">{place!.label}</span>
+                        {place!.value && <span className="text-sm font-bold text-brand-ink">{place!.value}</span>}
                       </div>
                     ))}
                   </div>
@@ -226,15 +226,15 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                   {area.expat_friendly != null && (
                     <div className="flex items-center gap-1.5 whitespace-nowrap">
                       <span className="text-xs text-[#52647d]">{t("detail.expatFriendly", lang)}</span>
-                      <span className="text-sm font-bold text-[#1a7a5e]">{area.expat_friendly}/10</span>
+                      <span className="text-sm font-bold text-brand-ink">{area.expat_friendly}/10</span>
                       <div className="w-16 bg-[#e4e2e1] h-1.5 rounded-full overflow-hidden">
-                        <div className="bg-[#1a7a5e] h-full rounded-full" style={{ width: `${(area.expat_friendly / 10) * 100}%` }} />
+                        <div className="bg-brand h-full rounded-full" style={{ width: `${(area.expat_friendly / 10) * 100}%` }} />
                       </div>
                     </div>
                   )}
                 </div>
                 {area.area_notes && (
-                  <p className="text-sm text-[#3e4944] italic">{area.area_notes}</p>
+                  <p className="text-sm text-ink-2 italic">{area.area_notes}</p>
                 )}
               </section>
             )}
@@ -250,9 +250,9 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                   { label: t("detail.size", lang), value: `${property.size_sqm} m²` },
                   { label: t("detail.furnished", lang), value: property.is_furnished ? t("detail.yes", lang) : t("detail.no", lang) },
                 ].map((item) => (
-                  <div key={item.label} className="flex justify-between items-center pb-2 border-b border-[#bec9c2] last:border-0">
-                    <span className="text-[#3e4944] text-sm">{item.label}</span>
-                    <span className="text-[#1b1c1c] font-bold text-sm capitalize">{item.value}</span>
+                  <div key={item.label} className="flex justify-between items-center pb-2 border-b border-line-strong last:border-0">
+                    <span className="text-ink-2 text-sm">{item.label}</span>
+                    <span className="text-ink font-bold text-sm capitalize">{item.value}</span>
                   </div>
                 ))}
               </div>
@@ -268,9 +268,9 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
               shortStayRate={property.short_stay_rates ?? null}
             />
 
-            <div className="bg-[#0d2137] text-white p-6 rounded-xl space-y-3">
+            <div className="bg-ink text-white p-6 rounded-xl space-y-3">
               <h4 className="font-bold flex items-center gap-2">
-                <span className="material-symbols-outlined text-[#9cf4d1]">verified_user</span>
+                <span className="material-symbols-outlined text-brand">verified_user</span>
                 {t("detail.guarantee", lang)}
               </h4>
               <p className="text-sm opacity-90 leading-relaxed">
