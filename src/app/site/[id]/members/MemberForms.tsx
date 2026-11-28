@@ -284,18 +284,22 @@ export function MembershipControls({
         <option value="expired">Berakhir</option>
         <option value="cancelled">Dibatalkan</option>
       </select>
-      {canPayment && (
+      {canPayment && (paymentStatus === "paid" ? (
+        // Paid is final until refunds have a policy and a reversing journal;
+        // setMembershipPayment refuses it on the server too.
+        <span className="text-xs px-1.5 py-1 text-success-ink" title="Refund membership belum didukung">Lunas</span>
+      ) : (
         <select
           value={paymentStatus}
           disabled={busy}
           onChange={(e) => change(() => setMembershipPayment(siteId, membershipId, e.target.value))}
           className="text-xs border border-line-strong rounded px-1.5 py-1 bg-white"
         >
-          {PAYMENT_STATUSES.map((s) => (
+          {PAYMENT_STATUSES.filter((s) => s.value !== "refunded").map((s) => (
             <option key={s.value} value={s.value}>{s.label}</option>
           ))}
         </select>
-      )}
+      ))}
     </div>
   );
 }

@@ -318,8 +318,31 @@ export async function setMembershipPayment(siteId: string, membershipId: string,
     };
   }
 
-  const { error } = await admin.from("memberships").update({ payment_status }).eq("id", membershipId);
+  // Leaving 'paid' is a refund, and a refund has neither a policy nor a
+  // reversing journal yet (PROGRESS "Berikutnya" #1). Flipping the column
+  // would leave unearned_revenue and the settled periods saying "paid" while
+  // the membership says otherwise — so nobody does it, global staff included.
+  // 'refunded' is refused from any state for the same reason.
+  //
+  // The guard is in the UPDATE itself (neq paid), not only in a read before
+  // it, so a settle that lands between the two cannot be undone by this call.
+  const { data: cur } = await admin
+    .from("memberships").select("payment_status").eq("id", membershipId).maybeSingle();
+  if (!cur) return { error: "Not found." };
+  if (cur.payment_status === "paid" || payment_status === "refunded") {
+    return { error: REFUND_NOT_SUPPORTED };
+  }
+
+  const { data: moved, error } = await admin
+    .from("memberships").update({ payment_status })
+    .eq("id", membershipId).neq("payment_status", "paid")
+    .select("id");
   if (error) return { error: error.message };
+  if (!moved?.length) return { error: REFUND_NOT_SUPPORTED };
   revalidatePath(`/site/${siteId}/members`);
   return { success: true };
 }
+
+const REFUND_NOT_SUPPORTED =
+  "Membership yang sudah lunas tidak bisa diubah statusnya. Refund membership belum punya " +
+  "kebijakan dan jurnal balik di buku besar, jadi belum bisa dicatat dari sini.";
