@@ -70,55 +70,34 @@ const SECRET = "kata-sandi-rahasia-jangan-bocor";
 
   // ── the way in, from the header, with no JavaScript ──────────────────────
   //
-  // "Masuk" and "Daftar" used to be buttons opening a modal, and the modal
-  // always opened in sign-in mode: pressing "Daftar" handed a new visitor a
-  // sign-in form. Being onClick, neither did anything at all before React
-  // hydrated — on a phone the only account control in the header was dead
-  // for the first moment of a slow connection. They are links now.
+  // "Masuk" and "Daftar" used to be buttons opening a modal that did nothing
+  // before React hydrated. They became links; since V7 the header carries
+  // one account action, "Masuk", as a pill at every width (owner's call,
+  // 28 Nov 2026). Sign-up is the second tab of the same /auth/login page.
   for (const width of [1280, 390]) {
-    const phone = width === 390;
     const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width, height: 844 } });
+    await ctx.addCookies([{ name: "cosystem_locale", value: "id", url: BASE }]);
     const page = await ctx.newPage();
     await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
 
-    // On a phone the bar has no room for both, so "Masuk" moves into the
-    // menu; "Daftar" stays on the bar at every width.
-    const signUp = page.locator('a[href="/auth/login?mode=signup"]');
-    check(await signUp.count() >= 1, `${width}px: "Daftar" adalah tautan, bukan tombol modal`);
-    check(await signUp.first().isVisible(), `${width}px: "Daftar" terlihat di bilah`);
-
-    if (phone) {
-      await page.locator("details > summary").first().click();
-      check(
-        await page.locator('details a[href="/auth/login"]').first().isVisible(),
-        `${width}px: "Masuk" ada di dalam menu`,
-      );
-      check(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= window.innerWidth,
-        ),
-        `${width}px: halaman tidak meluber ke samping`,
-      );
-    } else {
-      // :visible — this href exists twice: once on the bar and once in the
-      // phone menu, whose <details> keeps its contents in the DOM while
-      // closed. At this width only the bar one is on screen.
-      check(
-        await page.locator('a[href="/auth/login"]:visible').count() === 1,
-        `${width}px: "Masuk" terlihat di bilah`,
-      );
-    }
-
-    // The label must match the form that opens.
-    await signUp.first().click();
-    await page.waitForLoadState("domcontentloaded");
+    const signIn = page.locator('header a[href="/auth/login"]:visible');
+    check(await signIn.count() === 1, `${width}px: "Masuk" terlihat di bilah, sekali`);
+    check((await signIn.first().textContent())?.trim() === "Masuk", `${width}px: labelnya "Masuk"`);
     check(
-      new URL(page.url()).search === "?mode=signup",
-      `${width}px: "Daftar" membuka /auth/login?mode=signup (${new URL(page.url()).search})`,
+      await page.locator('header a:has-text("Coba Gratis"):visible').count() === 0,
+      `${width}px: "Coba Gratis" tidak lagi di bilah`,
     );
     check(
-      await page.locator('input[name="name"]').isVisible(),
-      `${width}px: form pendaftaran yang terbuka, bukan form masuk`,
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      `${width}px: halaman tidak meluber ke samping`,
+    );
+
+    await signIn.first().click();
+    await page.waitForLoadState("domcontentloaded");
+    check(new URL(page.url()).pathname === "/auth/login", `${width}px: "Masuk" membuka /auth/login`);
+    check(
+      await page.locator('input[name="password"]').first().isVisible(),
+      `${width}px: form masuk terbuka tanpa JavaScript`,
     );
 
     await ctx.close();

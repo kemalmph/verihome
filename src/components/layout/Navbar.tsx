@@ -51,7 +51,7 @@ export async function Navbar() {
 
         <div className="flex items-center gap-2 sm:gap-3">
           <NavbarClient user={profile} />
-          <NavMobileMenu lang={lang} signedIn={profile !== null} />
+          <NavMobileMenu lang={lang} />
         </div>
       </nav>
     </header>

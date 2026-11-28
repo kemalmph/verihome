@@ -89,19 +89,12 @@ export function NavbarClient({ user }: NavbarClientProps) {
              posts without JavaScript, is translated, and honours ?next=.
              Two code paths for one job is what let the mislabelled modal
              live this long. */
-          <>
-            <Link
-              href="/auth/login"
-              className="hidden sm:block text-sm font-semibold text-ink-2 hover:text-ink transition-colors px-1"
-            >
-              {t("nav.signIn")}
-            </Link>
-            {/* No self-serve trial exists yet; until it does, "Start Free
-                Trial" opens a conversation with the team. */}
-            <Link href="/contact" className={`${pill.primarySm} text-xs sm:text-sm`}>
-              {t("nav.startTrial")}
-            </Link>
-          </>
+          // The header's one account action is signing in (owner's call,
+          // 28 Nov 2026). "Start Free Trial" stays in the hero and the
+          // closing CTA, where it is the page's main action.
+          <Link href="/auth/login" className={`${pill.primarySm} text-xs sm:text-sm`}>
+            {t("nav.signIn")}
+          </Link>
         )}
       </div>
     </>

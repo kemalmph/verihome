@@ -12,9 +12,10 @@ import { LanguageToggle } from "@/components/ui/LanguageToggle";
  * the one control a stranded visitor reaches for.
  *
  * It mirrors the desktop header (PUBLIC_NAV) with the dropdowns flattened
- * into labelled groups, plus "Sign In", which the bar has no room for.
+ * into labelled groups, plus the language switch, which the bar hides
+ * below 640px.
  */
-export function NavMobileMenu({ lang, signedIn }: { lang: Lang; signedIn: boolean }) {
+export function NavMobileMenu({ lang }: { lang: Lang }) {
   return (
     <details className="lg:hidden relative">
       <summary
@@ -52,16 +53,9 @@ export function NavMobileMenu({ lang, signedIn }: { lang: Lang; signedIn: boolea
           ),
         )}
 
-        {!signedIn && (
-          <Link
-            href="/auth/login"
-            className="block mt-1 px-3 py-2.5 border-t border-line text-sm font-semibold text-brand-ink hover:bg-cream"
-          >
-            {t("nav.signIn", lang)}
-          </Link>
-        )}
-
-        {/* The bar hides the language switch below 640px to fit the CTA. */}
+        {/* Sign In is no longer repeated here: it is the header's own
+            button at every width. The bar still hides the language switch
+            below 640px, so it lives here instead. */}
         <div className="sm:hidden mt-1 px-3 py-2.5 border-t border-line flex">
           <LanguageToggle />
         </div>

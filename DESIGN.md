@@ -207,7 +207,10 @@ lolos begini).
 ## 7. Navigasi publik
 
 Navbar: Product / Solutions / Pricing / Resources, dari satu sumber
-(`src/components/layout/nav-items.ts`) untuk desktop dan ponsel.
+(`src/components/layout/nav-items.ts`) untuk desktop dan ponsel. Di kanan
+bar: tombol bahasa (mulai 640px) dan **satu** tombol akun, `pill.primarySm`
+"Masuk" → `/auth/login`, di semua lebar (keputusan owner, 28 Nov 2026).
+"Coba Gratis" tidak di bar; ia aksi utama di hero dan CTA penutup.
 **Marketplace adalah produk sekunder** (keputusan owner, 28 Nov 2026): ia
 tinggal di Resources, bukan di menu utama, homepage, atau footer. Halaman
 marketplace sendiri (`/listings`) tetap memakai gaya V7 penuh.
