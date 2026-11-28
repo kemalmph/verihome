@@ -204,7 +204,15 @@ lolos begini).
 
 ---
 
-## 7. Halaman tanpa prototype
+## 7. Navigasi publik
+
+Navbar: Product / Solutions / Pricing / Resources, dari satu sumber
+(`src/components/layout/nav-items.ts`) untuk desktop dan ponsel.
+**Marketplace adalah produk sekunder** (keputusan owner, 28 Nov 2026): ia
+tinggal di Resources, bukan di menu utama, homepage, atau footer. Halaman
+marketplace sendiri (`/listings`) tetap memakai gaya V7 penuh.
+
+## 8. Halaman tanpa prototype
 
 Sebagian besar halaman belum punya prototype. Urutan acuan:
 

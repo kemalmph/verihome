@@ -366,6 +366,13 @@ Urut prioritas:
 
 ## Keputusan penting & alasannya
 
+- **Marketplace = produk sekunder** (keputusan owner, 28 Nov 2026). Homepage
+  V7 menjual Cosystem sebagai software untuk operator ruang; marketplace
+  hunian hanya dicapai lewat menu **Resources → Marketplace** dan lewat
+  tautan kontekstual di jalur penyewa (`/contact` kotak penyewa, konsultasi,
+  dashboard penyewa yang kosong). Jangan menambah listing atau CTA
+  marketplace ke homepage, navbar utama, atau footer tanpa keputusan baru.
+
 - **Membership diakui per bulan keanggotaan, bukan bulan kalender.** Keduanya
   berbeda uang sungguhan di tiap akhir periode. Yang penting bukan mana yang
   benar secara umum, tapi memilih satu dan tidak pernah mencampurnya — dan
