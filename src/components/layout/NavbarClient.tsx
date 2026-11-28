@@ -3,6 +3,7 @@
 import { useState } from "react";
 import Link from "next/link";
 import { LanguageToggle } from "@/components/ui/LanguageToggle";
+import { pill } from "@/components/brand/styles";
 import { signOut } from "@/lib/supabase/auth-actions";
 import { useT } from "@/lib/i18n/LocaleProvider";
 import type { StringKey } from "@/lib/i18n/strings";
@@ -18,30 +19,30 @@ export function NavbarClient({ user }: NavbarClientProps) {
   return (
     <>
       <div className="flex items-center gap-3">
-        <LanguageToggle />
+        <div className="hidden sm:block"><LanguageToggle /></div>
 
         {user ? (
           <div className="relative">
             <button
               onClick={() => setShowUserMenu((v) => !v)}
-              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-[#e8f5f0] transition-colors"
+              className="flex items-center gap-2 px-3 py-2 rounded-lg hover:bg-cream transition-colors"
             >
-              <div className="w-8 h-8 rounded-full bg-[#1a7a5e] flex items-center justify-center text-white text-sm font-bold">
+              <div className="w-8 h-8 rounded-full bg-brand flex items-center justify-center text-white text-sm font-bold">
                 {user.name.charAt(0).toUpperCase()}
               </div>
-              <span className="hidden lg:block text-sm font-medium text-[#1b1c1c]">
+              <span className="hidden lg:block text-sm font-medium text-ink">
                 {user.name.split(" ")[0]}
               </span>
-              <span className="material-symbols-outlined text-sm text-[#6e7a74]">expand_more</span>
+              <span className="material-symbols-outlined text-sm text-ink-3">expand_more</span>
             </button>
 
             {showUserMenu && (
               <>
                 <div className="fixed inset-0 z-10" onClick={() => setShowUserMenu(false)} />
-                <div className="absolute right-0 mt-2 w-52 bg-white border border-[#cccccc] rounded-xl shadow-lg z-20 overflow-hidden">
-                  <div className="px-4 py-3 border-b border-[#bec9c2]">
-                    <p className="text-sm font-semibold text-[#1b1c1c]">{user.name}</p>
-                    <p className="text-xs text-[#6e7a74] truncate">{user.email}</p>
+                <div className="absolute right-0 mt-2 w-52 bg-white border border-line rounded-2xl shadow-lift z-20 overflow-hidden">
+                  <div className="px-4 py-3 border-b border-line">
+                    <p className="text-sm font-semibold text-ink">{user.name}</p>
+                    <p className="text-xs text-ink-3 truncate">{user.email}</p>
                   </div>
                   {[
                     { href: "/dashboard", icon: "dashboard", label: "nav.dashboard" as StringKey },
@@ -52,13 +53,13 @@ export function NavbarClient({ user }: NavbarClientProps) {
                       key={item.href}
                       href={item.href}
                       onClick={() => setShowUserMenu(false)}
-                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-[#1b1c1c] hover:bg-[#f6f3f2] transition-colors"
+                      className="flex items-center gap-3 px-4 py-2.5 text-sm text-ink hover:bg-cream transition-colors"
                     >
-                      <span className="material-symbols-outlined text-[18px] text-[#6e7a74]">{item.icon}</span>
+                      <span className="material-symbols-outlined text-[18px] text-ink-3">{item.icon}</span>
                       {t(item.label)}
                     </Link>
                   ))}
-                  <div className="border-t border-[#bec9c2]">
+                  <div className="border-t border-line">
                     <form action={signOut}>
                       <button
                         type="submit"
@@ -91,15 +92,14 @@ export function NavbarClient({ user }: NavbarClientProps) {
           <>
             <Link
               href="/auth/login"
-              className="hidden sm:block px-4 sm:px-5 py-2 rounded-lg border border-[#1a7a5e] text-[#1a7a5e] text-sm font-medium hover:bg-[#e8f5f0] transition-colors"
+              className="hidden sm:block text-sm font-semibold text-ink-2 hover:text-ink transition-colors px-1"
             >
               {t("nav.signIn")}
             </Link>
-            <Link
-              href="/auth/login?mode=signup"
-              className="px-4 sm:px-5 py-2 rounded-lg bg-[#1a7a5e] text-white text-sm font-medium hover:opacity-90 transition-all shadow-sm"
-            >
-              {t("nav.signUp")}
+            {/* No self-serve trial exists yet; until it does, "Start Free
+                Trial" opens a conversation with the team. */}
+            <Link href="/contact" className={`${pill.primarySm} text-xs sm:text-sm`}>
+              {t("nav.startTrial")}
             </Link>
           </>
         )}

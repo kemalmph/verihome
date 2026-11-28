@@ -26,11 +26,11 @@ export function LanguageToggle() {
   return (
     <form
       action={setLocale}
-      className="flex items-center bg-[#f6f3f2] px-3 py-1 rounded-full text-xs font-medium select-none"
+      className="flex items-center bg-canvas px-3 py-1 rounded-full text-xs font-medium select-none"
     >
       {LOCALES.map((loc, i) => (
         <span key={loc} className="contents">
-          {i > 0 && <span className="mx-2 text-[#bec9c2]">|</span>}
+          {i > 0 && <span className="mx-2 text-line-strong">|</span>}
           <button
             type="submit"
             name="locale"
@@ -39,8 +39,8 @@ export function LanguageToggle() {
             aria-pressed={active === loc}
             className={
               active === loc
-                ? "text-[#1a7a5e] font-bold"
-                : "text-[#6e7a74] hover:text-[#3e4944]"
+                ? "text-brand-ink font-bold"
+                : "text-ink-3 hover:text-ink-2"
             }
           >
             {loc.toUpperCase()}
