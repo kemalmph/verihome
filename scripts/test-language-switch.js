@@ -146,13 +146,29 @@ const CHROME = {
     const page = await ctx.newPage();
     await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
 
-    // No cookie yet: Accept-Language decides. Playwright's default is en-US,
-    // so this also covers the browser-language guess.
+    // No cookie yet, English browser: English (owner's decision, 28 Nov 2026).
     const firstLang = await page.locator("html").getAttribute("lang");
     check(
       firstLang === "en",
-      `tanpa cookie, Accept-Language en-US → lang="${firstLang}"`,
+      `tanpa cookie → lang="${firstLang}" (bawaan: en)`,
     );
+
+    // Browser language, when there is no cookie: Indonesian only when the
+    // FIRST tag is Indonesian; anything else, or nothing, is English.
+    for (const [accept, want] of [
+      ["id-ID,id;q=0.9,en;q=0.8", "id"],
+      ["id", "id"],
+      ["en-US,id;q=0.8", "en"],
+      ["ja-JP,ja;q=0.9", "en"],
+      ["", "en"],
+    ]) {
+      const c = await browser.newContext({ extraHTTPHeaders: { "accept-language": accept } });
+      const pg = await c.newPage();
+      await pg.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+      const l = await pg.locator("html").getAttribute("lang");
+      check(l === want, `tanpa cookie, Accept-Language "${accept || "(kosong)"}" → lang="${l}" (harus ${want})`);
+      await c.close();
+    }
 
     const idButton = page.locator('header button[lang="id"]:visible').first();
     check(await idButton.count() === 1, "tombol ID ada di nav");

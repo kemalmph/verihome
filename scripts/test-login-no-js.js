@@ -74,55 +74,35 @@ const SECRET = "kata-sandi-rahasia-jangan-bocor";
   // always opened in sign-in mode. Being onClick, neither did anything before
   // React hydrated. They became links to /auth/login.
   //
-  // The V7 header (28 Nov 2026) keeps "Masuk" as a link and replaces the
-  // header "Daftar" with the "Start Free Trial" CTA, which goes to /contact
-  // until a self-serve trial exists. Sign-up itself is unchanged: the
-  // /auth/login page has its tab, reached directly with ?mode=signup (and from
-  // the sign-in form). This block checks what the header actually carries now.
+  // Since 28 Nov 2026 (owner's call) the header carries one account action:
+  // "Masuk", a pill on the bar at every width. "Coba Gratis" left the bar for
+  // the hero and the closing CTA. Sign-up is the second tab of /auth/login,
+  // reached with ?mode=signup (and from the sign-in form).
   for (const width of [1280, 390]) {
-    const phone = width === 390;
     const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width, height: 844 } });
+    await ctx.addCookies([{ name: "cosystem_locale", value: "id", url: BASE }]);
     const page = await ctx.newPage();
     await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
 
-    // The CTA is a link on the bar at every width.
-    const cta = page.locator('header a[href="/contact"]:visible, nav a[href="/contact"]:visible');
-    check(await cta.count() >= 1, `${width}px: CTA header adalah tautan ke /contact`);
-
-    if (phone) {
-      // No room for "Masuk" on the bar: it lives in the menu, which opens
-      // without JavaScript (<details>).
-      await page.locator("details > summary").first().click();
-      check(
-        await page.locator('details a[href="/auth/login"]').first().isVisible(),
-        `${width}px: "Masuk" ada di dalam menu`,
-      );
-      check(
-        await page.evaluate(
-          () => document.documentElement.scrollWidth <= window.innerWidth,
-        ),
-        `${width}px: halaman tidak meluber ke samping`,
-      );
-    } else {
-      // :visible — this href exists twice: once on the bar and once in the
-      // phone menu, whose <details> keeps its contents in the DOM while
-      // closed. At this width only the bar one is on screen.
-      check(
-        await page.locator('a[href="/auth/login"]:visible').count() === 1,
-        `${width}px: "Masuk" terlihat di bilah`,
-      );
-    }
+    const signIn = page.locator('header a[href="/auth/login"]:visible');
+    check(await signIn.count() === 1, `${width}px: "Masuk" terlihat di bilah, sekali`);
+    check((await signIn.first().textContent())?.trim() === "Masuk", `${width}px: labelnya "Masuk"`);
+    check(
+      await page.locator('header a:has-text("Coba Gratis"):visible').count() === 0,
+      `${width}px: "Coba Gratis" tidak lagi di bilah`,
+    );
+    check(
+      await page.evaluate(() => document.documentElement.scrollWidth <= window.innerWidth),
+      `${width}px: halaman tidak meluber ke samping`,
+    );
 
     // "Masuk" opens the sign-in form, still without JavaScript.
-    const signIn = phone
-      ? page.locator('details a[href="/auth/login"]').first()
-      : page.locator('a[href="/auth/login"]:visible').first();
-    await signIn.click();
+    await signIn.first().click();
     await page.waitForLoadState("domcontentloaded");
     check(new URL(page.url()).pathname === "/auth/login", `${width}px: "Masuk" membuka /auth/login`);
     check(
       await page.locator('input[name="password"]').first().isVisible(),
-      `${width}px: form masuk terlihat tanpa JavaScript`,
+      `${width}px: form masuk terbuka tanpa JavaScript`,
     );
 
     // The sign-up tab is still the one ?mode=signup opens.

@@ -198,13 +198,26 @@ teks berwarna untuk menggantikan logo.
 ## 6. Bahasa dan teks
 
 Semua teks antarmuka lewat `t()` / `useT()` dari `src/lib/i18n/strings.ts`,
-ID dan EN berdampingan. "Run Your Space." tetap Inggris di kedua bahasa.
+ID dan EN berdampingan. Pengunjung yang belum memilih mendapat **Indonesia** bila
+bahasa utama browser-nya Indonesia, selain itu **Inggris** (keputusan owner,
+28 Nov 2026). "Run Your Space." tetap Inggris di kedua bahasa.
 Jangan menanam teks langsung di komponen ("Continue", "Watch Video" pernah
 lolos begini).
 
 ---
 
-## 7. Halaman tanpa prototype
+## 7. Navigasi publik
+
+Navbar: Product / Solutions / Pricing / Resources, dari satu sumber
+(`src/components/layout/nav-items.ts`) untuk desktop dan ponsel. Di kanan
+bar: tombol bahasa (mulai 640px) dan **satu** tombol akun, `pill.primarySm`
+"Masuk" → `/auth/login`, di semua lebar (keputusan owner, 28 Nov 2026).
+"Coba Gratis" tidak di bar; ia aksi utama di hero dan CTA penutup.
+**Marketplace adalah produk sekunder** (keputusan owner, 28 Nov 2026): ia
+tinggal di Resources, bukan di menu utama, homepage, atau footer. Halaman
+marketplace sendiri (`/listings`) tetap memakai gaya V7 penuh.
+
+## 8. Halaman tanpa prototype
 
 Sebagian besar halaman belum punya prototype. Urutan acuan:
 

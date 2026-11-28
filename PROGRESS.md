@@ -511,6 +511,18 @@ Urut prioritas:
 
 ## Keputusan penting & alasannya
 
+- **Bahasa bawaan: Inggris, kecuali browser berbahasa Indonesia** (keputusan
+  owner, 28 Nov 2026). `getLocale()`: (1) cookie `cosystem_locale`, (2) `id`
+  bila tag pertama Accept-Language `id`, (3) selain itu `en`. Sebelumnya
+  langkah 3 jatuh ke `id`.
+
+- **Marketplace = produk sekunder** (keputusan owner, 28 Nov 2026). Homepage
+  V7 menjual Cosystem sebagai software untuk operator ruang; marketplace
+  hunian hanya dicapai lewat menu **Resources → Marketplace** dan lewat
+  tautan kontekstual di jalur penyewa (`/contact` kotak penyewa, konsultasi,
+  dashboard penyewa yang kosong). Jangan menambah listing atau CTA
+  marketplace ke homepage, navbar utama, atau footer tanpa keputusan baru.
+
 - **Membership diakui per bulan keanggotaan, bukan bulan kalender.** Keduanya
   berbeda uang sungguhan di tiap akhir periode. Yang penting bukan mana yang
   benar secara umum, tapi memilih satu dan tidak pernah mencampurnya — dan

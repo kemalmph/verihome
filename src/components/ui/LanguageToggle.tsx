@@ -16,9 +16,10 @@ import { LOCALES } from "@/lib/i18n/config";
  * in on a phone, where a dead switch reads as a broken site.
  *
  * There is no early return for the language already showing. Before a
- * cookie exists the active language is only a guess from Accept-Language,
- * so pressing the one on screen is the visitor confirming that guess — and
- * that confirmation is exactly what needs storing.
+ * cookie exists the active language is only a guess (Indonesian for an
+ * Indonesian browser, English otherwise), so pressing the one on screen is
+ * the visitor confirming it — and that confirmation is exactly what needs
+ * storing.
  */
 export function LanguageToggle() {
   const active = useLocale();
