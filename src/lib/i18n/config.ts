@@ -16,9 +16,9 @@ export const LOCALES = ["id", "en"] as const;
 export type Locale = (typeof LOCALES)[number];
 
 /**
- * What a visitor sees before choosing. English, by the owner's decision
- * (28 Nov 2026) — and for everyone, whatever their browser's language:
- * only the EN/ID switch changes it. See getLocale().
+ * What a visitor sees before choosing, unless their browser's first
+ * language is Indonesian (then Indonesian). Owner's decision, 28 Nov 2026;
+ * the full order is in getLocale().
  */
 export const DEFAULT_LOCALE: Locale = "en";
 

@@ -146,22 +146,28 @@ const CHROME = {
     const page = await ctx.newPage();
     await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
 
-    // No cookie yet: English, the default (owner's decision, 28 Nov 2026).
+    // No cookie yet, English browser: English (owner's decision, 28 Nov 2026).
     const firstLang = await page.locator("html").getAttribute("lang");
     check(
       firstLang === "en",
       `tanpa cookie → lang="${firstLang}" (bawaan: en)`,
     );
 
-    // And English even for an Indonesian browser: Accept-Language is no
-    // longer consulted, only the visitor's own choice.
-    {
-      const idCtx = await browser.newContext({ locale: "id-ID", extraHTTPHeaders: { "accept-language": "id-ID,id;q=0.9" } });
-      const idPage = await idCtx.newPage();
-      await idPage.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
-      const l = await idPage.locator("html").getAttribute("lang");
-      check(l === "en", `tanpa cookie, browser berbahasa Indonesia → lang="${l}" (bawaan: en)`);
-      await idCtx.close();
+    // Browser language, when there is no cookie: Indonesian only when the
+    // FIRST tag is Indonesian; anything else, or nothing, is English.
+    for (const [accept, want] of [
+      ["id-ID,id;q=0.9,en;q=0.8", "id"],
+      ["id", "id"],
+      ["en-US,id;q=0.8", "en"],
+      ["ja-JP,ja;q=0.9", "en"],
+      ["", "en"],
+    ]) {
+      const c = await browser.newContext({ extraHTTPHeaders: { "accept-language": accept } });
+      const pg = await c.newPage();
+      await pg.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
+      const l = await pg.locator("html").getAttribute("lang");
+      check(l === want, `tanpa cookie, Accept-Language "${accept || "(kosong)"}" → lang="${l}" (harus ${want})`);
+      await c.close();
     }
 
     const idButton = page.locator('header button[lang="id"]:visible').first();
