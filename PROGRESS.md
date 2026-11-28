@@ -88,8 +88,8 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 ## Selesai
 
-- **Alur booking & viewing V7 + bug instruksi pembayaran** (28 Nov, branch
-  `claude/exciting-darwin-fosna9`, belum di `main`; tanpa migration).
+- **Alur booking & viewing V7 + bug instruksi pembayaran** (28 Nov, PR #7,
+  merge `3ccb091`; tanpa migration).
   **Bug produksi yang diperbaiki:** langkah 3 kedua alur membaca field datar
   lama (`intent.bankName`, `intent.totalAmount`) padahal API mengirim
   `PaymentIntent` dengan detail di `intent.action` → layar menampilkan
@@ -98,7 +98,8 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
   membaca `intent.action` dan `payableAmount` dari server. Komponen bersama
   baru: `FlowSteps`, `CheckoutHeader`, `PaymentInstructions`, `styles.ts`.
   Diuji lokal sampai langkah pembayaran, desktop + 390px, ID + EN.
-  Pantas dicatat di Reference (§11 atau §19) — keputusan owner.
+  Dicatat di Reference atas permintaan owner: **§19.20** baru + rujukan dari
+  §11 (versi 26). Tamu yang terdampak tidak ditindaklanjuti (keputusan owner).
 
 - **Listing V7 — daftar & detail** (28 Nov, PR #6, merge `e175932`;
   tanpa migration). `/listings`: header krem + filter
