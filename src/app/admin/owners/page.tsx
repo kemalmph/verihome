@@ -27,7 +27,7 @@ export default async function AdminOwnersPage() {
   const linked = (owners ?? []).filter((o) => o.portal_access === "active").length;
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/owners" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
@@ -51,7 +51,7 @@ export default async function AdminOwnersPage() {
         ) : (
           <div className="space-y-4">
             {(owners ?? []).map((o) => (
-              <section key={o.id} className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-5">
+              <section key={o.id} className="bg-white rounded-2xl border border-line shadow-card p-5">
                 <div className="flex items-start justify-between gap-4 flex-wrap mb-4">
                   <div className="min-w-0">
                     <p className="font-semibold text-ink">{o.name}</p>

@@ -38,7 +38,7 @@ export function CreateUserForm() {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-6 space-y-4">
+    <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-ink flex items-center gap-2">
           <span className="material-symbols-outlined text-brand-ink">person_add</span>
@@ -67,7 +67,7 @@ export function CreateUserForm() {
               name="name"
               required
               placeholder="Jane Smith"
-              className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
           <div>
@@ -77,7 +77,7 @@ export function CreateUserForm() {
               type="email"
               required
               placeholder="jane@example.com"
-              className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
           <div>
@@ -88,7 +88,7 @@ export function CreateUserForm() {
               required
               minLength={8}
               placeholder="min 8 characters"
-              className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
         </div>
@@ -106,7 +106,7 @@ export function CreateUserForm() {
           <button
             type="button"
             onClick={() => { setOpen(false); setResult(null); }}
-            className="px-5 py-2 border border-[#cccccc] text-ink-2 rounded-lg text-sm hover:bg-[#f6f3f2]"
+            className="px-5 py-2 border border-line-strong text-ink-2 rounded-lg text-sm hover:bg-canvas"
           >
             Cancel
           </button>

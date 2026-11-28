@@ -47,7 +47,7 @@ export function NewSiteForm({ owners }: Props) {
   return (
     <form
       onSubmit={onSubmit}
-      className="bg-white border border-[#ddd7d4] rounded-lg p-6 max-w-2xl"
+      className="bg-white border border-line rounded-2xl p-6 max-w-2xl shadow-card"
     >
       <h2 className="text-lg font-semibold text-ink mb-1">Site baru</h2>
       <p className="text-sm text-ink-3 mb-5">
@@ -126,7 +126,7 @@ export function NewSiteForm({ owners }: Props) {
         <button
           type="button"
           onClick={() => { setOpen(false); setError(""); }}
-          className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-[#f6f3f2]"
+          className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
         >
           Batal
         </button>
@@ -136,7 +136,7 @@ export function NewSiteForm({ owners }: Props) {
 }
 
 const inputCls =
-  "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
+  "w-full border border-line-strong rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 function Field({
   label, hint, className = "", children,

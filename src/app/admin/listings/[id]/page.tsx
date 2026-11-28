@@ -91,11 +91,11 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
     redirect("/admin/listings");
   }
 
-  const inputClass = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white";
+  const inputClass = "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white";
   const labelClass = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/listings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1200px]">
         <div className="flex items-center justify-between mb-8">
@@ -117,7 +117,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
             <Link
               href={`/listings/${property.slug}`}
               target="_blank"
-              className="px-4 py-2 border border-[#cccccc] text-ink-2 rounded-lg text-sm hover:bg-white"
+              className="px-4 py-2 border border-line-strong text-ink-2 rounded-lg text-sm hover:bg-white"
             >
               View live →
             </Link>
@@ -133,7 +133,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
         <div className="grid grid-cols-1 lg:grid-cols-3 gap-8">
           {/* Main edit form */}
           <form action={handleUpdate} className="lg:col-span-2 space-y-6">
-            <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-5">
+            <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-5">
               <h2 className="font-semibold text-ink">Property Details</h2>
 
               <div>
@@ -229,7 +229,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
           {/* Side panels */}
           <div className="space-y-6">
             {/* Publish checklist */}
-            <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
+            <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-3">
               <h3 className="font-semibold text-ink flex items-center gap-2">
                 <span className="material-symbols-outlined text-brand-ink">checklist</span>
                 Publish Checklist
@@ -249,7 +249,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
 
             {/* Owner info */}
             {owner && (
-              <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
+              <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-3">
                 <h3 className="font-semibold text-ink flex items-center gap-2">
                   <span className="material-symbols-outlined text-brand-ink">person</span>
                   Owner
@@ -262,7 +262,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
 
             {/* RLA summary — 0-10 scale */}
             {rla && (
-              <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-3">
+              <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-3">
                 <h3 className="font-semibold text-ink flex items-center gap-2">
                   <span className="material-symbols-outlined text-brand-ink">verified_user</span>
                   RLA Score
@@ -286,7 +286,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
                       <span>{item.label}</span>
                       <span className="font-bold">{item.val}/10</span>
                     </div>
-                    <div className="w-full bg-[#e4e2e1] h-1.5 rounded-full">
+                    <div className="w-full bg-line h-1.5 rounded-full">
                       <div className="bg-brand h-full rounded-full" style={{ width: `${((item.val ?? 0) / 10) * 100}%` }} />
                     </div>
                   </div>
@@ -296,7 +296,7 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
 
             {/* Photo count */}
             {media && (
-              <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-2">
+              <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-2">
                 <h3 className="font-semibold text-ink flex items-center gap-2">
                   <span className="material-symbols-outlined text-brand-ink">photo_library</span>
                   Photos
@@ -323,11 +323,11 @@ export default async function EditListingPage({ params }: EditListingPageProps) 
 
             {/* Facilities */}
             {details && (
-              <div className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm space-y-2">
+              <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-2">
                 <h3 className="font-semibold text-ink">Facilities</h3>
                 <div className="flex flex-wrap gap-1">
                   {((details.facilities as string[]) ?? []).map((f: string) => (
-                    <span key={f} className="bg-[#e4e2e1] text-ink-2 px-2 py-1 rounded text-xs">{f}</span>
+                    <span key={f} className="bg-line text-ink-2 px-2 py-1 rounded text-xs">{f}</span>
                   ))}
                 </div>
               </div>

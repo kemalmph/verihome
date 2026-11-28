@@ -49,7 +49,7 @@ export function SiteDetailForm({
   return (
     <form
       onSubmit={onSubmit}
-      className="bg-white border border-[#ddd7d4] rounded-lg p-6 mb-10"
+      className="bg-white border border-line rounded-2xl p-6 mb-10 shadow-card"
     >
       <h2 className="text-lg font-semibold text-ink mb-5">Detail site</h2>
 
@@ -131,7 +131,7 @@ export function SiteDetailForm({
 }
 
 const inputCls =
-  "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
+  "w-full border border-line-strong rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 function Field({
   label, hint, className = "", children,

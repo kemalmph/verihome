@@ -49,7 +49,7 @@ export default async function SiteCalendarPage({
   const eventsWithGaps = events.filter((e) => e.gaps.length > 0);
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-ink-3 mb-4">
@@ -106,7 +106,7 @@ export default async function SiteCalendarPage({
         )}
 
         {/* ── the week chart ──────────────────────────────────────────── */}
-        <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-x-auto mb-8">
+        <section className="bg-white border border-line rounded-2xl shadow-card overflow-x-auto mb-8">
           {units.length === 0 ? (
             <p className="p-8 text-center text-ink-3 text-sm">Belum ada unit di site ini.</p>
           ) : (
@@ -164,7 +164,7 @@ export default async function SiteCalendarPage({
 
         {/* ── agenda ──────────────────────────────────────────────────── */}
         <div className="grid grid-cols-1 lg:grid-cols-2 gap-6">
-          <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
+          <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden">
             <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
               Booking minggu ini ({bookings.length})
             </h2>
@@ -205,7 +205,7 @@ export default async function SiteCalendarPage({
             )}
           </section>
 
-          <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
+          <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden">
             <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
               Event minggu ini ({events.length})
             </h2>
@@ -252,7 +252,7 @@ function NavLink({ href, children }: { href: string; children: React.ReactNode }
   return (
     <Link
       href={href}
-      className="px-3 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 bg-white hover:bg-[#f6f3f2]"
+      className="px-3 py-2 rounded-lg border border-line-strong text-sm text-ink-2 bg-white hover:bg-canvas"
     >
       {children}
     </Link>

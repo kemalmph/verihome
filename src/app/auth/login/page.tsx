@@ -36,7 +36,7 @@ export default async function LoginPage({
   return (
     <>
       <Navbar />
-      <main className="min-h-[70vh] bg-[#f6f3f2] px-4 py-14">
+      <main className="min-h-[70vh] bg-canvas px-4 py-14">
         <div className="max-w-sm mx-auto">
           <div className="mb-6 text-center">
             <h1 className="text-2xl font-bold text-ink">{t("login.title", lang)}</h1>

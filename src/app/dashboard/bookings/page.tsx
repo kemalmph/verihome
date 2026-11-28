@@ -46,7 +46,7 @@ export default async function DashboardBookingsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/bookings" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
@@ -76,7 +76,7 @@ export default async function DashboardBookingsPage() {
             {bookings.map((b) => {
               const property = (b.property as unknown) as { id: string; name: string; area: string; slug: string } | null;
               return (
-                <div key={b.id} className="bg-white rounded-xl border border-[#cccccc] p-6">
+                <div key={b.id} className="bg-white rounded-2xl border border-line shadow-card p-6">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">

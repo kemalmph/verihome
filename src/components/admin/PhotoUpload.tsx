@@ -216,7 +216,7 @@ export function PhotoUpload({
       {photos.length > 0 ? (
         <div className="grid grid-cols-3 gap-3">
           {photos.map((url, i) => (
-            <div key={url} className="relative rounded-lg overflow-hidden aspect-video bg-[#e4e2e1] group">
+            <div key={url} className="relative rounded-lg overflow-hidden aspect-video bg-line group">
               <Image
                 src={url}
                 alt={`Photo ${i + 1}`}
@@ -237,7 +237,7 @@ export function PhotoUpload({
       ) : (
         <div
           onClick={() => inputRef.current?.click()}
-          className="border-2 border-dashed border-[#cccccc] rounded-xl p-10 text-center cursor-pointer hover:border-brand transition-colors"
+          className="border-2 border-dashed border-line-strong rounded-xl p-10 text-center cursor-pointer hover:border-brand transition-colors"
         >
           <span className="material-symbols-outlined text-4xl text-line-strong block mb-2">add_photo_alternate</span>
           <p className="text-sm text-ink-3">Click to add photos</p>
@@ -252,7 +252,7 @@ export function PhotoUpload({
 
 function QueueItem({ item, onRetry }: { item: FileItem; onRetry: () => void }) {
   return (
-    <div className="bg-[#f6f3f2] rounded-lg p-3 space-y-1.5">
+    <div className="bg-canvas rounded-lg p-3 space-y-1.5">
       <div className="flex items-center justify-between text-xs">
         <span className="text-ink font-medium truncate max-w-[60%]">{item.file.name}</span>
         <span className="text-ink-3">
@@ -270,7 +270,7 @@ function QueueItem({ item, onRetry }: { item: FileItem; onRetry: () => void }) {
         </p>
       )}
       {(item.status === "uploading") && (
-        <div className="w-full bg-[#e4e2e1] h-1 rounded-full overflow-hidden">
+        <div className="w-full bg-line h-1 rounded-full overflow-hidden">
           <div
             className="h-full bg-brand transition-all"
             style={{ width: `${item.progress}%` }}

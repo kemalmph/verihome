@@ -27,7 +27,7 @@ export default async function SurveyIndexPage() {
   const resurveyed = rows.filter((r) => r.surveyCount > 0);
 
   return (
-    <div className="min-h-screen bg-[#f6f3f2]">
+    <div className="min-h-screen bg-canvas">
       <AppSidebar activeHref="/survey" />
       <div data-sidebar-offset className="md:ml-(--sidebar-w) md:transition-[margin] pt-14 md:pt-0">
       <main className="max-w-3xl mx-auto px-6 py-8">
@@ -37,7 +37,7 @@ export default async function SurveyIndexPage() {
         </p>
 
         {rows.length === 0 && (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-10 text-center">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-10 text-center">
             <span className="material-symbols-outlined text-line-strong text-4xl">task_alt</span>
             <p className="text-ink-2 font-medium mt-2">Nothing waiting</p>
             <p className="text-sm text-ink-3 mt-1">
@@ -80,7 +80,7 @@ function PropertyRow({ p }: {
     <li>
       <Link
         href={`/survey/${p.id}`}
-        className="flex items-center justify-between gap-4 bg-white rounded-xl border border-[#cccccc] px-5 py-4 hover:border-brand transition-colors"
+        className="flex items-center justify-between gap-4 bg-white rounded-2xl border border-line shadow-card px-5 py-4 hover:border-brand transition-colors"
       >
         <div className="min-w-0">
           <p className="font-semibold text-ink truncate">{p.name}</p>

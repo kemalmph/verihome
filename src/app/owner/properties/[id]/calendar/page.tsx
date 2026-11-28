@@ -40,7 +40,7 @@ export default async function OwnerCalendarPage({
   const ym = (d: Date) => `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}`;
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/properties" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <Link href={`/owner/properties/${id}`} className="text-sm text-brand-ink hover:underline">
@@ -55,8 +55,8 @@ export default async function OwnerCalendarPage({
             </p>
           </div>
           <div className="flex gap-2">
-            <Link href={`?m=${ym(prev)}`} className="px-3 py-1.5 border border-[#cccccc] rounded-lg text-sm hover:bg-white">←</Link>
-            <Link href={`?m=${ym(next)}`} className="px-3 py-1.5 border border-[#cccccc] rounded-lg text-sm hover:bg-white">→</Link>
+            <Link href={`?m=${ym(prev)}`} className="px-3 py-1.5 border border-line-strong rounded-lg text-sm hover:bg-white">←</Link>
+            <Link href={`?m=${ym(next)}`} className="px-3 py-1.5 border border-line-strong rounded-lg text-sm hover:bg-white">→</Link>
           </div>
         </header>
 

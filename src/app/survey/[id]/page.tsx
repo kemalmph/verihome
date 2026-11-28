@@ -33,7 +33,7 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
   const prior = priorSurveys ?? [];
 
   return (
-    <div className="min-h-screen bg-[#f6f3f2]">
+    <div className="min-h-screen bg-canvas">
       <AppSidebar activeHref={`/survey/${id}`} />
       <div data-sidebar-offset className="md:ml-(--sidebar-w) md:transition-[margin] pt-14 md:pt-0">
       <header className="bg-ink text-white">
@@ -54,7 +54,7 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
         </div>
 
         {closedToSurveyor ? (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-8 text-center">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-8 text-center">
             <span className="material-symbols-outlined text-line-strong text-4xl">lock</span>
             <p className="text-ink-2 font-medium mt-2">This listing is already published</p>
             <p className="text-sm text-ink-3 mt-1 max-w-sm mx-auto">
@@ -68,13 +68,13 @@ export default async function SurveyPage({ params }: { params: Promise<{ id: str
         ) : (
           <>
             {prior.length > 0 && (
-              <div className="mb-6 bg-white rounded-xl border border-[#cccccc] p-5">
+              <div className="mb-6 bg-white rounded-2xl border border-line shadow-card p-5">
                 <p className="text-xs font-semibold text-ink-2 uppercase tracking-wider mb-3">
                   {prior.length} previous {prior.length === 1 ? "survey" : "surveys"}
                 </p>
                 <ul className="space-y-2">
                   {prior.map((s) => (
-                    <li key={s.id} className="flex items-center justify-between text-sm border-b border-[#f6f3f2] last:border-0 pb-2 last:pb-0">
+                    <li key={s.id} className="flex items-center justify-between text-sm border-b border-canvas last:border-0 pb-2 last:pb-0">
                       <span className="text-ink-2">
                         <strong className="text-ink">{s.survey_date}</strong>
                         {s.surveyor_name ? ` · ${s.surveyor_name}` : ""}

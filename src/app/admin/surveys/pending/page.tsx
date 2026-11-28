@@ -27,7 +27,7 @@ export default async function PendingSurveysPage() {
   const pendingList  = pending   ?? [];
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/surveys/pending" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <div className="mb-8">
@@ -39,7 +39,7 @@ export default async function PendingSurveysPage() {
         </div>
 
         {pendingList.length === 0 ? (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-12 text-center">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-12 text-center">
             <span className="material-symbols-outlined text-brand-ink text-5xl">check_circle</span>
             <p className="mt-3 text-ink-2">No pending imports. All survey submissions have been processed.</p>
           </div>
@@ -66,8 +66,8 @@ export default async function PendingSurveysPage() {
               }
 
               return (
-                <div key={item.id} className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
-                  <div className="px-6 py-4 bg-[#f6f3f2] border-b border-line-strong flex items-center justify-between">
+                <div key={item.id} className="bg-white rounded-2xl border border-line shadow-card overflow-hidden">
+                  <div className="px-6 py-4 bg-canvas border-b border-line-strong flex items-center justify-between">
                     <div>
                       <p className="text-xs text-ink-3">Submission {item.tally_submission_id}</p>
                       <p className="text-sm font-semibold text-ink mt-0.5">
@@ -81,7 +81,7 @@ export default async function PendingSurveysPage() {
                     </span>
                   </div>
 
-                  <div className="px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm border-b border-[#e4e2e1]">
+                  <div className="px-6 py-4 grid grid-cols-2 md:grid-cols-4 gap-4 text-sm border-b border-line">
                     {[
                       { label: "Surveyor", val: String(fieldMap["Nama Surveyor"] ?? fieldMap["Surveyor"] ?? "—") },
                       { label: "PIC",      val: String(fieldMap["Nama PIC"]      ?? fieldMap["PIC"]      ?? "—") },
@@ -104,7 +104,7 @@ export default async function PendingSurveysPage() {
                         <select
                           name="property_id"
                           required
-                          className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
+                          className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white"
                         >
                           <option value="">Search and select…</option>
                           {propertyList.map((p) => (
@@ -131,7 +131,7 @@ export default async function PendingSurveysPage() {
 
                     <Link
                       href={`/admin/surveys/pending/${item.id}`}
-                      className="h-11 px-4 border border-[#cccccc] text-ink-2 rounded-lg text-sm hover:bg-[#f6f3f2] flex items-center whitespace-nowrap"
+                      className="h-11 px-4 border border-line-strong text-ink-2 rounded-lg text-sm hover:bg-canvas flex items-center whitespace-nowrap"
                     >
                       View raw →
                     </Link>

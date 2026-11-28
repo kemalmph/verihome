@@ -5,7 +5,7 @@ import { signInWithEmail, signUpWithEmail, signInWithGoogle } from "@/lib/supaba
 import { useT } from "@/lib/i18n/LocaleProvider";
 
 const input =
-  "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+  "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
 const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 
 type Mode = "signin" | "signup";
@@ -47,8 +47,8 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
   }
 
   return (
-    <div className="bg-white rounded-2xl border border-[#cccccc] shadow-sm overflow-hidden">
-      <div className="flex border-b border-[#e4e2e1]">
+    <div className="bg-white rounded-2xl border border-line-strong shadow-sm overflow-hidden">
+      <div className="flex border-b border-line">
         {([["signin", t("login.tabSignIn")], ["signup", t("login.tabSignUp")]] as const).map(([value, label]) => (
           <button
             key={value}
@@ -137,15 +137,15 @@ export function LoginForm({ next, reason, initialMode = "signin", googleEnabled 
         {googleEnabled && (
           <>
             <div className="flex items-center gap-3 my-5">
-              <span className="h-px flex-1 bg-[#e4e2e1]" />
+              <span className="h-px flex-1 bg-line" />
               <span className="text-xs text-ink-3">{t("login.or")}</span>
-              <span className="h-px flex-1 bg-[#e4e2e1]" />
+              <span className="h-px flex-1 bg-line" />
             </div>
 
             <form action={signInWithGoogle.bind(null, next)}>
               <button
                 type="submit"
-                className="w-full h-11 border border-[#cccccc] rounded-lg font-semibold text-sm text-ink-2 hover:border-brand transition-colors"
+                className="w-full h-11 border border-line-strong rounded-lg font-semibold text-sm text-ink-2 hover:border-brand transition-colors"
               >
                 {t("login.google")}
               </button>

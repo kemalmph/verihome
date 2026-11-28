@@ -48,7 +48,7 @@ export default async function AdminBookingsPage() {
     .order("created_at", { ascending: false });
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/bookings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="mb-8">
@@ -57,7 +57,7 @@ export default async function AdminBookingsPage() {
         </div>
 
         {!bookings || bookings.length === 0 ? (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-12 text-center">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-12 text-center">
             <span className="material-symbols-outlined text-[#cccccc] text-5xl">hotel</span>
             <p className="text-ink-3 mt-4">No bookings yet.</p>
           </div>
@@ -67,7 +67,7 @@ export default async function AdminBookingsPage() {
               const property = (b.property as unknown) as { id: string; name: string; area: string } | null;
               const user     = (b.user     as unknown) as { id: string; name: string; email: string; phone_whatsapp: string | null } | null;
               return (
-                <div key={b.id} className="bg-white rounded-xl border border-[#cccccc] p-5">
+                <div key={b.id} className="bg-white rounded-2xl border border-line shadow-card p-5">
                   <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4">
                     <div className="space-y-1">
                       <div className="flex items-center gap-2 flex-wrap">

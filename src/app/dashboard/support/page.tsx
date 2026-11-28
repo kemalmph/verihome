@@ -46,7 +46,7 @@ export default async function SupportPage() {
   const user = await getCurrentUser();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/support" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
@@ -57,7 +57,7 @@ export default async function SupportPage() {
 
         <div className="grid grid-cols-1 md:grid-cols-2 gap-6">
           {SERVICES.map((service) => (
-            <div key={service.id} className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm">
+            <div key={service.id} className="bg-white rounded-2xl border border-line shadow-card p-6">
               <div className="flex items-start justify-between mb-4">
                 <div className="flex items-center gap-4">
                   <div className="w-12 h-12 bg-brand-soft rounded-xl flex items-center justify-center">

@@ -3,6 +3,7 @@
 import Link from "next/link";
 import { useRef } from "react";
 import { SidebarCollapseToggle } from "./SidebarCollapseToggle";
+import { Logo } from "@/components/brand/Logo";
 
 /** What the shell draws. Labels are already resolved (language included) by AppSidebar. */
 export interface ShellItem {
@@ -74,7 +75,7 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
           {sections.map((section) => (
             <div key={section.id} data-nav-section={section.id} className="mb-5 last:mb-0">
               <p
-                className={`px-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/35 whitespace-nowrap ${r("collapsed:sr-only")}`}
+                className={`px-4 pb-1.5 text-[11px] font-semibold uppercase tracking-wider text-white/40 whitespace-nowrap ${r("collapsed:sr-only")}`}
               >
                 {section.heading}
               </p>
@@ -97,10 +98,10 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
                       onClick={closeDrawer}
                       title={rail ? item.label : undefined}
                       aria-current={item.active ? "page" : undefined}
-                      className={`flex items-center gap-3 px-4 py-2.5 rounded-md transition-colors ${r("collapsed:justify-center collapsed:px-0")} ${
+                      className={`flex items-center gap-3 px-4 py-2.5 rounded-xl transition-colors ${r("collapsed:justify-center collapsed:px-0")} ${
                         item.active
-                          ? "text-[#80d7b6] bg-white/5"
-                          : "text-white/70 hover:text-white hover:bg-white/5"
+                          ? "bg-brand text-white font-semibold shadow-brand"
+                          : "text-white/75 hover:text-white hover:bg-white/[.06]"
                       }`}
                     >
                       <span aria-hidden className="material-symbols-outlined text-lg">{item.icon}</span>
@@ -125,7 +126,7 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
             href="/"
             onClick={closeDrawer}
             title={rail ? labels.home : undefined}
-            className={`flex items-center text-white/50 hover:text-white text-xs transition-colors ${rail ? "gap-3 px-3 py-2 rounded-md hover:bg-white/5 collapsed:justify-center collapsed:px-0" : "gap-2"}`}
+            className={`flex items-center text-white/50 hover:text-white text-xs transition-colors ${rail ? "gap-3 px-3 py-2 rounded-xl hover:bg-white/[.06] collapsed:justify-center collapsed:px-0" : "gap-2"}`}
           >
             <span aria-hidden className={`material-symbols-outlined ${rail ? "text-lg" : "text-sm"}`}>arrow_back</span>
             <span className={`whitespace-nowrap ${r("collapsed:sr-only")}`}>{labels.home}</span>
@@ -141,13 +142,13 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
       <details ref={drawer} className="md:hidden">
         <summary
           aria-label={labels.menu}
-          className="list-none cursor-pointer fixed top-0 left-0 right-0 h-14 bg-ink flex items-center px-4 z-50 gap-3 [&::-webkit-details-marker]:hidden"
+          className="list-none cursor-pointer fixed top-0 left-0 right-0 h-14 bg-panel flex items-center px-4 z-50 gap-3 [&::-webkit-details-marker]:hidden"
         >
           <span aria-hidden className="material-symbols-outlined text-white text-xl p-1.5">
             menu
           </span>
-          <p className="text-brand font-bold text-lg">Cosystem</p>
-          <p className="text-white/50 text-xs mt-0.5">{subtitle}</p>
+          <Logo variant="light" height={20} />
+          <p className="text-white/50 text-xs mt-1">{subtitle}</p>
         </summary>
 
         <div
@@ -155,7 +156,7 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
           className="fixed top-14 left-0 right-0 bottom-0 bg-black/50 z-40"
         />
 
-        <aside className="fixed top-14 left-0 bottom-0 w-64 bg-ink text-white flex flex-col z-50">
+        <aside className="fixed top-14 left-0 bottom-0 w-64 bg-panel text-white flex flex-col z-50 pt-3">
           {renderNav(false)}
         </aside>
       </details>
@@ -163,12 +164,15 @@ export function SidebarShell({ sections, subtitle, person, labels }: SidebarShel
       {/* ── Desktop: always there, full or folded to an icon rail ─────── */}
       <aside
         data-app-sidebar
-        className="hidden md:flex fixed top-0 left-0 h-full w-(--sidebar-w) transition-[width] bg-ink text-white flex-col z-50 overflow-hidden"
+        className="hidden md:flex fixed top-0 left-0 h-full w-(--sidebar-w) transition-[width] bg-panel text-white flex-col z-50 overflow-hidden"
       >
-        <div className="px-6 py-8 collapsed:px-0 collapsed:text-center whitespace-nowrap">
-          <p className="text-brand font-bold text-xl collapsed:hidden">Cosystem</p>
-          <p aria-hidden className="text-brand font-bold text-xl hidden collapsed:block">C</p>
-          <p className="text-white/50 text-xs mt-1 collapsed:hidden">{subtitle}</p>
+        <div className="px-8 pt-8 pb-7 collapsed:px-0 collapsed:text-center whitespace-nowrap">
+          <Logo variant="light" height={26} className="collapsed:hidden" />
+          {/* Folded rail: the wordmark's first letter and its orange dot. */}
+          <p aria-hidden className="hidden collapsed:block text-white font-black text-2xl leading-none tracking-tight">
+            c<span className="text-brand">.</span>
+          </p>
+          <p className="text-white/50 text-xs mt-2 collapsed:hidden">{subtitle}</p>
           {person && (
             <p className="text-white text-sm mt-3 font-medium truncate collapsed:hidden">{person}</p>
           )}

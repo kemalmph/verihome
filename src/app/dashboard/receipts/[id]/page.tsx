@@ -36,7 +36,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
-      <main className="min-h-screen bg-[#f6f3f2] px-4 py-10">
+      <main className="min-h-screen bg-canvas px-4 py-10">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between gap-4 mb-5 no-print">
             <Link href="/dashboard/statement" className="text-sm text-brand-ink font-semibold hover:underline inline-flex items-center gap-1">
@@ -46,7 +46,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             <PrintButton />
           </div>
 
-          <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
+          <article className="print-sheet bg-white rounded-2xl border border-line shadow-card p-8 md:p-10">
             {/* Header */}
             <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-ink">
               <div>
@@ -65,7 +65,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             </div>
 
             {/* Parties */}
-            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-6 border-b border-[#e4e2e1]">
+            <div className="grid grid-cols-1 sm:grid-cols-2 gap-6 py-6 border-b border-line">
               <div>
                 <p className="text-xs font-bold uppercase tracking-wider text-ink-3 mb-1">
                   Pelanggan <span className="font-normal normal-case">/ Customer</span>
@@ -85,7 +85,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             </div>
 
             {receipt.kind === "booking" && (
-              <div className="grid grid-cols-3 gap-4 py-5 border-b border-[#e4e2e1] text-sm">
+              <div className="grid grid-cols-3 gap-4 py-5 border-b border-line text-sm">
                 <Field label="Check-in" value={receipt.checkIn ?? "—"} />
                 <Field label="Check-out" value={receipt.checkOut ?? "—"} />
                 <Field label="Malam / Nights" value={String(receipt.nights ?? "—")} />
@@ -95,14 +95,14 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             {/* Lines */}
             <table className="w-full mt-6 text-sm">
               <thead>
-                <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                   <th className="text-left py-2 font-medium">Keterangan / Description</th>
                   <th className="text-right py-2 font-medium">Jumlah / Amount</th>
                 </tr>
               </thead>
               <tbody>
                 {charged.map((l) => (
-                  <tr key={l.label} className="border-b border-[#f6f3f2]">
+                  <tr key={l.label} className="border-b border-canvas">
                     <td className="py-2.5">
                       <span className="text-ink">{l.label}</span>
                       <span className="block text-xs text-ink-3">{l.labelEn}</span>
@@ -116,7 +116,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
             </table>
 
             {refundable.length > 0 && (
-              <div className="mt-5 bg-[#f6f3f2] rounded-lg p-4 avoid-break">
+              <div className="mt-5 bg-canvas rounded-lg p-4 avoid-break">
                 <p className="text-xs font-bold uppercase tracking-wider text-ink-2 mb-2">
                   Dapat dikembalikan <span className="font-normal normal-case">/ Refundable</span>
                 </p>
@@ -129,7 +129,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
                     <span className="tabular-nums text-ink">{fmt(l.amount)}</span>
                   </div>
                 ))}
-                <p className="text-xs text-ink-3 mt-2 pt-2 border-t border-[#e4e2e1]">
+                <p className="text-xs text-ink-3 mt-2 pt-2 border-t border-line">
                   Bukan biaya — dikembalikan sesuai syarat dan ketentuan.
                   <span className="block">Not a charge — returned per the terms of your booking.</span>
                 </p>
@@ -161,7 +161,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
               </p>
             )}
 
-            <p className="text-xs text-ink-3 mt-8 pt-4 border-t border-[#e4e2e1]">
+            <p className="text-xs text-ink-3 mt-8 pt-4 border-t border-line">
               Dokumen ini dibuat otomatis dan sah tanpa tanda tangan.
               <span className="block">This document is computer-generated and valid without signature.</span>
             </p>

@@ -36,7 +36,7 @@ export function RequestActions({ requestId, needsPhoneCheck }: { requestId: stri
       <input
         value={note} onChange={(e) => setNote(e.target.value)}
         placeholder="Catatan (opsional)"
-        className="w-full h-9 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand"
+        className="w-full h-9 px-3 rounded-lg border border-line-strong text-sm focus:outline-none focus:border-brand"
       />
 
       {error && <p className="text-sm text-red-600">{error}</p>}

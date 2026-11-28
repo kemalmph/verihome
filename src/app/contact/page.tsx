@@ -31,7 +31,7 @@ export default async function ContactPage() {
   return (
     <>
       <Navbar />
-      <main className="bg-[#f6f3f2] min-h-[70vh]">
+      <main className="bg-canvas min-h-[70vh]">
         <div className="max-w-5xl mx-auto px-4 md:px-16 py-16 md:py-24">
           <p className="text-xs font-semibold uppercase tracking-[0.12em] text-brand-ink">
             {t("nav.contact", lang)}
@@ -44,7 +44,7 @@ export default async function ContactPage() {
           </p>
 
           <div className="mt-12 grid grid-cols-1 md:grid-cols-2 gap-6">
-            <div className="bg-white border border-[#ddd7d4] rounded-2xl p-8">
+            <div className="bg-white border border-line-strong rounded-2xl p-8">
               <span className="material-symbols-outlined text-brand-ink text-3xl">
                 apartment
               </span>
@@ -62,7 +62,7 @@ export default async function ContactPage() {
               </Link>
             </div>
 
-            <div className="bg-white border border-[#ddd7d4] rounded-2xl p-8">
+            <div className="bg-white border border-line-strong rounded-2xl p-8">
               <span className="material-symbols-outlined text-brand-ink text-3xl">
                 support_agent
               </span>
@@ -103,7 +103,7 @@ export default async function ContactPage() {
             </div>
           </div>
 
-          <div className="mt-12 bg-white border border-[#ddd7d4] rounded-2xl p-8">
+          <div className="mt-12 bg-white border border-line-strong rounded-2xl p-8">
             <h2 className="text-lg font-bold text-ink">
               {t("contact.renterTitle", lang)}
             </h2>

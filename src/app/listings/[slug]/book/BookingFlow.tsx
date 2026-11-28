@@ -98,7 +98,7 @@ function StepDates({
   const today = new Date().toISOString().slice(0, 10);
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
       <h2 className="font-bold text-ink text-lg">{t("bf.s1title")}</h2>
 
       <div className="grid grid-cols-2 gap-4">
@@ -109,7 +109,7 @@ function StepDates({
             min={today}
             value={checkIn}
             onChange={(e) => { setCheckIn(e.target.value); setQuote(null); }}
-            className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
+            className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
           />
         </div>
         <div>
@@ -119,7 +119,7 @@ function StepDates({
             min={checkIn || today}
             value={checkOut}
             onChange={(e) => { setCheckOut(e.target.value); setQuote(null); }}
-            className="w-full border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
+            className="w-full border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
           />
         </div>
       </div>
@@ -132,7 +132,7 @@ function StepDates({
           max={20}
           value={guests}
           onChange={(e) => setGuests(Number(e.target.value))}
-          className="w-32 border border-[#cccccc] rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
+          className="w-32 border border-line-strong rounded-lg px-3 py-2 text-sm focus:outline-none focus:border-brand"
         />
       </div>
 
@@ -152,7 +152,7 @@ function StepDates({
       {error && <p className="text-sm text-red-600">{error}</p>}
 
       {quote && (
-        <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-2 text-sm">
+        <div className="bg-canvas rounded-lg p-4 space-y-2 text-sm">
           {/* Tier-aware price breakdown */}
           {quote.tier === "monthly" && (
             <div className="flex justify-between">
@@ -194,7 +194,7 @@ function StepDates({
               <span>IDR {fmt(quote.securityDeposit)}</span>
             </div>
           )}
-          <div className="flex justify-between font-bold border-t border-[#cccccc] pt-2">
+          <div className="flex justify-between font-bold border-t border-line-strong pt-2">
             <span>{t("bf.totalToPay")}</span>
             <span className="text-brand-ink">IDR {fmt(quote.total + quote.securityDeposit)}</span>
           </div>
@@ -222,7 +222,7 @@ function StepConfirm({
 }) {
   const t = useT();
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
       <h2 className="font-bold text-ink text-lg">{t("bf.s2title")}</h2>
 
       <div className="space-y-3 text-sm">
@@ -238,7 +238,7 @@ function StepConfirm({
             : []),
           { label: t("bf.totalTransfer"), value: `IDR ${fmt(quote.total + quote.securityDeposit)}` },
         ].map((row) => (
-          <div key={row.label} className="flex justify-between border-b border-[#f6f3f2] pb-2 last:border-0 last:font-bold">
+          <div key={row.label} className="flex justify-between border-b border-canvas pb-2 last:border-0 last:font-bold">
             <span className="text-ink-2">{row.label}</span>
             <span className="text-ink">{row.value}</span>
           </div>
@@ -250,7 +250,7 @@ function StepConfirm({
       </p>
 
       <div className="flex gap-3">
-        <button onClick={onBack} className="flex-1 py-3 border border-[#cccccc] rounded-lg text-sm font-semibold text-ink-2 hover:bg-[#f6f3f2]">
+        <button onClick={onBack} className="flex-1 py-3 border border-line-strong rounded-lg text-sm font-semibold text-ink-2 hover:bg-canvas">
           ← {t("bf.back")}
         </button>
         <button
@@ -274,7 +274,7 @@ function StepPayment({
 }) {
   const t = useT();
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+    <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
       <div className="flex items-center gap-3">
         <div className="w-10 h-10 rounded-full bg-brand/10 flex items-center justify-center">
           <span className="material-symbols-outlined text-brand-ink">check_circle</span>
@@ -285,13 +285,13 @@ function StepPayment({
         </div>
       </div>
 
-      <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
+      <div className="bg-canvas rounded-lg p-4 space-y-3">
         <p className="font-semibold text-sm text-ink">{t("bf.completePayment")}</p>
         <div className="space-y-1 text-sm">
           <div className="flex justify-between"><span className="text-ink-3">{t("view.bank")}</span><strong>{intent.bankName}</strong></div>
           <div className="flex justify-between"><span className="text-ink-3">{t("view.account")}</span><strong>{intent.accountNumber}</strong></div>
           <div className="flex justify-between"><span className="text-ink-3">{t("view.accountName")}</span><strong>{intent.accountHolder}</strong></div>
-          <div className="flex justify-between text-brand-ink font-bold border-t border-[#cccccc] pt-2 mt-2">
+          <div className="flex justify-between text-brand-ink font-bold border-t border-line-strong pt-2 mt-2">
             <span>{t("view.transferExactly")}</span>
             <span>IDR {fmt(intent.totalAmount + Number(intent.transferCode))}</span>
           </div>
@@ -375,7 +375,7 @@ export function BookingFlow({ propertyId, rate }: Pick<Props, "propertyId" | "ra
       <div className="flex items-center gap-2 text-xs text-ink-3 mb-2">
         {[t("bf.stepDates"), t("bf.stepConfirm"), t("bf.stepPayment")].map((label, i) => (
           <div key={label} className="flex items-center gap-2">
-            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-brand text-white" : step > i + 1 ? "bg-brand-light text-ink" : "bg-[#e4e2e1] text-ink-3"}`}>
+            <span className={`w-5 h-5 rounded-full flex items-center justify-center text-xs font-bold ${step === i + 1 ? "bg-brand text-white" : step > i + 1 ? "bg-brand-light text-ink" : "bg-line text-ink-3"}`}>
               {step > i + 1 ? "✓" : i + 1}
             </span>
             <span className={step === i + 1 ? "font-semibold text-ink" : ""}>{label}</span>

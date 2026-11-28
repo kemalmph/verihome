@@ -35,7 +35,7 @@ export function CreateAdminForm() {
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-6 space-y-4">
+    <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-4">
       <div className="flex items-center justify-between">
         <h3 className="font-semibold text-ink flex items-center gap-2">
           <span className="material-symbols-outlined text-brand-ink">admin_panel_settings</span>
@@ -59,7 +59,7 @@ export function CreateAdminForm() {
       <form onSubmit={handleSubmit} className="space-y-4">
         <div>
           <label className="text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1">Role</label>
-          <select name="role" required defaultValue="" className="w-full md:w-64 h-11 px-3 rounded-lg border border-[#cccccc] text-sm bg-white">
+          <select name="role" required defaultValue="" className="w-full md:w-64 h-11 px-3 rounded-lg border border-line-strong text-sm bg-white">
             <option value="" disabled>Choose a role…</option>
             <option value="superadmin">Superadmin</option>
             <option value="admin_general">Admin — general</option>
@@ -75,7 +75,7 @@ export function CreateAdminForm() {
               name="name"
               required
               placeholder="Budi Santoso"
-              className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
           <div>
@@ -85,7 +85,7 @@ export function CreateAdminForm() {
               type="email"
               required
               placeholder="budi@cosystem.co"
-              className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
           <div>
@@ -96,7 +96,7 @@ export function CreateAdminForm() {
               required
               minLength={8}
               placeholder="min 8 characters"
-              className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
         </div>
@@ -114,7 +114,7 @@ export function CreateAdminForm() {
           <button
             type="button"
             onClick={() => { setOpen(false); setResult(null); }}
-            className="px-5 py-2 border border-[#cccccc] text-ink-2 rounded-lg text-sm hover:bg-[#f6f3f2]"
+            className="px-5 py-2 border border-line-strong text-ink-2 rounded-lg text-sm hover:bg-canvas"
           >
             Cancel
           </button>

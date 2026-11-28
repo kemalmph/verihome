@@ -36,7 +36,7 @@ export function OwnerDocuments({ documents }: { documents: Doc[] }) {
   }
 
   return (
-    <section className="bg-white rounded-xl border border-[#cccccc] p-5">
+    <section className="bg-white rounded-2xl border border-line shadow-card p-5">
       <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
         {t("owner.profile.documents")}
       </h2>
@@ -65,7 +65,7 @@ export function OwnerDocuments({ documents }: { documents: Doc[] }) {
               )}
 
               <label className="inline-block">
-                <span className="px-3 py-1.5 border border-[#cccccc] text-ink-2 text-xs font-semibold rounded-lg hover:bg-[#f6f3f2] cursor-pointer inline-block">
+                <span className="px-3 py-1.5 border border-line-strong text-ink-2 text-xs font-semibold rounded-lg hover:bg-canvas cursor-pointer inline-block">
                   {busy === kind ? t("common.loading") : t("owner.profile.upload")}
                 </span>
                 <input

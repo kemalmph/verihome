@@ -32,7 +32,7 @@ export default async function PlacementsPage() {
     .reduce((s, p) => s + Number(p.commission_amount ?? 0), 0);
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/placements" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <div className="mb-8">
@@ -44,12 +44,12 @@ export default async function PlacementsPage() {
         </div>
 
         <div className="grid grid-cols-1 sm:grid-cols-2 gap-4 mb-8">
-          <div className="bg-white rounded-xl border border-[#cccccc] p-5">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-5">
             <p className="text-xs font-semibold text-ink-3 uppercase tracking-wider">Belum dibayar</p>
             <p className="text-2xl font-bold text-ink mt-1 tabular-nums">IDR {fmt(outstanding)}</p>
             <p className="text-xs text-ink-3 mt-1">Piutang komisi</p>
           </div>
-          <div className="bg-white rounded-xl border border-[#cccccc] p-5">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-5">
             <p className="text-xs font-semibold text-ink-3 uppercase tracking-wider">Sudah diterima</p>
             <p className="text-2xl font-bold text-brand-ink mt-1 tabular-nums">IDR {fmt(collected)}</p>
             <p className="text-xs text-ink-3 mt-1">Masuk ke kas</p>
@@ -58,11 +58,11 @@ export default async function PlacementsPage() {
 
         <PlacementForm properties={properties ?? []} />
 
-        <div className="bg-white rounded-xl border border-[#cccccc] overflow-hidden mt-8">
+        <div className="bg-white rounded-2xl border border-line shadow-card overflow-hidden mt-8">
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: 720 }}>
               <thead>
-                <tr className="bg-[#f6f3f2] border-b border-line-strong text-xs uppercase tracking-wider text-ink-2">
+                <tr className="bg-canvas border-b border-line-strong text-xs uppercase tracking-wider text-ink-2">
                   <th className="text-left px-5 py-3 font-bold">Properti</th>
                   <th className="text-right px-5 py-3 font-bold">Sewa/bulan</th>
                   <th className="text-right px-5 py-3 font-bold">Komisi</th>
@@ -71,7 +71,7 @@ export default async function PlacementsPage() {
                   <th className="px-5 py-3" />
                 </tr>
               </thead>
-              <tbody className="divide-y divide-[#f6f3f2]">
+              <tbody className="divide-y divide-canvas">
                 {rows.map((p) => (
                   <PlacementRow
                     key={p.id}

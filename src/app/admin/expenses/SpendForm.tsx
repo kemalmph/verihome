@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { recordSpend } from "@/lib/actions/expense-actions";
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const input = "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
 const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 const fmt = (n: number) => new Intl.NumberFormat("id-ID").format(Math.round(n));
 
@@ -32,7 +32,7 @@ export function SpendForm({ available }: { available: number }) {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-5">
       <h2 className="font-bold text-ink">Catat pengeluaran</h2>
 
       {error && (

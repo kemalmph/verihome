@@ -23,12 +23,12 @@ export default async function OwnerPlacementsPage() {
   const [placements, properties] = await Promise.all([ownerPlacements(), ownerProperties()]);
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/placements" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <h1 className="text-3xl font-bold text-ink mb-6">{t("owner.placements.title")}</h1>
 
-        <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-8">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-8">
           <h2 className="font-semibold text-ink text-sm">{t("owner.placements.report")}</h2>
           <p className="text-xs text-ink-3 mt-1 mb-4 max-w-xl">{t("owner.placements.reportNote")}</p>
           <ReportPlacement properties={properties.map((p) => ({ id: p.id as string, name: p.name as string }))} />
@@ -37,7 +37,7 @@ export default async function OwnerPlacementsPage() {
         {placements.length === 0 ? (
           <p className="text-ink-2">{t("owner.placements.none")}</p>
         ) : (
-          <div className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+          <div className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
             {placements.map((p) => {
               const s = STATUS[p.status] ?? { label: p.status, cls: "bg-gray-100 text-gray-600" };
               return (

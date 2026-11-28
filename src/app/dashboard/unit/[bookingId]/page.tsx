@@ -38,7 +38,7 @@ export default async function UnitDetailPage({
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/unit" userName={user.name} isActiveClient={user.is_active_client} />
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-3xl">
         <Link href="/dashboard/unit" className="text-sm text-brand-ink hover:underline">← {t("unit.title")}</Link>
@@ -58,7 +58,7 @@ export default async function UnitDetailPage({
         )}
 
         {/* Where and when */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">Alamat & jadwal</h2>
 
           {u.property.address ? (
@@ -96,7 +96,7 @@ export default async function UnitDetailPage({
 
         {/* Rules and facilities */}
         {(u.rules || u.facilities.length > 0 || u.includedUtilities.length > 0) && (
-          <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
+          <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
             <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
               {t("unit.rules")} &amp; {t("unit.facilities")}
             </h2>
@@ -115,7 +115,7 @@ export default async function UnitDetailPage({
 
         {/* Area */}
         {u.area && (
-          <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
+          <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
             <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">{t("unit.area")}</h2>
             <p className="text-sm text-ink-2">
               {[
@@ -132,13 +132,13 @@ export default async function UnitDetailPage({
 
         {/* Assessment */}
         {u.rla && (
-          <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
+          <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
             <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">{t("unit.assessment")}</h2>
             <div className="grid grid-cols-4 gap-2 mb-4">
               {SCORES.map(([k, label]) => {
                 const v = (u.rla as Record<string, unknown>)[k];
                 return (
-                  <div key={k} className="bg-[#f6f3f2] rounded-lg p-2 text-center">
+                  <div key={k} className="bg-canvas rounded-lg p-2 text-center">
                     <p className="text-[10px] text-ink-3 leading-tight">{label}</p>
                     <p className="text-base font-bold text-ink tabular-nums">{v == null ? "—" : String(v)}</p>
                   </div>
@@ -163,7 +163,7 @@ export default async function UnitDetailPage({
         )}
 
         {/* Money */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">{t("unit.money")}</h2>
           <dl className="space-y-2 text-sm">
             <div className="flex justify-between gap-3">
@@ -195,7 +195,7 @@ export default async function UnitDetailPage({
         </section>
 
         {/* Cancellation */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">{t("unit.cancellation")}</h2>
           <div className="flex items-baseline justify-between gap-3">
             <span className="text-sm text-ink-2">{t("unit.refundNow")}</span>
@@ -212,7 +212,7 @@ export default async function UnitDetailPage({
         </section>
 
         {/* Contact */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-5">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-5">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">{t("unit.contact")}</h2>
           <p className="text-sm text-ink font-medium">{t("unit.contactSupport")}</p>
           <Link href="/dashboard/support" className="text-sm text-brand-ink hover:underline">Hubungi dukungan →</Link>

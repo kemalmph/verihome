@@ -82,7 +82,7 @@ export function BookingDocuments({
   }
 
   return (
-    <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden mt-8">
+    <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden mt-8">
       <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
         Dokumen kontrak
       </h2>
@@ -123,7 +123,7 @@ export function BookingDocuments({
       <form onSubmit={onUpload} className="px-5 py-4 border-t border-[#e8e3e0] flex flex-wrap items-end gap-2">
         <label className="block">
           <span className="block text-xs text-ink-3 mb-1">Jenis</span>
-          <select name="kind" defaultValue="contract" className="border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm bg-white">
+          <select name="kind" defaultValue="contract" className="border border-line-strong rounded-lg px-3 py-2 text-sm bg-white">
             {KINDS.map(([v, l]) => <option key={v} value={v}>{l}</option>)}
           </select>
         </label>
@@ -132,7 +132,7 @@ export function BookingDocuments({
           <input
             name="title"
             placeholder="Opsional"
-            className="border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm w-56"
+            className="border border-line-strong rounded-lg px-3 py-2 text-sm w-56"
           />
         </label>
         <label className="block">
@@ -142,7 +142,7 @@ export function BookingDocuments({
             type="file"
             name="file"
             accept=".pdf,.jpg,.jpeg,.png,.webp,.doc,.docx"
-            className="text-sm file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border file:border-[#ddd7d4] file:bg-white file:text-ink-2 file:text-sm"
+            className="text-sm file:mr-3 file:px-3 file:py-1.5 file:rounded-lg file:border file:border-line-strong file:bg-white file:text-ink-2 file:text-sm"
           />
         </label>
         <button

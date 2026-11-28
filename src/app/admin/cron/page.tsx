@@ -30,7 +30,7 @@ export default async function AdminCronPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/cron" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
@@ -42,7 +42,7 @@ export default async function AdminCronPage() {
           </p>
         </header>
 
-        <div className="mb-8 bg-white rounded-xl border border-[#cccccc] shadow-sm p-5">
+        <div className="mb-8 bg-white rounded-2xl border border-line shadow-card p-5">
           <RunNowButton />
           <p className="text-xs text-ink-3 mt-2">
             Menjalankan langkah yang sama dengan penjadwal, tanpa menunggu sehari.
@@ -50,7 +50,7 @@ export default async function AdminCronPage() {
         </div>
 
         {groups.size === 0 ? (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-10 text-center">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-10 text-center">
             <p className="text-ink-2">Belum ada catatan. Jalankan sekali untuk mengisinya.</p>
           </div>
         ) : (
@@ -61,11 +61,11 @@ export default async function AdminCronPage() {
                 <section
                   key={key}
                   className={`bg-white rounded-xl border shadow-sm overflow-hidden ${
-                    anyFailed ? "border-[#cf2f52]" : "border-[#cccccc]"
+                    anyFailed ? "border-[#cf2f52]" : "border-line-strong"
                   }`}
                 >
                   <div className={`px-5 py-3 border-b flex items-center justify-between gap-3 flex-wrap ${
-                    anyFailed ? "bg-[#fbeeec] border-[#e2b3ab]" : "border-[#e4e2e1]"
+                    anyFailed ? "bg-[#fbeeec] border-[#e2b3ab]" : "border-line"
                   }`}>
                     <p className="font-semibold text-sm text-ink">{wib(steps[0].started_at)}</p>
                     {anyFailed ? (
@@ -82,7 +82,7 @@ export default async function AdminCronPage() {
                   <div className="overflow-x-auto">
                     <table className="w-full text-sm" style={{ minWidth: 560 }}>
                       <thead>
-                        <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                        <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                           <th className="text-left px-5 py-2 font-medium">Langkah</th>
                           <th className="text-right px-3 py-2 font-medium">Layak</th>
                           <th className="text-right px-3 py-2 font-medium">Berhasil</th>

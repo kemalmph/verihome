@@ -23,7 +23,7 @@ export default async function OwnerBookingsPage() {
   const bookings = await ownerBookings();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/bookings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <h1 className="text-3xl font-bold text-ink">{t("owner.bookings.title")}</h1>
@@ -36,7 +36,7 @@ export default async function OwnerBookingsPage() {
             {bookings.map((b) => {
               const s = STATUS[b.status] ?? { label: b.status, cls: "bg-gray-100 text-gray-600" };
               return (
-                <article key={b.id} className="bg-white rounded-xl border border-[#cccccc] p-5">
+                <article key={b.id} className="bg-white rounded-2xl border border-line shadow-card p-5">
                   <div className="flex items-start justify-between gap-3 flex-wrap">
                     <div className="min-w-0">
                       <p className="font-semibold text-ink">{b.propertyName}</p>

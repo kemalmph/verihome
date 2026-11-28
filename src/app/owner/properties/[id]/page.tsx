@@ -73,7 +73,7 @@ export default async function OwnerPropertyPage({
   ];
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/properties" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-4xl">
         <Link href="/owner/properties" className="text-sm text-brand-ink hover:underline">← {t("owner.nav.properties")}</Link>
@@ -84,7 +84,7 @@ export default async function OwnerPropertyPage({
         </header>
 
         {/* Status */}
-        <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
+        <section className="mb-8 bg-white rounded-2xl border border-line shadow-card p-5">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
             {t("owner.property.status")}
           </h2>
@@ -121,15 +121,15 @@ export default async function OwnerPropertyPage({
         </section>
 
         {/* Rates and split */}
-        <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
+        <section className="mb-8 bg-white rounded-2xl border border-line shadow-card p-5">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
             {t("owner.property.rates")}
           </h2>
 
           {perNight > 0 ? (
             <>
-              <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm mb-4">
-                <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
+              <div className="border border-line rounded-lg overflow-hidden text-sm mb-4">
+                <div className="bg-canvas px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
                   {t("owner.property.perNight")}
                 </div>
                 <div className="divide-y divide-[#f0eeed]">
@@ -159,13 +159,13 @@ export default async function OwnerPropertyPage({
             <p className="text-sm text-ink-2">Tarif harian belum diatur untuk properti ini.</p>
           )}
 
-          <div className="mt-5 pt-4 border-t border-[#e4e2e1]">
+          <div className="mt-5 pt-4 border-t border-line">
             <ProposeRate propertyId={property.id} current={rate as Record<string, unknown> | null} />
           </div>
         </section>
 
         {/* Assessment — read only */}
-        <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
+        <section className="mb-8 bg-white rounded-2xl border border-line shadow-card p-5">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-1">
             {t("owner.property.assessment")}
           </h2>
@@ -177,7 +177,7 @@ export default async function OwnerPropertyPage({
                 {SCORES.map(([k, label]) => {
                   const v = (rla as Record<string, unknown>)[k];
                   return (
-                    <div key={k} className="bg-[#f6f3f2] rounded-lg p-3">
+                    <div key={k} className="bg-canvas rounded-lg p-3">
                       <p className="text-[11px] text-ink-3 leading-tight">{label}</p>
                       <p className="text-lg font-bold text-ink tabular-nums">
                         {v == null ? "—" : `${v}/10`}
@@ -210,7 +210,7 @@ export default async function OwnerPropertyPage({
         </section>
 
         {/* Media — read only */}
-        <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
+        <section className="mb-8 bg-white rounded-2xl border border-line shadow-card p-5">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
             {t("owner.property.media")}
           </h2>
@@ -234,7 +234,7 @@ export default async function OwnerPropertyPage({
 
         {/* Area + rules */}
         {(area || details) && (
-          <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
+          <section className="mb-8 bg-white rounded-2xl border border-line shadow-card p-5">
             <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">Lingkungan & fasilitas</h2>
             {area && (
               <p className="text-sm text-ink-2 mb-3">

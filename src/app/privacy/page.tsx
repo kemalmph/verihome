@@ -20,7 +20,7 @@ export default async function Page() {
   return (
     <>
       <Navbar />
-      <main className="bg-[#f6f3f2] min-h-[60vh]">
+      <main className="bg-canvas min-h-[60vh]">
         <div className="max-w-3xl mx-auto px-4 md:px-16 py-16 md:py-24">
           <h1 className="text-3xl md:text-4xl font-bold text-ink">{t("legal.privacy.title", lang)}</h1>
           <p className="mt-6 text-ink-2 text-lg leading-relaxed">

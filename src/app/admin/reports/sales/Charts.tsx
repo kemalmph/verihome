@@ -25,7 +25,7 @@ export function StreamBars({ data }: {
 
   if (rows.length === 0) {
     return (
-      <div className="text-sm text-ink-3 py-8 text-center border border-dashed border-[#cccccc] rounded-lg">
+      <div className="text-sm text-ink-3 py-8 text-center border border-dashed border-line-strong rounded-lg">
         Belum ada pendapatan pada periode ini.
       </div>
     );
@@ -85,7 +85,7 @@ export function TrendLines({ months, series }: {
   const live = series.filter((s) => s.values.some((v) => v > 0));
   if (live.length === 0) {
     return (
-      <div className="text-sm text-ink-3 py-10 text-center border border-dashed border-[#cccccc] rounded-lg">
+      <div className="text-sm text-ink-3 py-10 text-center border border-dashed border-line-strong rounded-lg">
         Belum ada pendapatan tercatat dalam 12 bulan terakhir.
       </div>
     );

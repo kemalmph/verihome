@@ -4,10 +4,10 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { submitSurvey } from "@/lib/actions/survey-actions";
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
-const area = "w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const input = "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const area = "w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
 const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
-const sectionCls = "bg-white rounded-xl border border-[#cccccc] shadow-sm p-6 space-y-5";
+const sectionCls = "bg-white rounded-2xl border border-line shadow-card p-6 space-y-5";
 
 const SCORES = [
   { name: "building_condition", label: "Building Condition", hint: "Structure, walls, fittings" },
@@ -22,7 +22,7 @@ const SCORES = [
 
 function SectionHeading({ icon, title, subtitle }: { icon: string; title: string; subtitle?: string }) {
   return (
-    <div className="flex items-start gap-3 pb-2 border-b border-[#e4e2e1]">
+    <div className="flex items-start gap-3 pb-2 border-b border-line">
       <span className="material-symbols-outlined text-brand-ink text-xl mt-0.5">{icon}</span>
       <div>
         <h3 className="font-semibold text-ink">{title}</h3>
@@ -52,7 +52,7 @@ function ScoreSlider({ name, label, hint }: { name: string; label: string; hint:
           value={val} onChange={(e) => setVal(Number(e.target.value))}
           className="flex-1 accent-brand h-2"
         />
-        <div className="w-20 bg-[#e4e2e1] h-2 rounded-full overflow-hidden flex-shrink-0">
+        <div className="w-20 bg-line h-2 rounded-full overflow-hidden flex-shrink-0">
           <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
         </div>
       </div>
@@ -125,7 +125,7 @@ export function SurveyForm({ propertyId, propertyName, defaultSurveyor = "" }: {
           </button>
           <button
             onClick={() => setSaved(false)}
-            className="px-5 py-2.5 border border-[#cccccc] text-ink-2 rounded-lg text-sm font-semibold hover:border-brand"
+            className="px-5 py-2.5 border border-line-strong text-ink-2 rounded-lg text-sm font-semibold hover:border-brand"
           >
             Record another visit
           </button>

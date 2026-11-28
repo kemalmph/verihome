@@ -222,7 +222,7 @@ export function BuildListingPageClient({
 
         {/* Right: survey entry + Tally import + tips */}
         <div className="space-y-4 sticky top-8">
-          <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-3">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-3">
             <div className="flex items-center gap-2">
               <span className="material-symbols-outlined text-brand-ink">edit_note</span>
               <h3 className="font-bold text-ink">Record a survey</h3>
@@ -299,7 +299,7 @@ export function BuildListingPageClient({
           </div>
 
           {/* Build checklist */}
-          <div className="bg-white rounded-xl border border-[#cccccc] p-5 space-y-3 text-sm text-ink-2">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-5 space-y-3 text-sm text-ink-2">
             <p className="font-semibold text-ink flex items-center gap-2">
               <span className="material-symbols-outlined text-brand-ink text-base">info</span>
               Build checklist

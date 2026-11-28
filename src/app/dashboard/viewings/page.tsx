@@ -40,7 +40,7 @@ export default async function ViewingsPage() {
   const rows = viewings ?? [];
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/viewings" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
@@ -72,7 +72,7 @@ export default async function ViewingsPage() {
             </Link>
           </div>
         ) : (
-          <section className="bg-white rounded-xl border border-[#cccccc] shadow-sm divide-y divide-[#f0eeed]">
+          <section className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
             {rows.map((v) => {
               const p = v.property as unknown as { name: string; area: string | null; slug: string } | null;
               const s = STATUS[v.status as string] ?? { label: String(v.status), cls: "bg-gray-100 text-gray-600" };

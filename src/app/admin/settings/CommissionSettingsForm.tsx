@@ -45,8 +45,8 @@ export function CommissionSettingsForm({
   const margin  = parsed === null ? null : Math.round((example * parsed) / 100);
 
   return (
-    <form onSubmit={onSubmit} className="bg-white rounded-xl border border-[#cccccc] shadow-sm">
-      <div className="p-6 border-b border-[#e4e2e1]">
+    <form onSubmit={onSubmit} className="bg-white rounded-2xl border border-line shadow-card">
+      <div className="p-6 border-b border-line">
         <h2 className="text-lg font-semibold text-ink">Komisi platform bawaan</h2>
         <p className="text-sm text-ink-2 mt-1 max-w-2xl">
           Bagian Cosystem dari harga sewa untuk properti yang belum punya komisi
@@ -71,7 +71,7 @@ export function CommissionSettingsForm({
                 value={pct}
                 onChange={(e) => { setPct(e.target.value); setSaved(false); setError(""); }}
                 placeholder="mis. 15"
-                className="w-full border border-[#cccccc] rounded-lg px-3 py-2 pr-9 text-ink focus:outline-none focus:border-brand"
+                className="w-full border border-line-strong rounded-lg px-3 py-2 pr-9 text-ink focus:outline-none focus:border-brand"
               />
               <span className="absolute right-3 top-1/2 -translate-y-1/2 text-ink-3 text-sm">%</span>
             </div>
@@ -89,8 +89,8 @@ export function CommissionSettingsForm({
           </div>
 
           {valid && parsed !== null && margin !== null && (
-            <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm self-start">
-              <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
+            <div className="border border-line rounded-lg overflow-hidden text-sm self-start">
+              <div className="bg-canvas px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
                 Contoh — sewa {example.toLocaleString("id-ID")}
               </div>
               <div className="divide-y divide-[#f0eeed]">
@@ -112,7 +112,7 @@ export function CommissionSettingsForm({
         </div>
 
         {/* The question everyone asks first, answered with a number. */}
-        <div className="bg-[#f6f3f2] border border-[#e4e2e1] rounded-lg p-4 flex items-start gap-3">
+        <div className="bg-canvas border border-line rounded-lg p-4 flex items-start gap-3">
           <span className="material-symbols-outlined text-ink-2 text-lg">lock_clock</span>
           <div className="text-sm text-ink-2">
             <p className="font-semibold text-ink">
@@ -141,7 +141,7 @@ export function CommissionSettingsForm({
         )}
       </div>
 
-      <div className="px-6 py-4 border-t border-[#e4e2e1] flex items-center gap-4 flex-wrap">
+      <div className="px-6 py-4 border-t border-line flex items-center gap-4 flex-wrap">
         <button
           type="submit"
           disabled={!dirty || !valid || isPending}

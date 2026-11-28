@@ -28,7 +28,7 @@ export default async function ConsultationSuccessPage() {
           {t("consultOk.body", lang)}
         </p>
 
-        <div className="bg-[#f6f3f2] rounded-xl border border-line-strong p-6 mb-8 text-left space-y-3">
+        <div className="bg-canvas rounded-xl border border-line-strong p-6 mb-8 text-left space-y-3">
           {[
             { icon: "calendar_today", text: t("consultOk.i1", lang) },
             { icon: "videocam", text: t("consultOk.i2", lang) },
@@ -50,7 +50,7 @@ export default async function ConsultationSuccessPage() {
           </Link>
           <Link
             href="/listings"
-            className="px-6 py-3 border border-ink text-ink rounded-lg font-semibold hover:bg-[#f6f3f2] transition-colors"
+            className="px-6 py-3 border border-ink text-ink rounded-lg font-semibold hover:bg-canvas transition-colors"
           >
             {t("consultOk.browseMore", lang)}
           </Link>

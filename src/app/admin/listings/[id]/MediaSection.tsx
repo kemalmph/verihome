@@ -73,7 +73,7 @@ export function MediaSection({ propertyId, initialMedia }: MediaSectionProps) {
   const activeConfig = TABS.find((t) => t.category === activeTab)!;
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
+    <div className="bg-white rounded-2xl border border-line shadow-card overflow-hidden">
       {/* Section header */}
       <div className="px-6 py-5 border-b border-[#e8e8e8] flex items-center justify-between">
         <div className="flex items-center gap-2">
@@ -103,7 +103,7 @@ export function MediaSection({ propertyId, initialMedia }: MediaSectionProps) {
             >
               {tab.label}
               <span className={`px-1.5 py-0.5 rounded-full text-xs font-bold ${
-                count >= tab.min ? "bg-brand-soft text-brand-ink" : "bg-[#f6f3f2] text-ink-3"
+                count >= tab.min ? "bg-brand-soft text-brand-ink" : "bg-canvas text-ink-3"
               }`}>
                 {count}
               </span>

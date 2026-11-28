@@ -16,7 +16,7 @@ export default async function DashboardPage() {
   const firstName = user.name.split(" ")[0];
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar
         activeHref="/dashboard"
         userName={user.name}
@@ -43,7 +43,7 @@ export default async function DashboardPage() {
           ].map((stat) => (
             <div
               key={stat.label}
-              className="bg-white border border-[#cccccc] p-6 rounded-lg shadow-sm flex items-center gap-4"
+              className="bg-white border border-line p-6 rounded-2xl shadow-card flex items-center gap-4"
             >
               <div className="bg-[#f0eded] p-3 rounded-full">
                 <span className={`material-symbols-outlined ${stat.color}`}>{stat.icon}</span>
@@ -95,16 +95,16 @@ export default async function DashboardPage() {
                   <span className="material-symbols-outlined text-lg">video_call</span>
                   Join Google Meet
                 </button>
-                <button className="border border-ink-3 text-ink px-6 py-3 rounded-md font-medium hover:bg-[#f6f3f2]">
+                <button className="border border-ink-3 text-ink px-6 py-3 rounded-md font-medium hover:bg-canvas">
                   Reschedule
                 </button>
               </div>
             </section>
 
             {/* Active Services */}
-            <section className="bg-white border border-[#cccccc] rounded-lg p-6 shadow-sm">
+            <section className="bg-white border border-line rounded-2xl p-6 shadow-card">
               <h3 className="text-xl font-semibold text-ink mb-6">Active Client Services</h3>
-              <div className="flex items-center justify-between p-4 bg-[#f6f3f2] rounded-lg mb-4">
+              <div className="flex items-center justify-between p-4 bg-canvas rounded-lg mb-4">
                 <div className="flex items-center gap-4">
                   <div className="bg-white p-2 rounded-md shadow-sm">
                     <span className="material-symbols-outlined text-brand-ink">translate</span>
@@ -124,7 +124,7 @@ export default async function DashboardPage() {
           {/* Right */}
           <div className="lg:col-span-5 space-y-6">
             {/* Saved Listings */}
-            <section className="bg-white border border-[#cccccc] rounded-lg shadow-sm">
+            <section className="bg-white border border-line rounded-2xl shadow-card">
               <div className="p-6 border-b border-line-strong">
                 <h3 className="text-xl font-semibold text-ink">Saved Listings</h3>
               </div>
@@ -133,7 +133,7 @@ export default async function DashboardPage() {
                   const price = new Intl.NumberFormat("id-ID").format(p.price_per_month);
                   return (
                     <div key={p.id} className="flex gap-4 group cursor-pointer">
-                      <div className="w-24 h-20 rounded-md bg-[#e4e2e1] flex-shrink-0 flex items-center justify-center">
+                      <div className="w-24 h-20 rounded-md bg-line flex-shrink-0 flex items-center justify-center">
                         <span className="material-symbols-outlined text-ink-3 text-xl">apartment</span>
                       </div>
                       <div className="flex-1 min-w-0">
@@ -148,7 +148,7 @@ export default async function DashboardPage() {
                   );
                 })}
               </div>
-              <div className="p-4 bg-[#f6f3f2] text-center rounded-b-lg">
+              <div className="p-4 bg-canvas text-center rounded-b-lg">
                 <Link href="/dashboard/saved" className="text-brand-ink text-sm font-bold hover:underline">
                   View All Saved Listings
                 </Link>

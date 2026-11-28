@@ -157,7 +157,7 @@ function FlatGallery({ photos, title, videoUrl }: { photos: string[]; title: str
 
   if (!photos.length) {
     return (
-      <div className="aspect-video bg-[#e4e2e1] rounded-xl flex items-center justify-center">
+      <div className="aspect-video bg-line rounded-xl flex items-center justify-center">
         <span className="material-symbols-outlined text-ink-3 text-6xl">image</span>
       </div>
     );
@@ -223,7 +223,7 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
 
   if (availableTabs.length === 0) {
     return (
-      <div className="aspect-video bg-[#e4e2e1] rounded-xl flex items-center justify-center">
+      <div className="aspect-video bg-line rounded-xl flex items-center justify-center">
         <span className="material-symbols-outlined text-ink-3 text-6xl">image</span>
       </div>
     );
@@ -243,7 +243,7 @@ function CategorizedGallery({ categorized, title, videoUrl }: { categorized: Cat
             key={tab.key}
             onClick={() => handleTabChange(tab.key)}
             className={`flex items-center gap-1.5 px-3 py-1.5 rounded-full text-sm font-medium transition-colors ${
-              activeTab === tab.key ? "bg-brand text-white" : "bg-[#e4e2e1] text-ink-2 hover:bg-line-strong"
+              activeTab === tab.key ? "bg-brand text-white" : "bg-line text-ink-2 hover:bg-line-strong"
             }`}
           >
             <span className="material-symbols-outlined text-base">{tab.icon}</span>

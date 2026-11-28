@@ -33,7 +33,7 @@ export default async function AdminInventoryPage() {
     .order("name");
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/inventory" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="mb-8">
@@ -41,10 +41,10 @@ export default async function AdminInventoryPage() {
           <p className="text-ink-3 text-sm mt-1">All properties with rental mode and short-stay status</p>
         </div>
 
-        <div className="overflow-x-auto bg-white rounded-xl border border-[#cccccc]">
+        <div className="overflow-x-auto bg-white rounded-2xl border border-line shadow-card">
           <table className="w-full text-sm">
             <thead>
-              <tr className="border-b border-[#cccccc] text-ink-3 text-xs uppercase">
+              <tr className="border-b border-line-strong text-ink-3 text-xs uppercase">
                 <th className="text-left py-3 px-4">Property</th>
                 <th className="text-left py-3 px-4">Status</th>
                 <th className="text-left py-3 px-4">Rental Mode</th>
@@ -61,7 +61,7 @@ export default async function AdminInventoryPage() {
                 const isBlocked  = blocks.some((b) => b.start_date <= today && b.end_date > today);
 
                 return (
-                  <tr key={p.id} className="border-b border-[#f6f3f2] hover:bg-[#f6f3f2]">
+                  <tr key={p.id} className="border-b border-canvas hover:bg-canvas">
                     <td className="py-3 px-4">
                       <div className="font-semibold text-ink">{p.name}</div>
                       <div className="text-xs text-ink-3">{p.area}</div>

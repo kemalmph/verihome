@@ -9,7 +9,7 @@ import {
 
 const rupiah = (n: number) => `Rp${Math.round(n).toLocaleString("id-ID")}`;
 const inputCls =
-  "w-full border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
+  "w-full border border-line-strong rounded-lg px-3 py-2 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 interface CatalogItem {
   id: string; name: string; unit: string; cost_price: number; sell_price: number; kind: string;
@@ -57,7 +57,7 @@ export function BookingItems({
   }
 
   return (
-    <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
+    <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden">
       <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
         Konsumsi &amp; barang
       </h2>
@@ -111,7 +111,7 @@ export function BookingItems({
       <form onSubmit={onAdd} className="px-5 py-4 border-t border-[#e8e3e0] flex flex-wrap items-end gap-2">
         <label className="block">
           <span className="block text-xs text-ink-3 mb-1">Item</span>
-          <select name="item_id" defaultValue="" className="border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm bg-white min-w-48">
+          <select name="item_id" defaultValue="" className="border border-line-strong rounded-lg px-3 py-2 text-sm bg-white min-w-48">
             <option value="">— pilih dari katalog —</option>
             {catalog.map((c) => (
               <option key={c.id} value={c.id}>
@@ -122,10 +122,10 @@ export function BookingItems({
         </label>
         <label className="block">
           <span className="block text-xs text-ink-3 mb-1">Jumlah</span>
-          <input name="qty" type="number" min="1" defaultValue={1} className="border border-[#ddd7d4] rounded-lg px-3 py-2 text-sm w-24" />
+          <input name="qty" type="number" min="1" defaultValue={1} className="border border-line-strong rounded-lg px-3 py-2 text-sm w-24" />
         </label>
         <label className="flex items-center gap-2 text-sm text-ink-2 pb-2.5">
-          <input type="checkbox" name="included" className="rounded border-[#ddd7d4]" />
+          <input type="checkbox" name="included" className="rounded border-line-strong" />
           Termasuk harga sewa
         </label>
         <button
@@ -138,7 +138,7 @@ export function BookingItems({
         <button
           type="button"
           onClick={() => { setNewItem((v) => !v); setError(""); }}
-          className="px-3 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-[#f6f3f2]"
+          className="px-3 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
         >
           {newItem ? "Tutup" : "Item baru"}
         </button>
@@ -224,7 +224,7 @@ export function UtilitiesToggle({
           checked={on}
           disabled={busy}
           onChange={(e) => toggle(e.target.checked)}
-          className="rounded border-[#ddd7d4] mt-0.5"
+          className="rounded border-line-strong mt-0.5"
         />
         <span>
           Listrik &amp; internet termasuk

@@ -32,7 +32,7 @@ export default async function OwnerOwnStatementPage({
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
-      <main className="min-h-screen bg-[#f6f3f2] px-4 py-10">
+      <main className="min-h-screen bg-canvas px-4 py-10">
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5 no-print">
             <Link href="/owner/earnings" className="text-sm text-brand-ink font-semibold hover:underline inline-flex items-center gap-1">
@@ -43,7 +43,7 @@ export default async function OwnerOwnStatementPage({
                 <Link key={m} href={`/owner/earnings/statement?months=${m}`}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
                     months === m ? "bg-white border-brand text-brand-ink"
-                                 : "bg-white border-[#cccccc] text-ink-2 hover:border-brand"}`}>
+                                 : "bg-white border-line-strong text-ink-2 hover:border-brand"}`}>
                   {m} bln
                 </Link>
               ))}
@@ -51,7 +51,7 @@ export default async function OwnerOwnStatementPage({
             </div>
           </div>
 
-          <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
+          <article className="print-sheet bg-white rounded-2xl border border-line shadow-card p-8 md:p-10">
             <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-ink">
               <div>
                 <p className="text-2xl font-extrabold text-ink tracking-tight">Cosystem</p>
@@ -67,7 +67,7 @@ export default async function OwnerOwnStatementPage({
               </div>
             </div>
 
-            <div className="grid grid-cols-3 gap-4 py-6 border-b border-[#e4e2e1]">
+            <div className="grid grid-cols-3 gap-4 py-6 border-b border-line">
               <div>
                 <p className="text-xs text-ink-3">Diperoleh</p>
                 <p className="text-lg font-bold text-ink tabular-nums">Rp {fmt(s.earned)}</p>
@@ -88,7 +88,7 @@ export default async function OwnerOwnStatementPage({
                 <div className="overflow-x-auto">
                   <table className="w-full text-sm" style={{ minWidth: 520 }}>
                     <thead>
-                      <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                      <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                         <th className="text-left py-2 font-medium">Pemesanan</th>
                         <th className="text-right py-2 font-medium">Bruto</th>
                         <th className="text-right py-2 font-medium">Komisi</th>
@@ -116,7 +116,7 @@ export default async function OwnerOwnStatementPage({
             )}
 
             {s.payouts.length > 0 && (
-              <div className="py-6 border-t border-[#e4e2e1]">
+              <div className="py-6 border-t border-line">
                 <p className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">Pembayaran</p>
                 {s.payouts.map((p, i) => (
                   <div key={i} className="flex justify-between py-1.5 text-sm">
@@ -127,7 +127,7 @@ export default async function OwnerOwnStatementPage({
               </div>
             )}
 
-            <p className="text-[11px] text-ink-3 pt-6 border-t border-[#e4e2e1]">
+            <p className="text-[11px] text-ink-3 pt-6 border-t border-line">
               Seluruh angka diambil dari buku besar Cosystem. Jumlah dalam IDR.
             </p>
           </article>

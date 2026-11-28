@@ -29,8 +29,8 @@ export function CreditCashbackCard({ credits }: { credits: RefundableCredit[] })
   }
 
   return (
-    <section className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
-      <div className="px-5 py-3 border-b border-[#e4e2e1]">
+    <section className="bg-white rounded-xl border border-line-strong shadow-sm overflow-hidden">
+      <div className="px-5 py-3 border-b border-line">
         <p className="font-semibold text-sm text-ink">
           Tukar kredit jadi uang
           <span className="font-normal text-ink-3"> / Exchange credit for cash</span>

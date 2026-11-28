@@ -72,9 +72,9 @@ interface BuildListingFormProps {
 
 // ── Shared styles ──────────────────────────────────────────────────────────
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const input = "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
 const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
-const sectionCls = "bg-white rounded-xl border border-[#cccccc] shadow-sm p-6 space-y-5";
+const sectionCls = "bg-white rounded-2xl border border-line shadow-card p-6 space-y-5";
 
 // ── Score slider ────────────────────────────────────────────────────────────
 
@@ -113,7 +113,7 @@ function ScoreInput({
           }}
           className="flex-1 accent-brand h-2"
         />
-        <div className="w-24 bg-[#e4e2e1] h-2 rounded-full overflow-hidden flex-shrink-0">
+        <div className="w-24 bg-line h-2 rounded-full overflow-hidden flex-shrink-0">
           <div className="h-full rounded-full transition-all" style={{ width: `${pct}%`, backgroundColor: color }} />
         </div>
       </div>
@@ -125,7 +125,7 @@ function ScoreInput({
 
 function SectionHeading({ icon, title, subtitle }: { icon: string; title: string; subtitle?: string }) {
   return (
-    <div className="flex items-start gap-3 pb-2 border-b border-[#e4e2e1]">
+    <div className="flex items-start gap-3 pb-2 border-b border-line">
       <span className="material-symbols-outlined text-brand-ink text-xl mt-0.5">{icon}</span>
       <div>
         <h3 className="font-semibold text-ink">{title}</h3>
@@ -276,7 +276,7 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
               rows={4}
               defaultValue={(rla?.pros ?? []).join("\n")}
               placeholder={"Great natural light\nClose to MRT\nResponsive owner"}
-              className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+              className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
             />
           </div>
           <div>
@@ -286,7 +286,7 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
               rows={4}
               defaultValue={(rla?.cons ?? []).join("\n")}
               placeholder={"No dedicated parking\nSmall balcony"}
-              className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+              className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
             />
           </div>
           <div className="md:col-span-2">
@@ -296,7 +296,7 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
               rows={3}
               defaultValue={rla?.overall_notes ?? ""}
               placeholder="General impression of the property…"
-              className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+              className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
             />
           </div>
         </div>
@@ -371,7 +371,7 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
             rows={2}
             defaultValue={area?.area_notes ?? ""}
             placeholder="Anything else a tenant should know about the location…"
-            className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+            className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
           />
         </div>
       </div>
@@ -386,7 +386,7 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
             rows={3}
             defaultValue={(details?.facilities ?? []).join(", ")}
             placeholder="AC, WiFi, Furnished, Water Heater, Parking, Gym, Pool…"
-            className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+            className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
           />
         </div>
         <div>
@@ -396,7 +396,7 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
             rows={2}
             defaultValue={(details?.included_utilities ?? []).join(", ")}
             placeholder="Water, Electricity up to 50kWh, WiFi…"
-            className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+            className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
           />
         </div>
         <div>
@@ -406,7 +406,7 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
             rows={3}
             defaultValue={details?.rules ?? ""}
             placeholder="No smoking, No pets, Quiet hours 10pm–7am…"
-            className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+            className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
           />
         </div>
         <div>
@@ -415,7 +415,7 @@ export function BuildListingForm({ property, rla, area, details, formRef, onDirt
             name="additional_notes"
             rows={2}
             defaultValue={details?.additional_notes ?? ""}
-            className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+            className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
           />
         </div>
       </div>

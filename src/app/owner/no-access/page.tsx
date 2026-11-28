@@ -18,7 +18,7 @@ export default async function OwnerNoAccessPage() {
     <>
       <Navbar />
       <main className="max-w-lg mx-auto px-4 py-20 text-center">
-        <div className="w-16 h-16 bg-[#f6f3f2] rounded-full flex items-center justify-center mx-auto mb-6">
+        <div className="w-16 h-16 bg-canvas rounded-full flex items-center justify-center mx-auto mb-6">
           <span className="material-symbols-outlined text-ink-3 text-3xl">lock</span>
         </div>
         <h1 className="text-xl font-bold text-ink">{t("owner.access.denied", lang)}</h1>

@@ -30,7 +30,7 @@ export function SavedList({ items }: { items: Saved[] }) {
   }
 
   if (items.length === 0) {
-    return <p className="text-ink-2 bg-white rounded-xl border border-[#cccccc] p-6">{t("saved.none")}</p>;
+    return <p className="text-ink-2 bg-white rounded-2xl border border-line shadow-card p-6">{t("saved.none")}</p>;
   }
 
   return (
@@ -38,7 +38,7 @@ export function SavedList({ items }: { items: Saved[] }) {
       {error && <p className="text-sm text-red-600 mb-3">{error}</p>}
       <div className="grid grid-cols-1 md:grid-cols-2 gap-5">
         {items.map((s) => (
-          <article key={s.id} className="bg-white rounded-xl border border-[#cccccc] p-5 flex flex-col">
+          <article key={s.id} className="bg-white rounded-2xl border border-line shadow-card p-5 flex flex-col">
             <div className="flex items-start justify-between gap-3">
               <div className="min-w-0">
                 <h3 className="font-semibold text-ink">{s.name}</h3>
@@ -92,7 +92,7 @@ export function SavedList({ items }: { items: Saved[] }) {
                 </>
               )}
               <button onClick={() => drop(s.id)} disabled={busy === s.id}
-                      className="px-3 py-1.5 border border-[#cccccc] text-ink-2 text-xs font-semibold rounded-lg hover:bg-[#f6f3f2] disabled:opacity-50 ml-auto">
+                      className="px-3 py-1.5 border border-line-strong text-ink-2 text-xs font-semibold rounded-lg hover:bg-canvas disabled:opacity-50 ml-auto">
                 {busy === s.id ? "…" : t("saved.remove")}
               </button>
             </div>

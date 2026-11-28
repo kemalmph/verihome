@@ -37,7 +37,7 @@ export default async function AdminSettingsPage() {
   const unset      = rows.filter((r) => r.source === "none").length;
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/settings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-10">
@@ -55,8 +55,8 @@ export default async function AdminSettingsPage() {
 
           {/* Which properties the default actually governs. A rate with no
               visible consequences is how the old one stayed unset for months. */}
-          <section className="bg-white rounded-xl border border-[#cccccc] shadow-sm">
-            <div className="p-6 border-b border-[#e4e2e1]">
+          <section className="bg-white rounded-2xl border border-line shadow-card">
+            <div className="p-6 border-b border-line">
               <h2 className="text-lg font-semibold text-ink">
                 Properti sewa harian
               </h2>

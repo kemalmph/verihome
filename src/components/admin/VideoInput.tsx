@@ -83,7 +83,7 @@ export function VideoInput({ propertyId, existingUrl, onUpdate }: VideoInputProp
             value={value}
             onChange={(e) => { setValue(e.target.value); setError(null); }}
             placeholder="https://youtube.com/watch?v=..."
-            className="flex-1 h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+            className="flex-1 h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
           />
           <button
             onClick={save}

@@ -29,7 +29,7 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
   const total = Number(assessment.rla_score).toFixed(1);
 
   return (
-    <section className="bg-[#f6f3f2] p-6 rounded-xl space-y-6 border border-line-strong">
+    <section className="bg-canvas p-6 rounded-xl space-y-6 border border-line-strong">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
           <h2 className="text-xl font-semibold text-ink">{t("rla.title", lang)}</h2>
@@ -64,7 +64,7 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
                 <span>{t(cat.label, lang)}</span>
                 <span className="font-bold text-ink">{score}/10</span>
               </div>
-              <div className="w-full bg-[#e4e2e1] h-2 rounded-full overflow-hidden">
+              <div className="w-full bg-line h-2 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all"
                   style={{ width: `${pct}%`, backgroundColor: color }}

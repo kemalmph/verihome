@@ -46,7 +46,7 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
     .filter((g) => g.rows.length > 0);
 
   return (
-    <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
+    <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden">
       <div className="flex items-center justify-between p-6 pb-4">
         <div>
           <h2 className="text-lg font-semibold text-ink">Unit</h2>
@@ -92,7 +92,7 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
         <div className="border-t border-[#e8e3e0]">
           {grouped.map((g) => (
             <div key={g.type}>
-              <div className="px-6 py-2 bg-[#f6f3f2] text-xs font-semibold uppercase tracking-wide text-ink-3">
+              <div className="px-6 py-2 bg-canvas text-xs font-semibold uppercase tracking-wide text-ink-3">
                 {g.label} · {g.rows.length}
               </div>
               {g.rows.map((u) =>
@@ -163,7 +163,7 @@ function UnitStatusPill({ status }: { status: string }) {
   const tone =
     status === "available" ? "bg-success-soft text-success-ink border-success-line"
     : status === "maintenance" ? "bg-[#fdf4e3] text-[#7a5518] border-[#e4c894]"
-    : "bg-[#efeae8] text-ink-3 border-[#ddd7d4]";
+    : "bg-[#efeae8] text-ink-3 border-line-strong";
   return (
     <span className={`text-xs px-2 py-0.5 rounded-full border whitespace-nowrap ${tone}`}>
       {unitStatusLabel(status)}
@@ -189,7 +189,7 @@ function UnitForm({
         await onSubmit(new FormData(e.currentTarget));
         setBusy(false);
       }}
-      className="border border-[#ddd7d4] rounded-lg p-4 bg-white"
+      className="border border-line rounded-2xl p-4 bg-white shadow-card"
     >
       <div className="grid grid-cols-2 md:grid-cols-4 gap-3">
         <L label="Nama" className="col-span-2">
@@ -240,7 +240,7 @@ function UnitForm({
         <button
           type="button"
           onClick={onCancel}
-          className="px-3 py-1.5 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-[#f6f3f2]"
+          className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
         >
           Batal
         </button>
@@ -250,7 +250,7 @@ function UnitForm({
 }
 
 const i =
-  "w-full border border-[#ddd7d4] rounded-lg px-2.5 py-1.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
+  "w-full border border-line-strong rounded-lg px-2.5 py-1.5 text-sm text-ink focus:outline-none focus:ring-2 focus:ring-brand/30 focus:border-brand";
 
 function L({
   label, hint, className = "", children,

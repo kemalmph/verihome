@@ -17,7 +17,7 @@ export default async function CoworkingSitesPage() {
   const totalSeats = sites.reduce((n, s) => n + s.capacity, 0);
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
@@ -39,7 +39,7 @@ export default async function CoworkingSitesPage() {
           </div>
         )}
 
-        <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden mb-10">
+        <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden mb-10">
           {sites.length === 0 ? (
             <div className="p-10 text-center">
               <p className="text-ink font-semibold">Belum ada site</p>
@@ -122,7 +122,7 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
 
 function Stat({ label, value, hint }: { label: string; value: string; hint?: string }) {
   return (
-    <div className="bg-white border border-[#ddd7d4] rounded-lg p-5">
+    <div className="bg-white border border-line rounded-2xl p-5 shadow-card">
       <div className="text-xs uppercase tracking-wide text-ink-3">{label}</div>
       <div className="text-2xl font-bold text-ink mt-1 tabular-nums">{value}</div>
       {hint && <div className="text-xs text-ink-3 mt-1">{hint}</div>}
@@ -134,7 +134,7 @@ function StatusPill({ status }: { status: string }) {
   const tone =
     status === "active" ? "bg-success-soft text-success-ink border-success-line"
     : status === "closed" ? "bg-[#fbeeec] text-[#8c3a2c] border-[#e2b3ab]"
-    : "bg-[#efeae8] text-ink-3 border-[#ddd7d4]";
+    : "bg-[#efeae8] text-ink-3 border-line-strong";
   return (
     <span className={`inline-block text-xs px-2 py-0.5 rounded-full border ${tone}`}>
       {siteStatusLabel(status)}

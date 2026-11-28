@@ -4,7 +4,7 @@ import { useState, useTransition } from "react";
 import { useRouter } from "next/navigation";
 import { recordPlacement, markPlacementPaid, updatePlacementStatus } from "@/lib/actions/placement-actions";
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
+const input = "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white";
 const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 const fmt = (n: number) => new Intl.NumberFormat("id-ID").format(n);
 
@@ -15,7 +15,7 @@ const STATUS_LABEL: Record<string, string> = {
 const STATUS_STYLE: Record<string, string> = {
   reported: "bg-blue-100 text-blue-800", invoiced: "bg-amber-100 text-amber-800",
   paid: "bg-green-100 text-green-800", disputed: "bg-red-100 text-red-700",
-  written_off: "bg-[#f6f3f2] text-ink-2",
+  written_off: "bg-canvas text-ink-2",
 };
 
 export function PlacementForm({ properties }: { properties: { id: string; name: string; area: string | null }[] }) {
@@ -53,7 +53,7 @@ export function PlacementForm({ properties }: { properties: { id: string; name: 
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+    <form onSubmit={handleSubmit} className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-5">
       <h2 className="font-semibold text-ink">Catat penempatan baru</h2>
 
       {error && (
@@ -104,7 +104,7 @@ export function PlacementForm({ properties }: { properties: { id: string; name: 
         <div className="md:col-span-2">
           <label className={labelCls} htmlFor="notes">Catatan</label>
           <textarea id="notes" name="notes" rows={2}
-            className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white" />
+            className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white" />
         </div>
       </div>
 
@@ -121,7 +121,7 @@ export function PlacementForm({ properties }: { properties: { id: string; name: 
           {isPending ? "Menyimpan…" : "Simpan penempatan"}
         </button>
         <button type="button" onClick={() => setOpen(false)}
-          className="px-5 py-3 border border-[#cccccc] text-ink-2 rounded-lg font-semibold text-sm hover:border-brand">
+          className="px-5 py-3 border border-line-strong text-ink-2 rounded-lg font-semibold text-sm hover:border-brand">
           Batal
         </button>
       </div>
@@ -150,7 +150,7 @@ export function PlacementRow({ placement }: {
   }
 
   return (
-    <tr className="hover:bg-[#f6f3f2]">
+    <tr className="hover:bg-canvas">
       <td className="px-5 py-3">
         <p className="font-semibold text-ink">{placement.propertyName}</p>
         {placement.area && <p className="text-xs text-ink-3">{placement.area}</p>}

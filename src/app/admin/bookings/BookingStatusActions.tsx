@@ -45,7 +45,7 @@ export function BookingStatusActions({ bookingId, currentStatus, currentPaymentS
   const canMarkPaid = currentPaymentStatus !== "paid" && !isClosed;
 
   return (
-    <div className="mt-4 flex items-center gap-2 flex-wrap border-t border-[#f6f3f2] pt-3">
+    <div className="mt-4 flex items-center gap-2 flex-wrap border-t border-canvas pt-3">
       {canMarkPaid && (
         <button
           disabled={isPending}

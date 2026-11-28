@@ -34,7 +34,7 @@ export async function ListingCard({ property, savedIds = [] }: ListingCardProps)
             className="object-cover group-hover:scale-110 transition-transform duration-500"
           />
         ) : (
-          <div className="w-full h-full bg-[#e4e2e1] flex items-center justify-center">
+          <div className="w-full h-full bg-line flex items-center justify-center">
             <span className="material-symbols-outlined text-ink-3 text-4xl">
               apartment
             </span>

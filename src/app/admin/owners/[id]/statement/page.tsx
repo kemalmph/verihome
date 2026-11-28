@@ -105,7 +105,7 @@ export default async function OwnerStatementPage({
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
-      <main className="min-h-screen bg-[#f6f3f2] px-4 py-10">
+      <main className="min-h-screen bg-canvas px-4 py-10">
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5 no-print">
             <Link href="/admin/listings" className="text-sm text-brand-ink font-semibold hover:underline inline-flex items-center gap-1">
@@ -116,7 +116,7 @@ export default async function OwnerStatementPage({
                 <Link key={m} href={`/admin/owners/${id}/statement?months=${m}`}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
                     months === m ? "bg-white border-brand text-brand-ink"
-                                 : "bg-white border-[#cccccc] text-ink-2 hover:border-brand"}`}>
+                                 : "bg-white border-line-strong text-ink-2 hover:border-brand"}`}>
                   {m} bln
                 </Link>
               ))}
@@ -124,7 +124,7 @@ export default async function OwnerStatementPage({
             </div>
           </div>
 
-          <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
+          <article className="print-sheet bg-white rounded-2xl border border-line shadow-card p-8 md:p-10">
             <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-ink">
               <div>
                 <p className="text-2xl font-extrabold text-ink tracking-tight">Cosystem</p>
@@ -139,7 +139,7 @@ export default async function OwnerStatementPage({
             </div>
 
             {/* Period summary */}
-            <section className="py-6 border-b border-[#e4e2e1]">
+            <section className="py-6 border-b border-line">
               <h2 className="text-xs font-bold uppercase tracking-wider text-ink-2 mb-3">
                 Ringkasan periode
               </h2>
@@ -149,21 +149,21 @@ export default async function OwnerStatementPage({
               {depositClaims > 0 && (
                 <Row label="Ditambah klaim jaminan kerusakan" value={`+ ${fmt(depositClaims)}`} />
               )}
-              <div className="flex justify-between gap-4 pt-3 mt-2 border-t border-[#cccccc] font-bold">
+              <div className="flex justify-between gap-4 pt-3 mt-2 border-t border-line-strong font-bold">
                 <span className="text-ink">HAK BERSIH PEMILIK</span>
                 <span className="tabular-nums text-ink">IDR {fmt(earned)}</span>
               </div>
             </section>
 
             {/* Booking detail */}
-            <section className="py-6 border-b border-[#e4e2e1]">
+            <section className="py-6 border-b border-line">
               <h2 className="text-xs font-bold uppercase tracking-wider text-ink-2 mb-3">
                 Rincian pemesanan
               </h2>
               <div className="overflow-x-auto">
                 <table className="w-full text-sm" style={{ minWidth: 560 }}>
                   <thead>
-                    <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                    <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                       <th className="text-left py-2 font-medium">Tamu</th>
                       <th className="text-left py-2 font-medium">Tanggal</th>
                       <th className="text-right py-2 font-medium">Malam</th>
@@ -174,7 +174,7 @@ export default async function OwnerStatementPage({
                   </thead>
                   <tbody>
                     {detail.map((d) => (
-                      <tr key={d.code} className="border-b border-[#f6f3f2]">
+                      <tr key={d.code} className="border-b border-canvas">
                         <td className="py-2.5">
                           <span className="text-ink">{d.guest}</span>
                           <span className="block text-xs text-ink-3">{d.property}</span>
@@ -204,7 +204,7 @@ export default async function OwnerStatementPage({
             </section>
 
             {/* Payout history */}
-            <section className="py-6 border-b border-[#e4e2e1]">
+            <section className="py-6 border-b border-line">
               <h2 className="text-xs font-bold uppercase tracking-wider text-ink-2 mb-3">
                 Riwayat pembayaran
               </h2>
@@ -214,7 +214,7 @@ export default async function OwnerStatementPage({
                 <table className="w-full text-sm">
                   <tbody>
                     {(payouts ?? []).map((p, i) => (
-                      <tr key={i} className="border-b border-[#f6f3f2]">
+                      <tr key={i} className="border-b border-canvas">
                         <td className="py-2 text-ink-3 whitespace-nowrap">{String(p.entry_date).slice(0, 10)}</td>
                         <td className="py-2 text-ink-2">{p.description ?? "Pembayaran"}</td>
                         <td className="py-2 text-right tabular-nums font-semibold text-ink">
@@ -236,7 +236,7 @@ export default async function OwnerStatementPage({
               <p className="text-2xl font-bold tabular-nums text-ink">IDR {fmt(outstanding)}</p>
             </div>
 
-            <p className="text-xs text-ink-3 mt-4 pt-4 border-t border-[#e4e2e1]">
+            <p className="text-xs text-ink-3 mt-4 pt-4 border-t border-line">
               Dokumen ini adalah <strong>laporan</strong>, bukan faktur pajak.
               <span className="block">This is a statement, not a tax invoice.</span>
             </p>

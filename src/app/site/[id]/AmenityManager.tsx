@@ -50,7 +50,7 @@ export function AmenityManager({
     Array.from(form.querySelectorAll<HTMLInputElement>('input[name="amenity"]:checked')).map((i) => i.value);
 
   return (
-    <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden mt-8">
+    <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden mt-8">
       <div className="p-6 pb-4">
         <h2 className="text-lg font-semibold text-ink">Fasilitas</h2>
         <p className="text-sm text-ink-3 mt-0.5">
@@ -79,7 +79,7 @@ export function AmenityManager({
           {!siteOpen && (
             <button
               onClick={() => { setSiteOpen(true); setOpenUnit(null); }}
-              className="px-3 py-1.5 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-[#f6f3f2] whitespace-nowrap"
+              className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas whitespace-nowrap"
             >
               Ubah
             </button>
@@ -128,7 +128,7 @@ export function AmenityManager({
                   {!isOpen && (
                     <button
                       onClick={() => { setOpenUnit(u.id); setSiteOpen(false); setError(""); }}
-                      className="px-3 py-1.5 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-[#f6f3f2] whitespace-nowrap"
+                      className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas whitespace-nowrap"
                     >
                       Ubah
                     </button>
@@ -178,7 +178,7 @@ function Picker({
                   name="amenity"
                   value={a.id}
                   defaultChecked={checked.includes(a.id)}
-                  className="rounded border-[#ddd7d4]"
+                  className="rounded border-line-strong"
                 />
                 {a.label}
               </label>
@@ -203,7 +203,7 @@ function Buttons({ busy, onCancel }: { busy: boolean; onCancel: () => void }) {
       <button
         type="button"
         onClick={onCancel}
-        className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-[#f6f3f2]"
+        className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas"
       >
         Batal
       </button>

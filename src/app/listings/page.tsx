@@ -62,7 +62,7 @@ export default async function ListingsPage({ searchParams }: ListingsPageProps) 
         </header>
 
         {/* Filter Bar */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-12 shadow-sm">
+        <section className="bg-white rounded-xl border border-line-strong p-6 mb-12 shadow-sm">
           <form className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-5 gap-4 items-end">
             <div className="space-y-1">
               <label className="text-xs font-medium text-ink-2">{t("listings.area", lang)}</label>

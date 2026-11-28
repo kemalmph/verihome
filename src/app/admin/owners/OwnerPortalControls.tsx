@@ -96,7 +96,7 @@ export function OwnerPortalControls({ ownerId, ownerName, portalAccess, hasWhats
             </code>
             <button
               onClick={() => { navigator.clipboard?.writeText(invite.url); setCopied(true); }}
-              className="px-2 py-1.5 bg-white border border-[#cccccc] rounded text-xs font-semibold shrink-0"
+              className="px-2 py-1.5 bg-white border border-line-strong rounded text-xs font-semibold shrink-0"
             >
               {copied ? "Tersalin" : "Salin"}
             </button>

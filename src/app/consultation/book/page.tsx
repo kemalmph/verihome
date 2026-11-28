@@ -56,7 +56,7 @@ export default async function BookConsultationPage({ searchParams }: BookPagePro
           </p>
         </div>
 
-        <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-8">
+        <div className="bg-white rounded-xl border border-line-strong shadow-sm p-8">
           <BookingForm
             defaultPackage={packageId}
             savedProperties={savedProperties}

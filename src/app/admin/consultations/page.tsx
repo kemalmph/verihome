@@ -21,7 +21,7 @@ export default async function AdminConsultationsPage() {
   };
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/consultations" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-8">
@@ -29,10 +29,10 @@ export default async function AdminConsultationsPage() {
           <p className="text-ink-2 mt-1">{consultations?.length ?? 0} total</p>
         </header>
 
-        <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-line shadow-card overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#f6f3f2] border-b border-line-strong">
+              <tr className="bg-canvas border-b border-line-strong">
                 {["User", "Package", "Price", "Status", "Notes", "Booked", "Actions"].map((h) => (
                   <th key={h} className="text-left px-5 py-4 text-xs font-bold text-ink-2 uppercase tracking-wider">
                     {h}
@@ -46,7 +46,7 @@ export default async function AdminConsultationsPage() {
                 const price = new Intl.NumberFormat("id-ID").format(c.price ?? 0);
                 const booked = new Date(c.created_at).toLocaleDateString("en-GB", { day: "numeric", month: "short" });
                 return (
-                  <tr key={c.id} className="hover:bg-[#f6f3f2] transition-colors">
+                  <tr key={c.id} className="hover:bg-canvas transition-colors">
                     <td className="px-5 py-4">
                       <p className="font-medium text-sm text-ink">{user?.name ?? "—"}</p>
                       <p className="text-xs text-ink-3 truncate max-w-[140px]">{user?.email ?? "—"}</p>

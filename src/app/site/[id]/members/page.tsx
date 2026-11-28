@@ -32,7 +32,7 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
   const unpaid = members.filter((m) => m.status !== "cancelled" && m.payment_status !== "paid");
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-ink-3 mb-4">
@@ -51,7 +51,7 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
         </header>
 
         {(endingSoon.length > 0 || unpaid.length > 0) && (
-          <section className="mb-8 bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
+          <section className="mb-8 bg-white border border-line rounded-2xl shadow-card overflow-hidden">
             <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">Perlu tindakan</h2>
             <ul className="divide-y divide-[#e8e3e0] text-sm">
               {endingSoon.map((m) => (
@@ -76,7 +76,7 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
         )}
 
         {/* ── members ─────────────────────────────────────────────────── */}
-        <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-x-auto mb-8">
+        <section className="bg-white border border-line rounded-2xl shadow-card overflow-x-auto mb-8">
           <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
             Daftar member ({members.length})
           </h2>
@@ -108,7 +108,7 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
         </div>
 
         {/* ── plans ───────────────────────────────────────────────────── */}
-        <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-x-auto">
+        <section className="bg-white border border-line rounded-2xl shadow-card overflow-x-auto">
           <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
             Paket ({plans.length})
           </h2>
@@ -222,7 +222,7 @@ function Quota({ used, total, unit }: { used: number; total: number; unit: strin
           {used} / {total}
         </span>
       </div>
-      <div className="w-28 bg-[#e4e2e1] h-1.5 rounded-full overflow-hidden">
+      <div className="w-28 bg-line h-1.5 rounded-full overflow-hidden">
         <div
           className={`h-full rounded-full ${over ? "bg-[#c2503c]" : "bg-brand"}`}
           style={{ width: `${over ? 100 : pct}%` }}

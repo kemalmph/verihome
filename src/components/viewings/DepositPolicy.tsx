@@ -34,8 +34,8 @@ export function DepositPolicy({ deposit }: { deposit: number }) {
   const lines = viewingPolicyLines(deposit);
 
   return (
-    <div className="border border-[#cccccc] rounded-lg overflow-hidden">
-      <div className="bg-[#f6f3f2] px-4 py-2.5 border-b border-[#e4e2e1]">
+    <div className="border border-line-strong rounded-lg overflow-hidden">
+      <div className="bg-canvas px-4 py-2.5 border-b border-line">
         <p className="font-semibold text-sm text-ink">
           {t("policy.title", lang)}
         </p>

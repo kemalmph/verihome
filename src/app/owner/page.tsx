@@ -71,7 +71,7 @@ export default async function OwnerOverviewPage() {
   }
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10">
         <header className="mb-8">
@@ -94,7 +94,7 @@ export default async function OwnerOverviewPage() {
                   { label: t("owner.overview.occupancy"),    value: `${occupancy}%` },
                   { label: t("owner.overview.earnings"),     value: rp(monthEarnings) },
                 ].map((s) => (
-                  <div key={s.label} className="bg-white rounded-xl border border-[#cccccc] p-5">
+                  <div key={s.label} className="bg-white rounded-2xl border border-line shadow-card p-5">
                     <p className="text-xs text-ink-3">{s.label}</p>
                     <p className="text-2xl font-bold text-ink mt-1 tabular-nums">{s.value}</p>
                   </div>
@@ -103,7 +103,7 @@ export default async function OwnerOverviewPage() {
             </section>
 
             {/* Balance */}
-            <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-5">
+            <section className="mb-8 bg-white rounded-2xl border border-line shadow-card p-5">
               <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
                 {t("owner.balance.title")}
               </h2>
@@ -130,7 +130,7 @@ export default async function OwnerOverviewPage() {
                 {t("owner.overview.needsAction")}
               </h2>
               {actions.length === 0 ? (
-                <p className="text-sm text-ink-2 bg-white rounded-xl border border-[#cccccc] p-5">
+                <p className="text-sm text-ink-2 bg-white rounded-2xl border border-line shadow-card p-5">
                   {t("owner.overview.allClear")}
                 </p>
               ) : (
@@ -152,11 +152,11 @@ export default async function OwnerOverviewPage() {
                 {t("owner.overview.upcoming")}
               </h2>
               {upcoming.length === 0 ? (
-                <p className="text-sm text-ink-2 bg-white rounded-xl border border-[#cccccc] p-5">
+                <p className="text-sm text-ink-2 bg-white rounded-2xl border border-line shadow-card p-5">
                   {t("owner.overview.noUpcoming")}
                 </p>
               ) : (
-                <ul className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+                <ul className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
                   {upcoming.map((e, i) => (
                     <li key={`${e.b.id}-${e.kind}-${i}`} className="p-4 flex items-center justify-between gap-3 flex-wrap">
                       <div>
@@ -183,14 +183,14 @@ export default async function OwnerOverviewPage() {
               <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
                 {t("owner.nav.properties")}
               </h2>
-              <div className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+              <div className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
                 {properties.map((p) => {
                   const s = PIPELINE[p.status as string] ?? { label: String(p.status), cls: "bg-gray-100 text-gray-600" };
                   return (
                     <Link
                       key={p.id as string}
                       href={`/owner/properties/${p.id}`}
-                      className="p-4 flex items-center justify-between gap-3 hover:bg-[#f6f3f2] flex-wrap"
+                      className="p-4 flex items-center justify-between gap-3 hover:bg-canvas flex-wrap"
                     >
                       <div className="min-w-0">
                         <p className="font-semibold text-ink">{p.name as string}</p>

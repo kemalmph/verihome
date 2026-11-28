@@ -37,7 +37,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
   const catalog = await listItems(r.site_id);
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/site" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <nav className="text-sm text-ink-3 mb-4">
@@ -98,7 +98,7 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           />
         </div>
 
-        <div className="bg-white border border-[#ddd7d4] rounded-lg p-5 mb-8">
+        <div className="bg-white border border-line rounded-2xl p-5 mb-8 shadow-card">
           <UtilitiesToggle reservationId={r.id} included={r.utilities_included} />
           {!r.utilities_included && (
             <p className="text-xs text-[#8a6416] bg-[#fdf4e3] border border-[#e6d09a] rounded px-3 py-2 mt-3">
@@ -139,7 +139,7 @@ function Stat({
     : tone === "cost" ? "text-[#8a6416]"
     : "text-ink";
   return (
-    <div className="bg-white border border-[#ddd7d4] rounded-lg p-5">
+    <div className="bg-white border border-line rounded-2xl p-5 shadow-card">
       <div className="text-xs uppercase tracking-wide text-ink-3">{label}</div>
       <div className={`text-xl font-bold mt-1 tabular-nums ${colour}`}>{value}</div>
       {hint && <div className="text-xs text-ink-3 mt-1">{hint}</div>}

@@ -25,7 +25,7 @@ export function ListYourPropertyForm() {
 
   if (result?.success) {
     return (
-      <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-12 text-center space-y-4">
+      <div className="bg-white rounded-xl border border-line-strong shadow-sm p-12 text-center space-y-4">
         <div className="w-16 h-16 bg-brand-soft rounded-full flex items-center justify-center mx-auto">
           <span className="material-symbols-outlined text-brand-ink text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             check_circle
@@ -46,7 +46,7 @@ export function ListYourPropertyForm() {
   }
 
   return (
-    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-8 space-y-6">
+    <form onSubmit={handleSubmit} className="bg-white rounded-xl border border-line-strong shadow-sm p-8 space-y-6">
       {result?.error && (
         <div className="p-4 bg-red-50 border border-red-200 rounded-lg text-sm text-red-700">
           {result.error}
@@ -62,7 +62,7 @@ export function ListYourPropertyForm() {
           type="text"
           required
           placeholder={t("lp.propertyNamePh")}
-          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
+          className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
         />
       </div>
 
@@ -76,7 +76,7 @@ export function ListYourPropertyForm() {
             required
             value={selectedCity}
             onChange={(e) => setSelectedCity(e.target.value)}
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
+            className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white"
           >
             <option value="">{t("lp.selectCity")}</option>
             <option value="Jakarta">Jakarta</option>
@@ -90,7 +90,7 @@ export function ListYourPropertyForm() {
             name="area"
             required
             disabled={!selectedCity}
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white disabled:opacity-50 disabled:cursor-not-allowed"
+            className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white disabled:opacity-50 disabled:cursor-not-allowed"
           >
             <option value="">{t("lp.selectNeighborhood")}</option>
             {(CITY_NEIGHBORHOODS[selectedCity] ?? []).map((n) => (
@@ -109,7 +109,7 @@ export function ListYourPropertyForm() {
           type="text"
           required
           placeholder={t("lp.addressPh")}
-          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
+          className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
         />
       </div>
 
@@ -121,7 +121,7 @@ export function ListYourPropertyForm() {
           name="google_maps_url"
           type="url"
           placeholder="https://maps.google.com/..."
-          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
+          className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
         />
       </div>
 
@@ -133,7 +133,7 @@ export function ListYourPropertyForm() {
           <select
             name="property_type"
             required
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
+            className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white"
           >
             <option value="">{t("lp.selectType")}</option>
             <option value="apartment">{t("lp.apartment")}</option>
@@ -148,7 +148,7 @@ export function ListYourPropertyForm() {
           <select
             name="bedrooms"
             required
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
+            className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white"
           >
             <option value="studio">{t("lp.studio")}</option>
             <option value="1">1</option>
@@ -164,7 +164,7 @@ export function ListYourPropertyForm() {
           <select
             name="bathrooms"
             required
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
+            className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white"
           >
             <option value="1">1</option>
             <option value="2">2</option>
@@ -184,7 +184,7 @@ export function ListYourPropertyForm() {
             required
             min="500000"
             placeholder={t("lp.rentPh")}
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
+            className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
           />
         </div>
         <div className="space-y-1">
@@ -196,7 +196,7 @@ export function ListYourPropertyForm() {
             type="number"
             min="10"
             placeholder={t("lp.sizePh")}
-            className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
+            className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm"
           />
         </div>
       </div>
@@ -209,7 +209,7 @@ export function ListYourPropertyForm() {
           name="description"
           rows={4}
           placeholder={t("lp.descriptionPh")}
-          className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm resize-none"
+          className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light text-sm resize-none"
         />
       </div>
 
@@ -225,7 +225,7 @@ export function ListYourPropertyForm() {
               type="text"
               required
               placeholder={t("lp.fullNamePh")}
-              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
           <div className="space-y-1">
@@ -237,7 +237,7 @@ export function ListYourPropertyForm() {
               type="email"
               required
               placeholder="your@email.com"
-              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
           <div className="space-y-1">
@@ -249,7 +249,7 @@ export function ListYourPropertyForm() {
               type="tel"
               required
               placeholder="+62 812-xxxx-xxxx"
-              className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+              className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
             />
           </div>
         </div>

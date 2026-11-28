@@ -30,7 +30,7 @@ export default async function StatementPage({
   return (
     <>
       <style dangerouslySetInnerHTML={{ __html: PRINT_CSS }} />
-      <main className="min-h-screen bg-[#f6f3f2] px-4 py-10">
+      <main className="min-h-screen bg-canvas px-4 py-10">
         <div className="max-w-3xl mx-auto">
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5 no-print">
             <div className="flex gap-2">
@@ -38,21 +38,21 @@ export default async function StatementPage({
                 <Link key={m} href={`/dashboard/statement?months=${m}`}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
                     months === m ? "bg-white border-brand text-brand-ink"
-                                 : "bg-white border-[#cccccc] text-ink-2 hover:border-brand"}`}>
+                                 : "bg-white border-line-strong text-ink-2 hover:border-brand"}`}>
                   {m} bulan
                 </Link>
               ))}
             </div>
             <div className="flex gap-2">
               <a href={`/api/admin/reports/export?type=my_statement&months=${months}`}
-                 className="px-4 py-2.5 border border-[#cccccc] bg-white rounded-lg font-semibold text-sm text-ink-2 hover:border-brand inline-flex items-center gap-2">
+                 className="px-4 py-2.5 border border-line-strong bg-white rounded-lg font-semibold text-sm text-ink-2 hover:border-brand inline-flex items-center gap-2">
                 <span className="material-symbols-outlined text-base">table_view</span> CSV
               </a>
               <PrintButton />
             </div>
           </div>
 
-          <article className="print-sheet bg-white rounded-xl border border-[#cccccc] p-8 md:p-10">
+          <article className="print-sheet bg-white rounded-2xl border border-line shadow-card p-8 md:p-10">
             <div className="flex justify-between items-start gap-6 pb-6 border-b-2 border-ink">
               <div>
                 <p className="text-2xl font-extrabold text-ink tracking-tight">Cosystem</p>
@@ -68,7 +68,7 @@ export default async function StatementPage({
             </div>
 
             {/* Summary — deposits and credits read as the guest's money, not ours */}
-            <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6 border-b border-[#e4e2e1]">
+            <section className="grid grid-cols-1 sm:grid-cols-3 gap-4 py-6 border-b border-line">
               <Summary label="Total dibayar" labelEn="Total spent" value={s.totalSpent} />
               <Summary label="Jaminan ditahan Cosystem" labelEn="Deposits held — refundable"
                        value={s.depositsHeld} tone="held" />
@@ -121,7 +121,7 @@ export default async function StatementPage({
               <div className="overflow-x-auto">
                 <table className="w-full text-sm" style={{ minWidth: 520 }}>
                   <thead>
-                    <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                    <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                       <th className="text-left py-2 font-medium">Tanggal</th>
                       <th className="text-left py-2 font-medium">Keterangan</th>
                       <th className="text-left py-2 font-medium">Jenis</th>
@@ -131,11 +131,11 @@ export default async function StatementPage({
                   </thead>
                   <tbody>
                     {s.lines.map((l, i) => (
-                      <tr key={i} className="border-b border-[#f6f3f2]">
+                      <tr key={i} className="border-b border-canvas">
                         <td className="py-2.5 text-ink-3 whitespace-nowrap">{l.date}</td>
                         <td className="py-2.5 text-ink">{l.description}</td>
                         <td className="py-2.5">
-                          <span className="px-2 py-0.5 rounded-full bg-[#f6f3f2] text-ink-2 text-xs font-medium">
+                          <span className="px-2 py-0.5 rounded-full bg-canvas text-ink-2 text-xs font-medium">
                             {l.type}
                           </span>
                         </td>
@@ -163,7 +163,7 @@ export default async function StatementPage({
               </div>
             </section>
 
-            <p className="text-xs text-ink-3 mt-8 pt-4 border-t border-[#e4e2e1]">
+            <p className="text-xs text-ink-3 mt-8 pt-4 border-t border-line">
               Dokumen ini dibuat otomatis dari catatan keuangan Cosystem.
               <span className="block">Generated from Cosystem&apos;s financial records.</span>
             </p>
@@ -179,7 +179,7 @@ function Summary({ label, labelEn, value, tone }: {
 }) {
   return (
     <div className={`rounded-lg p-4 ${
-      tone === "held" ? "bg-[#f6f3f2]" : tone === "credit" ? "bg-brand-soft" : "bg-[#f6f3f2]"
+      tone === "held" ? "bg-canvas" : tone === "credit" ? "bg-brand-soft" : "bg-canvas"
     }`}>
       <p className="text-xs font-bold uppercase tracking-wider text-ink-2">{label}</p>
       <p className="text-[10px] text-ink-3 mb-1">{labelEn}</p>

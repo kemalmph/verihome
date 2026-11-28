@@ -154,7 +154,7 @@ const CHROME = {
       `tanpa cookie, Accept-Language en-US → lang="${firstLang}"`,
     );
 
-    const idButton = page.locator('button[lang="id"]');
+    const idButton = page.locator('header button[lang="id"]:visible').first();
     check(await idButton.count() === 1, "tombol ID ada di nav");
     await Promise.all([
       page.waitForLoadState("domcontentloaded"),
@@ -170,7 +170,7 @@ const CHROME = {
       "klik ID mengubah halaman ke bahasa Indonesia",
     );
     check(
-      (await page.content()).includes("Kelola Operasional"),
+      (await page.content()).includes("Kelola dan Kembangkan Workspace"),
       "isi halaman ikut berganti, bukan hanya atribut lang",
     );
 
@@ -257,7 +257,7 @@ const CHROME = {
       "tanpa JS: halaman terbuka dalam bahasa Inggris",
     );
 
-    await page.locator('button[lang="id"]').click().catch(() => {});
+    await page.locator('header button[lang="id"]:visible').first().click().catch(() => {});
     await page.waitForLoadState("domcontentloaded").catch(() => {});
 
     check(
@@ -265,7 +265,7 @@ const CHROME = {
       "tanpa JS: klik ID tetap mengganti bahasa",
     );
     check(
-      (await page.content()).includes("Kelola Operasional"),
+      (await page.content()).includes("Kelola dan Kembangkan Workspace"),
       "tanpa JS: isi halaman ikut berganti",
     );
     await ctx.close();

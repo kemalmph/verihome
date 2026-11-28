@@ -24,7 +24,7 @@ export default async function AdminViewingsPage() {
     .order("preferred_date", { ascending: true });
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/viewings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="mb-8">
@@ -33,7 +33,7 @@ export default async function AdminViewingsPage() {
         </div>
 
         {!viewings || viewings.length === 0 ? (
-          <div className="bg-white rounded-xl border border-[#cccccc] p-12 text-center">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-12 text-center">
             <span className="material-symbols-outlined text-[#cccccc] text-5xl">location_on</span>
             <p className="text-ink-3 mt-4">No viewing requests yet.</p>
           </div>
@@ -41,7 +41,7 @@ export default async function AdminViewingsPage() {
           <div className="overflow-x-auto">
             <table className="w-full text-sm">
               <thead>
-                <tr className="border-b border-[#cccccc] text-ink-3 text-xs uppercase">
+                <tr className="border-b border-line-strong text-ink-3 text-xs uppercase">
                   <th className="text-left py-3 px-4">Property</th>
                   <th className="text-left py-3 px-4">Guest</th>
                   <th className="text-left py-3 px-4">Date / Time</th>
@@ -55,7 +55,7 @@ export default async function AdminViewingsPage() {
                   const property = (v.property as unknown) as { name: string; area: string } | null;
                   const user     = (v.user     as unknown) as { name: string; email: string; phone_whatsapp: string | null } | null;
                   return (
-                    <tr key={v.id} className="border-b border-[#f6f3f2] hover:bg-[#f6f3f2] bg-white">
+                    <tr key={v.id} className="border-b border-canvas hover:bg-canvas bg-white">
                       <td className="py-3 px-4">
                         <div className="font-semibold text-ink">{property?.name ?? "—"}</div>
                         <div className="text-xs text-ink-3">{property?.area}</div>

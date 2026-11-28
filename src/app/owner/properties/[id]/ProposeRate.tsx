@@ -73,7 +73,7 @@ export function ProposeRate({
             <input
               id={name} name={name} type="text" inputMode="numeric"
               placeholder="kosongkan jika tidak berubah"
-              className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand"
+              className="w-full h-10 px-3 rounded-lg border border-line-strong text-sm focus:outline-none focus:border-brand"
             />
           </div>
         ))}
@@ -83,7 +83,7 @@ export function ProposeRate({
         <label htmlFor="note" className="block text-xs font-semibold text-ink-2 mb-1">Catatan (opsional)</label>
         <textarea
           id="note" name="note" rows={2}
-          className="w-full px-3 py-2 rounded-lg border border-[#cccccc] text-sm resize-none focus:outline-none focus:border-brand"
+          className="w-full px-3 py-2 rounded-lg border border-line-strong text-sm resize-none focus:outline-none focus:border-brand"
         />
       </div>
 
@@ -98,7 +98,7 @@ export function ProposeRate({
         </button>
         <button
           type="button" onClick={() => setOpen(false)}
-          className="px-4 py-2 border border-[#cccccc] text-sm font-semibold text-ink-2 rounded-lg hover:bg-[#f6f3f2]"
+          className="px-4 py-2 border border-line-strong text-sm font-semibold text-ink-2 rounded-lg hover:bg-canvas"
         >
           {t("common.cancel")}
         </button>

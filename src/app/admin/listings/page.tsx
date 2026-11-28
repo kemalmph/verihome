@@ -65,7 +65,7 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
   const filtered = status && status !== "all" ? all.filter((p) => p.status === status) : all;
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/listings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <div className="flex justify-between items-center mb-8">
@@ -91,7 +91,7 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
               key={stage.value}
               href={`/admin/listings?status=${stage.value}`}
               className={`bg-white rounded-xl border p-4 text-center hover:border-brand transition-colors ${
-                status === stage.value ? "border-brand ring-1 ring-brand" : "border-[#cccccc]"
+                status === stage.value ? "border-brand ring-1 ring-brand" : "border-line-strong"
               }`}
             >
               <div className="text-2xl font-bold text-ink">{counts[stage.value] ?? 0}</div>
@@ -116,7 +116,7 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
               className={`flex items-center gap-2 px-4 py-2 rounded-lg border text-sm transition-colors ${
                 status === s.value
                   ? "border-brand bg-white text-brand-ink font-semibold"
-                  : "border-[#cccccc] bg-white text-ink-2 hover:border-brand"
+                  : "border-line-strong bg-white text-ink-2 hover:border-brand"
               }`}
             >
               <StatusBadge status={s.value} />
@@ -129,7 +129,7 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
             className={`ml-auto px-4 py-2 rounded-lg border text-sm transition-colors ${
               !status || status === "all"
                 ? "border-brand bg-white text-brand-ink font-semibold"
-                : "border-[#cccccc] bg-white text-ink-2 hover:border-brand"
+                : "border-line-strong bg-white text-ink-2 hover:border-brand"
             }`}
           >
             View all
@@ -137,10 +137,10 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-line shadow-card overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#f6f3f2] border-b border-line-strong">
+              <tr className="bg-canvas border-b border-line-strong">
                 {["Property", "Area", "Price", "Stage", "Added", "Actions"].map((h) => (
                   <th key={h} className="text-left px-6 py-4 text-xs font-bold text-ink-2 uppercase tracking-wider">
                     {h}
@@ -157,7 +157,7 @@ export default async function AdminListingsPage({ searchParams }: AdminListingsP
                   day: "numeric", month: "short", year: "numeric",
                 });
                 return (
-                  <tr key={p.id} className="hover:bg-[#f6f3f2] transition-colors">
+                  <tr key={p.id} className="hover:bg-canvas transition-colors">
                     <td className="px-6 py-4">
                       <p className="font-semibold text-ink text-sm">{p.name}</p>
                       <p className="text-xs text-ink-2 capitalize">{p.property_type ?? "—"}</p>

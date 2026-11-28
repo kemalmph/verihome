@@ -143,7 +143,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
             {/* Pros & Cons */}
             {rla && (
               <section className="grid grid-cols-1 md:grid-cols-2 gap-6">
-                <div className="bg-white p-6 rounded-xl border border-[#cccccc]">
+                <div className="bg-white p-6 rounded-xl border border-line-strong">
                   <h3 className="text-lg font-semibold text-brand-ink mb-4">{t("detail.pros", lang)}</h3>
                   <ul className="space-y-3">
                     {(rla.pros as string[]).map((pro) => (
@@ -154,7 +154,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                     ))}
                   </ul>
                 </div>
-                <div className="bg-[#f6f3f2] p-6 rounded-xl border border-[#cccccc]">
+                <div className="bg-canvas p-6 rounded-xl border border-line-strong">
                   <h3 className="text-lg font-semibold text-ink-2 mb-4">{t("detail.cons", lang)}</h3>
                   <ul className="space-y-3">
                     {(rla.cons as string[]).map((con) => (
@@ -174,7 +174,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                 <h2 className="text-lg font-semibold text-ink">{t("detail.facilities", lang)}</h2>
                 <div className="flex flex-wrap gap-2">
                   {(details.facilities as string[]).map((f) => (
-                    <span key={f} className="bg-[#e4e2e1] text-ink-2 px-3 py-1.5 rounded-lg text-sm border border-line-strong">
+                    <span key={f} className="bg-line text-ink-2 px-3 py-1.5 rounded-lg text-sm border border-line-strong">
                       {f}
                     </span>
                   ))}
@@ -199,7 +199,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
               <section className="space-y-4">
                 <h2 className="text-lg font-semibold text-ink">{t("detail.areaOverview", lang)}</h2>
                 <div className="grid grid-cols-1 md:grid-cols-3 gap-4">
-                  <div className="md:col-span-2 rounded-xl bg-[#e4e2e1] h-56 flex items-center justify-center">
+                  <div className="md:col-span-2 rounded-xl bg-line h-56 flex items-center justify-center">
                     <span className="material-symbols-outlined text-ink-3 text-5xl">map</span>
                   </div>
                   <div className="space-y-3">
@@ -211,7 +211,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                       area.nearest_food ? { label: area.nearest_food, value: null } : null,
                       area.nearest_gym  ? { label: area.nearest_gym,  value: null } : null,
                     ].filter(Boolean).map((place) => (
-                      <div key={place!.label} className="bg-white p-3 rounded-xl border border-[#cccccc] flex justify-between items-center">
+                      <div key={place!.label} className="bg-white p-3 rounded-xl border border-line-strong flex justify-between items-center">
                         <span className="text-sm text-ink">{place!.label}</span>
                         {place!.value && <span className="text-sm font-bold text-brand-ink">{place!.value}</span>}
                       </div>
@@ -227,7 +227,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
                     <div className="flex items-center gap-1.5 whitespace-nowrap">
                       <span className="text-xs text-[#52647d]">{t("detail.expatFriendly", lang)}</span>
                       <span className="text-sm font-bold text-brand-ink">{area.expat_friendly}/10</span>
-                      <div className="w-16 bg-[#e4e2e1] h-1.5 rounded-full overflow-hidden">
+                      <div className="w-16 bg-line h-1.5 rounded-full overflow-hidden">
                         <div className="bg-brand h-full rounded-full" style={{ width: `${(area.expat_friendly / 10) * 100}%` }} />
                       </div>
                     </div>
@@ -243,7 +243,7 @@ export default async function ListingDetailPage({ params }: ListingDetailPagePro
           {/* Sticky Sidebar */}
           <aside className="lg:col-span-4 sticky top-24 space-y-6">
             {/* Property quick-facts */}
-            <div className="bg-white border border-[#cccccc] rounded-xl p-4 shadow-sm">
+            <div className="bg-white border border-line-strong rounded-xl p-4 shadow-sm">
               <div className="space-y-2">
                 {[
                   { label: t("detail.propertyType", lang), value: property.property_type },

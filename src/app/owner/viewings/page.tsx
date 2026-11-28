@@ -12,7 +12,7 @@ export default async function OwnerViewingsPage() {
   const viewings = await ownerViewings();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/viewings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <h1 className="text-3xl font-bold text-ink mb-6">{t("owner.viewings.title")}</h1>
@@ -20,7 +20,7 @@ export default async function OwnerViewingsPage() {
         {viewings.length === 0 ? (
           <p className="text-ink-2">{t("owner.viewings.none")}</p>
         ) : (
-          <div className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+          <div className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
             {viewings.map((v) => {
               const when = v.scheduledAt
                 ? new Date(v.scheduledAt).toLocaleString("id-ID", { dateStyle: "long", timeStyle: "short" })
@@ -32,7 +32,7 @@ export default async function OwnerViewingsPage() {
                     <p className="text-sm text-ink-2 mt-0.5">{when}</p>
                     <p className="text-xs text-ink-3 mt-1">{t("owner.viewings.prospect")}: {v.prospectFirstName}</p>
                   </div>
-                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-[#f6f3f2] text-ink-2 shrink-0">
+                  <span className="px-2.5 py-1 rounded-full text-xs font-semibold bg-canvas text-ink-2 shrink-0">
                     {v.status}
                   </span>
                 </div>

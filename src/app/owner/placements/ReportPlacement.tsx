@@ -36,17 +36,17 @@ export function ReportPlacement({ properties }: { properties: { id: string; name
       )}
 
       <select name="property_id" required
-              className="w-full h-10 px-3 rounded-lg border border-[#cccccc] text-sm bg-white focus:outline-none focus:border-brand">
+              className="w-full h-10 px-3 rounded-lg border border-line-strong text-sm bg-white focus:outline-none focus:border-brand">
         {properties.map((p) => <option key={p.id} value={p.id}>{p.name}</option>)}
       </select>
 
       <div className="grid grid-cols-1 sm:grid-cols-3 gap-3">
         <input name="tenant_first_name" required placeholder={t("owner.placements.tenantFirstName")}
-               className="h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand" />
+               className="h-10 px-3 rounded-lg border border-line-strong text-sm focus:outline-none focus:border-brand" />
         <input name="monthly_rent" required inputMode="numeric" placeholder={t("owner.placements.monthlyRent")}
-               className="h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand" />
+               className="h-10 px-3 rounded-lg border border-line-strong text-sm focus:outline-none focus:border-brand" />
         <input name="lease_start" type="date" aria-label={t("owner.placements.leaseStart")}
-               className="h-10 px-3 rounded-lg border border-[#cccccc] text-sm focus:outline-none focus:border-brand" />
+               className="h-10 px-3 rounded-lg border border-line-strong text-sm focus:outline-none focus:border-brand" />
       </div>
 
       {error && <p className="text-sm text-red-600">{error}</p>}

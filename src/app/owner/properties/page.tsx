@@ -13,7 +13,7 @@ export default async function OwnerPropertiesPage() {
   const properties = await ownerProperties();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/properties" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <h1 className="text-3xl font-bold text-ink mb-8">{t("owner.nav.properties")}</h1>
@@ -21,10 +21,10 @@ export default async function OwnerPropertiesPage() {
         {properties.length === 0 ? (
           <p className="text-ink-2">{t("owner.overview.noProperties")}</p>
         ) : (
-          <div className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+          <div className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
             {properties.map((p) => (
               <Link key={p.id as string} href={`/owner/properties/${p.id}`}
-                    className="p-5 flex items-center justify-between gap-3 hover:bg-[#f6f3f2] flex-wrap">
+                    className="p-5 flex items-center justify-between gap-3 hover:bg-canvas flex-wrap">
                 <div className="min-w-0">
                   <p className="font-semibold text-ink">{p.name as string}</p>
                   <p className="text-xs text-ink-3 mt-0.5">{(p.area as string) ?? ""}</p>

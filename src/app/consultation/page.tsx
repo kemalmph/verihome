@@ -62,7 +62,7 @@ export default async function ConsultationPage() {
               className={`bg-white rounded-xl p-8 flex flex-col transition-all shadow-sm ${
                 pkg.popular
                   ? "border-2 border-brand relative md:scale-105"
-                  : "border border-[#cccccc]"
+                  : "border border-line-strong"
               }`}
             >
               {pkg.popular && (
@@ -111,8 +111,8 @@ export default async function ConsultationPage() {
           <p className="text-xs font-bold text-ink-2 uppercase tracking-widest mb-4">
             {t("consult.selectLabel", lang)}
           </p>
-          <div className="flex items-center gap-4 bg-[#f6f3f2] p-4 rounded-xl max-w-lg border border-[#cccccc]">
-            <div className="w-28 h-20 rounded-lg bg-[#e4e2e1] flex-shrink-0 flex items-center justify-center">
+          <div className="flex items-center gap-4 bg-canvas p-4 rounded-xl max-w-lg border border-line-strong">
+            <div className="w-28 h-20 rounded-lg bg-line flex-shrink-0 flex items-center justify-center">
               <span className="material-symbols-outlined text-ink-3 text-2xl">image</span>
             </div>
             <div>

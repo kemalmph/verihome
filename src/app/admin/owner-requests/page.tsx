@@ -22,7 +22,7 @@ export default async function AdminOwnerRequestsPage() {
   const requests = await listPendingOwnerRequests();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/owner-requests" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-4xl">
         <header className="mb-8">
@@ -31,7 +31,7 @@ export default async function AdminOwnerRequestsPage() {
         </header>
 
         {requests.length === 0 ? (
-          <p className="text-ink-2 bg-white rounded-xl border border-[#cccccc] p-6">
+          <p className="text-ink-2 bg-white rounded-2xl border border-line shadow-card p-6">
             {t("admin.requests.none")}
           </p>
         ) : (
@@ -41,7 +41,7 @@ export default async function AdminOwnerRequestsPage() {
               return (
                 <article key={r.id}
                          className={`bg-white rounded-xl border shadow-sm p-5 ${
-                           isPayout ? "border-[#e2b3ab]" : "border-[#cccccc]"}`}>
+                           isPayout ? "border-[#e2b3ab]" : "border-line-strong"}`}>
                   <div className="flex items-start justify-between gap-3 flex-wrap mb-3">
                     <div className="min-w-0">
                       <p className="font-semibold text-ink">
@@ -75,7 +75,7 @@ export default async function AdminOwnerRequestsPage() {
                       </div>
 
                       <div className="grid grid-cols-1 sm:grid-cols-2 gap-3">
-                        <div className="border border-[#e4e2e1] rounded-lg p-3">
+                        <div className="border border-line rounded-lg p-3">
                           <p className="text-[11px] font-bold text-ink-3 uppercase tracking-wider mb-2">Sekarang</p>
                           <dl className="text-sm space-y-1">
                             <div className="flex justify-between gap-2"><dt className="text-ink-3">Bank</dt><dd>{String(r.previous?.payout_bank ?? "—")}</dd></div>
@@ -97,7 +97,7 @@ export default async function AdminOwnerRequestsPage() {
                     <div className="overflow-x-auto">
                       <table className="w-full text-sm" style={{ minWidth: 380 }}>
                         <thead>
-                          <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                          <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                             <th className="text-left py-2 font-medium">Item</th>
                             <th className="text-right py-2 font-medium">Sekarang</th>
                             <th className="text-right py-2 font-medium">Diminta</th>

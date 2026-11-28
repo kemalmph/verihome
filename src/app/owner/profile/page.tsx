@@ -14,12 +14,12 @@ export default async function OwnerProfilePage() {
   const p = await ownerProfile();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/profile" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-2xl">
         <h1 className="text-3xl font-bold text-ink mb-6">{t("owner.profile.title")}</h1>
 
-        <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-6">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-6">
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">
             {t("owner.profile.contact")}
           </h2>

@@ -78,7 +78,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
 
   if (covered) {
     return (
-      <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+      <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-brand-ink text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             check_circle
@@ -106,7 +106,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
 
   if (transfer) {
     return (
-      <div className="bg-white rounded-xl border border-[#cccccc] p-6 space-y-5">
+      <div className="bg-white rounded-xl border border-line-strong p-6 space-y-5">
         <div className="flex items-center gap-3">
           <span className="material-symbols-outlined text-brand-ink text-3xl" style={{ fontVariationSettings: "'FILL' 1" }}>
             check_circle
@@ -117,12 +117,12 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
           </div>
         </div>
 
-        <div className="bg-[#f6f3f2] rounded-lg p-4 space-y-3">
+        <div className="bg-canvas rounded-lg p-4 space-y-3">
           <div className="space-y-1 text-sm">
             <div className="flex justify-between"><span className="text-ink-3">{t("view.bank")}</span><strong>{transfer.bankName}</strong></div>
             <div className="flex justify-between"><span className="text-ink-3">{t("view.account")}</span><strong>{transfer.accountNumber}</strong></div>
             <div className="flex justify-between"><span className="text-ink-3">{t("view.accountName")}</span><strong>{transfer.accountHolder}</strong></div>
-            <div className="flex justify-between text-brand-ink font-bold border-t border-[#cccccc] pt-2 mt-2">
+            <div className="flex justify-between text-brand-ink font-bold border-t border-line-strong pt-2 mt-2">
               <span>{t("view.transferExactly")}</span>
               <span>IDR {transfer.payableAmount.toLocaleString("id-ID")}</span>
             </div>
@@ -158,7 +158,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
               className={`p-5 rounded-xl border-2 text-left transition-all ${
                 selectedPackage === id
                   ? "border-brand bg-brand-soft"
-                  : "border-[#cccccc] bg-white hover:border-brand/50"
+                  : "border-line-strong bg-white hover:border-brand/50"
               }`}
             >
               <p className="text-xs font-bold text-ink-2 uppercase tracking-wider">{pkg.label}</p>
@@ -176,7 +176,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
         </label>
         <select
           name="property_id"
-          className="w-full h-12 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
+          className="w-full h-12 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white"
         >
           <option value="">{t("cf.generalConsult")}</option>
           {savedProperties.map((p) => (
@@ -196,7 +196,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
           name="notes"
           rows={3}
           placeholder={t("cf.questionsPh")}
-          className="w-full px-4 py-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm resize-none"
+          className="w-full px-4 py-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm resize-none"
         />
       </div>
 
@@ -224,7 +224,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
       )}
 
       {/* Order summary */}
-      <div className="bg-[#f6f3f2] rounded-xl p-5 space-y-3 border border-line-strong">
+      <div className="bg-canvas rounded-xl p-5 space-y-3 border border-line-strong">
         <p className="text-xs font-bold text-ink-2 uppercase tracking-wider">{t("cf.orderSummary")}</p>
         <div className="flex justify-between items-center">
           <span className="text-sm text-ink">

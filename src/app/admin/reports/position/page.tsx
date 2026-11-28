@@ -45,7 +45,7 @@ export default async function PositionPage({
   const share = (v: number) => (cash > 0 ? Math.max(0, Math.min(100, (v / cash) * 100)) : 0);
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/reports/position" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[900px]">
         <header className="mb-6">
@@ -61,17 +61,17 @@ export default async function PositionPage({
               Per tanggal
             </label>
             <input id="as_of" name="as_of" type="date" defaultValue={asOfDate} max={today}
-              className="h-10 px-3 rounded-lg border border-[#cccccc] text-sm bg-white" />
+              className="h-10 px-3 rounded-lg border border-line-strong text-sm bg-white" />
           </div>
           <button type="submit"
-            className="h-10 px-4 rounded-lg border border-[#cccccc] bg-white text-sm font-medium text-ink-2 hover:border-brand">
+            className="h-10 px-4 rounded-lg border border-line-strong bg-white text-sm font-medium text-ink-2 hover:border-brand">
             Tampilkan
           </button>
         </form>
 
         {/* ── The statement ─────────────────────────────────────────────────── */}
-        <section className="bg-white rounded-xl border border-[#cccccc] overflow-hidden mb-8">
-          <div className="px-6 py-4 border-b border-[#e4e2e1]">
+        <section className="bg-white rounded-2xl border border-line shadow-card overflow-hidden mb-8">
+          <div className="px-6 py-4 border-b border-line">
             <h2 className="font-bold text-ink">Laporan posisi keuangan</h2>
             <p className="text-xs text-ink-3 mt-0.5">Per {asOfDate}</p>
           </div>
@@ -83,7 +83,7 @@ export default async function PositionPage({
             <Total label="TOTAL ASET" value={totalAssets} />
           </div>
 
-          <div className="px-6 py-5 border-t border-[#e4e2e1]">
+          <div className="px-6 py-5 border-t border-line">
             <SectionLabel>KEWAJIBAN — uang milik pihak lain</SectionLabel>
 
             <p className="text-xs text-ink-3 mt-3 mb-1">Akan dikembalikan kepada pembayar:</p>
@@ -114,7 +114,7 @@ export default async function PositionPage({
 
         {/* ── Cash breakdown ───────────────────────────────────────────────── */}
         <section className={`rounded-xl border p-6 mb-8 ${
-          overdrawn ? "bg-red-50 border-[#cf2f52]" : "bg-white border-[#cccccc]"
+          overdrawn ? "bg-red-50 border-[#cf2f52]" : "bg-white border-line-strong"
         }`}>
           <h2 className="font-bold text-ink">Rincian kas</h2>
           <p className="text-sm text-ink-3 mt-1 mb-5">
@@ -195,7 +195,7 @@ function Line({ label, value, indent }: { label: string; value: number; indent?:
 
 function Total({ label, value }: { label: string; value: number }) {
   return (
-    <div className="flex justify-between gap-4 pt-3 mt-2 border-t border-[#cccccc] text-sm font-bold">
+    <div className="flex justify-between gap-4 pt-3 mt-2 border-t border-line-strong text-sm font-bold">
       <span className="text-ink">{label}</span>
       <span className="tabular-nums text-ink">IDR {fmt(value)}</span>
     </div>
@@ -216,7 +216,7 @@ function Slice({ label, value, share, color }: {
           IDR {fmt(value)}
         </span>
       </div>
-      <div className="h-2 bg-[#e4e2e1] rounded-full overflow-hidden ml-5">
+      <div className="h-2 bg-line rounded-full overflow-hidden ml-5">
         <div className="h-full rounded-full" style={{ width: `${share}%`, background: color }} />
       </div>
     </div>

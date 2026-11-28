@@ -21,7 +21,7 @@ export default async function AppointmentsPage() {
   const user = await getCurrentUser();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/appointments" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
@@ -44,11 +44,11 @@ export default async function AppointmentsPage() {
               confirmed: "bg-green-100 text-green-800",
               pending: "bg-yellow-100 text-yellow-800",
               cancelled: "bg-red-100 text-red-800",
-              completed: "bg-[#f6f3f2] text-ink-2",
+              completed: "bg-canvas text-ink-2",
             };
 
             return (
-              <div key={apt.id} className="bg-white rounded-xl border border-[#cccccc] p-8 shadow-sm">
+              <div key={apt.id} className="bg-white rounded-2xl border border-line shadow-card p-8">
                 <div className="flex flex-col md:flex-row md:items-start md:justify-between gap-4 mb-6">
                   <div className="flex items-center gap-3">
                     <div className="w-12 h-12 bg-brand-soft rounded-full flex items-center justify-center">
@@ -92,7 +92,7 @@ export default async function AppointmentsPage() {
                     <span className="material-symbols-outlined text-lg">video_call</span>
                     Join Meeting
                   </button>
-                  <button className="border border-ink-3 text-ink px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-[#f6f3f2]">
+                  <button className="border border-ink-3 text-ink px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-canvas">
                     Reschedule
                   </button>
                   <button className="text-red-600 px-6 py-2.5 rounded-lg text-sm font-medium hover:bg-red-50">

@@ -14,7 +14,7 @@ export default async function OwnerEarningsPage() {
   const e = await ownerEarnings();
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/owner/earnings" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-10 pt-20 md:pt-10 max-w-3xl">
         <header className="mb-6 flex items-end justify-between gap-3 flex-wrap">
@@ -25,7 +25,7 @@ export default async function OwnerEarningsPage() {
           </a>
         </header>
 
-        <section className="bg-white rounded-xl border border-[#cccccc] p-5 mb-8">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-5 mb-8">
           <div className="grid grid-cols-1 sm:grid-cols-3 gap-4">
             <div>
               <p className="text-xs text-ink-3">{t("owner.balance.earned")}</p>
@@ -46,10 +46,10 @@ export default async function OwnerEarningsPage() {
         {e.perBooking.length > 0 && (
           <section className="mb-8">
             <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">Per pemesanan</h2>
-            <div className="bg-white rounded-xl border border-[#cccccc] overflow-x-auto">
+            <div className="bg-white rounded-2xl border border-line shadow-card overflow-x-auto">
               <table className="w-full text-sm" style={{ minWidth: 560 }}>
                 <thead>
-                  <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                  <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                     <th className="text-left px-4 py-2 font-medium">Pemesanan</th>
                     <th className="text-right px-3 py-2 font-medium">{t("owner.earnings.gross")}</th>
                     <th className="text-right px-3 py-2 font-medium">{t("owner.earnings.commission")}</th>
@@ -81,11 +81,11 @@ export default async function OwnerEarningsPage() {
         <section>
           <h2 className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-3">{t("owner.earnings.payouts")}</h2>
           {e.payouts.length === 0 ? (
-            <p className="text-sm text-ink-2 bg-white rounded-xl border border-[#cccccc] p-5">
+            <p className="text-sm text-ink-2 bg-white rounded-2xl border border-line shadow-card p-5">
               {t("owner.earnings.none")}
             </p>
           ) : (
-            <div className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+            <div className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
               {e.payouts.map((p) => (
                 <div key={p.id} className="px-5 py-3 flex items-center justify-between gap-3">
                   <div>

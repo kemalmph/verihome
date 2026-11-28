@@ -67,7 +67,7 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
   const showActiveClientCol = activeTab !== "admins";
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref={activeTab === "admins" ? "/admin/users?tab=admins" : "/admin/users"} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         {/* Header */}
@@ -91,11 +91,11 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
               className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                 activeTab === t.value
                   ? "bg-white border-brand text-brand-ink shadow-sm"
-                  : "bg-white border-[#cccccc] text-ink-2 hover:border-brand"
+                  : "bg-white border-line-strong text-ink-2 hover:border-brand"
               }`}
             >
               {t.label}
-              <span className="ml-2 px-1.5 py-0.5 bg-[#f6f3f2] rounded text-xs font-bold text-ink-3">
+              <span className="ml-2 px-1.5 py-0.5 bg-canvas rounded text-xs font-bold text-ink-3">
                 {counts[t.value]}
               </span>
             </a>
@@ -103,10 +103,10 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
         </div>
 
         {/* Table */}
-        <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm overflow-hidden">
+        <div className="bg-white rounded-2xl border border-line shadow-card overflow-hidden">
           <table className="w-full">
             <thead>
-              <tr className="bg-[#f6f3f2] border-b border-line-strong">
+              <tr className="bg-canvas border-b border-line-strong">
                 <th className="text-left px-6 py-4 text-xs font-bold text-ink-2 uppercase tracking-wider">User</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-ink-2 uppercase tracking-wider">Contact</th>
                 <th className="text-left px-6 py-4 text-xs font-bold text-ink-2 uppercase tracking-wider">Type</th>
@@ -124,14 +124,14 @@ export default async function AdminUsersPage({ searchParams }: AdminUsersPagePro
                   day: "numeric", month: "short", year: "numeric",
                 });
                 return (
-                  <tr key={u.id} className="hover:bg-[#f6f3f2] transition-colors">
+                  <tr key={u.id} className="hover:bg-canvas transition-colors">
                     <td className="px-6 py-4">
                       <p className="font-semibold text-ink text-sm">{u.name ?? "—"}</p>
                       <p className="text-xs text-ink-3">{u.email ?? "—"}</p>
                     </td>
                     <td className="px-6 py-4 text-sm text-ink">{u.phone_whatsapp ?? "—"}</td>
                     <td className="px-6 py-4">
-                      <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-[#f6f3f2] text-ink-2 capitalize">
+                      <span className="px-2 py-0.5 rounded-full text-xs font-semibold bg-canvas text-ink-2 capitalize">
                         {u.user_type ?? "—"}
                       </span>
                     </td>

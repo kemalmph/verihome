@@ -15,7 +15,7 @@ export function Reconcile({ ledgerCash }: { ledgerCash: number }) {
   const variance = actual === null ? null : actual - ledgerCash;
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] p-6">
+    <div className="bg-white rounded-2xl border border-line shadow-card p-6">
       <h2 className="font-bold text-ink">Rekonsiliasi bank</h2>
       <p className="text-sm text-ink-3 mt-1 mb-5">
         Masukkan saldo rekening sebenarnya. Selisih berarti ada transaksi yang belum tercatat.
@@ -32,7 +32,7 @@ export function Reconcile({ ledgerCash }: { ledgerCash: number }) {
             value={entered}
             onChange={(e) => setEntered(e.target.value.replace(/\D/g, ""))}
             placeholder="0"
-            className="w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white tabular-nums"
+            className="w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white tabular-nums"
           />
         </div>
 

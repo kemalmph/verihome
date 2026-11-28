@@ -41,7 +41,7 @@ interface Props {
   defaultCommissionPct: number | null;
 }
 
-const input = "w-full h-11 px-4 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white disabled:bg-[#f6f3f2] disabled:text-[#aaa] disabled:cursor-not-allowed";
+const input = "w-full h-11 px-4 rounded-lg border border-line-strong focus:border-brand focus:outline-none focus:ring-2 focus:ring-brand-light/40 text-sm bg-white disabled:bg-canvas disabled:text-[#aaa] disabled:cursor-not-allowed";
 const labelCls = "text-xs font-semibold text-ink-2 uppercase tracking-wider block mb-1";
 
 function isShortStayMode(mode: string) {
@@ -85,13 +85,13 @@ function PricingPreview({ rate }: { rate: ShortStayRateData }) {
   if (!rate.price_per_night) return null;
 
   return (
-    <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm">
-      <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
+    <div className="border border-line rounded-lg overflow-hidden text-sm">
+      <div className="bg-canvas px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider">
         Live pricing preview
       </div>
       <table className="w-full">
         <thead>
-          <tr className="text-xs text-ink-3 border-b border-[#e4e2e1]">
+          <tr className="text-xs text-ink-3 border-b border-line">
             <th className="text-left px-4 py-2 font-medium">Scenario</th>
             <th className="text-left px-4 py-2 font-medium">Tier</th>
             <th className="text-right px-4 py-2 font-medium">Total (incl. cleaning)</th>
@@ -99,7 +99,7 @@ function PricingPreview({ rate }: { rate: ShortStayRateData }) {
         </thead>
         <tbody>
           {rows.map((row) => (
-            <tr key={row.label} className="border-b border-[#f6f3f2] last:border-0">
+            <tr key={row.label} className="border-b border-canvas last:border-0">
               <td className="px-4 py-2.5 text-ink-2">{row.label}</td>
               <td className="px-4 py-2.5">
                 {row.result ? (
@@ -194,8 +194,8 @@ function CommissionPreview({ rate, commission, defaultPct }: {
   const guestPays = rent + cleaning + deposit;
 
   return (
-    <div className="border border-[#e4e2e1] rounded-lg overflow-hidden text-sm">
-      <div className="bg-[#f6f3f2] px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider flex justify-between gap-2">
+    <div className="border border-line rounded-lg overflow-hidden text-sm">
+      <div className="bg-canvas px-4 py-2 text-xs font-semibold text-ink-2 uppercase tracking-wider flex justify-between gap-2">
         <span>Contoh pembagian — menginap 5 malam</span>
         {inherited && (
           <span className="font-medium normal-case tracking-normal text-ink-3">
@@ -215,7 +215,7 @@ function CommissionPreview({ rate, commission, defaultPct }: {
       ) : (
         <table className="w-full">
           <tbody>
-            <tr className="border-b border-[#f6f3f2]">
+            <tr className="border-b border-canvas">
               <td className="px-4 py-2.5 text-ink-2">
                 Tamu membayar
                 <span className="block text-xs text-ink-3">
@@ -226,7 +226,7 @@ function CommissionPreview({ rate, commission, defaultPct }: {
                 IDR {fmt(guestPays)}
               </td>
             </tr>
-            <tr className="border-b border-[#f6f3f2]">
+            <tr className="border-b border-canvas">
               <td className="px-4 py-2.5 text-ink-2">
                 Cosystem menerima
                 <span className="block text-xs text-ink-3">
@@ -237,7 +237,7 @@ function CommissionPreview({ rate, commission, defaultPct }: {
                 IDR {fmt(cosystem)}
               </td>
             </tr>
-            <tr className="border-b border-[#f6f3f2]">
+            <tr className="border-b border-canvas">
               <td className="px-4 py-2.5 text-ink-2">
                 Pemilik menerima
                 <span className="block text-xs text-ink-3">
@@ -323,9 +323,9 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
   }
 
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] shadow-sm p-6 space-y-5">
+    <div className="bg-white rounded-2xl border border-line shadow-card p-6 space-y-5">
       {/* Header */}
-      <div className="flex items-start gap-3 pb-2 border-b border-[#e4e2e1]">
+      <div className="flex items-start gap-3 pb-2 border-b border-line">
         <span className="material-symbols-outlined text-brand-ink text-xl mt-0.5">nights_stay</span>
         <div className="flex-1">
           <h3 className="font-semibold text-ink">Short-stay Rates</h3>
@@ -343,7 +343,7 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
                 : "Activate to allow new short-stay bookings"}
             >
               <span className="text-ink-2">Active</span>
-              <div className={`w-10 h-5 rounded-full relative transition-colors ${rate.active ? "bg-brand" : "bg-[#cccccc]"}`}>
+              <div className={`w-10 h-5 rounded-full relative transition-colors ${rate.active ? "bg-brand" : "bg-line-strong"}`}>
                 <span className={`absolute top-0.5 left-0.5 w-4 h-4 bg-white rounded-full shadow transition-transform ${rate.active ? "translate-x-5" : ""}`} />
               </div>
             </button>
@@ -484,7 +484,7 @@ export function ShortStayRateEditor({ propertyId, rentalMode, savedRentalMode, i
 
       {/* Commission — a property-level setting, edited here because it is a
           pricing decision and because a rate without it cannot be split. */}
-      <div className={`border-t border-[#e4e2e1] pt-5 space-y-4 ${!isEditable ? "opacity-50 pointer-events-none select-none" : ""}`}>
+      <div className={`border-t border-line pt-5 space-y-4 ${!isEditable ? "opacity-50 pointer-events-none select-none" : ""}`}>
         <div>
           <h4 className="font-semibold text-ink text-sm">Pembagian pendapatan</h4>
           <p className="text-xs text-ink-3 mt-0.5">

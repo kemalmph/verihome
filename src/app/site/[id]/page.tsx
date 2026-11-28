@@ -37,7 +37,7 @@ export default async function CoworkingSitePage({ params }: Props) {
   const seats = lettable.reduce((n, u) => n + Number(u.capacity ?? 0), 0);
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-ink-3 mb-4">
@@ -56,13 +56,13 @@ export default async function CoworkingSitePage({ params }: Props) {
           <div className="flex gap-2">
             <Link
               href={`/site/${site.slug}/members`}
-              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-white"
+              className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
             >
               Member
             </Link>
             <Link
               href={`/site/${site.slug}/calendar`}
-              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-white"
+              className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
             >
               Kalender
             </Link>

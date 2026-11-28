@@ -37,10 +37,10 @@ export function BookingOptions({
   const showTabs = rentalMode === "both";
 
   return (
-    <div className="bg-white border border-[#cccccc] rounded-xl p-6 shadow-sm">
+    <div className="bg-white border border-line-strong rounded-xl p-6 shadow-sm">
       {/* Tab switcher — only shown when mode is "both" */}
       {showTabs && (
-        <div className="flex rounded-lg overflow-hidden border border-[#cccccc] mb-5 text-sm font-semibold">
+        <div className="flex rounded-lg overflow-hidden border border-line-strong mb-5 text-sm font-semibold">
           {(["long_term", "short_stay"] as const).map((mode) => (
             <button
               key={mode}
@@ -48,7 +48,7 @@ export function BookingOptions({
               className={`flex-1 py-2 transition-colors ${
                 tab === mode
                   ? "bg-brand text-white"
-                  : "bg-white text-ink-2 hover:bg-[#f6f3f2]"
+                  : "bg-white text-ink-2 hover:bg-canvas"
               }`}
             >
               {mode === "long_term" ? t("book.longTerm") : t("book.shortStay")}
@@ -87,7 +87,7 @@ export function BookingOptions({
             </Link>
             <Link
               href={`/listings/${slug}/viewing`}
-              className="w-full border-2 border-ink text-ink py-4 rounded-lg font-semibold flex flex-col items-center hover:bg-[#f6f3f2] transition-colors"
+              className="w-full border-2 border-ink text-ink py-4 rounded-lg font-semibold flex flex-col items-center hover:bg-canvas transition-colors"
             >
               <span>{t("book.viewing")}</span>
               <span className="text-xs font-normal opacity-70">{t("book.viewingSub")}</span>

@@ -32,7 +32,7 @@ export default async function UnitPage() {
   const label = overview.current ? t("unit.current") : overview.next ? t("unit.next") : t("unit.past");
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <DashboardSidebar activeHref="/dashboard/unit" userName={user.name} isActiveClient={user.is_active_client} />
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-3xl">
         <h1 className="text-3xl font-bold text-ink mb-8">{t("unit.title")}</h1>
@@ -44,7 +44,7 @@ export default async function UnitPage() {
         )}
 
         {overview.tenancy && (
-          <section className="mb-8 bg-white rounded-xl border border-[#cccccc] p-6">
+          <section className="mb-8 bg-white rounded-2xl border border-line shadow-card p-6">
             <p className="text-xs font-bold text-ink-2 uppercase tracking-wider">{t("tenancy.title")}</p>
             <h2 className="text-lg font-bold text-ink mt-2">{overview.tenancy.propertyName}</h2>
             {overview.tenancy.propertyArea && <p className="text-sm text-ink-3">{overview.tenancy.propertyArea}</p>}
@@ -81,9 +81,9 @@ export default async function UnitPage() {
             </Link>
           </div>
           {saved.length === 0 ? (
-            <p className="text-sm text-ink-2 bg-white rounded-xl border border-[#cccccc] p-5">{t("saved.none")}</p>
+            <p className="text-sm text-ink-2 bg-white rounded-2xl border border-line shadow-card p-5">{t("saved.none")}</p>
           ) : (
-            <div className="bg-white rounded-xl border border-[#cccccc] divide-y divide-[#f0eeed]">
+            <div className="bg-white rounded-2xl border border-line shadow-card divide-y divide-[#f0eeed]">
               {saved.slice(0, 4).map((s) => (
                 <div key={s.id} className="p-4 flex items-center justify-between gap-3 flex-wrap">
                   <div className="min-w-0">

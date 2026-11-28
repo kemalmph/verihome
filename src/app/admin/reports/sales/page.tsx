@@ -34,7 +34,7 @@ export default async function SalesReportPage({
   ].filter((a) => (a.count ?? 0) > 0 || (a.amount ?? 0) > 0);
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin/reports/sales" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12 max-w-[1100px]">
         <header className="mb-6">
@@ -53,7 +53,7 @@ export default async function SalesReportPage({
               className={`px-4 py-2 rounded-lg text-sm font-medium border transition-colors ${
                 period.key === o.key
                   ? "bg-white border-brand text-brand-ink shadow-sm"
-                  : "bg-white border-[#cccccc] text-ink-2 hover:border-brand"
+                  : "bg-white border-line-strong text-ink-2 hover:border-brand"
               }`}
             >
               {o.label}
@@ -62,12 +62,12 @@ export default async function SalesReportPage({
           <form action="/admin/reports/sales" className="flex items-center gap-2">
             <input type="hidden" name="period" value="custom" />
             <input type="date" name="from" defaultValue={sp.from}
-              className="h-10 px-3 rounded-lg border border-[#cccccc] text-sm bg-white" />
+              className="h-10 px-3 rounded-lg border border-line-strong text-sm bg-white" />
             <span className="text-ink-3 text-sm">–</span>
             <input type="date" name="to" defaultValue={sp.to}
-              className="h-10 px-3 rounded-lg border border-[#cccccc] text-sm bg-white" />
+              className="h-10 px-3 rounded-lg border border-line-strong text-sm bg-white" />
             <button type="submit"
-              className="h-10 px-4 rounded-lg border border-[#cccccc] bg-white text-sm font-medium text-ink-2 hover:border-brand">
+              className="h-10 px-4 rounded-lg border border-line-strong bg-white text-sm font-medium text-ink-2 hover:border-brand">
               Terapkan
             </button>
           </form>
@@ -85,7 +85,7 @@ export default async function SalesReportPage({
             </p>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#cccccc] p-6">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-6">
             <p className="text-xs font-bold uppercase tracking-wider text-ink-3">Nilai transaksi bruto</p>
             <p className="text-3xl font-semibold text-ink-2 mt-2 tabular-nums">IDR {fmt(r.gbv)}</p>
             <p className="text-sm text-ink-3 mt-2">
@@ -93,13 +93,13 @@ export default async function SalesReportPage({
             </p>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#cccccc] p-6">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-6">
             <p className="text-xs font-bold uppercase tracking-wider text-ink-3">Take rate</p>
             <p className="text-3xl font-semibold text-ink mt-2 tabular-nums">{pct(r.takeRate)}</p>
             <p className="text-sm text-ink-3 mt-2">Pendapatan dibagi nilai transaksi</p>
           </div>
 
-          <div className="bg-white rounded-xl border border-[#cccccc] p-6">
+          <div className="bg-white rounded-2xl border border-line shadow-card p-6">
             <p className="text-xs font-bold uppercase tracking-wider text-ink-3">Saldo kas</p>
             <p className="text-3xl font-semibold text-ink mt-2 tabular-nums">IDR {fmt(r.cashPosition)}</p>
             <p className="text-sm text-ink-3 mt-2">
@@ -112,7 +112,7 @@ export default async function SalesReportPage({
         </section>
 
         {/* ── 2. Revenue by stream ────────────────────────────────────────── */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-6 mb-8">
           <h2 className="font-bold text-ink mb-1">Pendapatan per sumber</h2>
           <p className="text-sm text-ink-3 mb-5">Perbandingan dengan periode sebelumnya yang setara</p>
 
@@ -121,7 +121,7 @@ export default async function SalesReportPage({
           <div className="overflow-x-auto mt-6">
             <table className="w-full text-sm" style={{ minWidth: 560 }}>
               <thead>
-                <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                   <th className="text-left py-2 font-medium">Sumber</th>
                   <th className="text-right py-2 font-medium">Jumlah</th>
                   <th className="text-right py-2 font-medium">Porsi</th>
@@ -131,7 +131,7 @@ export default async function SalesReportPage({
               </thead>
               <tbody>
                 {r.streams.map((s) => (
-                  <tr key={s.account} className="border-b border-[#f6f3f2]">
+                  <tr key={s.account} className="border-b border-canvas">
                     <td className="py-2.5">
                       <span className="inline-flex items-center gap-2">
                         <span className="w-3 h-3 rounded-sm" style={{ background: s.color }} />
@@ -161,7 +161,7 @@ export default async function SalesReportPage({
         </section>
 
         {/* ── 3. Trend ─────────────────────────────────────────────────────── */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-6 mb-8">
           <h2 className="font-bold text-ink mb-1">Tren 12 bulan</h2>
           <p className="text-sm text-ink-3 mb-4">Pendapatan bersih per bulan, dipisah per sumber</p>
           <Legend items={REVENUE_STREAMS.map((s) => ({ label: s.label, color: s.color }))} />
@@ -205,13 +205,13 @@ export default async function SalesReportPage({
         </section>
 
         {/* ── 5. Top properties ────────────────────────────────────────────── */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-6 mb-8">
           <h2 className="font-bold text-ink mb-1">Properti teratas</h2>
           <p className="text-sm text-ink-3 mb-4">Diurutkan berdasarkan kontribusi pendapatan Cosystem</p>
           <div className="overflow-x-auto">
             <table className="w-full text-sm" style={{ minWidth: 680 }}>
               <thead>
-                <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-[#e4e2e1]">
+                <tr className="text-xs uppercase tracking-wider text-ink-3 border-b border-line">
                   <th className="text-left py-2 font-medium">Properti</th>
                   <th className="text-right py-2 font-medium">Pesanan</th>
                   <th className="text-right py-2 font-medium">Bruto</th>
@@ -222,7 +222,7 @@ export default async function SalesReportPage({
               </thead>
               <tbody>
                 {r.topProperties.map((p) => (
-                  <tr key={p.id} className="border-b border-[#f6f3f2]">
+                  <tr key={p.id} className="border-b border-canvas">
                     <td className="py-2.5">
                       <Link href={`/admin/listings/${p.id}/build`} className="font-semibold text-ink hover:text-brand-ink">
                         {p.name}
@@ -247,7 +247,7 @@ export default async function SalesReportPage({
         </section>
 
         {/* ── Exports ───────────────────────────────────────────────────────── */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-6 mb-8">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-6 mb-8">
           <h2 className="font-bold text-ink mb-1">Ekspor untuk akuntan</h2>
           <p className="text-sm text-ink-3 mb-4">
             CSV dengan angka polos tanpa pemisah ribuan, siap dibuka di spreadsheet.
@@ -262,7 +262,7 @@ export default async function SalesReportPage({
               <a
                 key={e.type}
                 href={`/api/admin/reports/export?type=${e.type}&from=${period.from.toISOString()}&to=${period.to.toISOString()}`}
-                className="px-4 py-2 border border-[#cccccc] rounded-lg text-sm font-medium text-ink-2 hover:border-brand inline-flex items-center gap-2"
+                className="px-4 py-2 border border-line-strong rounded-lg text-sm font-medium text-ink-2 hover:border-brand inline-flex items-center gap-2"
               >
                 <span className="material-symbols-outlined text-base">table_view</span>
                 {e.label}
@@ -272,12 +272,12 @@ export default async function SalesReportPage({
         </section>
 
         {/* ── 6. Needs attention ───────────────────────────────────────────── */}
-        <section className="bg-white rounded-xl border border-[#cccccc] p-6">
+        <section className="bg-white rounded-2xl border border-line shadow-card p-6">
           <h2 className="font-bold text-ink mb-4">Perlu tindakan</h2>
           {attention.length === 0 ? (
             <p className="text-sm text-ink-3">Tidak ada yang tertunda.</p>
           ) : (
-            <ul className="divide-y divide-[#f6f3f2]">
+            <ul className="divide-y divide-canvas">
               {attention.map((a) => (
                 <li key={a.label}>
                   <Link href={a.href}
@@ -307,11 +307,11 @@ export default async function SalesReportPage({
 
 function VolumeCard({ title, rows }: { title: string; rows: [string, string][] }) {
   return (
-    <div className="bg-white rounded-xl border border-[#cccccc] p-5">
+    <div className="bg-white rounded-2xl border border-line shadow-card p-5">
       <h3 className="font-semibold text-ink mb-3">{title}</h3>
       <dl className="space-y-2 text-sm">
         {rows.map(([k, v]) => (
-          <div key={k} className="flex justify-between gap-4 border-b border-[#f6f3f2] pb-2 last:border-0 last:pb-0">
+          <div key={k} className="flex justify-between gap-4 border-b border-canvas pb-2 last:border-0 last:pb-0">
             <dt className="text-ink-3">{k}</dt>
             <dd className="font-semibold text-ink tabular-nums">{v}</dd>
           </div>

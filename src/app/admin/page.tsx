@@ -90,7 +90,7 @@ export default async function AdminDashboardPage() {
   );
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref="/admin" />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <header className="mb-10">
@@ -208,7 +208,7 @@ export default async function AdminDashboardPage() {
             <Link
               key={status}
               href={`/admin/listings?status=${status}`}
-              className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm hover:border-brand transition-colors group"
+              className="bg-white rounded-2xl border border-line shadow-card p-6 hover:border-brand transition-colors group"
             >
               <p className="text-xs font-bold text-ink-2 uppercase tracking-wider mb-1 capitalize group-hover:text-brand-ink">
                 {status}
@@ -225,7 +225,7 @@ export default async function AdminDashboardPage() {
             { icon: "rate_review", label: "Pending Reviews", value: pendingReviews ?? 0, href: "/admin" },
             { icon: "inbox", label: "New Submissions", value: byStatus.unverified, href: "/admin/listings?status=unverified" },
           ].map((stat) => (
-            <Link key={stat.label} href={stat.href} className="bg-white rounded-xl border border-[#cccccc] p-6 shadow-sm flex items-center gap-4 hover:border-brand transition-colors">
+            <Link key={stat.label} href={stat.href} className="bg-white rounded-2xl border border-line shadow-card p-6 flex items-center gap-4 hover:border-brand transition-colors">
               <div className="w-12 h-12 bg-brand-soft rounded-full flex items-center justify-center">
                 <span className="material-symbols-outlined text-brand-ink">{stat.icon}</span>
               </div>
@@ -238,7 +238,7 @@ export default async function AdminDashboardPage() {
         </div>
 
         {/* Recent unverified submissions */}
-        <section className="bg-white rounded-xl border border-[#cccccc] shadow-sm">
+        <section className="bg-white rounded-2xl border border-line shadow-card">
           <div className="p-6 border-b border-line-strong flex justify-between items-center">
             <h3 className="text-lg font-semibold text-ink">Recent Owner Submissions</h3>
             <Link href="/admin/listings?status=unverified" className="text-brand-ink text-sm font-medium hover:underline">

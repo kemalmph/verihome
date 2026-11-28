@@ -84,7 +84,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
                 name="name"
                 defaultValue={user.name ?? ""}
                 placeholder="Full name"
-                className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+                className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
               />
             </div>
 
@@ -95,7 +95,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
                 type="email"
                 defaultValue={user.email ?? ""}
                 placeholder="email@example.com"
-                className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+                className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
               />
             </div>
 
@@ -105,7 +105,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
                 name="phone_whatsapp"
                 defaultValue={user.phone_whatsapp ?? ""}
                 placeholder="+62 812 3456 7890"
-                className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+                className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
               />
             </div>
 
@@ -114,7 +114,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
               <select
                 name="user_type"
                 defaultValue={user.user_type ?? ""}
-                className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm bg-white"
+                className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm bg-white"
               >
                 <option value="">— Select type —</option>
                 <option value="renter">Renter</option>
@@ -131,7 +131,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
                 name="preferred_area"
                 defaultValue={user.preferred_area ?? ""}
                 placeholder="e.g. Kemang, SCBD"
-                className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+                className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
               />
             </div>
 
@@ -142,7 +142,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
                 type="number"
                 defaultValue={user.budget_min ?? ""}
                 placeholder="e.g. 5000000"
-                className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+                className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
               />
             </div>
 
@@ -153,7 +153,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
                 type="number"
                 defaultValue={user.budget_max ?? ""}
                 placeholder="e.g. 15000000"
-                className="w-full h-11 px-3 rounded-lg border border-[#cccccc] focus:border-brand focus:outline-none text-sm"
+                className="w-full h-11 px-3 rounded-lg border border-line-strong focus:border-brand focus:outline-none text-sm"
               />
             </div>
           </div>
@@ -169,7 +169,7 @@ function EditUserModal({ user, onClose }: { user: User; onClose: () => void }) {
             <button
               type="button"
               onClick={onClose}
-              className="px-5 py-2.5 border border-[#cccccc] text-ink-2 rounded-lg text-sm hover:bg-[#f6f3f2] transition-colors"
+              className="px-5 py-2.5 border border-line-strong text-ink-2 rounded-lg text-sm hover:bg-canvas transition-colors"
             >
               Cancel
             </button>

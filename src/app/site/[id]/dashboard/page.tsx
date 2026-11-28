@@ -42,7 +42,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
   const occPct = totals.sqm_total > 0 ? Math.round((totals.sqm_occupied / totals.sqm_total) * 100) : 0;
 
   return (
-    <div className="flex min-h-screen bg-[#f6f3f2]">
+    <div className="flex min-h-screen bg-canvas">
       <AppSidebar activeHref={`/site/${param}`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-ink-3 mb-4">
@@ -61,13 +61,13 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
           <div className="flex gap-2">
             <Link
               href={`/site/${site.slug}/calendar`}
-              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-white"
+              className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
             >
               Kalender
             </Link>
             <Link
               href={`/site/${site.slug}`}
-              className="px-4 py-2 rounded-lg border border-[#ddd7d4] text-sm text-ink-2 hover:bg-white"
+              className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
             >
               Kelola unit
             </Link>
@@ -98,7 +98,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
 
         {/* ── what needs doing ────────────────────────────────────────── */}
         {(instalments.overdue.length > 0 || totals.unpriced > 0 || ending_soon.length > 0) && (
-          <section className="mb-8 bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
+          <section className="mb-8 bg-white border border-line rounded-2xl shadow-card overflow-hidden">
             <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">Perlu tindakan</h2>
             <ul className="divide-y divide-[#e8e3e0]">
               {instalments.overdue.map((i) => (
@@ -118,7 +118,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
         )}
 
         {/* ── units ───────────────────────────────────────────────────── */}
-        <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden mb-8">
+        <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden mb-8">
           <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">
             Unit ({units.length})
           </h2>
@@ -140,7 +140,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
         </section>
 
         {/* ── the schedule ────────────────────────────────────────────── */}
-        <section className="bg-white border border-[#ddd7d4] rounded-lg overflow-hidden">
+        <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden">
           <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">Jadwal pembayaran</h2>
           {instalments.overdue.length + instalments.upcoming.length === 0 ? (
             <p className="p-8 text-center text-ink-3 text-sm">Tidak ada tagihan terbuka.</p>
@@ -239,7 +239,7 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
 
 function Stat({ label, value, hint, tone }: { label: string; value: string; hint?: string; tone?: "alert" }) {
   return (
-    <div className={`bg-white border rounded-lg p-5 ${tone === "alert" ? "border-[#e2b3ab]" : "border-[#ddd7d4]"}`}>
+    <div className={`bg-white border rounded-lg p-5 ${tone === "alert" ? "border-[#e2b3ab]" : "border-line-strong"}`}>
       <div className="text-xs uppercase tracking-wide text-ink-3">{label}</div>
       <div className={`text-2xl font-bold mt-1 tabular-nums ${tone === "alert" ? "text-[#8c3a2c]" : "text-ink"}`}>
         {value}
@@ -263,7 +263,7 @@ function Pill({ children, tone }: { children: React.ReactNode; tone: "free" | "b
     free:  "bg-success-soft text-success-ink border-success-line",
     busy:  "bg-[#eef2fb] text-[#2d4a86] border-[#b6c6e8]",
     warn:  "bg-[#fdf4e3] text-[#8a6416] border-[#e6d09a]",
-    muted: "bg-[#efeae8] text-ink-3 border-[#ddd7d4]",
+    muted: "bg-[#efeae8] text-ink-3 border-line-strong",
   }[tone];
   return <span className={`inline-block text-xs px-2 py-0.5 rounded-full border whitespace-nowrap ${cls}`}>{children}</span>;
 }
