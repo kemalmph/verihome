@@ -1,11 +1,11 @@
 import Link from "next/link";
-import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { AccountSidebar } from "@/components/layout/AccountSidebar";
 import { PLACEHOLDER_PROPERTIES } from "@/lib/placeholder-data";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 
 export const dynamic = "force-dynamic";
 
-export default async function DashboardPage() {
+export default async function AccountPage() {
   const user = await getCurrentUser();
 
   const savedCount = 2;
@@ -17,8 +17,8 @@ export default async function DashboardPage() {
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <DashboardSidebar
-        activeHref="/dashboard"
+      <AccountSidebar
+        activeHref="/account"
         userName={user.name}
         isActiveClient={user.is_active_client}
       />
@@ -149,7 +149,7 @@ export default async function DashboardPage() {
                 })}
               </div>
               <div className="p-4 bg-canvas text-center rounded-b-lg">
-                <Link href="/dashboard/saved" className="text-brand-ink text-sm font-bold hover:underline">
+                <Link href="/account/saved" className="text-brand-ink text-sm font-bold hover:underline">
                   View All Saved Listings
                 </Link>
               </div>

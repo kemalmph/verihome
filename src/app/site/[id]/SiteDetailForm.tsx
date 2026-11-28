@@ -20,10 +20,13 @@ interface Site {
 }
 
 export function SiteDetailForm({
-  site, owners,
+  site, owners, canEdit,
 }: {
   site: Site;
-  owners: { id: string; name: string }[];
+  /** Null unless the viewer is a superadmin: only they assign a site's owner. */
+  owners: { id: string; name: string }[] | null;
+  /** site.settings on this site. Without it the form is read-only. */
+  canEdit: boolean;
 }) {
   const router = useRouter();
   const [error, setError] = useState("");
@@ -53,7 +56,7 @@ export function SiteDetailForm({
     >
       <h2 className="text-lg font-semibold text-ink mb-5">Detail site</h2>
 
-      <div className="grid grid-cols-1 sm:grid-cols-2 gap-4">
+      <fieldset disabled={!canEdit} className="grid grid-cols-1 sm:grid-cols-2 gap-4">
         <Field label="Nama" className="sm:col-span-2">
           <input name="name" required defaultValue={site.name} className={inputCls} />
         </Field>
@@ -82,14 +85,16 @@ export function SiteDetailForm({
           <input name="address" defaultValue={site.address ?? ""} className={inputCls} />
         </Field>
 
-        <Field label="Pemilik">
-          <select name="owner_id" defaultValue={site.owner_id ?? ""} className={inputCls}>
-            <option value="">— belum ditentukan —</option>
-            {owners.map((o) => (
-              <option key={o.id} value={o.id}>{o.name}</option>
-            ))}
-          </select>
-        </Field>
+        {owners && (
+          <Field label="Pemilik">
+            <select name="owner_id" defaultValue={site.owner_id ?? ""} className={inputCls}>
+              <option value="">— belum ditentukan —</option>
+              {owners.map((o) => (
+                <option key={o.id} value={o.id}>{o.name}</option>
+              ))}
+            </select>
+          </Field>
+        )}
 
         <Field label="Google Maps">
           <input name="google_maps_url" defaultValue={site.google_maps_url ?? ""} className={inputCls} />
@@ -106,7 +111,7 @@ export function SiteDetailForm({
         <Field label="Catatan" className="sm:col-span-2">
           <textarea name="notes" rows={2} defaultValue={site.notes ?? ""} className={inputCls} />
         </Field>
-      </div>
+      </fieldset>
 
       {error && (
         <p className="mt-4 text-sm text-[#8c3a2c] bg-[#fbeeec] border border-[#e2b3ab] rounded px-3 py-2">
@@ -119,13 +124,15 @@ export function SiteDetailForm({
         </p>
       )}
 
-      <button
-        type="submit"
-        disabled={isPending}
-        className="mt-6 px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
-      >
-        {isPending ? "Menyimpan…" : "Simpan perubahan"}
-      </button>
+      {canEdit && (
+        <button
+          type="submit"
+          disabled={isPending}
+          className="mt-6 px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong disabled:opacity-60"
+        >
+          {isPending ? "Menyimpan…" : "Simpan perubahan"}
+        </button>
+      )}
     </form>
   );
 }

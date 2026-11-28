@@ -1,11 +1,11 @@
-import { requirePermissionOrRedirect } from "@/lib/auth/guards";
+import { requireSitePage } from "@/lib/auth/site-access";
+import { hasSitePermission, type SitePermission } from "@/lib/auth/site-permissions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { listMemberships, listPlans, type MembershipRow } from "@/lib/actions/membership-actions";
 import { NewMembershipForm, NewPlanForm, MembershipControls } from "./MemberForms";
-import { resolveSiteId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -15,11 +15,10 @@ const tgl = (ymd: string) =>
     .format(new Date(`${ymd}T00:00:00+07:00`));
 
 export default async function MembersPage({ params }: { params: Promise<{ id: string }> }) {
-  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
   const { id: param } = await params;
-  const id = await resolveSiteId(param);
-  if (!id) notFound();
-
+  const access = await requireSitePage(param, "site.members.view");
+  const id = access.siteId;
+  const can = (p: SitePermission) => hasSitePermission(access.perms, p);
 
   const admin = createAdminClient();
   const { data: site } = await admin.from("sites").select("id, name, slug").eq("id", id).maybeSingle();
@@ -29,11 +28,15 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
 
   const active = members.filter((m) => m.status === "active");
   const endingSoon = active.filter((m) => m.days_left >= 0 && m.days_left <= 30);
-  const unpaid = members.filter((m) => m.status !== "cancelled" && m.payment_status !== "paid");
+  // Who has not paid is billing information (site.billing); front office
+  // handles members, not their payments.
+  const unpaid = can("site.billing")
+    ? members.filter((m) => m.status !== "cancelled" && m.payment_status !== "paid")
+    : [];
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <AppSidebar activeHref={`/site/${param}`} />
+      <AppSidebar activeHref={`/site/${site.slug}/members`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-ink-3 mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
@@ -97,15 +100,20 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
                 </tr>
               </thead>
               <tbody>
-                {members.map((m) => <Row key={m.id} m={m} siteId={site.id} />)}
+                {members.map((m) => (
+                  <Row key={m.id} m={m} siteId={site.id}
+                    canStatus={can("site.members")} canPayment={can("site.billing")} />
+                ))}
               </tbody>
             </table>
           )}
         </section>
 
-        <div className="mb-10">
-          <NewMembershipForm siteId={site.id} plans={plans} />
-        </div>
+        {can("site.members") && (
+          <div className="mb-10">
+            <NewMembershipForm siteId={site.id} plans={plans} />
+          </div>
+        )}
 
         {/* ── plans ───────────────────────────────────────────────────── */}
         <section className="bg-white border border-line rounded-2xl shadow-card overflow-x-auto">
@@ -147,9 +155,12 @@ export default async function MembersPage({ params }: { params: Promise<{ id: st
               </tbody>
             </table>
           )}
-          <div className="px-5 py-3 border-t border-[#e8e3e0]">
-            <NewPlanForm siteId={site.id} />
-          </div>
+          {can("site.catalog") && (
+            <div className="px-5 py-3 border-t border-[#e8e3e0]">
+              {/* A plan for every site is a global decision (createPlan enforces it). */}
+              <NewPlanForm siteId={site.id} allowAllSites={access.actor.global.includes("site.catalog")} />
+            </div>
+          )}
         </section>
 
         <p className="text-xs text-ink-3 mt-6 max-w-3xl">
@@ -172,7 +183,9 @@ function Th({ children, className = "" }: { children: React.ReactNode; className
   );
 }
 
-function Row({ m, siteId }: { m: MembershipRow; siteId: string }) {
+function Row({ m, siteId, canStatus, canPayment }: {
+  m: MembershipRow; siteId: string; canStatus: boolean; canPayment: boolean;
+}) {
   return (
     <tr className="border-b border-[#f0ecea] last:border-0 hover:bg-[#faf9f8]">
       <td className="px-4 py-3">
@@ -204,6 +217,8 @@ function Row({ m, siteId }: { m: MembershipRow; siteId: string }) {
           membershipId={m.id}
           status={m.status}
           paymentStatus={m.payment_status}
+          canStatus={canStatus}
+          canPayment={canPayment}
         />
       </td>
     </tr>

@@ -1,4 +1,6 @@
-import { requirePermissionOrRedirect } from "@/lib/auth/guards";
+import { getSiteActor } from "@/lib/auth/site-access";
+import { hasSitePermission, type SitePermission } from "@/lib/auth/site-permissions";
+import { redirect } from "next/navigation";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppSidebar } from "@/components/layout/AppSidebar";
@@ -26,15 +28,18 @@ const waktu = (iso: string) =>
   }).format(new Date(iso));
 
 export default async function BookingDetailPage({ params }: { params: Promise<{ resId: string }> }) {
-  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
+  if (!(await getSiteActor())) redirect("/admin-login");
   const { resId: param } = await params;
   const resId = await resolveReservationId(param);
   if (!resId) notFound();
 
-  const r = await getReservationDetail(resId);
+  // The site comes from the reservation, inside getReservationDetail, which
+  // throws not-found for a reservation whose site the viewer cannot see.
+  const r = await getReservationDetail(resId).catch(() => null);
   if (!r) notFound();
+  const can = (p: SitePermission) => hasSitePermission(r.perms, p);
 
-  const catalog = await listItems(r.site_id);
+  const catalog = can("site.reservations") || can("site.catalog") ? await listItems(r.site_id) : [];
 
   return (
     <div className="flex min-h-screen bg-canvas">
@@ -88,22 +93,26 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
                 ? "cost" : undefined
             }
           />
-          <Stat label="Barang terjual" value={rupiah(r.item_sales)} />
-          <Stat label="HPP konsumsi" value={rupiah(r.cogs)} tone={r.cogs > 0 ? "cost" : undefined} />
-          <Stat
-            label="Margin"
-            value={rupiah(r.margin)}
-            hint="Sewa + barang terjual − HPP"
-            tone={r.margin < 0 ? "alert" : "good"}
-          />
+          {/* Item sales, COGS and margin: site.revenue only (global finance)
+              until the revenue-share decision (§20.7). Null otherwise. */}
+          {r.item_sales !== null && <Stat label="Barang terjual" value={rupiah(r.item_sales)} />}
+          {r.cogs !== null && <Stat label="HPP konsumsi" value={rupiah(r.cogs)} tone={r.cogs > 0 ? "cost" : undefined} />}
+          {r.margin !== null && (
+            <Stat
+              label="Margin"
+              value={rupiah(r.margin)}
+              hint="Sewa + barang terjual − HPP"
+              tone={r.margin < 0 ? "alert" : "good"}
+            />
+          )}
         </div>
 
         <div className="bg-white border border-line rounded-2xl p-5 mb-8 shadow-card">
-          <UtilitiesToggle reservationId={r.id} included={r.utilities_included} />
+          <UtilitiesToggle reservationId={r.id} included={r.utilities_included} canEdit={can("site.reservations")} />
           {!r.utilities_included && (
             <p className="text-xs text-[#8a6416] bg-[#fdf4e3] border border-[#e6d09a] rounded px-3 py-2 mt-3">
               Penyewa membayar listrik &amp; internet sendiri. Biaya itu tidak
-              masuk hitungan margin di atas, karena memang bukan biaya kita.
+              ditanggung site, karena memang bukan biaya kita.
             </p>
           )}
         </div>
@@ -113,16 +122,21 @@ export default async function BookingDetailPage({ params }: { params: Promise<{ 
           siteId={r.site_id}
           items={r.items}
           catalog={catalog}
+          canEdit={can("site.reservations")}
+          canCatalog={can("site.catalog")}
+          showCost={can("site.revenue")}
         />
 
-        <BookingDocuments reservationId={r.id} documents={r.documents} />
+        {(can("site.documents") || can("site.documents.view")) && (
+          <BookingDocuments reservationId={r.id} documents={r.documents} canManage={can("site.documents")} />
+        )}
 
-        <p className="text-xs text-ink-3 mt-6 max-w-3xl">
+        {r.margin !== null && <p className="text-xs text-ink-3 mt-6 max-w-3xl">
           Margin di sini hanya menghitung yang bisa diukur per booking: sewa,
           barang yang keluar, dan harga pokoknya. Biaya tetap gedung — listrik,
           internet, cleaning — tidak dibagi ke tiap booking, karena pembagian
           itu perkiraan, bukan pengukuran, selama belum ada sub-meter.
-        </p>
+        </p>}
       </main>
     </div>
   );

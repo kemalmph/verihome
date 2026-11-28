@@ -1,11 +1,11 @@
-import { requirePermissionOrRedirect } from "@/lib/auth/guards";
+import { requireSitePage } from "@/lib/auth/site-access";
+import { hasSitePermission } from "@/lib/auth/site-permissions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { getSiteCalendar, type CalBooking } from "@/lib/actions/coworking-calendar";
 import { unitTypeLabel } from "@/lib/coworking/taxonomy";
 import { NewEventForm, EventControls } from "./EventForm";
-import { resolveSiteId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -23,10 +23,11 @@ export default async function SiteCalendarPage({
   params: Promise<{ id: string }>;
   searchParams: Promise<{ week?: string }>;
 }) {
-  await requirePermissionOrRedirect(["sites.operate_all"]);
   const { id: param } = await params;
-  const id = await resolveSiteId(param);
-  if (!id) notFound();
+  // Reading the calendar: site.reservations.view. Changing events: site.events.
+  const access = await requireSitePage(param, "site.reservations.view");
+  const id = access.siteId;
+  const canEvents = hasSitePermission(access.perms, "site.events");
 
   const { week } = await searchParams;
 
@@ -50,7 +51,7 @@ export default async function SiteCalendarPage({
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <AppSidebar activeHref={`/site/${param}`} />
+      <AppSidebar activeHref={`/site/${site.slug}/calendar`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-ink-3 mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
@@ -74,13 +75,15 @@ export default async function SiteCalendarPage({
           </div>
         </header>
 
-        <div className="mb-6">
-          <NewEventForm
-            siteId={site.id}
-            units={units.filter((u) => u.status === "available")}
-            defaultDay={days[0].ymd}
-          />
-        </div>
+        {canEvents && (
+          <div className="mb-6">
+            <NewEventForm
+              siteId={site.id}
+              units={units.filter((u) => u.status === "available")}
+              defaultDay={days[0].ymd}
+            />
+          </div>
+        )}
 
         {/* An event announced in a room nobody booked is the failure this
             whole design exists to prevent, so it goes at the top. */}
@@ -230,13 +233,15 @@ export default async function SiteCalendarPage({
                         <span className="text-ink-3"> · {e.status === "draft" ? "draf" : e.status}</span>
                       )}
                     </div>
-                    <EventControls
-                      siteId={site.id}
-                      eventId={e.id}
-                      status={e.status}
-                      hasGaps={e.gaps.length > 0}
-                      units={units.filter((u) => u.status === "available").map((u) => ({ id: u.id, name: u.name }))}
-                    />
+                    {canEvents && (
+                      <EventControls
+                        siteId={site.id}
+                        eventId={e.id}
+                        status={e.status}
+                        hasGaps={e.gaps.length > 0}
+                        units={units.filter((u) => u.status === "available").map((u) => ({ id: u.id, name: u.name }))}
+                      />
+                    )}
                   </li>
                 ))}
               </ul>

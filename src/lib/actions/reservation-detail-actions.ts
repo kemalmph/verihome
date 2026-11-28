@@ -1,8 +1,9 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requirePermission, requireAnyPermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireRecordAccess, requireSiteAccess, siteIdOf } from "@/lib/auth/site-access";
+import { canSeeDocumentKind, hasSitePermission, type SitePermission } from "@/lib/auth/site-permissions";
 
 /**
  * One booking, and what it actually cost.
@@ -10,7 +11,12 @@ import { createAdminClient } from "@/lib/supabase/admin";
  * The margin on a meeting-room booking is the rate less what was handed out
  * with it. Without the consumables, every booking looks equally profitable,
  * which is the same as having no margin at all.
+ *
+ * Phase 3: every action takes the site from the reservation (or item row,
+ * or document) in the database and checks access there. A site id from the
+ * client only ever narrows: when it disagrees with the record, not-found.
  */
+
 
 /** An embedded PostgREST row, whether it arrived as an object or a 1-element array. */
 function first<T>(v: unknown): T | null {
@@ -62,15 +68,23 @@ export interface ReservationDetail {
   membership_holder: string | null;
   items: ResItem[];
   documents: ResDocument[];
-  /** What the consumables cost, and what they brought in. */
-  cogs: number;
-  item_sales: number;
+  /**
+   * What the consumables cost, what they brought in, and the margin. Null
+   * unless the viewer holds site.revenue (global finance only): revenue for a
+   * site waits on the revenue-share decision (§20.7).
+   */
+  cogs: number | null;
+  item_sales: number | null;
   /** Room rate plus items sold, less what the items cost. */
-  margin: number;
+  margin: number | null;
+  /** The viewer's permissions on this reservation's site, for the page to choose what to show. */
+  perms: SitePermission[];
 }
 
 export async function getReservationDetail(reservationId: string): Promise<ReservationDetail | null> {
-  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
+  // Site from the reservation itself. Throws NotFoundError for no access.
+  const access = await requireRecordAccess("reservation", reservationId, "site.reservations.view");
+  const seeMoney = hasSitePermission(access.perms, "site.revenue");
   const admin = createAdminClient();
 
   const { data: r } = await admin
@@ -115,6 +129,10 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
     .eq("reservation_id", reservationId)
     .order("created_at", { ascending: false });
 
+  // Documents by kind: finance sees invoices and receipts; contracts and IDs
+  // need site.documents.
+  const docs = (docRows ?? []).filter((d) => canSeeDocumentKind(access.perms, d.kind));
+
   const cogs = items.reduce((n, i) => n + i.qty * i.cost_price, 0);
   const item_sales = items.reduce((n, i) => n + i.qty * i.sell_price, 0);
   const total = Number(r.total_price);
@@ -143,16 +161,23 @@ export async function getReservationDetail(reservationId: string): Promise<Reser
     // cast would compile and then be undefined at runtime.
     event_title: first<{ title: string }>(r.events)?.title ?? null,
     membership_holder: first<{ member_name: string | null }>(r.memberships)?.member_name ?? null,
-    items,
-    documents: (docRows ?? []).map((d) => ({ ...d, size_bytes: Number(d.size_bytes) })),
-    cogs,
-    item_sales,
-    margin: total + item_sales - cogs,
+    // Item lines carry cost prices; without site.revenue they go out
+    // without them.
+    items: seeMoney ? items : items.map((i) => ({ ...i, cost_price: 0 })),
+    documents: docs.map((d) => ({ ...d, size_bytes: Number(d.size_bytes) })),
+    cogs: seeMoney ? cogs : null,
+    item_sales: seeMoney ? item_sales : null,
+    margin: seeMoney ? total + item_sales - cogs : null,
+    perms: access.perms,
   };
 }
 
+/** The catalog a booking at this site can draw from: the site's items plus the all-sites ones. */
 export async function listItems(siteId: string) {
-  await requirePermission("sites.operate_all");
+  const access = await requireSiteAccess(siteId, ["site.reservations", "site.catalog"]);
+  // Cost prices go to whoever keeps the catalog (site.catalog) or reads
+  // revenue (site.revenue); front office picks items by name and sell price.
+  const seeCost = hasSitePermission(access.perms, ["site.catalog", "site.revenue"]);
   const admin = createAdminClient();
   const { data } = await admin
     .from("items")
@@ -161,12 +186,12 @@ export async function listItems(siteId: string) {
     .eq("status", "active")
     .order("name");
   return (data ?? []).map((i) => ({
-    ...i, cost_price: Number(i.cost_price), sell_price: Number(i.sell_price),
+    ...i, cost_price: seeCost ? Number(i.cost_price) : 0, sell_price: Number(i.sell_price),
   }));
 }
 
 export async function createItem(siteId: string, fd: FormData) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  try { await requireSiteAccess(siteId, "site.catalog"); } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
 
   const name = ((fd.get("name") as string) ?? "").trim();
@@ -191,7 +216,9 @@ export async function createItem(siteId: string, fd: FormData) {
 }
 
 export async function addReservationItem(reservationId: string, fd: FormData) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  let siteId: string;
+  try { siteId = (await requireRecordAccess("reservation", reservationId, "site.reservations")).siteId; }
+  catch { return { error: "Not found." }; }
   const admin = createAdminClient();
 
   const qty = Number(((fd.get("qty") as string) ?? "1").replace(/[^\d.]/g, "")) || 0;
@@ -206,8 +233,10 @@ export async function addReservationItem(reservationId: string, fd: FormData) {
 
   if (itemId) {
     const { data: item } = await admin
-      .from("items").select("name, cost_price, sell_price").eq("id", itemId).maybeSingle();
-    if (!item) return { error: "Item tidak ditemukan." };
+      .from("items").select("name, cost_price, sell_price, site_id").eq("id", itemId).maybeSingle();
+    // The item must be this reservation's site's, or one sold at every site
+    // (site_id null). Another site's catalog is not-found, not "wrong site".
+    if (!item || (item.site_id !== null && item.site_id !== siteId)) return { error: "Not found." };
     // Snapshot: a supplier raising the price of water in April must not change
     // what a booking in March cost.
     name = item.name;
@@ -233,7 +262,13 @@ export async function addReservationItem(reservationId: string, fd: FormData) {
 }
 
 export async function removeReservationItem(reservationId: string, itemRowId: string) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  // The row's own reservation's site; a reservationId that disagrees is not-found.
+  try {
+    const rowSite = await siteIdOf("reservation_item", itemRowId);
+    const resSite = await siteIdOf("reservation", reservationId);
+    if (!rowSite || rowSite !== resSite) return { error: "Not found." };
+    await requireSiteAccess(rowSite, "site.reservations");
+  } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
   const { error } = await admin
     .from("reservation_items").delete().eq("id", itemRowId).eq("reservation_id", reservationId);
@@ -243,7 +278,7 @@ export async function removeReservationItem(reservationId: string, itemRowId: st
 }
 
 export async function setReservationUtilities(reservationId: string, included: boolean) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  try { await requireRecordAccess("reservation", reservationId, "site.reservations"); } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
   const { error } = await admin
     .from("unit_reservations").update({ utilities_included: included }).eq("id", reservationId);
@@ -261,7 +296,12 @@ export async function setReservationUtilities(reservationId: string, included: b
  * When a real retention policy exists, it sweeps by key.
  */
 export async function removeDocument(reservationId: string, documentId: string) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  try {
+    const docSite = await siteIdOf("document", documentId);
+    const resSite = await siteIdOf("reservation", reservationId);
+    if (!docSite || docSite !== resSite) return { error: "Not found." };
+    await requireSiteAccess(docSite, "site.documents");
+  } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
   const { error } = await admin
     .from("coworking_documents").delete().eq("id", documentId).eq("reservation_id", reservationId);

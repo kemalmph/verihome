@@ -95,7 +95,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
         </div>
 
         <button
-          onClick={() => router.push("/dashboard/appointments")}
+          onClick={() => router.push("/account/appointments")}
           className="w-full py-3 bg-ink text-white rounded-lg text-sm font-semibold hover:opacity-90"
         >
           {t("cf.viewAppointments")}
@@ -135,7 +135,7 @@ export function BookingForm({ defaultPackage, savedProperties, availableCredit }
         </p>
 
         <button
-          onClick={() => router.push("/dashboard/appointments")}
+          onClick={() => router.push("/account/appointments")}
           className="w-full py-3 bg-ink text-white rounded-lg text-sm font-semibold hover:opacity-90"
         >
           {t("cf.viewAppointments")}

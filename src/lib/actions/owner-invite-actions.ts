@@ -19,6 +19,8 @@ function siteOrigin(): string {
 
 export interface InviteResult {
   url: string;
+  /** The address the invite is bound to; only a confirmed account with it can redeem. */
+  email: string;
   /** Prefilled WhatsApp link, because email delivery is not connected. */
   whatsappUrl: string | null;
   expiresAt: string;
@@ -34,6 +36,11 @@ export interface InviteResult {
  *
  * The raw token is returned once, here, and never stored. A leaked database
  * backup therefore contains no usable invite.
+ *
+ * The invite is also bound to the owner's email as it stands now (copied, not
+ * joined): redeem_owner_invite refuses any account whose confirmed email is
+ * not that address. A forwarded link, or an account registered under the
+ * owner's address and never confirmed, gets nothing.
  */
 export async function createOwnerInvite(ownerId: string) {
   let caller;
@@ -42,13 +49,17 @@ export async function createOwnerInvite(ownerId: string) {
   const admin = createAdminClient();
   const { data: owner } = await admin
     .from("owners")
-    .select("id, name, phone_whatsapp, portal_access")
+    .select("id, name, email, phone_whatsapp, portal_access")
     .eq("id", ownerId)
     .maybeSingle();
 
   if (!owner) return { error: "Pemilik tidak ditemukan." };
   if (owner.portal_access === "revoked") {
     return { error: "Akses pemilik ini dicabut. Pulihkan dulu sebelum mengundang." };
+  }
+  const email = String(owner.email ?? "").trim().toLowerCase();
+  if (!/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(email)) {
+    return { error: "Pemilik ini belum punya email yang valid. Isi email pemilik dulu — undangan hanya bisa dipakai oleh akun dengan email itu." };
   }
 
   const token = randomBytes(32).toString("base64url");
@@ -57,6 +68,7 @@ export async function createOwnerInvite(ownerId: string) {
   const { error } = await admin.from("owner_invites").insert({
     owner_id: ownerId,
     token_hash: hash(token),
+    email,
     expires_at: expiresAt,
     created_by: caller.id,
   });
@@ -78,13 +90,14 @@ export async function createOwnerInvite(ownerId: string) {
   const phone = String(owner.phone_whatsapp ?? "").replace(/\D/g, "");
   const message =
     `Halo ${owner.name}, ini tautan untuk mengaktifkan portal pemilik Cosystem Anda. ` +
+    `Masuk atau daftar dengan email ${email} (dan konfirmasi email itu), lalu buka tautan ini. ` +
     `Berlaku ${INVITE_DAYS} hari dan hanya dapat dipakai sekali: ${url}`;
   const whatsappUrl = phone ? `https://wa.me/${phone}?text=${encodeURIComponent(message)}` : null;
 
   revalidatePath("/admin/owners");
   revalidatePath(`/admin/owners/${ownerId}`);
 
-  return { success: true, invite: { url, whatsappUrl, expiresAt } as InviteResult };
+  return { success: true, invite: { url, email, whatsappUrl, expiresAt } as InviteResult };
 }
 
 /** Switches an owner's portal access off. Takes effect on their next request. */
@@ -126,6 +139,9 @@ const REDEEM_MESSAGES: Record<string, string> = {
   invite_already_used:  "owner.invite.used",
   invite_expired:       "owner.invite.expired",
   invite_revoked:       "owner.invite.invalid",
+  invite_email_missing: "owner.invite.reissue",
+  invite_email_mismatch: "owner.invite.emailMismatch",
+  invite_email_unconfirmed: "owner.invite.emailUnconfirmed",
   owner_revoked:        "owner.access.revoked",
   owner_already_linked: "owner.invite.invalid",
   user_already_owner:   "owner.invite.invalid",

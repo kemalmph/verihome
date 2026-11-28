@@ -97,7 +97,7 @@ export async function POST(request: Request) {
               <p style="margin: 0 0 8px; font-size: 14px; color: #1a7a5e;"><strong>What's next?</strong></p>
               <p style="margin: 0; font-size: 14px; color: #3e4944;">Our team will contact you within 24 hours to schedule your session via Google Meet or Zoom.</p>
             </div>
-            <p style="color: #6e7a74; font-size: 13px;">View your appointment in your <a href="${process.env.NEXT_PUBLIC_SITE_URL}/dashboard/appointments" style="color: #1a7a5e;">dashboard</a>.</p>
+            <p style="color: #6e7a74; font-size: 13px;">View your appointment in your <a href="${process.env.NEXT_PUBLIC_SITE_URL}/account/appointments" style="color: #1a7a5e;">dashboard</a>.</p>
           </div>
         </div>
       `,

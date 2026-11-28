@@ -85,8 +85,8 @@ export async function requestCreditRefund(creditId: string) {
 
   if (error) return { error: friendly(error.message) };
 
-  revalidatePath("/dashboard/statement");
-  revalidatePath("/dashboard/viewings");
+  revalidatePath("/account/statement");
+  revalidatePath("/account/viewings");
   return { success: true };
 }
 

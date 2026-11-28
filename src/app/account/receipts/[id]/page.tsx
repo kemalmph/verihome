@@ -15,7 +15,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
   const { id } = await params;
 
   const user = await getCurrentUser().catch(() => null);
-  if (!user) redirect(`/auth/login?next=/dashboard/receipts/${id}`);
+  if (!user) redirect(`/auth/login?next=/account/receipts/${id}`);
 
   const receipt = await getReceipt(id);
   if (!receipt) notFound();
@@ -39,7 +39,7 @@ export default async function ReceiptPage({ params }: { params: Promise<{ id: st
       <main className="min-h-screen bg-canvas px-4 py-10">
         <div className="max-w-2xl mx-auto">
           <div className="flex items-center justify-between gap-4 mb-5 no-print">
-            <Link href="/dashboard/statement" className="text-sm text-brand-ink font-semibold hover:underline inline-flex items-center gap-1">
+            <Link href="/account/statement" className="text-sm text-brand-ink font-semibold hover:underline inline-flex items-center gap-1">
               <span className="material-symbols-outlined text-base">arrow_back</span>
               Rekening koran
             </Link>

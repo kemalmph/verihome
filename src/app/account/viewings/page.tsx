@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { AccountSidebar } from "@/components/layout/AccountSidebar";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { createAdminClient } from "@/lib/supabase/admin";
 import { CreditCashbackCard } from "@/components/credits/CreditCashbackCard";
@@ -41,7 +41,7 @@ export default async function ViewingsPage() {
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <DashboardSidebar activeHref="/dashboard/viewings" userName={user.name} isActiveClient={user.is_active_client} />
+      <AccountSidebar activeHref="/account/viewings" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">

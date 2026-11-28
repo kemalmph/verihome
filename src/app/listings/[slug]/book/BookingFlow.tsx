@@ -314,7 +314,7 @@ function StepPayment({
         {t("bf.afterTransfer")} <strong className="text-ink">{t("bf.myBookings")}</strong>. {t("bf.afterTransfer2")}
       </p>
 
-      <Link href="/dashboard/bookings" className={`${pill.primary} w-full`}>
+      <Link href="/account/bookings" className={`${pill.primary} w-full`}>
         {t("bf.viewBookings")} <span aria-hidden>→</span>
       </Link>
     </section>

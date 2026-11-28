@@ -1,6 +1,6 @@
 #!/usr/bin/env node
 /**
- * The desktop sidebar of /admin, /site and the tenant /dashboard folds to an
+ * The desktop sidebar of /admin, /site and the customer /account (formerly /dashboard) folds to an
  * icon rail, and stays folded.
  *
  * What has to hold, each checked rather than assumed:
@@ -87,7 +87,7 @@ async function run(browser, cookies, js, { start, other, wide, href, who, names 
   await ctx.addCookies(cookies);
   const page = await ctx.newPage();
 
-  // "load", not "networkidle": /dashboard pulls placeholder images from an
+  // "load", not "networkidle": /account pulls placeholder images from an
   // outside host, which never settles where that host is unreachable.
   await page.goto(`${BASE}${start}`, { waitUntil: "load" });
   if (js) await page.waitForTimeout(1500); // let React hydrate
@@ -181,6 +181,10 @@ const RUN = Date.now().toString(36);
       }).select("id").single();
       if (oe) throw new Error(`owner ${key}: ${oe.message}`);
       made.owners.push(o.id);
+      // Phase 3: the property portal is in the menu only for an owner with a property.
+      const { rows: [p] } = await db.query("insert into properties(name, slug, owner_id) values ($1,$2,$3) returning id",
+        [`Collapse ${key}`, `collapse-${key}-${RUN}`, o.id]);
+      (made.properties ??= []).push(p.id);
     }
     const jar = new Map();
     const sb = createServerClient(SUPA, ANON, {
@@ -206,7 +210,7 @@ const RUN = Date.now().toString(36);
       // An owner who is not staff gets the language switch; the default is Indonesian.
       { who: "pemilik", cookies: owner, start: "/owner", other: "/owner/properties", wide: 256, href: "/owner/properties", names: { collapse: "Ciutkan sidebar", expand: "Lebarkan sidebar" } },
       { who: "pemilik+staf", cookies: ownerStaff, start: "/owner", other: "/admin/expenses", wide: 256, href: "/owner/earnings" },
-      { who: "dashboard", cookies, start: "/dashboard", other: "/dashboard/bookings", wide: 288, href: "/dashboard/bookings" },
+      { who: "account", cookies, start: "/account", other: "/account/bookings", wide: 288, href: "/account/bookings" },
     ];
     for (const a of areas) {
       await run(browser, a.cookies, true, a);
@@ -215,6 +219,7 @@ const RUN = Date.now().toString(36);
     }
   } finally {
     await browser.close();
+    for (const id of made.properties ?? []) await svc.from("properties").delete().eq("id", id);
     for (const id of made.owners) await svc.from("owners").delete().eq("id", id);
     for (const id of made.users) {
       await db.query("delete from staff_roles where user_id=$1", [id]).catch(() => {});

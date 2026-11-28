@@ -1,5 +1,7 @@
-import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
+import { redirect } from "next/navigation";
+import { getSiteActor } from "@/lib/auth/site-access";
+import { accessibleSites } from "@/lib/sites/accessible";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { listSites, listOwnerOptions } from "@/lib/actions/coworking-actions";
 import { siteStatusLabel, siteTypeLabel } from "@/lib/coworking/taxonomy";
@@ -8,10 +10,25 @@ import { NewSiteForm } from "./NewSiteForm";
 export const dynamic = "force-dynamic";
 
 export default async function CoworkingSitesPage() {
-  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
-  // The layout gates rendering, not data. This page reads sites, so it checks.
+  // The layout gates rendering, not data. This page reads sites, so it checks:
+  // global site staff see every site; site owners and site staff see theirs.
+  const actor = await getSiteActor();
+  if (!actor) redirect("/admin-login");
+  const reach = await accessibleSites(actor);
+  // Global site staff open the list even when there is no site yet (it holds
+  // the create form); anyone else needs at least one site.
+  if (actor.global.length === 0 && reach.length === 0) redirect("/admin");
+  // Someone who reaches exactly one site, and only through it, goes to it:
+  // a list of one is a click nobody needs.
+  if (actor.global.length === 0 && reach.length === 1) redirect(`/site/${reach[0].slug}`);
 
-  const [sites, owners] = await Promise.all([listSites(), listOwnerOptions()]);
+  // Creating a site: superadmin and admin_general (sites.operate_all). Only a
+  // superadmin assigns its owner, so only they get the owner list.
+  const canCreate = actor.permissions.includes("sites.operate_all");
+  const [sites, owners] = await Promise.all([
+    listSites(),
+    actor.isSuperadmin ? listOwnerOptions() : Promise.resolve(null),
+  ]);
 
   const totalUnits = sites.reduce((n, s) => n + s.unit_count, 0);
   const totalSeats = sites.reduce((n, s) => n + s.capacity, 0);
@@ -106,7 +123,7 @@ export default async function CoworkingSitesPage() {
           )}
         </section>
 
-        <NewSiteForm owners={owners} />
+        {canCreate && <NewSiteForm owners={owners} />}
       </main>
     </div>
   );

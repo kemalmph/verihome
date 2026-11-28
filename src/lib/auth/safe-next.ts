@@ -9,7 +9,7 @@
  *
  * Shared by every place that reads `next` so the rule cannot drift between them.
  */
-export function safeNext(raw: string | null | undefined, fallback = "/dashboard"): string {
+export function safeNext(raw: string | null | undefined, fallback = "/account"): string {
   if (!raw) return fallback;
   if (!raw.startsWith("/")) return fallback;  // absolute URLs and schemes
   if (raw.startsWith("//")) return fallback;  // protocol-relative

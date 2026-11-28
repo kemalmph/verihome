@@ -1,10 +1,10 @@
-import { requirePermissionOrRedirect } from "@/lib/auth/guards";
+import { requireSitePage } from "@/lib/auth/site-access";
+import { hasSitePermission } from "@/lib/auth/site-permissions";
 import Link from "next/link";
 import { notFound } from "next/navigation";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { getSiteDashboard, type DashboardUnit, type DashboardInstalment } from "@/lib/actions/coworking-dashboard";
 import { unitTypeLabel, paymentStatusLabel, pricePeriodLabel } from "@/lib/coworking/taxonomy";
-import { resolveSiteId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -25,16 +25,19 @@ const tanggal = (iso: string) =>
   });
 
 export default async function SiteDashboardPage({ params }: { params: Promise<{ id: string }> }) {
-  await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
   const { id: param } = await params;
-  const id = await resolveSiteId(param);
-  if (!id) notFound();
-
+  const access = await requireSitePage(param, "site.view");
+  const id = access.siteId;
+  const canCalendar = hasSitePermission(access.perms, "site.reservations.view");
 
   const d = await getSiteDashboard(id);
   if (!d) notFound();
 
+  // instalments: null without site.billing. committed_monthly: null without
+  // site.revenue (global finance only, §20.7). Tiles are drawn only for what
+  // the viewer was given.
   const { site, units, totals, instalments, ending_soon } = d;
+  const overdue = instalments?.overdue ?? [];
 
   // Occupancy by area, not by unit count. Twelve empty cupboards and one let
   // hall is not "92% vacant" in any sense an operator cares about, and these
@@ -43,7 +46,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <AppSidebar activeHref={`/site/${param}`} />
+      <AppSidebar activeHref={`/site/${site.slug}/dashboard`} />
       <main className="flex-1 ml-0 md:ml-(--sidebar-w) md:transition-[margin] p-6 md:p-12 pt-20 md:pt-12">
         <nav className="text-sm text-ink-3 mb-4">
           <Link href="/site" className="hover:underline">Site</Link>
@@ -59,17 +62,19 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
             {site.address && <p className="text-ink-2 mt-1">{site.address}</p>}
           </div>
           <div className="flex gap-2">
-            <Link
-              href={`/site/${site.slug}/calendar`}
-              className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
-            >
-              Kalender
-            </Link>
+            {canCalendar && (
+              <Link
+                href={`/site/${site.slug}/calendar`}
+                className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
+              >
+                Kalender
+              </Link>
+            )}
             <Link
               href={`/site/${site.slug}`}
               className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
             >
-              Kelola unit
+              Detail site
             </Link>
           </div>
         </header>
@@ -82,26 +87,32 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
             hint={`${totals.sqm_occupied.toFixed(1)} dari ${totals.sqm_total.toFixed(1)} m²`}
           />
           <Stat label="Terisi" value={`${totals.occupied} unit`} hint={`${totals.vacant} kosong`} />
-          <Stat
-            label="Sewa terikat"
-            value={`${rupiah(totals.committed_monthly)}/bln`}
-            hint="Dari kontrak yang berjalan, bukan price list"
-          />
-          <Stat
-            label="Tagihan belum dibayar"
-            value={rupiah(instalments.outstanding_total)}
-            hint={instalments.overdue.length > 0 ? `${instalments.overdue.length} lewat jatuh tempo` : "Tidak ada yang lewat tempo"}
-            tone={instalments.overdue.length > 0 ? "alert" : undefined}
-          />
-          <Stat label="Sudah diterima" value={rupiah(instalments.paid_total)} hint="Total termin lunas" />
+          {totals.committed_monthly !== null && (
+            <Stat
+              label="Sewa terikat"
+              value={`${rupiah(totals.committed_monthly)}/bln`}
+              hint="Dari kontrak yang berjalan, bukan price list"
+            />
+          )}
+          {instalments && (
+            <>
+              <Stat
+                label="Tagihan belum dibayar"
+                value={rupiah(instalments.outstanding_total)}
+                hint={instalments.overdue.length > 0 ? `${instalments.overdue.length} lewat jatuh tempo` : "Tidak ada yang lewat tempo"}
+                tone={instalments.overdue.length > 0 ? "alert" : undefined}
+              />
+              <Stat label="Sudah diterima" value={rupiah(instalments.paid_total)} hint="Total termin lunas" />
+            </>
+          )}
         </div>
 
         {/* ── what needs doing ────────────────────────────────────────── */}
-        {(instalments.overdue.length > 0 || totals.unpriced > 0 || ending_soon.length > 0) && (
+        {(overdue.length > 0 || totals.unpriced > 0 || ending_soon.length > 0) && (
           <section className="mb-8 bg-white border border-line rounded-2xl shadow-card overflow-hidden">
             <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">Perlu tindakan</h2>
             <ul className="divide-y divide-[#e8e3e0]">
-              {instalments.overdue.map((i) => (
+              {overdue.map((i) => (
                 <Action key={i.id} tone="alert"
                   text={`${i.unit_name} · ${i.tenant} — termin ${i.seq} sebesar ${rupiah(i.amount)} lewat ${Math.abs(i.days_until_due)} hari (jatuh tempo ${tanggal(i.due_date)})`} />
               ))}
@@ -139,8 +150,8 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
           )}
         </section>
 
-        {/* ── the schedule ────────────────────────────────────────────── */}
-        <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden">
+        {/* ── the schedule (billing) ──────────────────────────────────── */}
+        {instalments && <section className="bg-white border border-line rounded-2xl shadow-card overflow-hidden">
           <h2 className="px-5 py-3 bg-[#efeae8] text-sm font-semibold text-ink">Jadwal pembayaran</h2>
           {instalments.overdue.length + instalments.upcoming.length === 0 ? (
             <p className="p-8 text-center text-ink-3 text-sm">Tidak ada tagihan terbuka.</p>
@@ -161,7 +172,7 @@ export default async function SiteDashboardPage({ params }: { params: Promise<{ 
             terhubung ke buku besar — pengakuan pendapatan tetap lewat fungsi
             settlement, supaya tidak terhitung dua kali.
           </p>
-        </section>
+        </section>}
       </main>
     </div>
   );

@@ -45,7 +45,7 @@ export async function AppSidebar({ activeHref }: { activeHref: string }) {
     !!ctx.viewer && ctx.viewer.permissions.every((p) => p === "surveys.input");
   const subtitle = ctx.viewer
     ? staffOnlySurveys ? "Surveyor" : "Admin Panel"
-    : t("owner.portal", lang);
+    : ctx.isOwner ? t("owner.portal", lang) : "Site Management";
 
   return (
     <SidebarShell

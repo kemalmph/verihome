@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requirePermission } from "@/lib/auth/guards";
+import { requireRecordAccess, requireSiteAccess } from "@/lib/auth/site-access";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -28,7 +28,7 @@ export interface AmenityAssignments {
 }
 
 export async function getAmenityAssignments(siteId: string): Promise<AmenityAssignments> {
-  await requirePermission("sites.operate_all");
+  await requireSiteAccess(siteId, "site.view");
   const admin = createAdminClient();
 
   const [{ data: all }, { data: siteRows }, { data: unitRows }] = await Promise.all([
@@ -60,7 +60,7 @@ export async function getAmenityAssignments(siteId: string): Promise<AmenityAssi
  * the operator can see is idempotent: submitting twice leaves the same rows.
  */
 export async function setSiteAmenities(siteId: string, amenityIds: string[]) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  try { await requireSiteAccess(siteId, "site.settings"); } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
 
   const { error: delErr } = await admin.from("site_amenities").delete().eq("site_id", siteId);
@@ -77,15 +77,12 @@ export async function setSiteAmenities(siteId: string, amenityIds: string[]) {
 }
 
 export async function setUnitAmenities(siteId: string, unitId: string, amenityIds: string[]) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
-  const admin = createAdminClient();
-
-  // The unit must belong to this site. Without this check the action is a
+  // The unit's site comes from the unit. Without this the action is a
   // separately addressable endpoint that edits any unit anywhere given its id
-  // (§19.6) — the site in the URL would be decoration.
-  const { data: unit } = await admin
-    .from("lettable_units").select("id").eq("id", unitId).eq("site_id", siteId).maybeSingle();
-  if (!unit) return { error: "Unit tidak ada di site ini." };
+  // (§19.6) — the site in the URL would be decoration. A siteId that is not
+  // the unit's site is not-found.
+  try { await requireRecordAccess("unit", unitId, "site.units", siteId); } catch { return { error: "Not found." }; }
+  const admin = createAdminClient();
 
   const { error: delErr } = await admin.from("unit_amenities").delete().eq("unit_id", unitId);
   if (delErr) return { error: delErr.message };

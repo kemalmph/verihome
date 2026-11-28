@@ -70,10 +70,14 @@ const SECRET = "kata-sandi-rahasia-jangan-bocor";
 
   // ── the way in, from the header, with no JavaScript ──────────────────────
   //
-  // "Masuk" and "Daftar" used to be buttons opening a modal that did nothing
-  // before React hydrated. They became links; since V7 the header carries
-  // one account action, "Masuk", as a pill at every width (owner's call,
-  // 28 Nov 2026). Sign-up is the second tab of the same /auth/login page.
+  // "Masuk" and "Daftar" used to be buttons opening a modal, and the modal
+  // always opened in sign-in mode. Being onClick, neither did anything before
+  // React hydrated. They became links to /auth/login.
+  //
+  // Since 28 Nov 2026 (owner's call) the header carries one account action:
+  // "Masuk", a pill on the bar at every width. "Coba Gratis" left the bar for
+  // the hero and the closing CTA. Sign-up is the second tab of /auth/login,
+  // reached with ?mode=signup (and from the sign-in form).
   for (const width of [1280, 390]) {
     const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width, height: 844 } });
     await ctx.addCookies([{ name: "cosystem_locale", value: "id", url: BASE }]);
@@ -92,12 +96,20 @@ const SECRET = "kata-sandi-rahasia-jangan-bocor";
       `${width}px: halaman tidak meluber ke samping`,
     );
 
+    // "Masuk" opens the sign-in form, still without JavaScript.
     await signIn.first().click();
     await page.waitForLoadState("domcontentloaded");
     check(new URL(page.url()).pathname === "/auth/login", `${width}px: "Masuk" membuka /auth/login`);
     check(
       await page.locator('input[name="password"]').first().isVisible(),
       `${width}px: form masuk terbuka tanpa JavaScript`,
+    );
+
+    // The sign-up tab is still the one ?mode=signup opens.
+    await page.goto(`${BASE}/auth/login?mode=signup`, { waitUntil: "domcontentloaded" });
+    check(
+      await page.locator('input[name="name"]').isVisible(),
+      `${width}px: /auth/login?mode=signup membuka form pendaftaran, bukan form masuk`,
     );
 
     await ctx.close();

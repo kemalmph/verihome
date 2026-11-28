@@ -17,11 +17,15 @@ const CATEGORY_LABEL: Record<string, string> = {
 };
 
 export function AmenityManager({
-  siteId, units, assignments,
+  siteId, units, assignments, canEditSite = true, canEditUnits = true,
 }: {
   siteId: string;
   units: { id: string; name: string; unit_type: string }[];
   assignments: AmenityAssignments;
+  /** site.settings — the site's own amenities. */
+  canEditSite?: boolean;
+  /** site.units — each unit's amenities. */
+  canEditUnits?: boolean;
 }) {
   const router = useRouter();
   const [openUnit, setOpenUnit] = useState<string | null>(null);
@@ -76,7 +80,7 @@ export function AmenityManager({
                 : <span className="text-ink-3">Belum ada</span>}
             </p>
           </div>
-          {!siteOpen && (
+          {canEditSite && !siteOpen && (
             <button
               onClick={() => { setSiteOpen(true); setOpenUnit(null); }}
               className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas whitespace-nowrap"
@@ -125,7 +129,7 @@ export function AmenityManager({
                         : <span className="text-ink-3">Belum ada fasilitas</span>}
                     </p>
                   </div>
-                  {!isOpen && (
+                  {canEditUnits && !isOpen && (
                     <button
                       onClick={() => { setOpenUnit(u.id); setSiteOpen(false); setError(""); }}
                       className="px-3 py-1.5 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-canvas whitespace-nowrap"

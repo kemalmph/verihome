@@ -12,7 +12,11 @@ import {
 
 const idr = (n: number) => new Intl.NumberFormat("id-ID").format(n);
 
-export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[] }) {
+export function UnitManager({ siteId, units, canEdit = true }: {
+  siteId: string; units: UnitRow[];
+  /** site.units on this site. Without it the list is read-only (the actions refuse regardless). */
+  canEdit?: boolean;
+}) {
   const router = useRouter();
   const [adding, setAdding] = useState(false);
   const [editingId, setEditingId] = useState<string | null>(null);
@@ -54,7 +58,7 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
             Apa pun di site ini yang menghasilkan uang dari ruang
           </p>
         </div>
-        {!adding && (
+        {canEdit && !adding && (
           <button
             onClick={() => { setAdding(true); setEditingId(null); setError(""); }}
             className="px-3 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong"
@@ -132,7 +136,7 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
 
                     <UnitStatusPill status={u.status} />
 
-                    <div className="flex gap-2">
+                    {canEdit && <div className="flex gap-2">
                       <button
                         onClick={() => { setEditingId(u.id); setAdding(false); setError(""); }}
                         className="text-sm text-brand-ink hover:underline"
@@ -147,7 +151,7 @@ export function UnitManager({ siteId, units }: { siteId: string; units: UnitRow[
                           Nonaktifkan
                         </button>
                       )}
-                    </div>
+                    </div>}
                   </div>
                 )
               )}

@@ -1,6 +1,7 @@
 import { NextRequest, NextResponse } from "next/server";
-import { requirePermission } from "@/lib/auth/guards";
 import { createAdminClient } from "@/lib/supabase/admin";
+import { requireSiteAccess, siteIdOf } from "@/lib/auth/site-access";
+import { canSeeDocumentKind } from "@/lib/auth/site-permissions";
 import { uploadPrivate, presignedGetUrl } from "@/lib/r2/private";
 import { sanitizeFilename } from "@/lib/r2/upload";
 
@@ -10,7 +11,15 @@ import { sanitizeFilename } from "@/lib/r2/upload";
  * Private bucket, key stored, URL minted only on request and only for fifteen
  * minutes. A signed lease names people, addresses and money; it has no
  * business behind a URL that works forever for anyone who has ever seen it.
+ *
+ * Phase 3: the site is always derived from what the document hangs on — the
+ * reservation's unit's site, the unit's site, or (for a site document) the
+ * site itself. A site_id sent alongside a reservation or unit is only a
+ * claim; when it disagrees, not-found. Every refusal is the same 404 as a
+ * record that does not exist.
  */
+
+const notFound = () => NextResponse.json({ error: "Not found." }, { status: 404 });
 
 const MAX_BYTES = 20 * 1024 * 1024;
 
@@ -38,12 +47,33 @@ const KINDS = new Set([
 ]);
 
 export async function POST(req: NextRequest) {
-  let caller;
-  try { caller = await requirePermission("sites.operate_all"); } catch (e) {
-    return NextResponse.json({ error: (e as Error).message }, { status: 403 });
+  let fd: FormData;
+  try { fd = await req.formData(); } catch { return notFound(); }
+
+  const reservation_id = ((fd.get("reservation_id") as string) ?? "").trim() || null;
+  const unit_id = ((fd.get("unit_id") as string) ?? "").trim() || null;
+  const claimedSite = ((fd.get("site_id") as string) ?? "").trim() || null;
+
+  if (reservation_id && unit_id) {
+    return NextResponse.json(
+      { error: "Dokumen harus menempel pada tepat satu: kontrak, unit, atau site." },
+      { status: 400 },
+    );
   }
 
-  const fd = await req.formData();
+  // The site, from the database: the reservation's or the unit's, or for a
+  // site document the site itself. Access is checked before anything about
+  // the file is looked at, so a refused caller learns nothing from the reply.
+  const siteId = reservation_id
+    ? await siteIdOf("reservation", reservation_id)
+    : unit_id
+      ? await siteIdOf("unit", unit_id)
+      : claimedSite;
+  if (!siteId || (claimedSite && claimedSite !== siteId)) return notFound();
+
+  let caller;
+  try { caller = (await requireSiteAccess(siteId, "site.documents")).actor; } catch { return notFound(); }
+
   const file = fd.get("file") as File | null;
   if (!file) return NextResponse.json({ error: "Tidak ada berkas." }, { status: 400 });
 
@@ -63,30 +93,12 @@ export async function POST(req: NextRequest) {
     return NextResponse.json({ error: "Jenis dokumen tidak dikenal." }, { status: 400 });
   }
 
-  const reservation_id = ((fd.get("reservation_id") as string) ?? "").trim() || null;
-  const unit_id = ((fd.get("unit_id") as string) ?? "").trim() || null;
-  const site_id = ((fd.get("site_id") as string) ?? "").trim() || null;
-
+  // Exactly one owner on the row (the table's CHECK): the most specific one.
+  // The site, reservation or unit is known to exist — siteIdOf read it.
+  const site_id = reservation_id || unit_id ? null : siteId;
   const owners = [reservation_id, unit_id, site_id].filter(Boolean);
-  if (owners.length !== 1) {
-    return NextResponse.json(
-      { error: "Dokumen harus menempel pada tepat satu: kontrak, unit, atau site." },
-      { status: 400 },
-    );
-  }
 
   const admin = createAdminClient();
-
-  // The owner must exist. A wrong-but-real id files someone's lease under
-  // another tenant, which is worse than an error.
-  const ownerCheck = reservation_id
-    ? await admin.from("unit_reservations").select("id").eq("id", reservation_id).maybeSingle()
-    : unit_id
-      ? await admin.from("lettable_units").select("id").eq("id", unit_id).maybeSingle()
-      : await admin.from("sites").select("id").eq("id", site_id!).maybeSingle();
-  if (!ownerCheck.data) {
-    return NextResponse.json({ error: "Kontrak, unit atau site tidak ditemukan." }, { status: 404 });
-  }
 
   const scope = reservation_id ? "reservations" : unit_id ? "units" : "sites";
   const key = `coworking/${scope}/${owners[0]}/${Date.now()}-${sanitizeFilename(file.name)}`;
@@ -107,7 +119,7 @@ export async function POST(req: NextRequest) {
       file_name: file.name,
       content_type: file.type,
       size_bytes: file.size,
-      uploaded_by: caller.id,
+      uploaded_by: caller.userId,
     })
     .select("id")
     .single();
@@ -119,17 +131,20 @@ export async function POST(req: NextRequest) {
 
 /** A fifteen-minute link to one document. */
 export async function GET(req: NextRequest) {
-  try { await requirePermission("sites.operate_all"); } catch (e) {
-    return NextResponse.json({ error: (e as Error).message }, { status: 403 });
-  }
+  const id = req.nextUrl.searchParams.get("id") ?? "";
 
-  const id = req.nextUrl.searchParams.get("id");
-  if (!id) return NextResponse.json({ error: "id wajib." }, { status: 400 });
+  // The document's site, from the document. Finance (site.documents.view)
+  // opens invoices and receipts only; contracts and IDs need site.documents.
+  const siteId = await siteIdOf("document", id);
+  if (!siteId) return notFound();
+  let perms;
+  try { perms = (await requireSiteAccess(siteId, ["site.documents", "site.documents.view"])).perms; }
+  catch { return notFound(); }
 
   const admin = createAdminClient();
   const { data: doc } = await admin
-    .from("coworking_documents").select("file_key, file_name").eq("id", id).maybeSingle();
-  if (!doc) return NextResponse.json({ error: "Dokumen tidak ditemukan." }, { status: 404 });
+    .from("coworking_documents").select("file_key, file_name, kind").eq("id", id).maybeSingle();
+  if (!doc || !canSeeDocumentKind(perms, doc.kind)) return notFound();
 
   const url = await presignedGetUrl(doc.file_key);
   return NextResponse.json({ url, file_name: doc.file_name });

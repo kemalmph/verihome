@@ -1,5 +1,5 @@
 import Link from "next/link";
-import { DashboardSidebar } from "@/components/layout/DashboardSidebar";
+import { AccountSidebar } from "@/components/layout/AccountSidebar";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { createAdminClient } from "@/lib/supabase/admin";
 import type { BookingStatus, PaymentStatus } from "@/types/booking";
@@ -31,7 +31,7 @@ function fmt(n: number) {
   return new Intl.NumberFormat("id-ID").format(n);
 }
 
-export default async function DashboardBookingsPage() {
+export default async function AccountBookingsPage() {
   const user  = await getCurrentUser();
   const admin = createAdminClient();
 
@@ -47,7 +47,7 @@ export default async function DashboardBookingsPage() {
 
   return (
     <div className="flex min-h-screen bg-canvas">
-      <DashboardSidebar activeHref="/dashboard/bookings" userName={user.name} isActiveClient={user.is_active_client} />
+      <AccountSidebar activeHref="/account/bookings" userName={user.name} isActiveClient={user.is_active_client} />
 
       <main className="flex-1 ml-0 md:ml-(--dash-sidebar-w) md:transition-[margin] p-6 md:p-16 pt-20 md:pt-16 max-w-[1400px]">
         <header className="mb-10">

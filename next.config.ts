@@ -32,6 +32,35 @@ const nextConfig: NextConfig = {
         destination: "/site/:path*",
         permanent: true,
       },
+      /**
+       * The customer area moved from /dashboard to /account (28 Nov 2026).
+       * Same reasoning as above: links already sent in emails, bookmarks and
+       * chats keep working, path and query intact
+       * (/dashboard/receipts/abc?x=1 → /account/receipts/abc?x=1), and 308
+       * keeps the method.
+       *
+       * Not an open redirect: the destination is always a path under
+       * /account on this origin. /dashboard//evil.com becomes
+       * /account//evil.com and /dashboard/\evil.com becomes
+       * /account/\evil.com — both start with "/account", so no browser reads
+       * them as another host. Never write a destination that starts with
+       * ":path" itself; that is the shape that turns //evil.com into a
+       * protocol-relative URL. scripts/test-account-redirect.js checks it.
+       *
+       * Redirects run before src/proxy.ts (Next.js execution order), so a
+       * signed-out visitor is redirected first and then sent to sign in by
+       * the proxy's /account rule.
+       */
+      {
+        source: "/dashboard",
+        destination: "/account",
+        permanent: true,
+      },
+      {
+        source: "/dashboard/:path*",
+        destination: "/account/:path*",
+        permanent: true,
+      },
     ];
   },
 };

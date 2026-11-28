@@ -4,9 +4,10 @@ Posisi terakhir pekerjaan, untuk disambung session berikutnya.
 Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
-Terakhir diperbarui: 2026-11-28 · branch kerja `claude/exciting-darwin-fosna9`
-(redesign V7 — design system, homepage, shell dashboard — di-merge ke `main`
-lewat PR #5, merge commit `630ee4c`, atas permintaan owner). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+Terakhir diperbarui: 2026-11-28 · branch kerja
+`claude/site-management-phase-3-inventory-uyamoo` (Fase 3 — Site Management
+per pemilik site & staf site; PR #9 di-merge ke `main` atas persetujuan owner;
+migration `20261128120000_site_staff_invites.sql` **sudah di produksi**). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -52,6 +53,16 @@ catatan handoff bilang "jaga tetap sinkron". Kalau menemukan sesuatu yang
 pantas masuk, **sebutkan di chat beserta nomor bagiannya** dan biarkan
 dokumennya. Owner yang memutuskan.
 
+**Diperbarui 2026-11-28 (versi 27), atas permintaan owner — Fase 3:** §21
+*Access per site* (peta izin, aturan record anak, undangan, sidebar per site,
+membership lunas tetap lunas), §02 (`site_staff`, `site_staff_invites`, baris
+RLS), §19.21 baru (service_role tidak bisa membaca `auth.users`), §20.7
+(pendapatan site disembunyikan dari peran site). **Versi 28** (hari yang sama,
+atas permintaan owner) menyelaraskan sisanya: §3 (`site_staff` dipakai, gate
+`/site`, `accessibleSites`, grup sidebar per site, item Portal Pemilik hanya
+untuk pemilik berproperti, landing), §18, §20.9 (Phase 3 ditutup), lede §20,
+kotak fakta masthead, dan baris skema di footer.
+
 **Diperbarui 2026-11-23 (versi 20), atas permintaan owner.** Yang masuk:
 
 - **Masthead** — produknya kini Cosystem di `cosystem.co`; nama lama bertahan
@@ -87,6 +98,135 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 ---
 
 ## Selesai
+
+- **Undangan pemilik terikat ke email yang dikonfirmasi** (28 Nov, branch
+  `claude/owner-invite-email`, PR #11 di-merge atas persetujuan owner).
+  **Migration `20261128150000_owner_invite_email.sql` diterapkan ke produksi
+  28 Nov lewat MCP `apply_migration`** (tercatat sebagai `20261128122405`).
+  Terverifikasi: kolom `email` + CHECK ada; satu versi fungsi, SECURITY
+  DEFINER, `search_path=public, pg_temp`, ACL `postgres` + `service_role`
+  saja; anon/authenticated tidak bisa EXECUTE; grant tabel `owner_invites`
+  ke anon/authenticated/PUBLIC nol; RLS aktif; data tidak berubah (1
+  undangan, 3 pemilik).
+  - `owner_invites.email` (huruf kecil, disalin dari `owners.email` saat
+    undangan dibuat — salinan, bukan join). `redeem_owner_invite` kini menolak
+    `invite_email_missing` (undangan lama tanpa alamat), `invite_email_mismatch`,
+    dan `invite_email_unconfirmed`, sebelum menyentuh `owners`. Fungsi jadi
+    `SECURITY DEFINER` + `search_path` dikunci (§19.21).
+  - **Celah tambahan yang ditemukan di produksi dan ditutup di migration yang
+    sama:** EXECUTE `redeem_owner_invite` dipegang `PUBLIC`, `anon`,
+    `authenticated`, dan `owner_invites` memberi grant tabel penuh ke anon/
+    authenticated — keduanya hanya tertahan RLS. Kini service_role saja.
+  - Data produksi saat ditulis: 1 undangan (kedaluwarsa), 0 terbuka, 3 pemilik
+    semua ber-email — tidak ada undangan berjalan yang rusak.
+  - App: `createOwnerInvite` menolak pemilik tanpa email valid, menyimpan
+    email, menyebutnya di pesan WhatsApp dan di panel admin; tiga kalimat i18n
+    baru untuk halaman undangan.
+  - Tes: `test-portal-isolation` (+ undangan tanpa alamat, email beda, email
+    belum dikonfirmasi → tidak terpakai → setelah konfirmasi berhasil sekali,
+    anon tak bisa EXECUTE/baca); `test-staff-permissions` (+ email disimpan
+    huruf kecil, pemilik tanpa email ditolak).
+
+- **PR #10 (`/dashboard` → `/account`) di-merge** (`4547da8`) atas persetujuan
+  owner; **deploy produksi terverifikasi**: `www.cosystem.co/dashboard/statement?months=3`
+  → 308 `/account/statement?months=3` sekitar satu menit setelah merge. System
+  Reference versi 30 mencatat merge-nya.
+
+- **Fase 3b — area pelanggan `/dashboard` → `/account`** (28 Nov, branch
+  `claude/account-phase-3b`, PR terpisah menunggu persetujuan owner; **tanpa
+  migration**, rename murni — perilaku, izin, data tidak berubah).
+  - `git mv src/app/dashboard src/app/account` (10 halaman) dan
+    `DashboardSidebar` → `AccountSidebar`. Label: kunci i18n `nav.dashboard`
+    → `nav.account` = "Akun Saya" / "My Account" (cookie bahasa), dipakai menu
+    pengguna di header dan item pertama sidebar.
+  - Redirect 308 di `next.config.ts` (`/dashboard` dan `/dashboard/:path*` →
+    `/account/...`, query ikut), mengikuti pola `/admin/coworking` → `/site`.
+    Redirect config jalan sebelum `proxy.ts`, jadi pengunjung belum masuk
+    dialihkan dulu lalu ditangkap aturan login `/account`. Tujuan selalu di
+    bawah `/account`, jadi tidak bisa jadi open redirect; Next.js juga lebih
+    dulu menormalkan `//` dan `\` dalam path ke origin yang sama.
+  - Rujukan yang diganti: `proxy.ts` PROTECTED_PREFIXES, `landingPath`
+    (fallback tamu), `safeNext` fallback, `signInWithGoogle`/`signUpWithEmail`
+    /`signOut` default, `LoginForm`, menu pengguna di header, sidebar, tautan
+    di alur booking/viewing/konsultasi, `revalidatePath` di saved/credit
+    actions, email konfirmasi konsultasi (webhook Xendit), `returnUrl` Xendit,
+    redirect login di halaman akun. **Tidak** diubah: `/site/[id]/dashboard`,
+    "Admin Dashboard", `DASHBOARD_PERMISSIONS`, variabel CSS `--dash-sidebar-w`.
+  - Tes: `test-account-redirect` baru (45 check: 308 + path/query utuh, POST
+    tetap 308, 12 varian open-redirect lewat request mentah — tiap hop tetap di
+    origin, ikut di browser masuk/keluar, label sidebar, grep `src/`).
+    `test-login-no-js` diperbaiki untuk header V7 (tautan "Masuk" + CTA ke
+    `/contact`; `?mode=signup` tetap membuka form daftar) — **hijau lagi**.
+    `test-admin-nav`, `test-portal-isolation`, `test-safe-next`,
+    `test-sidebar-collapse` menyesuaikan path. 19 suite hijau di DB bersih.
+  - Catatan: proxy mengirim pengunjung belum masuk ke `/?login=1` tanpa
+    membawa path asalnya (perilaku lama, tidak diubah di PR rename ini).
+  - System Reference **versi 29** (atas permintaan owner): §16 jadi
+    *Customer account (`/account`)* + catatan redirect 308, rute di §15,
+    aturan landing & catatan sidebar di §3, rail, Fig. 1, §22, footer. Footer
+    menyebut bahwa versi ini mendahului merge PR #10.
+
+- **Fase 3 — Site Management per pemilik site & staf site** (28 Nov, branch
+  `claude/site-management-phase-3-inventory-uyamoo`, PR #9 di-merge atas
+  persetujuan owner). **Migration `20261128120000_site_staff_invites.sql`
+  diterapkan ke produksi 28 Nov lewat MCP `apply_migration`** (versi tercatat
+  `20261128115051`). Terverifikasi: RLS aktif, 0 policy, tanpa grant
+  anon/authenticated; `redeem_site_staff_invite` SECURITY DEFINER,
+  `search_path=public, pg_temp`, EXECUTE hanya service_role (+ owner
+  postgres); `site_staff` dan `site_staff_invites` 0 baris; `owner_id`
+  Co&co Lokalima tetap kosong.
+  Inventaris action/route/halaman disetujui owner sebelum kode ditulis.
+  - `src/lib/auth/site-permissions.ts` (murni): relasi site — pemilik
+    (owners.portal_access='active' + sites.owner_id), superstaff,
+    front_office, back_office, finance — → 14 izin `site.*`. Global:
+    operate_all = semua kecuali billing/staff/revenue; finance_all = billing +
+    revenue + lihat; superadmin semua. `site.revenue` (sewa terikat, barang
+    terjual, HPP, margin) **tidak dipegang peran site mana pun** sampai §20.7.
+    `site.documents.view` = finance hanya invoice/receipt.
+  - `src/lib/auth/site-access.ts`: `requireSiteAccess`, `requireRecordAccess`
+    (site record anak dari DB; siteId client yang tidak cocok = NotFoundError),
+    `requireSitePage` (404 untuk "tidak ada" dan "bukan milikmu"), dibaca ulang
+    tiap panggilan. Semua action site, route dokumen, halaman `/site` memakai
+    ini. Gate `/site` kini menerima pemilik/staf site non-staf.
+  - Celah lama yang ikut tertutup: `setMembershipStatus`/`setMembershipPayment`
+    dan `setReservationUtilities` tanpa filter site; rilis ruangan
+    `setEventStatus` lintas site; item/plan site lain; unduhan dokumen mana pun;
+    admin_general bisa mengisi `owner_id`; `listOwnerOptions` bocor ke semua staf site.
+  - **B4** (commit terpisah): `createMembership` selalu `unpaid`; lunas hanya
+    lewat `settle_membership_payment`.
+  - Staf & undangan: migration `20261128120000_site_staff_invites.sql`
+    (hash token saja, RLS tanpa policy, grant dicabut; `redeem_site_staff_invite`
+    SECURITY DEFINER karena membaca `auth.users`, EXECUTE hanya service_role).
+    Pemilik mengundang semua peran, superstaff tidak bisa superstaff. Tautan +
+    WhatsApp, tanpa email (seperti undangan pemilik). `/site/[id]/staff`,
+    `/invite/site/[token]`.
+  - Sidebar: tiap site satu grup (Overview, Dashboard, Members, Calendar,
+    Staff), difilter izin site viewer. "All sites" untuk staf global atau yang
+    punya >1 site; pemilik/staf satu site dialihkan dari `/site` ke site-nya.
+  - Tes: `test-site-isolation` 958 check (lintas-site 41 action × 5 orang +
+    route + halaman + snapshot B, matriks 30 action × 12 orang, uang,
+    eskalasi, pencabutan, undangan, B4, sidebar). Dibuktikan bisa merah
+    (cek site record `setMembershipStatus` dilepas → 4 gagal; tidak dikomit).
+    `test-staff-permissions` (609) dan `test-admin-nav` (831) disesuaikan.
+    17 suite lain hijau di DB lokal bersih, **kecuali `test-login-no-js`**
+    yang sudah merah sebelum PR ini: ia mencari tautan header
+    `/auth/login?mode=signup` yang hilang sejak navbar V7 (tidak ada di
+    `origin/main`).
+  - Tiga fitur yang izinnya sudah ada tapi action-nya belum (buat reservasi,
+    tandai cicilan lunas, status bayar reservasi) dicatat di `ROADMAP.md` §7.
+  - **Review owner atas PR #9** (di branch yang sama):
+    (1) `setMembershipPayment` menolak keluar dari `paid` (dan `refunded` dari
+    status apa pun) untuk semua peran termasuk global — refund belum punya
+    kebijakan & jurnal balik. Penjaganya di dalam UPDATE (`neq paid`), bukan
+    hanya dibaca sebelumnya. Jalur lain ke `memberships.payment_status`: hanya
+    `createMembership` (dikunci `unpaid`) dan `settle_membership_payment`;
+    anon/authenticated tertahan RLS (aktif, tanpa policy). Pilihan "refunded"
+    dihapus dari UI, membership lunas tampil "Lunas" tanpa dropdown.
+    (2) `redeem_site_staff_invite` mensyaratkan `email_confirmed_at IS NOT
+    NULL` (`invite_email_unconfirmed`); file migration diubah langsung karena
+    belum diterapkan. (3) Item Portal Pemilik properti hanya tampil kalau
+    pemilik punya ≥1 properti (`getNavContext`); pemilik yang hanya punya site
+    melihat Site Management saja. Gate `/owner` tidak berubah.
 
 - **Panduan desain V7 tertulis** (28 Nov). `DESIGN.md` di root (aturan:
   warna, tipografi, radius, bayangan, komponen, logo, teks, halaman tanpa
@@ -323,6 +463,11 @@ Tes: 13 suite, ±434 check, semua hijau di DB lokal bersih.
 
 ## Sedang dikerjakan
 
+**Fase 3 selesai** (PR #9 di-merge, migration di produksi). `sites.owner_id`
+Co&co Lokalima sengaja **tidak** diisi dan belum ada undangan di produksi —
+menunggu instruksi owner. Cek deploy Vercel untuk merge commit PR #9. Berikutnya
+**Fase 3b (`/account`)** — instruksi dari owner menyusul.
+
 Redesign V7 sudah di `main` (PR #5). Cek di Vercel bahwa `630ee4c` Ready ·
 Current. Yang belum: halaman lain (listing, detail, login, contact, form) baru ikut
 berganti **warna** lewat token — tata letaknya masih gaya lama (tombol
@@ -330,8 +475,8 @@ berganti **warna** lewat token — tata letaknya masih gaya lama (tombol
 juga punya top bar (pemilih site, lonceng, avatar) yang belum dibuat karena
 notifikasi dan pemilih site belum ada sebagai fitur.
 
-Masih terbuka dari sebelumnya: di `/dashboard`, "Profile Settings" → 404
-(`/dashboard/settings` tidak ada); angka ringkasan dan badge "1" masih
+Masih terbuka dari sebelumnya: di `/account` (dulu `/dashboard`), "Profile
+Settings" → 404 (`/account/settings` tidak ada); angka ringkasan dan badge "1" masih
 placeholder.
 
 ---
@@ -340,10 +485,10 @@ placeholder.
 
 Urut prioritas:
 
-0. **Fase 2: merge PR setelah owner setuju, lalu pastikan deploy Vercel Ready.**
-   Lalu Fase 3 (`site_staff`: `accessibleSites` ditambah site milik/tempat staf)
-   dan dashboard per peran. Migration terpisah nanti: hapus kolom
-   `is_admin`/`is_surveyor`.
+0. **Cek deploy Vercel untuk merge PR #11.** Undangan pemilik lama tanpa
+   alamat harus diterbitkan ulang. Cek setelan konfirmasi email di Auth
+   Supabase produksi (owner). Berikutnya: dashboard per peran; migration hapus kolom `is_admin`/`is_surveyor`;
+   proxy membawa path asal ke login (`/?login=1` sekarang membuangnya).
 
 1. **Putuskan pengembalian dana membership.** Jenis peristiwa
    `membership_refund_issued` sudah ada di daftar, fungsinya belum —
@@ -450,6 +595,11 @@ Urut prioritas:
   `RESEND_API_KEY`, `XENDIT_SECRET_KEY`, dan `XENDIT_WEBHOOK_TOKEN`; ketiganya
   perlu diperlakukan sama.
 
+- **Undangan pemilik (`owner_invites`)** — diperbaiki di branch
+  `claude/owner-invite-email` (lihat "Selesai"); tertutup di produksi setelah
+  migration-nya diterapkan. Catatan: Supabase lokal memakai
+  `enable_confirmations = false` (autokonfirmasi); setelan konfirmasi email di
+  produksi belum diverifikasi dari sini.
 - **Empat keputusan pemilik** di daftar "Berikutnya" (1–4) memblokir pekerjaan
   nyata, bukan sekadar kerapian.
 - **Xendit ditulis dan bisa dipilih, tapi `PAYMENT_PROVIDER` tetap `manual`.**
@@ -523,9 +673,11 @@ Bukan pemblokir, tapi sayang kalau hilang:
 
 **Supabase** — org `nzqxxsuurhvtygpyxdvb`, project `verihome`
 (`hxktoewssuahtkrksbpx`, ap-northeast-1, Postgres 17).
-Migration di `supabase/migrations/` (14 file; yang lama di
+Migration di `supabase/migrations/` (16 file; yang lama di
 `supabase/migrations-archive/`).
-Terakhir: `20261126180000_drop_admin_email_hook.sql` (produksi sudah sama).
+Terakhir: `20261128150000_owner_invite_email.sql` (produksi sudah sama;
+tercatat di produksi sebagai versi `20261128122405` karena MCP memberi
+timestamp sendiri — lihat HANDOFF Phase B).
 Isi produksi saat ini: 1 site · 14 unit · 2 reservasi · 3 cicilan · 10 entri
 buku besar · 7 properti (6 tayang) · 3 pemilik · 30 pengguna · 24 amenity ·
 0 membership plan.
