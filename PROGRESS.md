@@ -88,8 +88,20 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 
 ## Selesai
 
-- **Listing V7 — daftar & detail** (28 Nov, branch `claude/exciting-darwin-fosna9`,
-  belum di `main`; tanpa migration). `/listings`: header krem + filter
+- **Alur booking & viewing V7 + bug instruksi pembayaran** (28 Nov, branch
+  `claude/exciting-darwin-fosna9`, belum di `main`; tanpa migration).
+  **Bug produksi yang diperbaiki:** langkah 3 kedua alur membaca field datar
+  lama (`intent.bankName`, `intent.totalAmount`) padahal API mengirim
+  `PaymentIntent` dengan detail di `intent.action` → layar menampilkan
+  "IDR NaN" dan rekening kosong. Booking/viewing tetap tercatat; hanya
+  instruksinya yang hilang. Sekarang `src/components/checkout/PaymentInstructions`
+  membaca `intent.action` dan `payableAmount` dari server. Komponen bersama
+  baru: `FlowSteps`, `CheckoutHeader`, `PaymentInstructions`, `styles.ts`.
+  Diuji lokal sampai langkah pembayaran, desktop + 390px, ID + EN.
+  Pantas dicatat di Reference (§11 atau §19) — keputusan owner.
+
+- **Listing V7 — daftar & detail** (28 Nov, PR #6, merge `e175932`;
+  tanpa migration). `/listings`: header krem + filter
   mengambang, kartu V7 (seluruh kartu tautan, tombol simpan z-10 di atasnya),
   banner pemilik pindah ke bawah hasil. `/listings/[slug]`: judul besar, chip
   spesifikasi, kartu RLA/pro-kontra/fasilitas/area, kotak booking pil +
@@ -98,9 +110,8 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
   diterjemahkan; jenis properti pakai label terjemahan. Tes tautan 25/25, tes
   bahasa 103/103, tsc bersih. Screenshot dari Supabase lokal dengan 3 listing
   contoh (foto homepage) — host Supabase produksi tidak terjangkau dari
-  container. **Belum**: alur `/book` dan `/viewing`; di ponsel kotak booking
-  ada di paling bawah halaman detail (perilaku lama, layak jadi bar CTA
-  menempel).
+  container. **Belum**: di ponsel kotak booking ada di paling bawah halaman
+  detail (perilaku lama, layak jadi bar CTA menempel).
 
 - **Redesign V7 — design system, homepage, shell dashboard** (28 Nov, PR #5,
   di-merge ke `main` sebagai `630ee4c`; **tanpa migration**). Deploy Vercel

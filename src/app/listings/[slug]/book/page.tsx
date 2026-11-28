@@ -4,6 +4,9 @@ import { Footer } from "@/components/layout/Footer";
 import { getPropertyBySlug } from "@/lib/supabase/queries";
 import { getCurrentUser } from "@/lib/supabase/get-current-user";
 import { BookingFlow } from "./BookingFlow";
+import { CheckoutHeader } from "@/components/checkout/CheckoutHeader";
+import { getLocale } from "@/lib/i18n/server";
+import { t } from "@/lib/i18n/strings";
 
 export const dynamic = "force-dynamic";
 
@@ -14,9 +17,10 @@ interface Props {
 export default async function BookPage({ params }: Props) {
   const { slug } = await params;
 
-  const [property, user] = await Promise.all([
+  const [property, user, lang] = await Promise.all([
     getPropertyBySlug(slug),
     getCurrentUser().catch(() => null),
+    getLocale(),
   ]);
 
   if (!property) notFound();
@@ -32,15 +36,20 @@ export default async function BookPage({ params }: Props) {
   return (
     <>
       <Navbar />
-      <main className="max-w-3xl mx-auto px-4 py-10">
-        <div className="mb-8">
-          <div className="text-sm text-ink-3 mb-1">{property.area}</div>
-          <h1 className="text-2xl font-bold text-ink">{property.name}</h1>
-        </div>
+      <main className="flex-1 bg-cream-2">
+        <div className="max-w-2xl mx-auto px-4 md:px-6 pt-8 pb-14 md:pt-10 md:pb-20">
+        <CheckoutHeader
+          slug={slug}
+          name={property.name}
+          area={property.area}
+          photo={property.photo_urls?.[0]}
+          backLabel={t("flow.backToListing", lang)}
+        />
         <BookingFlow
           propertyId={property.id}
           rate={rate}
         />
+        </div>
       </main>
       <Footer />
     </>
