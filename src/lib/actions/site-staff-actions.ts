@@ -232,6 +232,7 @@ const REDEEM_MESSAGES: Record<string, string> = {
   invite_revoked: "Undangan ini sudah dicabut.",
   invite_expired: "Undangan ini sudah kedaluwarsa. Minta undangan baru.",
   invite_email_mismatch: "Undangan ini untuk email lain. Masuk dengan email yang diundang.",
+  invite_email_unconfirmed: "Email akun Anda belum dikonfirmasi. Buka tautan konfirmasi di email Anda, lalu buka undangan ini lagi.",
 };
 
 /**

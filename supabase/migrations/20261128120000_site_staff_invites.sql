@@ -4,8 +4,9 @@
 -- one role on one site. The link carries a random token; only its SHA-256
 -- hash is stored, so a leaked backup holds no usable invite. Redeeming is
 -- single use, needs an unexpired, unrevoked invite, and needs the signed-in
--- account's email to equal the invited one — a forwarded link does not make
--- its reader staff.
+-- account's email to equal the invited one AND be confirmed — a forwarded
+-- link does not make its reader staff, and neither does registering an
+-- unconfirmed account under the invitee's address.
 --
 -- Who may invite which role is decided in the app (site-permissions.ts,
 -- manageableSiteRoles): owner → every role, superstaff → front_office,
@@ -63,6 +64,7 @@ AS $function$
 DECLARE
   v_inv   site_staff_invites%ROWTYPE;
   v_email text;
+  v_confirmed timestamptz;
   v_slug  text;
 BEGIN
   SELECT * INTO v_inv FROM site_staff_invites WHERE token_hash = p_token_hash FOR UPDATE;
@@ -79,9 +81,16 @@ BEGIN
     RAISE EXCEPTION 'invite_expired' USING ERRCODE = 'P0001';
   END IF;
 
-  SELECT lower(btrim(u.email)) INTO v_email FROM auth.users u WHERE u.id = p_user_id;
+  SELECT lower(btrim(u.email)), u.email_confirmed_at INTO v_email, v_confirmed
+    FROM auth.users u WHERE u.id = p_user_id;
   IF v_email IS NULL OR v_email <> v_inv.email THEN
     RAISE EXCEPTION 'invite_email_mismatch' USING ERRCODE = 'P0001';
+  END IF;
+  -- Matching an address nobody has proved they own proves nothing: an
+  -- account can be registered under someone else's email and sit
+  -- unconfirmed. Only a confirmed address counts as the invitee.
+  IF v_confirmed IS NULL THEN
+    RAISE EXCEPTION 'invite_email_unconfirmed' USING ERRCODE = 'P0001';
   END IF;
 
   INSERT INTO site_staff (site_id, user_id, role, granted_by)
