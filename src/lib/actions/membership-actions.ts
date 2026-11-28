@@ -1,15 +1,18 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requirePermission, requireAnyPermission } from "@/lib/auth/guards";
+import { requireRecordAccess, requireSiteAccess } from "@/lib/auth/site-access";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
  * Memberships and the plans they are sold from.
  *
- * Every function calls requirePermission("sites.operate_all") itself — these are separately
- * addressable POST endpoints, not pages behind a layout (§19.6).
+ * Every function checks site access itself — these are separately
+ * addressable POST endpoints, not pages behind a layout (§19.6). A
+ * membership's or plan's site comes from the record in the database; a
+ * siteId from the client that disagrees with it is not-found.
  */
+
 
 export interface PlanRow {
   id: string;
@@ -64,7 +67,7 @@ const num = (fd: FormData, k: string, dflt = 0) => {
 const bool = (fd: FormData, k: string) => fd.get(k) === "on" || fd.get(k) === "true";
 
 export async function listPlans(siteId: string): Promise<PlanRow[]> {
-  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
+  await requireSiteAccess(siteId, ["site.members.view", "site.catalog"]);
   const admin = createAdminClient();
   // Plans for this site, plus the ones sold everywhere.
   const { data } = await admin
@@ -82,7 +85,7 @@ export async function listPlans(siteId: string): Promise<PlanRow[]> {
 }
 
 export async function listMemberships(siteId: string): Promise<MembershipRow[]> {
-  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
+  await requireSiteAccess(siteId, "site.members.view");
   const admin = createAdminClient();
 
   const { data } = await admin
@@ -138,8 +141,16 @@ export async function listMemberships(siteId: string): Promise<MembershipRow[]> 
 }
 
 export async function createPlan(siteId: string, fd: FormData) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  let access;
+  try { access = await requireSiteAccess(siteId, "site.catalog"); } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
+
+  // A plan sold at every site is not one site's decision: only someone whose
+  // catalog permission is global may create it.
+  const allSites = bool(fd, "all_sites");
+  if (allSites && !access.actor.global.includes("site.catalog")) {
+    return { error: "Paket untuk semua site hanya bisa dibuat staf Cosystem." };
+  }
 
   const name = txt(fd, "name");
   if (!name) return { error: "Nama paket harus diisi." };
@@ -151,7 +162,7 @@ export async function createPlan(siteId: string, fd: FormData) {
   if (discount < 0 || discount > 100) return { error: "Diskon harus antara 0 dan 100." };
 
   const { error } = await admin.from("membership_plans").insert({
-    site_id: bool(fd, "all_sites") ? null : siteId,
+    site_id: allSites ? null : siteId,
     name,
     price: num(fd, "price"),
     period,
@@ -170,7 +181,7 @@ export async function createPlan(siteId: string, fd: FormData) {
 }
 
 export async function createMembership(siteId: string, fd: FormData) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  try { await requireSiteAccess(siteId, "site.members"); } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
 
   const member_name = txt(fd, "member_name");
@@ -199,7 +210,9 @@ export async function createMembership(siteId: string, fd: FormData) {
   if (plan_id) {
     const { data: plan } = await admin
       .from("membership_plans").select("*").eq("id", plan_id).maybeSingle();
-    if (!plan) return { error: "Paket tidak ditemukan." };
+    // This site's plan, or one sold at every site. Another site's plan is
+    // not-found — the same as a plan that does not exist.
+    if (!plan || (plan.site_id !== null && plan.site_id !== siteId)) return { error: "Not found." };
     snapshot = {
       price: num(fd, "price") || Number(plan.price),
       period: plan.period,
@@ -238,7 +251,11 @@ export async function createMembership(siteId: string, fd: FormData) {
       starts_on,
       ends_on,
       status: (fd.get("status") as string) || "pending",
-      payment_status: (fd.get("payment_status") as string) || "unpaid",
+      // Always unpaid. Settling is setMembershipPayment → settle_membership_payment,
+      // which is what posts the fee to the ledger; a payment_status written
+      // here would mark it paid with no journal behind it. Whatever the form
+      // sends for payment_status is ignored on purpose.
+      payment_status: "unpaid",
       contract_ref: txt(fd, "contract_ref"),
       notes: txt(fd, "notes"),
       ...snapshot,
@@ -260,7 +277,7 @@ export async function createMembership(siteId: string, fd: FormData) {
 }
 
 export async function setMembershipStatus(siteId: string, membershipId: string, status: string) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  try { await requireRecordAccess("membership", membershipId, "site.members", siteId); } catch { return { error: "Not found." }; }
   if (!["pending", "active", "expired", "cancelled"].includes(status)) {
     return { error: "Status tidak dikenal." };
   }
@@ -272,7 +289,7 @@ export async function setMembershipStatus(siteId: string, membershipId: string, 
 }
 
 export async function setMembershipPayment(siteId: string, membershipId: string, payment_status: string) {
-  try { await requirePermission("sites.finance_all"); } catch (e) { return { error: (e as Error).message }; }
+  try { await requireRecordAccess("membership", membershipId, "site.billing", siteId); } catch { return { error: "Not found." }; }
   if (!["unpaid", "pending_verification", "paid", "refunded"].includes(payment_status)) {
     return { error: "Status pembayaran tidak dikenal." };
   }
@@ -301,8 +318,31 @@ export async function setMembershipPayment(siteId: string, membershipId: string,
     };
   }
 
-  const { error } = await admin.from("memberships").update({ payment_status }).eq("id", membershipId);
+  // Leaving 'paid' is a refund, and a refund has neither a policy nor a
+  // reversing journal yet (PROGRESS "Berikutnya" #1). Flipping the column
+  // would leave unearned_revenue and the settled periods saying "paid" while
+  // the membership says otherwise — so nobody does it, global staff included.
+  // 'refunded' is refused from any state for the same reason.
+  //
+  // The guard is in the UPDATE itself (neq paid), not only in a read before
+  // it, so a settle that lands between the two cannot be undone by this call.
+  const { data: cur } = await admin
+    .from("memberships").select("payment_status").eq("id", membershipId).maybeSingle();
+  if (!cur) return { error: "Not found." };
+  if (cur.payment_status === "paid" || payment_status === "refunded") {
+    return { error: REFUND_NOT_SUPPORTED };
+  }
+
+  const { data: moved, error } = await admin
+    .from("memberships").update({ payment_status })
+    .eq("id", membershipId).neq("payment_status", "paid")
+    .select("id");
   if (error) return { error: error.message };
+  if (!moved?.length) return { error: REFUND_NOT_SUPPORTED };
   revalidatePath(`/site/${siteId}/members`);
   return { success: true };
 }
+
+const REFUND_NOT_SUPPORTED =
+  "Membership yang sudah lunas tidak bisa diubah statusnya. Refund membership belum punya " +
+  "kebijakan dan jurnal balik di buku besar, jadi belum bisa dicatat dari sini.";

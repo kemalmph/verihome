@@ -122,6 +122,30 @@ Yang perlu diputuskan:
 
 ---
 
+## 7. Operasi site yang izinnya sudah ada tapi fiturnya belum (Fase 3)
+
+Fase 3 memberi izin per site ke pemilik site dan staf site
+(`src/lib/auth/site-permissions.ts`). Tiga operasi yang disebut di matriks
+peran owner **belum punya action atau halaman sama sekali**, jadi izinnya
+didefinisikan tapi belum menjaga apa pun. Atas keputusan owner (28 Nov),
+fiturnya tidak dibangun di Fase 3:
+
+- **Membuat reservasi unit dari Site Management** — izin `site.reservations`
+  (front office, superstaff, pemilik; global `sites.operate_all`). Hari ini
+  reservasi hanya masuk lewat impor register dan lewat event
+  (`bookRoomForEvent`).
+- **Menandai cicilan (`reservation_instalments`) lunas** — izin `site.billing`
+  (finance, superstaff, pemilik; global `sites.finance_all`). Dashboard site
+  hanya menampilkan jadwalnya. Terkait keputusan akuntansi cicilan di bawah.
+- **Mengubah status pembayaran reservasi** — izin `site.billing`. Kolom
+  `unit_reservations.payment_status` hanya diisi saat impor.
+
+Saat dibangun, ikuti aturan yang sama dengan action site lain: site diambil
+dari record di database (`requireRecordAccess`), siteId dari client hanya
+boleh mempersempit, dan tambahkan barisnya ke `scripts/test-site-isolation.js`.
+
+---
+
 ## Keputusan yang masih menggantung
 
 Bukan fitur, tapi menghalangi beberapa butir di atas:

@@ -67,6 +67,15 @@ const F = (o = {}) => ({ F: o });
 const SO = ["sites.operate_all"];
 const SA = ["sites.operate_all", "sites.finance_all"];
 const LM = ["listings.manage"];
+// Site-scoped actions (every action that takes a site, unit, reservation,
+// membership, plan, event, item or document) moved to
+// scripts/test-site-isolation.js in Phase 3: access there is per site, and a
+// refusal is the same not-found as a record that does not exist, so it can
+// only be tested against real records. That suite runs every global role
+// below (superadmin, admin_general, admin_finance, admin_listings, a nobody)
+// as well as site owners and site staff. Left here: the site actions that
+// take no site.
+const SUPERADMIN_ONLY = ["staff.manage"]; // only superadmin holds staff.manage
 const ACTIONS = [
   ["updatePropertyStatus", [Z, "draft"], LM],
   ["updatePropertyDetails", [Z, F({ name: "x", area: "x", property_type: "x", price_monthly: "1", bedrooms: "1", bathrooms: "1", address: "x" })], LM],
@@ -74,45 +83,19 @@ const ACTIONS = [
   ["updateConsultationStatus", [Z, "confirmed"], ["bookings.operate"]],
   ["saveBuildListing", [Z, F()], LM],
   ["createNewProperty", [], LM, { denyOnly: true }],
-  ["getAmenityAssignments", [Z], SO],
-  ["setSiteAmenities", [Z, []], SO],
-  ["setUnitAmenities", [Z, Z, []], SO],
   ["listSites", [], SA],
-  ["getSite", [Z], SA],
-  ["listOwnerOptions", [], SA],
+  ["listOwnerOptions", [], SUPERADMIN_ONLY], // Phase 3: only a superadmin assigns a site's owner
   ["listSiteOptions", [], SA],
   ["createSite", [F()], SO],
-  ["updateSite", [F()], SO],
-  ["createUnit", [F()], SO],
-  ["updateUnit", [F()], SO],
-  ["retireUnit", [F()], SO],
-  ["getSiteCalendar", [Z], SO],
-  ["getSiteDashboard", [Z], SA],
   ["confirmCreditRefund", [Z], ["finance.operate"]],
   ["listCronRuns", [5], ["platform.settings"]],
   ["runDailyJobsNow", [], ["platform.settings"], { denyOnly: true }],
-  ["createEvent", [Z, F()], SO],
-  ["bookRoomForEvent", [Z, Z, Z, "2026-01-01T00:00:00Z", "2026-01-01T01:00:00Z", 0], SO],
-  ["setEventStatus", [Z, Z, "bogus"], SO],
   ["recordSpend", [F({ kind: "operating", amount: "", description: "" })], ["finance.operate"]],
-  ["listPlans", [Z], SA],
-  ["listMemberships", [Z], SA],
-  ["createPlan", [Z, F()], SO],
-  ["createMembership", [Z, F()], SO],
-  ["setMembershipStatus", [Z, Z, "bogus"], SO],
-  ["setMembershipPayment", [Z, Z, "bogus"], ["sites.finance_all"]],
   ["createOwnerInvite", [Z], LM],
   ["setOwnerPortalAccess", [Z, "revoked"], LM],
   ["recordPlacement", [F()], ["finance.operate"]],
   ["markPlacementPaid", [Z], ["finance.operate"]],
   ["updatePlacementStatus", [Z, "bogus"], ["finance.operate"]],
-  ["getReservationDetail", [Z], SA],
-  ["listItems", [Z], SO],
-  ["createItem", [Z, F()], SO],
-  ["addReservationItem", [Z, F()], SO],
-  ["removeReservationItem", [Z, Z], SO],
-  ["setReservationUtilities", [Z, true], SO],
-  ["removeDocument", [Z, Z], SO],
   ["getPlatformSettings", [], ["platform.settings"]],
   ["countBookingsUnaffected", [], ["platform.settings"]],
   ["saveDefaultCommission", [F()], ["platform.settings"]],
@@ -135,8 +118,6 @@ const ROUTES = [
   ["DELETE", "/api/admin/upload/delete", jsonBody({}), LM],
   ["POST", "/api/admin/upload/video", {}, LM],
   ["POST", "/api/admin/short-stay-rates", jsonBody({}), LM],
-  ["GET", "/api/admin/coworking/documents", {}, SO],
-  ["POST", "/api/admin/coworking/documents", {}, SO],
   ["GET", "/api/admin/reports/integrity", {}, ["finance.view"]],
   ["GET", "/api/admin/reports/export?type=ledger", {}, ["finance.view"]],
   ["PATCH", `/api/bookings/${Z}`, jsonBody({ payment_status: "paid" }), ["payments.settle"], "bookings PATCH paid"],
@@ -165,8 +146,7 @@ const PAGES = [
   ["/admin/owner-requests", ["listings.manage", "owners.payout_verify"]],
   ["/admin/surveys/pending", ["surveys.review"]],
   ["/admin/settings", ["platform.settings"]], ["/admin/cron", ["platform.settings"]],
-  ["/site", SA], [`/site/${Z}`, SA], [`/site/${Z}/members`, SA], [`/site/${Z}/dashboard`, SA],
-  [`/site/${Z}/calendar`, SO], [`/site/booking/${Z}`, SA],
+  ["/site", SA], // per-site pages: scripts/test-site-isolation.js
   ["/survey", ["surveys.input"]],
 ];
 

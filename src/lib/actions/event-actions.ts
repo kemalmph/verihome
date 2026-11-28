@@ -1,7 +1,7 @@
 "use server";
 
 import { revalidatePath } from "next/cache";
-import { requirePermission } from "@/lib/auth/guards";
+import { requireRecordAccess, requireSiteAccess } from "@/lib/auth/site-access";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -34,8 +34,9 @@ const txt = (fd: FormData, k: string) => {
   return v === "" ? null : v;
 };
 
+
 export async function createEvent(siteId: string, fd: FormData) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  try { await requireSiteAccess(siteId, "site.events"); } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
 
   const title = txt(fd, "title");
@@ -103,14 +104,15 @@ export async function bookRoomForEvent(
   endsAt: string,
   setupMinutes = 0,
 ) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  // The event's site, from the event; the unit must be in that same site.
+  try { await requireRecordAccess("event", eventId, "site.events", siteId); } catch { return { error: "Not found." }; }
   const admin = createAdminClient();
 
   const { data: unit } = await admin
     .from("lettable_units")
     .select("id, name, letting_mode, price, exclusive_use, status")
     .eq("id", unitId).eq("site_id", siteId).maybeSingle();
-  if (!unit) return { error: "Unit tidak ada di site ini." };
+  if (!unit) return { error: "Not found." };
   if (unit.status !== "available") return { error: `${unit.name} sedang tidak bisa disewakan.` };
 
   const from = new Date(new Date(startsAt).getTime() - setupMinutes * 60000).toISOString();
@@ -152,7 +154,10 @@ export async function bookRoomForEvent(
 }
 
 export async function setEventStatus(siteId: string, eventId: string, status: string) {
-  try { await requirePermission("sites.operate_all"); } catch (e) { return { error: (e as Error).message }; }
+  // From the event's own site. Before Phase 3 the update was filtered by site
+  // but the room release on 'cancelled' was not: siteId=A with B's event
+  // released B's rooms. Checking the event first closes both.
+  try { await requireRecordAccess("event", eventId, "site.events", siteId); } catch { return { error: "Not found." }; }
   if (!["draft", "confirmed", "cancelled", "done"].includes(status)) {
     return { error: "Status tidak dikenal." };
   }

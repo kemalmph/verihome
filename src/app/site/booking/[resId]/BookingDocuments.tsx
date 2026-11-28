@@ -23,8 +23,14 @@ const tanggal = (iso: string) =>
   }).format(new Date(iso));
 
 export function BookingDocuments({
-  reservationId, documents,
-}: { reservationId: string; documents: ResDocument[] }) {
+  reservationId, documents, canManage = true,
+}: {
+  reservationId: string;
+  /** Already filtered on the server to the kinds the viewer may open. */
+  documents: ResDocument[];
+  /** site.documents — upload and remove. Finance only opens invoices/receipts. */
+  canManage?: boolean;
+}) {
   const router = useRouter();
   const fileRef = useRef<HTMLInputElement>(null);
   const [error, setError] = useState("");
@@ -108,19 +114,21 @@ export function BookingDocuments({
                   {d.title && ` · ${d.file_name}`}
                 </div>
               </div>
-              <button
-                onClick={() => remove(d.id, d.title || d.file_name)}
-                disabled={busy}
-                className="text-xs text-[#8c3a2c] hover:underline disabled:opacity-50 whitespace-nowrap"
-              >
-                hapus
-              </button>
+              {canManage && (
+                <button
+                  onClick={() => remove(d.id, d.title || d.file_name)}
+                  disabled={busy}
+                  className="text-xs text-[#8c3a2c] hover:underline disabled:opacity-50 whitespace-nowrap"
+                >
+                  hapus
+                </button>
+              )}
             </li>
           ))}
         </ul>
       )}
 
-      <form onSubmit={onUpload} className="px-5 py-4 border-t border-[#e8e3e0] flex flex-wrap items-end gap-2">
+      {canManage && <form onSubmit={onUpload} className="px-5 py-4 border-t border-[#e8e3e0] flex flex-wrap items-end gap-2">
         <label className="block">
           <span className="block text-xs text-ink-3 mb-1">Jenis</span>
           <select name="kind" defaultValue="contract" className="border border-line-strong rounded-lg px-3 py-2 text-sm bg-white">
@@ -156,7 +164,7 @@ export function BookingDocuments({
           PDF, gambar, atau Word, maksimal 20 MB. Disimpan di penyimpanan privat —
           tautannya dibuat saat diklik dan hanya berlaku 15 menit.
         </p>
-      </form>
+      </form>}
 
       {error && (
         <p className="mx-5 mb-4 text-sm text-[#8c3a2c] bg-[#fbeeec] border border-[#e2b3ab] rounded px-3 py-2">

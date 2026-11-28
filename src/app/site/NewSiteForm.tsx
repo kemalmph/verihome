@@ -6,7 +6,8 @@ import { createSite } from "@/lib/actions/coworking-actions";
 import { SITE_STATUSES, SITE_TYPES } from "@/lib/coworking/taxonomy";
 
 interface Props {
-  owners: { id: string; name: string }[];
+  /** Null unless the viewer is a superadmin: only they assign a site's owner. */
+  owners: { id: string; name: string }[] | null;
 }
 
 export function NewSiteForm({ owners }: Props) {
@@ -83,14 +84,16 @@ export function NewSiteForm({ owners }: Props) {
           <input name="address" className={inputCls} placeholder="Jl. Kemang Raya No. 88, Jakarta Selatan" />
         </Field>
 
-        <Field label="Pemilik" hint="Opsional. Dipakai bersama dengan sisi sewa.">
-          <select name="owner_id" defaultValue="" className={inputCls}>
-            <option value="">— belum ditentukan —</option>
-            {owners.map((o) => (
-              <option key={o.id} value={o.id}>{o.name}</option>
-            ))}
-          </select>
-        </Field>
+        {owners && (
+          <Field label="Pemilik" hint="Opsional. Hanya superadmin yang menetapkan pemilik site.">
+            <select name="owner_id" defaultValue="" className={inputCls}>
+              <option value="">— belum ditentukan —</option>
+              {owners.map((o) => (
+                <option key={o.id} value={o.id}>{o.name}</option>
+              ))}
+            </select>
+          </Field>
+        )}
 
         <Field label="Google Maps" hint="Opsional">
           <input name="google_maps_url" className={inputCls} placeholder="https://maps.app.goo.gl/…" />

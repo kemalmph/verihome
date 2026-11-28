@@ -1,6 +1,7 @@
 "use server";
 
-import { requireAnyPermission } from "@/lib/auth/guards";
+import { requireSiteAccess } from "@/lib/auth/site-access";
+import { hasSitePermission, type SitePermission } from "@/lib/auth/site-permissions";
 import { createAdminClient } from "@/lib/supabase/admin";
 
 /**
@@ -84,15 +85,21 @@ export interface SiteDashboard {
      * units' asking prices. A let room earns what its tenant agreed to, which
      * may be below list; summing the price list would report revenue nobody
      * promised.
+     *
+     * Null without site.revenue (global finance only) — site revenue waits on
+     * the revenue-share decision (§20.7).
      */
-    committed_monthly: number;
+    committed_monthly: number | null;
   };
+  /** The billing summary. Null without site.billing. */
   instalments: {
     overdue: DashboardInstalment[];
     upcoming: DashboardInstalment[];
     paid_total: number;
     outstanding_total: number;
-  };
+  } | null;
+  /** The viewer's permissions on this site, for the page to choose what to show. */
+  perms: SitePermission[];
   ending_soon: DashboardEnding[];
 }
 
@@ -123,7 +130,9 @@ const daysFromNow = (when: string | Date) => {
 };
 
 export async function getSiteDashboard(siteId: string): Promise<SiteDashboard | null> {
-  await requireAnyPermission(["sites.operate_all","sites.finance_all"]);
+  const access = await requireSiteAccess(siteId, "site.view");
+  const seeRevenue = hasSitePermission(access.perms, "site.revenue");
+  const seeBilling = hasSitePermission(access.perms, "site.billing");
   const admin = createAdminClient();
   const nowIso = new Date().toISOString();
 
@@ -243,16 +252,21 @@ export async function getSiteDashboard(siteId: string): Promise<SiteDashboard | 
       unpriced: dashUnits.filter((u) => u.price === null).length,
       sqm_total: dashUnits.reduce((n, u) => n + (u.size_sqm ?? 0), 0),
       sqm_occupied: occupied.reduce((n, u) => n + (u.size_sqm ?? 0), 0),
-      committed_monthly: reservations
-        .filter((r) => r.ends_at > nowIso)
-        .reduce((n, r) => n + Number(r.unit_price ?? 0), 0),
+      committed_monthly: seeRevenue
+        ? reservations
+          .filter((r) => r.ends_at > nowIso)
+          .reduce((n, r) => n + Number(r.unit_price ?? 0), 0)
+        : null,
     },
-    instalments: {
-      overdue: due.filter((i) => i.days_until_due < 0),
-      upcoming: due.filter((i) => i.days_until_due >= 0),
-      paid_total: instalments.filter((i) => i.status === "paid").reduce((n, i) => n + i.amount, 0),
-      outstanding_total: due.reduce((n, i) => n + i.amount, 0),
-    },
+    instalments: seeBilling
+      ? {
+        overdue: due.filter((i) => i.days_until_due < 0),
+        upcoming: due.filter((i) => i.days_until_due >= 0),
+        paid_total: instalments.filter((i) => i.status === "paid").reduce((n, i) => n + i.amount, 0),
+        outstanding_total: due.reduce((n, i) => n + i.amount, 0),
+      }
+      : null,
+    perms: access.perms,
     ending_soon: reservations
       .filter((r) => r.ends_at > nowIso && daysFromNow(r.ends_at) <= 90)
       .map((r) => ({

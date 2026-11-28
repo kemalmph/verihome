@@ -1,13 +1,13 @@
-import { requirePermissionOrRedirect } from "@/lib/auth/guards";
 import Link from "next/link";
 import { notFound } from "next/navigation";
+import { requireSitePage } from "@/lib/auth/site-access";
+import { hasSitePermission } from "@/lib/auth/site-permissions";
 import { AppSidebar } from "@/components/layout/AppSidebar";
 import { getSite, listOwnerOptions } from "@/lib/actions/coworking-actions";
 import { SiteDetailForm } from "./SiteDetailForm";
 import { UnitManager } from "./UnitManager";
 import { AmenityManager } from "./AmenityManager";
 import { getAmenityAssignments } from "@/lib/actions/amenity-actions";
-import { resolveSiteId } from "@/lib/coworking/resolve";
 
 export const dynamic = "force-dynamic";
 
@@ -16,18 +16,16 @@ interface Props {
 }
 
 export default async function CoworkingSitePage({ params }: Props) {
-  const viewer = await requirePermissionOrRedirect(["sites.operate_all", "sites.finance_all"]);
-  // Amenity assignments are an operate_all read (and write). A finance-only
-  // viewer used to reach this page and get a 500 from that guard; they now get
-  // the page without the amenity editor.
-  const canOperate = viewer.permissions.includes("sites.operate_all");
   const { id: param } = await params;
-  const id = await resolveSiteId(param);
-  if (!id) notFound();
-
+  // Not-found for "no such site" and "not yours" alike.
+  const access = await requireSitePage(param, "site.view");
+  const id = access.siteId;
+  const can = (p: Parameters<typeof hasSitePermission>[1]) => hasSitePermission(access.perms, p);
 
   const [result, owners, amenities] = await Promise.all([
-    getSite(id), listOwnerOptions(), canOperate ? getAmenityAssignments(id) : Promise.resolve(null),
+    getSite(id),
+    access.actor.isSuperadmin ? listOwnerOptions() : Promise.resolve(null),
+    getAmenityAssignments(id),
   ]);
   if (!result) notFound();
 
@@ -54,18 +52,26 @@ export default async function CoworkingSitePage({ params }: Props) {
             </p>
           </div>
           <div className="flex gap-2">
-            <Link
+            {can("site.staff") && (
+              <Link
+                href={`/site/${site.slug}/staff`}
+                className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
+              >
+                Staf
+              </Link>
+            )}
+            {can("site.members.view") && <Link
               href={`/site/${site.slug}/members`}
               className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
             >
               Member
-            </Link>
-            <Link
+            </Link>}
+            {can("site.reservations.view") && <Link
               href={`/site/${site.slug}/calendar`}
               className="px-4 py-2 rounded-lg border border-line-strong text-sm text-ink-2 hover:bg-white"
             >
               Kalender
-            </Link>
+            </Link>}
             <Link
               href={`/site/${site.slug}/dashboard`}
               className="px-4 py-2 rounded-lg bg-brand text-white text-sm font-medium hover:bg-brand-strong"
@@ -75,11 +81,16 @@ export default async function CoworkingSitePage({ params }: Props) {
           </div>
         </header>
 
-        <SiteDetailForm site={site} owners={owners} />
+        <SiteDetailForm site={site} owners={owners} canEdit={can("site.settings")} />
 
-        <UnitManager siteId={site.id} units={units} />
+        <UnitManager siteId={site.id} units={units} canEdit={can("site.units")} />
 
-        {amenities && <AmenityManager siteId={site.id} units={units} assignments={amenities} />}
+        {(can("site.settings") || can("site.units")) && (
+          <AmenityManager
+            siteId={site.id} units={units} assignments={amenities}
+            canEditSite={can("site.settings")} canEditUnits={can("site.units")}
+          />
+        )}
       </main>
     </div>
   );
