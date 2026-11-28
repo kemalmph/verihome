@@ -512,6 +512,7 @@ export const STRINGS = {
   "gallery.close":        { id: "Tutup",            en: "Close" },
   "gallery.previous":     { id: "Sebelumnya",       en: "Previous" },
   "gallery.next":         { id: "Berikutnya",       en: "Next" },
+  "gallery.video":        { id: "Tonton Video",     en: "Watch Video" },
 
   // ── Viewing request flow ──────────────────────────────────────────────────
   "view.stepSchedule":    { id: "Jadwal",           en: "Schedule" },

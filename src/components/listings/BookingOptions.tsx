@@ -5,6 +5,7 @@ import Link from "next/link";
 import type { ShortStayRateRow } from "@/lib/supabase/queries";
 import type { RentalMode } from "@/types/property";
 import { useT } from "@/lib/i18n/LocaleProvider";
+import { pill } from "@/components/brand/styles";
 
 interface BookingOptionsProps {
   propertyId:        string;
@@ -37,18 +38,19 @@ export function BookingOptions({
   const showTabs = rentalMode === "both";
 
   return (
-    <div className="bg-white border border-line-strong rounded-xl p-6 shadow-sm">
+    <div className="bg-white border border-line rounded-3xl p-6 shadow-lift">
       {/* Tab switcher — only shown when mode is "both" */}
       {showTabs && (
-        <div className="flex rounded-lg overflow-hidden border border-line-strong mb-5 text-sm font-semibold">
+        <div className="flex rounded-full bg-canvas p-1 mb-5 text-sm font-semibold">
           {(["long_term", "short_stay"] as const).map((mode) => (
             <button
               key={mode}
               onClick={() => setTab(mode)}
-              className={`flex-1 py-2 transition-colors ${
+              aria-pressed={tab === mode}
+              className={`flex-1 py-2 rounded-full transition-colors ${
                 tab === mode
-                  ? "bg-brand text-white"
-                  : "bg-white text-ink-2 hover:bg-canvas"
+                  ? "bg-white text-ink shadow-card"
+                  : "text-ink-3 hover:text-ink"
               }`}
             >
               {mode === "long_term" ? t("book.longTerm") : t("book.shortStay")}
@@ -61,16 +63,16 @@ export function BookingOptions({
       {(tab === "long_term" || rentalMode === "long_term") && (
         <div className="space-y-4">
           <div>
-            <div className="text-xs text-ink-2 mb-1">{t("book.startingFrom")}</div>
-            <div className="text-brand-ink text-3xl font-bold">IDR {formatIDR(priceMonthly)}</div>
-            <div className="text-xs text-ink-2">{t("book.perMonthPlus")}</div>
+            <div className="text-xs text-ink-3 mb-1">{t("book.startingFrom")}</div>
+            <div className="text-ink text-3xl font-extrabold tracking-[-0.03em]">IDR {formatIDR(priceMonthly)}</div>
+            <div className="text-xs text-ink-3">{t("book.perMonthPlus")}</div>
           </div>
 
           <div className="space-y-3 mb-6">
             {[
               { label: t("book.minStay"), value: `${minStayMonths} ${minStayMonths > 1 ? t("book.monthPlural") : t("book.month")}` },
             ].map((item) => (
-              <div key={item.label} className="flex justify-between items-center pb-3 border-b border-line-strong">
+              <div key={item.label} className="flex justify-between items-center pb-3 border-b border-line">
                 <span className="text-ink-2 text-sm">{item.label}</span>
                 <span className="text-ink font-bold text-sm">{item.value}</span>
               </div>
@@ -80,17 +82,17 @@ export function BookingOptions({
           <div className="space-y-3">
             <Link
               href="/consultation"
-              className="w-full bg-brand text-white py-4 rounded-lg font-semibold flex flex-col items-center hover:opacity-90 transition-opacity"
+              className={`${pill.primary} w-full flex-col gap-0.5 py-3.5 text-center`}
             >
               <span>{t("book.consult")}</span>
-              <span className="text-xs font-normal opacity-80">{t("book.consultSub")}</span>
+              <span className="text-xs font-medium text-white/85">{t("book.consultSub")}</span>
             </Link>
             <Link
               href={`/listings/${slug}/viewing`}
-              className="w-full border-2 border-ink text-ink py-4 rounded-lg font-semibold flex flex-col items-center hover:bg-canvas transition-colors"
+              className={`${pill.secondary} w-full flex-col gap-0.5 py-3.5 text-center`}
             >
               <span>{t("book.viewing")}</span>
-              <span className="text-xs font-normal opacity-70">{t("book.viewingSub")}</span>
+              <span className="text-xs font-medium text-ink-3">{t("book.viewingSub")}</span>
             </Link>
           </div>
         </div>
@@ -100,8 +102,8 @@ export function BookingOptions({
       {(tab === "short_stay" || rentalMode === "short_stay") && shortStayRate && (
         <div className="space-y-4">
           <div>
-            <div className="text-xs text-ink-2 mb-1">{t("book.nightlyRate")}</div>
-            <div className="text-brand-ink text-3xl font-bold">
+            <div className="text-xs text-ink-3 mb-1">{t("book.nightlyRate")}</div>
+            <div className="text-ink text-3xl font-extrabold tracking-[-0.03em]">
               IDR {formatIDR(shortStayRate.price_per_night)}
             </div>
             {shortStayRate.price_per_night_weekend && (
@@ -116,7 +118,7 @@ export function BookingOptions({
             )}
           </div>
 
-          <div className="space-y-2 pb-4 border-b border-line-strong">
+          <div className="space-y-2 pb-4 border-b border-line">
             <div className="flex justify-between text-sm">
               <span className="text-ink-2">{t("book.minNights")}</span>
               <span className="font-bold text-ink">{shortStayRate.min_nights}</span>
@@ -137,10 +139,10 @@ export function BookingOptions({
 
           <Link
             href={`/listings/${slug}/book`}
-            className="w-full bg-brand text-white py-4 rounded-lg font-semibold flex flex-col items-center hover:opacity-90 transition-opacity"
+            className={`${pill.primary} w-full flex-col gap-0.5 py-3.5 text-center`}
           >
             <span>{t("book.bookNow")}</span>
-            <span className="text-xs font-normal opacity-80">
+            <span className="text-xs font-medium text-white/85">
               {isInstantBookable ? t("book.instantConfirm") : t("book.adminConfirm")}
             </span>
           </Link>

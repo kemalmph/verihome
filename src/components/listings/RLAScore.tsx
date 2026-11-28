@@ -29,10 +29,10 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
   const total = Number(assessment.rla_score).toFixed(1);
 
   return (
-    <section className="bg-canvas p-6 rounded-xl space-y-6 border border-line-strong">
+    <section className="bg-white p-6 md:p-7 rounded-3xl space-y-6 border border-line shadow-card">
       <div className="flex items-center justify-between">
         <div className="flex items-center gap-2">
-          <h2 className="text-xl font-semibold text-ink">{t("rla.title", lang)}</h2>
+          <h2 className="text-xl font-extrabold tracking-[-0.03em] text-ink">{t("rla.title", lang)}</h2>
           <span
             className="material-symbols-outlined text-ink-3 text-sm cursor-help"
             title={t("rla.tooltip", lang)}
@@ -40,8 +40,8 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
             info
           </span>
         </div>
-        <div className="flex items-center gap-1 bg-white px-3 py-1.5 rounded-full border border-line-strong shadow-sm">
-          <span className="text-brand-ink text-xl font-semibold">{total}</span>
+        <div className="flex items-center gap-1 bg-brand-soft px-3 py-1.5 rounded-full">
+          <span className="text-brand-ink text-xl font-extrabold">{total}</span>
           <span className="text-ink-2 text-sm">/ 10</span>
           <span
             className="material-symbols-outlined text-brand-ink text-xl"
@@ -64,7 +64,7 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
                 <span>{t(cat.label, lang)}</span>
                 <span className="font-bold text-ink">{score}/10</span>
               </div>
-              <div className="w-full bg-line h-2 rounded-full overflow-hidden">
+              <div className="w-full bg-canvas h-2 rounded-full overflow-hidden">
                 <div
                   className="h-full rounded-full transition-all"
                   style={{ width: `${pct}%`, backgroundColor: color }}
@@ -76,7 +76,7 @@ export async function RLAScore({ assessment }: RLAScoreProps) {
       </div>
 
       {assessment.overall_notes && (
-        <div className="p-4 bg-white border border-line-strong rounded-lg">
+        <div className="p-4 bg-cream-2 border border-line rounded-2xl">
           <div className="flex items-start gap-3">
             <span className="material-symbols-outlined text-brand-ink">notes</span>
             <p className="text-sm text-ink-2 italic">
