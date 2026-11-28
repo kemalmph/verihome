@@ -275,6 +275,21 @@ const DENY_RE = /do not have permission|signed in as staff|Only a superadmin|Adm
     }
   }
 
+  // createOwnerInvite binds the invite to the owner's email (lower-cased) and
+  // refuses an owner with no usable address.
+  {
+    const [{ id: oMixed }] = await q("insert into owners(name, email) values ($1,$2) returning id", [`PERMTEST-MIXED-${RUN}`, `  Mixed.Case-${RUN}@Test.Invalid `]);
+    const r = await callAction("createOwnerInvite", [oMixed], cookies.superadmin);
+    const rows = await q("select email from owner_invites where owner_id=$1", [oMixed]);
+    check(!wasDenied(r) && rows.length === 1 && rows[0].email === `mixed.case-${RUN}@test.invalid`,
+      `createOwnerInvite stores the owner's email lower-cased (got ${rows.map((x) => x.email).join(",") || "no invite"})`);
+    check(r.text.includes(`mixed.case-${RUN}@test.invalid`), "createOwnerInvite returns the bound address to the admin");
+    const [{ id: oNoMail }] = await q("insert into owners(name, email) values ($1,'not-an-email') returning id", [`PERMTEST-NOMAIL-${RUN}`]);
+    const r2 = await callAction("createOwnerInvite", [oNoMail], cookies.superadmin);
+    const rows2 = await q("select 1 from owner_invites where owner_id=$1", [oNoMail]);
+    check(/email yang valid/.test(r2.text) && rows2.length === 0, "createOwnerInvite refuses an owner without a valid email");
+  }
+
   // approve/reject depend on the request KIND. Seed one request per attempt and
   // read the row back: it only leaves 'pending' if the action went through.
   for (const act of ["approveOwnerRequest", "rejectOwnerRequest"]) {

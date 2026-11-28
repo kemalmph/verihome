@@ -24,7 +24,7 @@ export function OwnerPortalControls({ ownerId, ownerName, portalAccess, hasWhats
   const [busy, setBusy] = useState(false);
   const [error, setError] = useState("");
   const [copied, setCopied] = useState(false);
-  const [invite, setInvite] = useState<{ url: string; whatsappUrl: string | null; expiresAt: string } | null>(null);
+  const [invite, setInvite] = useState<{ url: string; email: string; whatsappUrl: string | null; expiresAt: string } | null>(null);
   const [, startTransition] = useTransition();
 
   const badge = BADGE[portalAccess] ?? BADGE.none;
@@ -89,6 +89,9 @@ export function OwnerPortalControls({ ownerId, ownerName, portalAccess, hasWhats
       {invite && (
         <div className="bg-brand-soft border border-brand-light rounded-lg p-3 space-y-2">
           <p className="text-xs font-semibold text-success-ink">{t("admin.owner.inviteCreated")}</p>
+          <p className="text-[11px] text-ink-2">
+            Hanya bisa dipakai oleh akun dengan email <strong>{invite.email}</strong> yang sudah dikonfirmasi.
+          </p>
 
           <div className="flex items-center gap-2">
             <code className="flex-1 text-[11px] bg-white rounded px-2 py-1.5 break-all text-ink">

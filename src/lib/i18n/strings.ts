@@ -155,6 +155,9 @@ export const STRINGS = {
   "owner.invite.invalid": { id: "Tautan undangan tidak berlaku.", en: "This invite link is not valid." },
   "owner.invite.used":    { id: "Tautan undangan ini sudah dipakai.", en: "This invite link has already been used." },
   "owner.invite.expired": { id: "Tautan undangan sudah kedaluwarsa. Minta tautan baru kepada tim Cosystem.", en: "This invite link has expired. Ask the Cosystem team for a new one." },
+  "owner.invite.reissue": { id: "Tautan undangan ini dibuat dengan cara lama dan tidak bisa dipakai lagi. Minta tautan baru kepada tim Cosystem.", en: "This invite link was issued the old way and can no longer be used. Ask the Cosystem team for a new one." },
+  "owner.invite.emailMismatch": { id: "Undangan ini untuk email lain. Masuk dengan email yang terdaftar sebagai pemilik.", en: "This invite is for a different email. Sign in with the email registered for the owner." },
+  "owner.invite.emailUnconfirmed": { id: "Email akun Anda belum dikonfirmasi. Buka tautan konfirmasi di email Anda, lalu buka undangan ini lagi.", en: "Your account's email is not confirmed yet. Open the confirmation link in your email, then open this invite again." },
   "owner.access.denied":  { id: "Akun Anda tidak memiliki akses portal pemilik.", en: "Your account does not have owner portal access." },
   "owner.access.revoked": { id: "Akses portal Anda telah dinonaktifkan. Hubungi tim Cosystem.", en: "Your portal access has been switched off. Please contact the Cosystem team." },
 

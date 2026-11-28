@@ -322,14 +322,82 @@ async function run() {
   }
   {
     // A token for an owner already linked to someone else must not re-point it.
+    // Addressed to gA (who is confirmed), so the email checks pass and the
+    // owner-link rule is what refuses it.
     const token = `iso-hijack-${Date.now()}`;
     await admin.from("owner_invites").insert({
-      owner_id: ownerB, token_hash: sha(token),
+      owner_id: ownerB, token_hash: sha(token), email: gA.email.toLowerCase(),
       expires_at: new Date(Date.now() + 86400000).toISOString(),
     });
     const { error } = await admin.rpc("redeem_owner_invite", { p_token_hash: sha(token), p_user_id: gA.id });
     check("token for a linked owner refused", Boolean(error) && error.message.includes("owner_already_linked"),
           error ? "owner_already_linked" : "ACCEPTED");
+  }
+
+  // ── The invite is bound to a confirmed email (28 Nov 2026) ───────────────
+  console.log("\nInvite email binding\n");
+  const freshOwner = async (tag) => mkOwner(`Owner ${tag}`, null, "invited");
+  const issue = async (ownerId, email) => {
+    const token = `iso-${Math.random().toString(36).slice(2)}-${Date.now()}`;
+    const { error } = await admin.from("owner_invites").insert({
+      owner_id: ownerId, token_hash: sha(token), email,
+      expires_at: new Date(Date.now() + 86400000).toISOString(),
+    });
+    if (error) throw new Error(`invite: ${error.message}`);
+    return token;
+  };
+  const linkedTo = async (ownerId) =>
+    (await admin.from("owners").select("user_id, portal_access").eq("id", ownerId).single()).data;
+  {
+    // Issued before the migration: no address on it, cannot be redeemed.
+    const oL = await freshOwner("Legacy");
+    const token = await issue(oL, null);
+    const { error } = await admin.rpc("redeem_owner_invite", { p_token_hash: sha(token), p_user_id: gA.id });
+    check("invite without an address refused", Boolean(error) && error.message.includes("invite_email_missing"),
+          error ? error.message : "ACCEPTED");
+    check("…and the owner stays unlinked", (await linkedTo(oL)).user_id === null);
+  }
+  {
+    // A forwarded link: someone else's account, confirmed, holding the token.
+    const oM = await freshOwner("Mismatch");
+    const token = await issue(oM, `someone-else-${Date.now()}@test.invalid`);
+    const { error } = await admin.rpc("redeem_owner_invite", { p_token_hash: sha(token), p_user_id: gA.id });
+    check("account with a different email refused", Boolean(error) && error.message.includes("invite_email_mismatch"),
+          error ? error.message : "ACCEPTED");
+    check("…and the owner stays unlinked", (await linkedTo(oM)).user_id === null);
+  }
+  {
+    // The right address, never confirmed — e.g. registered by someone else
+    // under the owner's email. Refused, the invite stays usable, and once the
+    // address is confirmed the same invite works.
+    const email = `iso-unconfirmed-${Date.now()}@test.invalid`;
+    const { data: u, error: ue } = await admin.auth.admin.createUser({ email, password: PASSWORD, email_confirm: false });
+    if (ue) throw new Error(ue.message);
+    made.authUsers.push(u.user.id);
+    const oU = await freshOwner("Unconfirmed");
+    const token = await issue(oU, email);
+    const r1 = await admin.rpc("redeem_owner_invite", { p_token_hash: sha(token), p_user_id: u.user.id });
+    check("unconfirmed email refused", Boolean(r1.error) && r1.error.message.includes("invite_email_unconfirmed"),
+          r1.error ? r1.error.message : "ACCEPTED");
+    const inv = (await admin.from("owner_invites").select("used_at").eq("token_hash", sha(token)).single()).data;
+    check("…and the invite is not consumed", inv.used_at === null);
+    check("…and the owner stays unlinked", (await linkedTo(oU)).user_id === null);
+    await admin.auth.admin.updateUserById(u.user.id, { email_confirm: true });
+    const r2 = await admin.rpc("redeem_owner_invite", { p_token_hash: sha(token), p_user_id: u.user.id });
+    const after = await linkedTo(oU);
+    check("once confirmed, the same invite links the owner", !r2.error && after.user_id === u.user.id && after.portal_access === "active",
+          r2.error ? r2.error.message : `${after.user_id === u.user.id ? "linked" : "NOT linked"}, ${after.portal_access}`);
+    const r3 = await admin.rpc("redeem_owner_invite", { p_token_hash: sha(token), p_user_id: u.user.id });
+    check("…and only once", Boolean(r3.error) && r3.error.message.includes("invite_already_used"));
+  }
+  {
+    // Only the server may call it, and only the server may read the table.
+    const pub = createClient(SUPA, ANON, { auth: { persistSession: false } });
+    const r = await pub.rpc("redeem_owner_invite", { p_token_hash: sha("x"), p_user_id: gA.id });
+    check("anon cannot execute redeem_owner_invite", Boolean(r.error) && !/invite_/.test(r.error.message),
+          r.error ? r.error.code ?? r.error.message : "EXECUTED");
+    const t = await pub.from("owner_invites").select("id").limit(1);
+    check("anon cannot read owner_invites", Boolean(t.error), t.error ? t.error.code ?? "" : "READ");
   }
 
   console.log(`\n${passed} passed, ${failed} failed\n`);
