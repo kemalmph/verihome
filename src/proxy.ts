@@ -12,7 +12,7 @@ import { NextResponse, type NextRequest } from "next/server";
 // no policy for anon/authenticated (service-role only) and the proxy holds the
 // anon key. The role check is the /admin and /site layouts (any staff role may
 // enter); each page and action then enforces its own permission.
-const PROTECTED_PREFIXES = ["/dashboard", "/admin", "/site"];
+const PROTECTED_PREFIXES = ["/account", "/admin", "/site"];
 
 /** Prefixes whose visitors belong at the staff login, not the public one. */
 const STAFF_PREFIXES = ["/admin", "/site"];

@@ -45,9 +45,9 @@ export function NavbarClient({ user }: NavbarClientProps) {
                     <p className="text-xs text-ink-3 truncate">{user.email}</p>
                   </div>
                   {[
-                    { href: "/dashboard", icon: "dashboard", label: "nav.dashboard" as StringKey },
-                    { href: "/dashboard/saved", icon: "favorite", label: "nav.saved" as StringKey },
-                    { href: "/dashboard/appointments", icon: "calendar_today", label: "nav.appointments" as StringKey },
+                    { href: "/account", icon: "dashboard", label: "nav.account" as StringKey },
+                    { href: "/account/saved", icon: "favorite", label: "nav.saved" as StringKey },
+                    { href: "/account/appointments", icon: "calendar_today", label: "nav.appointments" as StringKey },
                   ].map((item) => (
                     <Link
                       key={item.href}

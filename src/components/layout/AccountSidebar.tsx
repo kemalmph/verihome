@@ -5,32 +5,38 @@ import { useRef } from "react";
 import { signOut } from "@/lib/supabase/auth-actions";
 import { SidebarCollapseToggle } from "./SidebarCollapseToggle";
 import { Logo } from "@/components/brand/Logo";
+import { useT } from "@/lib/i18n/LocaleProvider";
+import type { StringKey } from "@/lib/i18n/strings";
 
 interface SidebarLink {
   href: string;
   label: string;
+  /** When set, the label comes from the dictionary and follows the language cookie. */
+  labelKey?: StringKey;
   icon: string;
   badge?: number;
 }
 
 const mainLinks: SidebarLink[] = [
-  { href: "/dashboard", label: "Dashboard", icon: "home" },
-  { href: "/dashboard/unit", label: "Unit Saya", icon: "apartment" },
-  { href: "/dashboard/saved", label: "Saved Listings", icon: "favorite" },
-  { href: "/dashboard/appointments", label: "Appointments", icon: "calendar_today", badge: 1 },
-  { href: "/dashboard/viewings",  label: "Viewings",  icon: "location_on" },
-  { href: "/dashboard/bookings",  label: "Bookings",  icon: "hotel" },
-  { href: "/dashboard/support", label: "Support & Services", icon: "headset_mic" },
+  { href: "/account", label: "My Account", labelKey: "nav.account", icon: "home" },
+  { href: "/account/unit", label: "Unit Saya", icon: "apartment" },
+  { href: "/account/saved", label: "Saved Listings", icon: "favorite" },
+  { href: "/account/appointments", label: "Appointments", icon: "calendar_today", badge: 1 },
+  { href: "/account/viewings",  label: "Viewings",  icon: "location_on" },
+  { href: "/account/bookings",  label: "Bookings",  icon: "hotel" },
+  { href: "/account/support", label: "Support & Services", icon: "headset_mic" },
 ];
 
-interface DashboardSidebarProps {
+interface AccountSidebarProps {
   activeHref?: string;
   userName?: string;
   isActiveClient?: boolean;
 }
 
 /**
- * The tenant dashboard's sidebar, built the same way as AdminSidebar.
+ * The customer area's sidebar (/account — formerly /dashboard, renamed 28 Nov
+ * 2026; /dashboard/* 308-redirects here, see next.config.ts), built the same
+ * way as AdminSidebar.
  *
  * It used to be one always-visible fixed aside, 288px wide at every screen
  * size, and half the pages beside it left `ml-72` unprefixed — so on a phone
@@ -42,11 +48,12 @@ interface DashboardSidebarProps {
  * Its width is --dash-sidebar-w, not the admin's --sidebar-w: this sidebar
  * has always been 288px, and the fold should not quietly resize it too.
  */
-export function DashboardSidebar({
-  activeHref = "/dashboard",
+export function AccountSidebar({
+  activeHref = "/account",
   userName = "User",
   isActiveClient = false,
-}: DashboardSidebarProps) {
+}: AccountSidebarProps) {
+  const t = useT();
   const drawer = useRef<HTMLDetailsElement>(null);
   const closeDrawer = () => {
     if (drawer.current) drawer.current.open = false;
@@ -85,7 +92,8 @@ export function DashboardSidebar({
         </div>
 
         <nav className={`flex-1 px-4 space-y-1 overflow-y-auto overflow-x-hidden ${r("collapsed:px-2")}`}>
-          {mainLinks.map((link) => {
+          {mainLinks.map((raw) => {
+            const link = raw.labelKey ? { ...raw, label: t(raw.labelKey) } : raw;
             const isActive = activeHref === link.href;
             return (
               <Link
@@ -125,7 +133,7 @@ export function DashboardSidebar({
           </div>
 
           <Link
-            href="/dashboard/settings"
+            href="/account/settings"
             onClick={closeDrawer}
             title={rail ? "Profile Settings" : undefined}
             className={linkClass(false)}

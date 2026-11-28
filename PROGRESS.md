@@ -53,6 +53,16 @@ catatan handoff bilang "jaga tetap sinkron". Kalau menemukan sesuatu yang
 pantas masuk, **sebutkan di chat beserta nomor bagiannya** dan biarkan
 dokumennya. Owner yang memutuskan.
 
+**Diperbarui 2026-11-28 (versi 27), atas permintaan owner — Fase 3:** §21
+*Access per site* (peta izin, aturan record anak, undangan, sidebar per site,
+membership lunas tetap lunas), §02 (`site_staff`, `site_staff_invites`, baris
+RLS), §19.21 baru (service_role tidak bisa membaca `auth.users`), §20.7
+(pendapatan site disembunyikan dari peran site). **Versi 28** (hari yang sama,
+atas permintaan owner) menyelaraskan sisanya: §3 (`site_staff` dipakai, gate
+`/site`, `accessibleSites`, grup sidebar per site, item Portal Pemilik hanya
+untuk pemilik berproperti, landing), §18, §20.9 (Phase 3 ditutup), lede §20,
+kotak fakta masthead, dan baris skema di footer.
+
 **Diperbarui 2026-11-23 (versi 20), atas permintaan owner.** Yang masuk:
 
 - **Masthead** — produknya kini Cosystem di `cosystem.co`; nama lama bertahan
@@ -88,6 +98,40 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 ---
 
 ## Selesai
+
+- **Fase 3b — area pelanggan `/dashboard` → `/account`** (28 Nov, branch
+  `claude/account-phase-3b`, PR terpisah menunggu persetujuan owner; **tanpa
+  migration**, rename murni — perilaku, izin, data tidak berubah).
+  - `git mv src/app/dashboard src/app/account` (10 halaman) dan
+    `DashboardSidebar` → `AccountSidebar`. Label: kunci i18n `nav.dashboard`
+    → `nav.account` = "Akun Saya" / "My Account" (cookie bahasa), dipakai menu
+    pengguna di header dan item pertama sidebar.
+  - Redirect 308 di `next.config.ts` (`/dashboard` dan `/dashboard/:path*` →
+    `/account/...`, query ikut), mengikuti pola `/admin/coworking` → `/site`.
+    Redirect config jalan sebelum `proxy.ts`, jadi pengunjung belum masuk
+    dialihkan dulu lalu ditangkap aturan login `/account`. Tujuan selalu di
+    bawah `/account`, jadi tidak bisa jadi open redirect; Next.js juga lebih
+    dulu menormalkan `//` dan `\` dalam path ke origin yang sama.
+  - Rujukan yang diganti: `proxy.ts` PROTECTED_PREFIXES, `landingPath`
+    (fallback tamu), `safeNext` fallback, `signInWithGoogle`/`signUpWithEmail`
+    /`signOut` default, `LoginForm`, menu pengguna di header, sidebar, tautan
+    di alur booking/viewing/konsultasi, `revalidatePath` di saved/credit
+    actions, email konfirmasi konsultasi (webhook Xendit), `returnUrl` Xendit,
+    redirect login di halaman akun. **Tidak** diubah: `/site/[id]/dashboard`,
+    "Admin Dashboard", `DASHBOARD_PERMISSIONS`, variabel CSS `--dash-sidebar-w`.
+  - Tes: `test-account-redirect` baru (45 check: 308 + path/query utuh, POST
+    tetap 308, 12 varian open-redirect lewat request mentah — tiap hop tetap di
+    origin, ikut di browser masuk/keluar, label sidebar, grep `src/`).
+    `test-login-no-js` diperbaiki untuk header V7 (tautan "Masuk" + CTA ke
+    `/contact`; `?mode=signup` tetap membuka form daftar) — **hijau lagi**.
+    `test-admin-nav`, `test-portal-isolation`, `test-safe-next`,
+    `test-sidebar-collapse` menyesuaikan path. 19 suite hijau di DB bersih.
+  - Catatan: proxy mengirim pengunjung belum masuk ke `/?login=1` tanpa
+    membawa path asalnya (perilaku lama, tidak diubah di PR rename ini).
+  - System Reference **versi 29** (atas permintaan owner): §16 jadi
+    *Customer account (`/account`)* + catatan redirect 308, rute di §15,
+    aturan landing & catatan sidebar di §3, rail, Fig. 1, §22, footer. Footer
+    menyebut bahwa versi ini mendahului merge PR #10.
 
 - **Fase 3 — Site Management per pemilik site & staf site** (28 Nov, branch
   `claude/site-management-phase-3-inventory-uyamoo`, PR #9 di-merge atas
@@ -398,8 +442,8 @@ berganti **warna** lewat token — tata letaknya masih gaya lama (tombol
 juga punya top bar (pemilih site, lonceng, avatar) yang belum dibuat karena
 notifikasi dan pemilih site belum ada sebagai fitur.
 
-Masih terbuka dari sebelumnya: di `/dashboard`, "Profile Settings" → 404
-(`/dashboard/settings` tidak ada); angka ringkasan dan badge "1" masih
+Masih terbuka dari sebelumnya: di `/account` (dulu `/dashboard`), "Profile
+Settings" → 404 (`/account/settings` tidak ada); angka ringkasan dan badge "1" masih
 placeholder.
 
 ---
@@ -408,8 +452,10 @@ placeholder.
 
 Urut prioritas:
 
-0. **Fase 3b: PR `/account`** (instruksi owner menyusul), yang juga
-   memperbaiki `test-login-no-js` (selector navbar V7). Sesudahnya: email
+0. **Fase 3b: PR `/account`** (branch `claude/account-phase-3b`, dibuat dari
+   `main` setelah merge PR #9) — siap direview; jangan merge tanpa persetujuan
+   owner. Sudah termasuk perbaikan `test-login-no-js` (selector navbar V7).
+   Sesudahnya: email
    binding + konfirmasi untuk undangan pemilik; dashboard per peran; migration
    hapus kolom `is_admin`/`is_surveyor`.
 

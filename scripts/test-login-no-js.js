@@ -71,23 +71,27 @@ const SECRET = "kata-sandi-rahasia-jangan-bocor";
   // ── the way in, from the header, with no JavaScript ──────────────────────
   //
   // "Masuk" and "Daftar" used to be buttons opening a modal, and the modal
-  // always opened in sign-in mode: pressing "Daftar" handed a new visitor a
-  // sign-in form. Being onClick, neither did anything at all before React
-  // hydrated — on a phone the only account control in the header was dead
-  // for the first moment of a slow connection. They are links now.
+  // always opened in sign-in mode. Being onClick, neither did anything before
+  // React hydrated. They became links to /auth/login.
+  //
+  // The V7 header (28 Nov 2026) keeps "Masuk" as a link and replaces the
+  // header "Daftar" with the "Start Free Trial" CTA, which goes to /contact
+  // until a self-serve trial exists. Sign-up itself is unchanged: the
+  // /auth/login page has its tab, reached directly with ?mode=signup (and from
+  // the sign-in form). This block checks what the header actually carries now.
   for (const width of [1280, 390]) {
     const phone = width === 390;
     const ctx = await browser.newContext({ javaScriptEnabled: false, viewport: { width, height: 844 } });
     const page = await ctx.newPage();
     await page.goto(`${BASE}/`, { waitUntil: "domcontentloaded" });
 
-    // On a phone the bar has no room for both, so "Masuk" moves into the
-    // menu; "Daftar" stays on the bar at every width.
-    const signUp = page.locator('a[href="/auth/login?mode=signup"]');
-    check(await signUp.count() >= 1, `${width}px: "Daftar" adalah tautan, bukan tombol modal`);
-    check(await signUp.first().isVisible(), `${width}px: "Daftar" terlihat di bilah`);
+    // The CTA is a link on the bar at every width.
+    const cta = page.locator('header a[href="/contact"]:visible, nav a[href="/contact"]:visible');
+    check(await cta.count() >= 1, `${width}px: CTA header adalah tautan ke /contact`);
 
     if (phone) {
+      // No room for "Masuk" on the bar: it lives in the menu, which opens
+      // without JavaScript (<details>).
       await page.locator("details > summary").first().click();
       check(
         await page.locator('details a[href="/auth/login"]').first().isVisible(),
@@ -109,16 +113,23 @@ const SECRET = "kata-sandi-rahasia-jangan-bocor";
       );
     }
 
-    // The label must match the form that opens.
-    await signUp.first().click();
+    // "Masuk" opens the sign-in form, still without JavaScript.
+    const signIn = phone
+      ? page.locator('details a[href="/auth/login"]').first()
+      : page.locator('a[href="/auth/login"]:visible').first();
+    await signIn.click();
     await page.waitForLoadState("domcontentloaded");
+    check(new URL(page.url()).pathname === "/auth/login", `${width}px: "Masuk" membuka /auth/login`);
     check(
-      new URL(page.url()).search === "?mode=signup",
-      `${width}px: "Daftar" membuka /auth/login?mode=signup (${new URL(page.url()).search})`,
+      await page.locator('input[name="password"]').first().isVisible(),
+      `${width}px: form masuk terlihat tanpa JavaScript`,
     );
+
+    // The sign-up tab is still the one ?mode=signup opens.
+    await page.goto(`${BASE}/auth/login?mode=signup`, { waitUntil: "domcontentloaded" });
     check(
       await page.locator('input[name="name"]').isVisible(),
-      `${width}px: form pendaftaran yang terbuka, bukan form masuk`,
+      `${width}px: /auth/login?mode=signup membuka form pendaftaran, bukan form masuk`,
     );
 
     await ctx.close();

@@ -245,7 +245,7 @@ export const STRINGS = {
   "nav.contact":         { id: "Kontak Kami",      en: "Contact Us" },
   "nav.signIn":          { id: "Masuk",            en: "Sign In" },
   "nav.signUp":          { id: "Daftar",           en: "Sign Up" },
-  "nav.dashboard":       { id: "Dashboard",        en: "Dashboard" },
+  "nav.account":       { id: "Akun Saya",        en: "My Account" },
   "nav.saved":           { id: "Unit Tersimpan",   en: "Saved Listings" },
   "nav.appointments":    { id: "Jadwal Kunjungan", en: "Appointments" },
   "nav.signOut":         { id: "Keluar",           en: "Sign Out" },

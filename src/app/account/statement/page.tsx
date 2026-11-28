@@ -18,7 +18,7 @@ export default async function StatementPage({
 }) {
   const sp = await searchParams;
   const user = await getCurrentUser().catch(() => null);
-  if (!user) redirect("/auth/login?next=/dashboard/statement");
+  if (!user) redirect("/auth/login?next=/account/statement");
 
   const months = [3, 6, 12, 24].includes(Number(sp.months)) ? Number(sp.months) : 6;
   const to = new Date();
@@ -35,7 +35,7 @@ export default async function StatementPage({
           <div className="flex flex-wrap items-center justify-between gap-3 mb-5 no-print">
             <div className="flex gap-2">
               {[3, 6, 12, 24].map((m) => (
-                <Link key={m} href={`/dashboard/statement?months=${m}`}
+                <Link key={m} href={`/account/statement?months=${m}`}
                   className={`px-3 py-1.5 rounded-lg text-sm font-medium border ${
                     months === m ? "bg-white border-brand text-brand-ink"
                                  : "bg-white border-line-strong text-ink-2 hover:border-brand"}`}>
@@ -145,7 +145,7 @@ export default async function StatementPage({
                         </td>
                         <td className="py-2.5 text-right no-print">
                           {l.receiptId && (
-                            <Link href={`/dashboard/receipts/${l.receiptId}`}
+                            <Link href={`/account/receipts/${l.receiptId}`}
                                   className="text-xs text-brand-ink font-semibold hover:underline">
                               Kuitansi
                             </Link>
