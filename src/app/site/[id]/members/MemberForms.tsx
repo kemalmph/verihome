@@ -115,14 +115,6 @@ export function NewMembershipForm({ siteId, plans }: { siteId: string; plans: Pl
           <input name="price" type="number" min="0" className={inputCls} />
         </Field>
 
-        <Field label="Status pembayaran">
-          <select name="payment_status" defaultValue="unpaid" className={inputCls}>
-            {PAYMENT_STATUSES.map((s) => (
-              <option key={s.value} value={s.value}>{s.label}</option>
-            ))}
-          </select>
-        </Field>
-
         <Field label="No. kontrak" hint="Opsional">
           <input name="contract_ref" className={inputCls} />
         </Field>

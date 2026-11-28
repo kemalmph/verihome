@@ -238,7 +238,11 @@ export async function createMembership(siteId: string, fd: FormData) {
       starts_on,
       ends_on,
       status: (fd.get("status") as string) || "pending",
-      payment_status: (fd.get("payment_status") as string) || "unpaid",
+      // Always unpaid. Settling is setMembershipPayment → settle_membership_payment,
+      // which is what posts the fee to the ledger; a payment_status written
+      // here would mark it paid with no journal behind it. Whatever the form
+      // sends for payment_status is ignored on purpose.
+      payment_status: "unpaid",
       contract_ref: txt(fd, "contract_ref"),
       notes: txt(fd, "notes"),
       ...snapshot,
