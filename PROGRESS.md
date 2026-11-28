@@ -4,9 +4,9 @@ Posisi terakhir pekerjaan, untuk disambung session berikutnya.
 Dokumen pendamping: `AGENTS.md` (aturan), `HANDOFF.md` (catatan teknis yang
 lebih dalam), `ROADMAP.md` (fitur yang belum ada).
 
-Terakhir diperbarui: 2026-11-26 · branch kerja `claude/magical-noether-o20z08`
-(Fase 2: satu sidebar bersama untuk /admin, /site, /survey, /owner; Fase 1 dan
-PR #2–#3 sudah di produksi). Posisi sebenarnya selalu dari `git log -15 --oneline` —
+Terakhir diperbarui: 2026-11-28 · branch kerja `claude/exciting-darwin-fosna9`
+(redesign V7: design system baru, homepage, shell dashboard; belum di-merge.
+Fase 2 / PR #4 sudah di `main`). Posisi sebenarnya selalu dari `git log -15 --oneline` —
 hash yang ditulis tangan di sini akan basi pada commit berikutnya.
 
 ---
@@ -84,6 +84,38 @@ menebak lebih buruk daripada ketidakcocokan yang tercatat.
 ---
 
 ## Selesai
+
+- **Redesign V7 — design system, homepage, shell dashboard** (28 Nov, branch
+  `claude/exciting-darwin-fosna9`, belum ada PR; **tanpa migration**).
+  Bahan dari owner: prototype HTML V7, copy `COSYSTEM_COPYWRITING_V7`, foto
+  `COSYSTEM_PHOTO_ASSETS_FINAL`, logo, dan mockup laptop+ponsel (dipakai
+  sebagai acuan gaya dashboard).
+  - **Token, bukan hex.** `@theme` di `globals.css`: `brand` #F36B21,
+    `brand-strong`, `brand-ink` #C2410C (teks oranye di atas putih; oranye
+    murni hanya ~3:1), `brand-soft`, `brand-light`, `ink`/`ink-2`/`ink-3`,
+    `line`/`line-strong`, `cream`/`cream-2`, `canvas`, `panel`, `success-*`.
+    Codemod mengganti ±2.600 kelas `*-[#hex]` di 124 file ke token ini. Hijau
+    lama → oranye, navy → ink; chip status hijau (Aktif/Lunas) → `success-*`,
+    tetap hijau. Skor RLA, warna aliran pendapatan, dan email HTML tidak
+    diubah. `src/lib/design-tokens.ts` = salinan JS untuk SVG/inline style.
+  - Font Public Sans → **Inter**. Resep tombol pil di
+    `src/components/brand/styles.ts`; logo `src/components/brand/Logo.tsx`
+    (PNG hitam & putih di `public/brand/`).
+  - **Homepage** ditulis ulang mengikuti V7 (hero, 6 fitur, showcase, 4
+    model ruang, CTA). Navbar Product/Solutions/Pricing/Resources
+    (`nav-items.ts`, satu sumber untuk desktop & ponsel), footer satu baris.
+    Teks ID adalah terjemahan saya — **perlu dicek owner**. "Run Your Space."
+    dibiarkan Inggris di kedua bahasa.
+  - CTA yang menunjuk hal yang belum ada: Start Free Trial, Pricing, Let's
+    Talk → `/contact`; Watch Demo → `/#platform`. Marketplace & Daftarkan
+    Properti pindah ke menu Resources (bagian listing di homepage hilang).
+  - **Dashboard**: `SidebarShell` dan `DashboardSidebar` → panel gelap, logo
+    putih, item aktif pil oranye; kartu `rounded-2xl` + `shadow-card` di
+    halaman dashboard. Perilaku sidebar tidak berubah.
+  - Diuji lokal (Supabase lokal + admin seed): `test-homepage-links` 22/22,
+    `test-language-switch` 103/103, `tsc`, `npm run build`. Screenshot
+    desktop & 390px untuk `/`, `/admin`, `/site`, `/dashboard`. `/owner`
+    tidak dilihat dengan akun pemilik (shell-nya sama).
 
 - **Fase 2 — satu shell dan satu sidebar** (26 Nov, branch
   `claude/magical-noether-o20z08`, PR menunggu persetujuan owner; **tanpa
@@ -252,15 +284,16 @@ Tes: 13 suite, ±434 check, semua hijau di DB lokal bersih.
 
 ## Sedang dikerjakan
 
-Collapse sidebar (termasuk `/dashboard`) sudah di-merge ke `main` atas
-permintaan owner. Container ini tidak bisa membuka `cosystem.co` (proxy
-menolak) dan repo tidak punya GitHub Actions, jadi status deploy Vercel
-**belum diverifikasi dari sini** — cek di dashboard Vercel bahwa commit
-terbaru Ready · Current.
+Redesign V7 menunggu review owner di branch `claude/exciting-darwin-fosna9`.
+Yang belum: halaman lain (listing, detail, login, contact, form) baru ikut
+berganti **warna** lewat token — tata letaknya masih gaya lama (tombol
+`rounded-lg`, bukan pil). Owner mau mengubahnya bertahap. Mockup dashboard
+juga punya top bar (pemilih site, lonceng, avatar) yang belum dibuat karena
+notifikasi dan pemilih site belum ada sebagai fitur.
 
-Temuan yang belum dibereskan di `/dashboard`: tautan "Profile Settings" menuju
-`/dashboard/settings`, yang tidak ada (404); badge "1" di Appointments dan
-angka di halaman ringkasan masih data placeholder.
+Masih terbuka dari sebelumnya: di `/dashboard`, "Profile Settings" → 404
+(`/dashboard/settings` tidak ada); angka ringkasan dan badge "1" masih
+placeholder.
 
 ---
 
