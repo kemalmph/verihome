@@ -80,7 +80,6 @@ const STAFF_URLS = {
   "/admin/cron": ["superadmin"],
   "/admin/settings": ["superadmin"],
   "/site": ["superadmin", "admin_general", "admin_finance"],
-  [`/site/${SITE_SLUG}`]: ["superadmin", "admin_general", "admin_finance"],
   "/admin/listings": ["superadmin", "admin_general", "admin_listings"],
   "/admin/inventory": ["superadmin", "admin_general", "admin_listings"],
   "/admin/bookings": ["superadmin", "admin_general", "admin_listings", "admin_finance"],
@@ -91,6 +90,19 @@ const STAFF_URLS = {
   "/survey": ["superadmin", "admin_general", "admin_listings", "surveyor"],
   "/admin/surveys/pending": ["superadmin", "admin_general", "admin_listings"],
 };
+/**
+ * Phase 3: each site is a group of pages, each shown iff the viewer's site
+ * permission for that page holds there (site-permissions.ts). By hand, for the
+ * global roles: operate_all and finance_all both read every page; only a
+ * superadmin manages site staff. Site owners and site staff are covered in
+ * scripts/test-site-isolation.js.
+ */
+const SITE_READERS = ["superadmin", "admin_general", "admin_finance"];
+function addSitePages(slug) {
+  for (const sub of ["", "/dashboard", "/members", "/calendar"]) STAFF_URLS[`/site/${slug}${sub}`] = SITE_READERS;
+  STAFF_URLS[`/site/${slug}/staff`] = ["superadmin"];
+}
+addSitePages(SITE_SLUG);
 const ROLES = ["superadmin", "admin_general", "admin_listings", "admin_finance", "surveyor"];
 const SECTIONS_OF = (href) =>
   href.startsWith("/owner") ? "marketplace"
@@ -171,7 +183,7 @@ function claimedHrefs() {
   }
   // Other suites leave sites behind: every one of them is a menu entry too.
   for (const s of await q("select slug from sites")) {
-    STAFF_URLS[`/site/${s.slug}`] = ["superadmin", "admin_general", "admin_finance"];
+    addSitePages(s.slug);
   }
   {
     const { data: s, error } = await svc.from("sites").insert({ name: `Nav Test Site ${RUN}`, slug: SITE_SLUG }).select("id").single();
@@ -222,7 +234,9 @@ function claimedHrefs() {
     return { status: res.status, location: res.headers.get("location") ?? "" };
   };
   const opens = (r) => r.status === 200;
-  const refused = (r) => r.status >= 300 && r.status < 400;
+  // A site page the viewer may not open is not-found (it does not confirm the
+  // site exists); every other hidden page redirects.
+  const refused = (r) => (r.status >= 300 && r.status < 400) || r.status === 404;
 
   // ── 1. the matrix: shown == allowed, hidden == refused ───────────────────
   const landingPage = { surveyor: "/survey", owner: "/owner", owner_finance: "/admin" };
@@ -262,7 +276,7 @@ function claimedHrefs() {
   // ── 2. signed-out visitors ────────────────────────────────────────────────
   for (const p of ["/admin", "/site", "/survey", "/owner"]) {
     const r = await fetchAs(null, p);
-    check(refused(r), `signed out: ${p} redirects (${r.status} ${r.location})`);
+    check(r.status >= 300 && r.status < 400, `signed out: ${p} redirects (${r.status} ${r.location})`);
   }
 
   // ── 2b. /admin shows listing data only to those entitled to it ──────────
@@ -282,7 +296,7 @@ function claimedHrefs() {
     // commission warning (owner decision); prices and the listing widgets may not.
     const leaks = (t) => t.includes("7.654.321") || /Pending Reviews|Today.s Consultations|Recent Owner Submissions/.test(t);
     const sv = await body("surveyor");
-    check(refused(sv) && !leaks(sv.text), `surveyor opens /admin: redirected, no listing data (${sv.status} ${sv.location})`);
+    check(sv.status >= 300 && sv.status < 400 && !leaks(sv.text), `surveyor opens /admin: redirected, no listing data (${sv.status} ${sv.location})`);
     const lst = await body("admin_listings");
     check(lst.status === 200 && lst.text.includes(marker), "admin_listings sees listing data on /admin");
     const gen = await body("admin_general");
